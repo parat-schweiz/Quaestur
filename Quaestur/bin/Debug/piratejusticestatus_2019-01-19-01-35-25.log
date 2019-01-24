@@ -1,0 +1,33 @@
+2019-01-19-01-35-25  Notice   Starting Nancy on http://localhost:8888
+2019-01-19-01-35-36  Notice   Application started
+2019-01-19-01-35-36  Notice   Running mailing task
+2019-01-19-01-35-36  Notice   Mailing task complete
+2019-01-19-01-35-36  Notice   Running billing task
+2019-01-19-01-35-39  Notice   Billing process modified Thomas Alexander: Created bill 20190119M0000062 for Thomas Alexander in Piratenpartei Zentralschweiz
+2019-01-19-01-35-42  Notice   Billing task complete
+2019-01-19-01-35-42  Notice   Running mailing task
+2019-01-19-01-35-43  Verbose  Sending message to "Thomas Alexander" <stefan+thomas.alexander@savvy.ch>
+2019-01-19-01-35-43  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-19-01-35-44  Info     Message sent to "Thomas Alexander" <stefan+thomas.alexander@savvy.ch>
+2019-01-19-01-35-44  Notice   Billing process modified Thomas Alexander: Sent bill 20190119M0000062 using template L1G by e-mail to stefan+thomas.alexander@savvy.ch
+2019-01-19-01-35-44  Notice   Mailing task complete
+2019-01-19-01-39-58  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-19-01-40-31  Notice   admin changed mailing Test
+2019-01-19-01-40-37  Notice   Running mailing task
+2019-01-19-01-40-37  Notice   Mailing task complete
+2019-01-19-01-40-37  Notice   Running billing task
+2019-01-19-01-40-41  Verbose  Sending message to stefan@savvy.ch
+2019-01-19-01-40-41  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-19-01-40-41  Info     Message sent to stefan@savvy.ch
+2019-01-19-01-40-41  Notice   admin tests mailing with subject Test
+2019-01-19-01-40-42  Notice   Billing task complete
+2019-01-19-01-40-43  Notice   Running mailing task
+2019-01-19-01-40-43  Notice   Mailing task complete
+2019-01-19-01-41-08  Verbose  Sending message to stefan@savvy.ch
+2019-01-19-01-41-08  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-19-01-41-09  Info     Message sent to stefan@savvy.ch
+2019-01-19-01-41-09  Notice   admin tests mailing with subject Test
+2019-01-19-01-41-19  Verbose  Sending message to stefan@savvy.ch
+2019-01-19-01-41-19  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-19-01-41-20  Info     Message sent to stefan@savvy.ch
+2019-01-19-01-41-20  Notice   admin tests mailing with subject Test

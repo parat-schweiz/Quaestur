@@ -1,0 +1,34 @@
+2019-01-18-00-29-37  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-00-29-49  Notice   Application started
+2019-01-18-00-29-49  Notice   Running mailing task
+2019-01-18-00-29-49  Notice   Mailing task complete
+2019-01-18-00-29-49  Notice   Running billing task
+2019-01-18-00-29-51  Notice   Billing process modified Justin Patterson: Created bill 20190118M0000017 for Justin Patterson in Piratenpartei Zentralschweiz
+2019-01-18-00-29-52  Notice   Billing process modified Michael J. Torres: Created bill 20190118M0000018 for Michael J. Torres in Piratenpartei Zentralschweiz
+2019-01-18-00-29-53  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-00-29-53  Notice   Billing process modified Susan Thomas: Created bill 20190118M0000019 for Susan Thomas in Piratenpartei Zentralschweiz
+2019-01-18-00-29-55  Notice   Billing process modified Gary Brown: Created bill 20190118M0000020 for Gary Brown in Piratenpartei Zentralschweiz
+2019-01-18-00-29-56  Notice   Billing process modified Larry Turner: Created bill 20190118M0000021 for Larry Turner in Piratenpartei Zentralschweiz
+2019-01-18-00-29-56  Notice   Billing task complete
+2019-01-18-00-29-56  Notice   Running mailing task
+2019-01-18-00-29-56  Verbose  Sending message to "Justin Patterson" <stefan+justin.patterson@savvy.ch>
+2019-01-18-00-29-57  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-00-29-58  Info     Message sent to "Justin Patterson" <stefan+justin.patterson@savvy.ch>
+2019-01-18-00-29-58  Notice   Billing process modified Justin Patterson: Sent bill 20190118M0000017 to Justin Patterson
+2019-01-18-00-29-58  Verbose  Sending message to "Michael J. Torres" <stefan+michael.torres@savvy.ch>
+2019-01-18-00-29-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-00-29-58  Info     Message sent to "Michael J. Torres" <stefan+michael.torres@savvy.ch>
+2019-01-18-00-29-58  Notice   Billing process modified Michael J. Torres: Sent bill 20190118M0000018 to Michael J. Torres
+2019-01-18-00-29-58  Verbose  Sending message to "Susan Thomas" <stefan+susan.thomas@savvy.ch>
+2019-01-18-00-29-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-00-29-58  Info     Message sent to "Susan Thomas" <stefan+susan.thomas@savvy.ch>
+2019-01-18-00-29-58  Notice   Billing process modified Susan Thomas: Sent bill 20190118M0000019 to Susan Thomas
+2019-01-18-00-29-58  Verbose  Sending message to "Gary Brown" <stefan+gary.brown@savvy.ch>
+2019-01-18-00-29-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-00-29-58  Info     Message sent to "Gary Brown" <stefan+gary.brown@savvy.ch>
+2019-01-18-00-29-58  Notice   Billing process modified Gary Brown: Sent bill 20190118M0000020 to Gary Brown
+2019-01-18-00-29-58  Verbose  Sending message to "Larry Turner" <stefan+larry.turner@savvy.ch>
+2019-01-18-00-29-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-00-29-59  Info     Message sent to "Larry Turner" <stefan+larry.turner@savvy.ch>
+2019-01-18-00-29-59  Notice   Billing process modified Larry Turner: Sent bill 20190118M0000021 to Larry Turner
+2019-01-18-00-29-59  Notice   Mailing task complete

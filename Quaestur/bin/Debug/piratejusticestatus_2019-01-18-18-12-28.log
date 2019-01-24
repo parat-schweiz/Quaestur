@@ -1,0 +1,20 @@
+2019-01-18-18-12-28  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-18-12-39  Notice   Application started
+2019-01-18-18-12-39  Notice   Running mailing task
+2019-01-18-18-12-39  Notice   Mailing task complete
+2019-01-18-18-12-39  Notice   Running billing task
+2019-01-18-18-12-42  Notice   Billing process modified Sandra B. Brown: Created bill 20190118M0000032 for Sandra B. Brown in Piratenpartei Zentralschweiz
+2019-01-18-18-12-43  Notice   Billing process modified Karen Henderson: Created bill 20190118M0000033 for Karen Henderson in Piratenpartei Zentralschweiz
+2019-01-18-18-12-44  Notice   Billing process modified Thomas Long: Created bill 20190118M0000034 for Thomas Long in Piratenpartei Zentralschweiz
+2019-01-18-18-12-45  Notice   Billing process modified Deborah A. S. Johnson: Created bill 20190118M0000035 for Deborah A. S. Johnson in Piratenpartei Zentralschweiz
+2019-01-18-18-12-46  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-18-12-47  Notice   Billing process modified William Watson: Created bill 20190118M0000036 for William Watson in Piratenpartei Zentralschweiz
+2019-01-18-18-12-47  Notice   Billing task complete
+2019-01-18-18-12-47  Notice   Running mailing task
+2019-01-18-18-12-51  Notice   Billing process modified Sandra B. Brown: Sent bill 20190118M0000032 using template L1G by post to Elfenstrasse 17, 3000 Bern, Schweiz
+2019-01-18-18-12-55  Notice   Billing process modified Karen Henderson: Sent bill 20190118M0000033 using template L1G by post to Forstweg 22, 1000 Lausanne, Schweiz
+2019-01-18-18-12-58  Notice   Billing process modified Thomas Long: Sent bill 20190118M0000034 using template L1G by post to Falkenweg 19, 9100 Herisau, Schweiz
+2019-01-18-18-13-00  Notice   admin changed tag Aktionsmails
+2019-01-18-18-13-02  Notice   Billing process modified Deborah A. S. Johnson: Sent bill 20190118M0000035 using template L1G by post to Gruberstrasse 12, 4800 Zofingen, Schweiz
+2019-01-18-18-13-06  Notice   Billing process modified William Watson: Sent bill 20190118M0000036 using template L1G by post to Hangweg 1, 6600 Locarno, Schweiz
+2019-01-18-18-13-06  Notice   Mailing task complete

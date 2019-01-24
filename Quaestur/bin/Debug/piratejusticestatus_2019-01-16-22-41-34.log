@@ -1,0 +1,24 @@
+2019-01-16-22-41-34  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-22-41-46  Notice   Application started
+2019-01-16-22-41-46  Notice   Running mailing task
+2019-01-16-22-41-46  Notice   Mailing task complete
+2019-01-16-22-41-46  Notice   Running billing task
+2019-01-16-22-41-48  Notice   Billing process modified Kenneth Alexander: Created bill 20190116M0000007 for Kenneth Alexander in Piratenpartei Zentralschweiz
+2019-01-16-22-41-49  Notice   Billing process modified Edward W. Powell: Created bill 20190116M0000008 for Edward W. Powell in Piratenpartei Zentralschweiz
+2019-01-16-22-41-50  Notice   Billing process modified Nicole L. J. Peterson: Created bill 20190116M0000009 for Nicole L. J. Peterson in Piratenpartei Zentralschweiz
+2019-01-16-22-41-51  Notice   Billing process modified Cynthia L. Murphy: Created bill 20190116M0000010 for Cynthia L. Murphy in Piratenpartei Zentralschweiz
+2019-01-16-22-41-52  Notice   Billing process modified Charles G. D. Lopez: Created bill 20190116M0000011 for Charles G. D. Lopez in Piratenpartei Zentralschweiz
+2019-01-16-22-41-52  Notice   Billing task complete
+2019-01-16-22-41-52  Notice   Running mailing task
+2019-01-16-22-41-52  Verbose  Sending message to "Kenneth Alexander" <stefan+kenneth.alexander@savvy.ch>
+2019-01-16-22-41-52  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-16-22-41-53  Info     Message sent to "Kenneth Alexander" <stefan+kenneth.alexander@savvy.ch>
+2019-01-16-22-41-53  Notice   Billing process modified Kenneth Alexander: Sent bill 20190116M0000007 to Kenneth Alexander
+2019-01-16-22-41-53  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in English at level 1
+2019-01-16-22-41-53  Verbose  Sending message to "Nicole L. J. Peterson" <stefan+nicole.peterson@savvy.ch>
+2019-01-16-22-41-53  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-16-22-41-53  Info     Message sent to "Nicole L. J. Peterson" <stefan+nicole.peterson@savvy.ch>
+2019-01-16-22-41-53  Notice   Billing process modified Nicole L. J. Peterson: Sent bill 20190116M0000009 to Nicole L. J. Peterson
+2019-01-16-22-41-53  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in French at level 1
+2019-01-16-22-41-53  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in English at level 1
+2019-01-16-22-41-53  Notice   Mailing task complete

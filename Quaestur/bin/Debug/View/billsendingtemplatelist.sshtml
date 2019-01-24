@@ -1,0 +1,67 @@
+﻿<script>
+$("#billSendingTemplateRowAdd").click(function(){
+  $.get("/billSendingTemplate/add/@Model.Id", function(data, status){
+    if (data){
+      $('#billSendingTemplateEditDialog').replaceWith(data);
+      $('#billSendingTemplateEditDialog').modal('show');
+      initTinyMce();
+    }
+  });
+});
+function showEditBillSendingTemplateDialog(id){
+  $.get("/billSendingTemplate/edit/" + id, function(data, status){
+    if (data){
+      $('#billSendingTemplateEditDialog').replaceWith(data);
+      $('#billSendingTemplateEditDialog').modal('show');
+      initTinyMce();
+    }
+  });
+}
+@Each.List
+$("#billSendingTemplateRowEdit1@Current.Id").click(function(){
+  showEditBillSendingTemplateDialog("@Current.Id");
+});
+$("#billSendingTemplateRowEdit2@Current.Id").click(function(){
+  showEditBillSendingTemplateDialog("@Current.Id");
+});
+$("#billSendingTemplateRowEdit3@Current.Id").click(function(){
+  showEditBillSendingTemplateDialog("@Current.Id");
+});
+$("#billSendingTemplateRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/billSendingTemplate/delete/@Current.Id", function(data, status){
+          updateBillSendingTemplateList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="100%" colspan="4"><a href="/membershiptype/@Model.OrganizationId">@Model.Name</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="20%" id="billSendingTemplateRowEdit1@Current.Id class="editable">@Current.Language</td>
+      <td width="50%" id="billSendingTemplateRowEdit2@Current.Id" class="editable">@Current.Name</td>
+      <td width="20%" id="billSendingTemplateRowEdit3@Current.Id" class="editable">@Current.ReminderLevel</td>
+      <td width="10%" id="billSendingTemplateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" colspan="3" id="billSendingTemplateRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="billSendingTemplateEditDialog"/>

@@ -1,0 +1,10 @@
+2019-01-19-01-57-30  Notice   Starting Nancy on http://localhost:8888
+2019-01-19-01-57-41  Notice   Application started
+2019-01-19-01-57-41  Notice   Running mailing task
+2019-01-19-01-57-41  Notice   Mailing task complete
+2019-01-19-01-57-41  Notice   Running billing task
+2019-01-19-01-57-48  Notice   Billing process modified Stefan Thöni: Created bill 20190119M0000224 for Stefan Thöni in Piratenpartei Zentralschweiz
+2019-01-19-01-57-48  Notice   Billing task complete
+2019-01-19-01-57-48  Notice   Running mailing task
+2019-01-19-01-57-48  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in English at level 1
+2019-01-19-01-57-48  Notice   Mailing task complete

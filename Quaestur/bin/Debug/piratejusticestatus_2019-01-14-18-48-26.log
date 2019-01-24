@@ -1,0 +1,13 @@
+2019-01-14-18-48-26  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-18-48-37  Notice   Application started
+2019-01-14-18-48-37  Notice   Running mailing task
+2019-01-14-18-48-37  Notice   Mailing task complete
+2019-01-14-18-48-37  Notice   Running billing task
+2019-01-14-18-48-39  Notice   Created bill 20190114M0000017 for Justin Patterson in Piratenpartei Zentralschweiz
+2019-01-14-18-48-40  Notice   Created bill 20190114M0000018 for Michael J. Torres in Piratenpartei Zentralschweiz
+2019-01-14-18-48-42  Notice   Created bill 20190114M0000019 for Susan Thomas in Piratenpartei Zentralschweiz
+2019-01-14-18-48-43  Notice   Created bill 20190114M0000020 for Gary Brown in Piratenpartei Zentralschweiz
+2019-01-14-18-48-44  Notice   Created bill 20190114M0000021 for Larry Turner in Piratenpartei Zentralschweiz
+2019-01-14-18-48-44  Notice   Billing task complete
+2019-01-14-18-48-51  Notice   User admin id 1a604734-b328-47d3-87a6-ad2d29e08200 logged in.
+2019-01-14-18-49-01  Notice   admin modified Susan Thomas: Downloaded bill 20190114M0000019

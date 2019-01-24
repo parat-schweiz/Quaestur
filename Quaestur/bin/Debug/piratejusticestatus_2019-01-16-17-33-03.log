@@ -1,0 +1,37 @@
+2019-01-16-17-33-03  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-17-33-14  Notice   Application started
+2019-01-16-17-33-14  Notice   Running mailing task
+2019-01-16-17-33-14  Notice   Mailing task complete
+2019-01-16-17-33-14  Notice   Running billing task
+2019-01-16-17-33-16  Notice   Billing process modified Elizabeth Miller: Created bill 20190116M0000012 for Elizabeth Miller in Piratenpartei Zentralschweiz
+2019-01-16-17-33-18  Notice   Billing process modified Kimberly S. N. Wood: Created bill 20190116M0000013 for Kimberly S. N. Wood in Piratenpartei Zentralschweiz
+2019-01-16-17-33-18  Notice   User admin id e9e10edf-01c6-4d01-ac73-86bc7be6966d logged in.
+2019-01-16-17-33-19  Notice   Billing process modified George Barnes: Created bill 20190116M0000014 for George Barnes in Piratenpartei Zentralschweiz
+2019-01-16-17-33-20  Notice   Billing process modified Elizabeth A. A. Turner: Created bill 20190116M0000015 for Elizabeth A. A. Turner in Piratenpartei Zentralschweiz
+2019-01-16-17-33-21  Notice   Billing process modified Angela Bryant: Created bill 20190116M0000016 for Angela Bryant in Piratenpartei Zentralschweiz
+2019-01-16-17-33-21  Notice   Billing task complete
+2019-01-16-17-33-36  Notice   admin modified admin: Added mail address stefan@savvy.ch
+2019-01-16-17-33-46  Verbose  Sending message to "admin" <>
+2019-01-16-17-33-46  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-16-17-33-46  Error    Error sending mail to "admin" <>
+2019-01-16-17-33-46  Error    MailKit.Net.Smtp.SmtpCommandException: 5.1.3 Bad recipient address syntax
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.OnRecipientNotAccepted (MimeKit.MimeMessage message, MimeKit.MailboxAddress mailbox, MailKit.Net.Smtp.SmtpResponse response) [0x00013] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.ProcessRcptToResponse (MimeKit.MimeMessage message, MimeKit.MailboxAddress mailbox, MailKit.Net.Smtp.SmtpResponse response) [0x00031] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.FlushCommandQueueAsync (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken) [0x00209] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00385] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00596] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.Net.Smtp.SmtpClient.Send (MimeKit.FormatOptions options, MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x0005f] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at MailKit.MailTransport.Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00000] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-33-46  Error    at Quaestur.Mailer.Send (MimeKit.InternetAddress from, MimeKit.InternetAddress to, Quaestur.GpgKeyInfo key, System.String subject, MimeKit.MimePart[] parts) [0x0012b] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Mailer.cs:148
+2019-01-16-17-34-27  Verbose  Sending message to "admin" <>
+2019-01-16-17-34-27  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-16-17-34-27  Error    Error sending mail to "admin" <>
+2019-01-16-17-34-27  Error    MailKit.Net.Smtp.SmtpCommandException: 5.1.3 Bad recipient address syntax
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.OnRecipientNotAccepted (MimeKit.MimeMessage message, MimeKit.MailboxAddress mailbox, MailKit.Net.Smtp.SmtpResponse response) [0x00013] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.ProcessRcptToResponse (MimeKit.MimeMessage message, MimeKit.MailboxAddress mailbox, MailKit.Net.Smtp.SmtpResponse response) [0x00031] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.FlushCommandQueueAsync (MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken) [0x00209] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00385] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.SendAsync (MimeKit.FormatOptions options, MimeKit.MimeMessage message, MimeKit.MailboxAddress sender, System.Collections.Generic.IList`1[T] recipients, System.Boolean doAsync, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00596] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.Net.Smtp.SmtpClient.Send (MimeKit.FormatOptions options, MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x0005f] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at MailKit.MailTransport.Send (MimeKit.MimeMessage message, System.Threading.CancellationToken cancellationToken, MailKit.ITransferProgress progress) [0x00000] in <1725046bb13a456591705d9d771b9e7c>:0
+2019-01-16-17-34-27  Error    at Quaestur.Mailer.Send (MimeKit.InternetAddress from, MimeKit.InternetAddress to, Quaestur.GpgKeyInfo key, System.String subject, MimeKit.MimePart[] parts) [0x0012b] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Mailer.cs:148

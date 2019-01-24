@@ -1,0 +1,19 @@
+2019-01-16-02-17-30  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-02-17-42  Notice   Application started
+2019-01-16-02-17-42  Notice   Running mailing task
+2019-01-16-02-17-42  Notice   Mailing task complete
+2019-01-16-02-17-42  Notice   Running billing task
+2019-01-16-02-17-42  Notice   Billing task complete
+2019-01-16-02-17-47  Notice   User admin id 8433825e-59cd-4dd9-b51e-9e11c9bb7f4a logged in.
+2019-01-16-02-18-04  Notice   admin changed organization test
+2019-01-16-02-18-21  Notice   admin changed organization Test
+2019-01-16-02-20-34  Notice   admin changed organization Piratenpartei Zentralschweiz
+2019-01-16-02-22-42  Notice   Running mailing task
+2019-01-16-02-22-42  Notice   Mailing task complete
+2019-01-16-02-22-42  Notice   Running billing task
+2019-01-16-02-22-43  Notice   Billing task complete
+2019-01-16-02-27-43  Notice   Running mailing task
+2019-01-16-02-27-43  Notice   Mailing task complete
+2019-01-16-02-27-43  Notice   Running billing task
+2019-01-16-02-27-43  Notice   Billing task complete
+2019-01-16-02-32-43  Notice   Running mailing task

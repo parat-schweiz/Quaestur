@@ -1,0 +1,18 @@
+2019-01-16-22-23-54  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-22-24-05  Notice   Application started
+2019-01-16-22-24-05  Notice   Running mailing task
+2019-01-16-22-24-05  Notice   Mailing task complete
+2019-01-16-22-24-05  Notice   Running billing task
+2019-01-16-22-24-09  Notice   Billing process modified Sandra M. Howard: Created bill 20190116M0000130 for Sandra M. Howard in Piratenpartei Zentralschweiz
+2019-01-16-22-24-11  Notice   Billing process modified Melissa White: Created bill 20190116M0000131 for Melissa White in Piratenpartei Zentralschweiz
+2019-01-16-22-24-12  Notice   Billing process modified Mark A. Wright: Created bill 20190116M0000132 for Mark A. Wright in Piratenpartei Zentralschweiz
+2019-01-16-22-24-13  Notice   Billing process modified Christopher Kelly: Created bill 20190116M0000133 for Christopher Kelly in Piratenpartei Zentralschweiz
+2019-01-16-22-24-14  Notice   Billing process modified Karen Coleman: Created bill 20190116M0000134 for Karen Coleman in Piratenpartei Zentralschweiz
+2019-01-16-22-24-14  Notice   Billing task complete
+2019-01-16-22-24-37  Notice   Running mailing task
+2019-01-16-22-24-37  Notice   No bill sending template for Quaestur.MultiLanguageString in Piratenpartei Zentralschweiz at level 1
+2019-01-16-22-24-37  Notice   No bill sending template for Quaestur.MultiLanguageString in Piratenpartei Zentralschweiz at level 1
+2019-01-16-22-24-37  Notice   No bill sending template for Quaestur.MultiLanguageString in Piratenpartei Zentralschweiz at level 1
+2019-01-16-22-24-37  Notice   No bill sending template for Quaestur.MultiLanguageString in Piratenpartei Zentralschweiz at level 1
+2019-01-16-22-24-37  Notice   No bill sending template for Quaestur.MultiLanguageString in Piratenpartei Zentralschweiz at level 1
+2019-01-16-22-24-37  Notice   Mailing task complete

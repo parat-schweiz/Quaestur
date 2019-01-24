@@ -1,0 +1,13 @@
+2019-01-14-18-38-49  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-18-39-00  Notice   Application started
+2019-01-14-18-39-00  Notice   Running mailing task
+2019-01-14-18-39-00  Notice   Mailing task complete
+2019-01-14-18-39-00  Notice   Running billing task
+2019-01-14-18-39-02  Notice   Created bill 20190114M0000002 for Sarah Cook in Piratenpartei Zentralschweiz
+2019-01-14-18-39-03  Notice   Created bill 20190114M0000003 for Jacob J. Howard in Piratenpartei Zentralschweiz
+2019-01-14-18-39-04  Notice   Created bill 20190114M0000004 for Laura Long in Piratenpartei Zentralschweiz
+2019-01-14-18-39-05  Notice   Created bill 20190114M0000005 for Amy E. S. Watson in Piratenpartei Zentralschweiz
+2019-01-14-18-39-06  Notice   Created bill 20190114M0000006 for Nancy Gonzales in Piratenpartei Zentralschweiz
+2019-01-14-18-39-06  Notice   Billing task complete
+2019-01-14-18-39-13  Notice   User admin id 1a604734-b328-47d3-87a6-ad2d29e08200 logged in.
+2019-01-14-18-39-28  Notice   admin modified Sarah Cook: Downloaded bill 20190114M0000002

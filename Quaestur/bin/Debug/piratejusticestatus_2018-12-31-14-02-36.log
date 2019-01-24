@@ -1,0 +1,6 @@
+2018-12-31-14-02-36  Error    System.InvalidOperationException: Collection was modified; enumeration operation may not execute.
+2018-12-31-14-02-36  Error    at System.Collections.Generic.List`1+Enumerator[T].MoveNextRare () [0x00013] in <7b0d87324cab49bf96eac679025e77d1>:0
+2018-12-31-14-02-36  Error    at System.Collections.Generic.List`1+Enumerator[T].MoveNext () [0x0004a] in <7b0d87324cab49bf96eac679025e77d1>:0
+2018-12-31-14-02-36  Error    at Quaestur.OrganizationEdit.<.ctor>b__1_6 (System.Object parameters) [0x000db] in /Dev/Code/Quaestur/Quaestur/Module/OrganizationModule.cs:197
+2018-12-31-14-02-36  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2018-12-31-14-02-36  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

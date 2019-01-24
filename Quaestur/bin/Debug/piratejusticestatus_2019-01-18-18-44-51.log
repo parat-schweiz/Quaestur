@@ -1,0 +1,20 @@
+2019-01-18-18-44-51  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-18-45-02  Notice   Application started
+2019-01-18-18-45-02  Notice   Running mailing task
+2019-01-18-18-45-02  Notice   Mailing task complete
+2019-01-18-18-45-02  Notice   Running billing task
+2019-01-18-18-45-05  Notice   Billing process modified Karen Rogers: Created bill 20190118M0000052 for Karen Rogers in Piratenpartei Zentralschweiz
+2019-01-18-18-45-06  Notice   Billing process modified Donna Price: Created bill 20190118M0000053 for Donna Price in Piratenpartei Zentralschweiz
+2019-01-18-18-45-07  Notice   Billing process modified Kevin Gray: Created bill 20190118M0000054 for Kevin Gray in Piratenpartei Zentralschweiz
+2019-01-18-18-45-09  Notice   Billing process modified Jeffrey Thomas: Created bill 20190118M0000055 for Jeffrey Thomas in Piratenpartei Zentralschweiz
+2019-01-18-18-45-10  Notice   Billing process modified Angela Davis: Created bill 20190118M0000056 for Angela Davis in Piratenpartei Zentralschweiz
+2019-01-18-18-45-10  Notice   Billing task complete
+2019-01-18-18-45-10  Notice   Running mailing task
+2019-01-18-18-45-12  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-18-45-14  Notice   Billing process modified Gary S. C. Wood: Sent bill 20190118M0000051 using template L1G by post to Helvetiastrasse 16, 2000 Neuchâtel, Schweiz
+2019-01-18-18-45-18  Notice   Billing process modified Karen Rogers: Sent bill 20190118M0000052 using template L1G by post to Rohrweg 5, 2500 Biel/Bienne, Schweiz
+2019-01-18-18-45-22  Notice   Billing process modified Donna Price: Sent bill 20190118M0000053 using template L1G by post to Floraweg 20, 5000 Aarau, Schweiz
+2019-01-18-18-45-26  Notice   Billing process modified Kevin Gray: Sent bill 20190118M0000054 using template L1G by post to Lagerweg 4, 1200 Genève, Schweiz
+2019-01-18-18-45-29  Notice   Billing process modified Jeffrey Thomas: Sent bill 20190118M0000055 using template L1G by post to Lagerweg 4, 1000 Lausanne, Schweiz
+2019-01-18-18-45-29  Notice   Mailing task complete
+2019-01-18-18-46-08  Notice   admin added state Waldstätten

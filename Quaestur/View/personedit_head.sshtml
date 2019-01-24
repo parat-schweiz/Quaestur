@@ -1,0 +1,109 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#person' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @If.HasAllAccess
+  assignFieldValidation("UserName", result);
+  @EndIf
+  assignFieldValidation("Titles", result);
+  assignFieldValidation("FirstName", result);
+  assignFieldValidation("MiddleNames", result);
+  assignFieldValidation("LastName", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  @If.HasAllAccess
+  formData.UserName = $("#personUserName").val();
+  @EndIf
+  formData.Titles = $("#personTitles").val();
+  formData.FirstName = $("#personFirstName").val();
+  formData.MiddleNames = $("#personMiddleNames").val();
+  formData.LastName = $("#personLastName").val();
+  $.post("/person/edit/head/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updatepersonhead();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personNumber">@Model.PhraseFieldNumber</label>
+        <input type="text" id="personNumber" class="form-control" value="@Model.Number" disabled/>
+        <div id="personNumberFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personUserName">@Model.PhraseFieldUserName</label>
+        @If.HasAllAccess
+        <input type="text" id="personUserName" class="form-control" value="@Model.UserName"/>
+        @EndIf
+        @IfNot.HasAllAccess
+        <input type="text" id="personUserName" class="form-control" value="@Model.UserName" disabled/>
+        @EndIf
+        <div id="personUserNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personTitles">@Model.PhraseFieldTitle</label>
+        <input type="text" id="personTitles" class="form-control" value="@Model.Titles"/>
+        <div id="personTitlesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personFirstName">@Model.PhraseFieldFirstName</label>
+        <input type="text" id="personFirstName" class="form-control" value="@Model.FirstName"/>
+        <div id="personFirstNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personMiddleNames">@Model.PhraseFieldMiddleNames</label>
+        <input type="text" id="personMiddleNames" class="form-control" value="@Model.MiddleNames"/>
+        <div id="personMiddleNamesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="personLastName">@Model.PhraseFieldLastName</label>
+        <input type="text" id="personLastName" class="form-control" value="@Model.LastName"/>
+        <div id="personLastNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

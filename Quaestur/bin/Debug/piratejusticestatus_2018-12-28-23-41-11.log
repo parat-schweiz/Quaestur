@@ -1,0 +1,38 @@
+2018-12-28-23-41-11  Notice   beforeswitch source
+2018-12-28-23-41-11  Notice   6850c975-60c1-44e8-a872-0739a77d811a
+2018-12-28-23-41-11  Notice   Sennweg 22
+2018-12-28-23-41-17  Notice   False
+2018-12-28-23-41-17  Notice   False
+2018-12-28-23-41-21  Notice   False
+2018-12-28-23-41-21  Notice   False
+2018-12-28-23-41-21  Notice   24dc460c-ffb7-4ab1-b2e1-0e3113d2aad5
+2018-12-28-23-41-21  Notice   Teststrasse 77
+2018-12-28-23-41-29  Notice   True
+2018-12-28-23-41-29  Notice   True
+2018-12-28-23-41-32  Notice   True
+2018-12-28-23-41-32  Notice   True
+2018-12-28-23-41-32  Notice   beforeswitch target
+2018-12-28-23-41-32  Notice   6850c975-60c1-44e8-a872-0739a77d811a
+2018-12-28-23-41-32  Notice   Sennweg 22
+2018-12-28-23-41-36  Notice   True
+2018-12-28-23-41-36  Notice   True
+2018-12-28-23-41-39  Notice   True
+2018-12-28-23-41-39  Notice   True
+2018-12-28-23-41-39  Notice   24dc460c-ffb7-4ab1-b2e1-0e3113d2aad5
+2018-12-28-23-41-39  Notice   Teststrasse 77
+2018-12-28-23-41-51  Notice   False
+2018-12-28-23-41-51  Notice   False
+2018-12-28-23-41-59  Notice   False
+2018-12-28-23-41-59  Notice   False
+2018-12-28-23-41-59  Notice   preswitch
+2018-12-28-23-42-07  Notice   Teststrasse 77, 1337 Root, Schweiz : Sarah Cook
+2018-12-28-23-42-07  Notice   Sennweg 22, 7500 St. Moritz, Schweiz : Sarah Cook
+2018-12-28-23-42-07  Notice   postswitch
+2018-12-28-23-42-07  Notice   Teststrasse 77, 1337 Root, Schweiz : Sarah Cook
+2018-12-28-23-42-07  Notice   Sennweg 22, 7500 St. Moritz, Schweiz : Sarah Cook
+2018-12-28-23-42-07  Notice   afterswitch
+2018-12-28-23-42-07  Notice   Sennweg 22, 7500 St. Moritz, Schweiz : Sarah Cook
+2018-12-28-23-42-07  Error    System.NullReferenceException: Object reference not set to an instance of an object
+2018-12-28-23-42-07  Error    at Quaestur.PostalAddressEdit.<.ctor>b__1_5 (System.Object parameters) [0x00426] in /Dev/Code/Quaestur/Quaestur/Module/PostalAddressEdit.cs:289
+2018-12-28-23-42-07  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2018-12-28-23-42-07  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

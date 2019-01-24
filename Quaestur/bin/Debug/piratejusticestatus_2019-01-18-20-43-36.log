@@ -1,0 +1,34 @@
+2019-01-18-20-43-36  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-20-43-47  Notice   Application started
+2019-01-18-20-43-47  Notice   Running mailing task
+2019-01-18-20-43-47  Notice   Mailing task complete
+2019-01-18-20-43-47  Notice   Running billing task
+2019-01-18-20-43-51  Notice   Billing process modified Helen M. Bailey: Created bill 20190118M0000107 for Helen M. Bailey in Piratenpartei Zentralschweiz
+2019-01-18-20-43-52  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-20-43-53  Notice   Billing process modified Shirley Jenkins: Created bill 20190118M0000108 for Shirley Jenkins in Piratenpartei Zentralschweiz
+2019-01-18-20-43-54  Notice   Billing process modified George R. Roberts: Created bill 20190118M0000109 for George R. Roberts in Piratenpartei Zentralschweiz
+2019-01-18-20-43-55  Notice   Billing process modified Shirley A. Edwards: Created bill 20190118M0000110 for Shirley A. Edwards in Piratenpartei Zentralschweiz
+2019-01-18-20-43-56  Notice   Billing process modified John B. Hayes: Created bill 20190118M0000111 for John B. Hayes in Piratenpartei Zentralschweiz
+2019-01-18-20-43-56  Notice   Billing task complete
+2019-01-18-20-43-56  Notice   Running mailing task
+2019-01-18-20-43-57  Verbose  Sending message to "Brian N. L. Taylor" <stefan+brian.taylor@savvy.ch>
+2019-01-18-20-43-57  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-43-57  Info     Message sent to "Brian N. L. Taylor" <stefan+brian.taylor@savvy.ch>
+2019-01-18-20-43-57  Notice   Billing process modified Brian N. L. Taylor: Sent bill 20190118M0000106 using template L1G by e-mail to stefan+brian.taylor@savvy.ch
+2019-01-18-20-43-57  Verbose  Sending message to "Helen M. Bailey" <stefan+helen.bailey@savvy.ch>
+2019-01-18-20-43-57  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-43-57  Info     Message sent to "Helen M. Bailey" <stefan+helen.bailey@savvy.ch>
+2019-01-18-20-43-57  Notice   Billing process modified Helen M. Bailey: Sent bill 20190118M0000107 using template L1G by e-mail to stefan+helen.bailey@savvy.ch
+2019-01-18-20-43-57  Verbose  Sending message to "Shirley Jenkins" <stefan+shirley.jenkins@savvy.ch>
+2019-01-18-20-43-57  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-43-57  Info     Message sent to "Shirley Jenkins" <stefan+shirley.jenkins@savvy.ch>
+2019-01-18-20-43-57  Notice   Billing process modified Shirley Jenkins: Sent bill 20190118M0000108 using template L1G by e-mail to stefan+shirley.jenkins@savvy.ch
+2019-01-18-20-43-57  Verbose  Sending message to "George R. Roberts" <stefan+george.roberts@savvy.ch>
+2019-01-18-20-43-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-43-58  Info     Message sent to "George R. Roberts" <stefan+george.roberts@savvy.ch>
+2019-01-18-20-43-58  Notice   Billing process modified George R. Roberts: Sent bill 20190118M0000109 using template L1G by e-mail to stefan+george.roberts@savvy.ch
+2019-01-18-20-43-58  Verbose  Sending message to "Shirley A. Edwards" <stefan+shirley.edwards@savvy.ch>
+2019-01-18-20-43-58  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-43-58  Info     Message sent to "Shirley A. Edwards" <stefan+shirley.edwards@savvy.ch>
+2019-01-18-20-43-58  Notice   Billing process modified Shirley A. Edwards: Sent bill 20190118M0000110 using template L1G by e-mail to stefan+shirley.edwards@savvy.ch
+2019-01-18-20-43-58  Notice   Mailing task complete

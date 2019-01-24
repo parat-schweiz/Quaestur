@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateStateList(){
+      $.get("/state/list", function(data, status){
+          if (data){
+              $("#stateList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateStateList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="stateList">
+</div>
+@EndSection

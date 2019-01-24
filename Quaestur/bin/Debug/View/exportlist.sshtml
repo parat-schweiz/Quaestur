@@ -1,0 +1,56 @@
+﻿<script>
+$("#exportRowAdd").click(function(){
+  $.get("/export/add", function(data, status){
+    if (data){
+      $('#exportEditDialog').replaceWith(data);
+      $('#exportEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#exportRowEdit@Current.Id").click(function(){
+  $.get("/export/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#exportEditDialog').replaceWith(data);
+      $('#exportEditDialog').modal('show');
+    }
+  });
+});
+$("#exportRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/export/delete/@Current.Id", function(data, status){
+          updateExportList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="70%">@Model.PhraseHeaderName</th>
+      <th width="30%" colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="90%" id="exportRowEdit@Current.Id" class="editable">@Current.Name</td>
+      <td width="20%"><a href="/export/download/@Current.Id">@Model.PhraseExportDownload</a></td>
+      <td width="10%" id="exportRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" id="exportRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="30%" colspan="2"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="exportEditDialog"/>

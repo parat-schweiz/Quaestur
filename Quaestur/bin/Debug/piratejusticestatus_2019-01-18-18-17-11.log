@@ -1,0 +1,23 @@
+2019-01-18-18-17-11  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-18-17-22  Notice   Application started
+2019-01-18-18-17-22  Notice   Running mailing task
+2019-01-18-18-17-22  Notice   Mailing task complete
+2019-01-18-18-17-22  Notice   Running billing task
+2019-01-18-18-17-25  Notice   Billing process modified Ryan Flores: Created bill 20190118M0000037 for Ryan Flores in Piratenpartei Zentralschweiz
+2019-01-18-18-17-26  Notice   Billing process modified Emily Wright: Created bill 20190118M0000038 for Emily Wright in Piratenpartei Zentralschweiz
+2019-01-18-18-17-26  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-18-17-27  Notice   Billing process modified Brandon S. Butler: Created bill 20190118M0000039 for Brandon S. Butler in Piratenpartei Zentralschweiz
+2019-01-18-18-17-29  Notice   Billing process modified Donna L. M. Jackson: Created bill 20190118M0000040 for Donna L. M. Jackson in Piratenpartei Zentralschweiz
+2019-01-18-18-17-30  Notice   Billing process modified James M. Mitchell: Created bill 20190118M0000041 for James M. Mitchell in Piratenpartei Zentralschweiz
+2019-01-18-18-17-30  Notice   Billing task complete
+2019-01-18-18-17-30  Notice   Running mailing task
+2019-01-18-18-17-34  Notice   Billing process modified Ryan Flores: Sent bill 20190118M0000037 using template L1G by post to Tellplatz 8, 3000 Bern, Schweiz
+2019-01-18-18-17-38  Notice   admin changed tag Aktivist
+2019-01-18-18-17-38  Notice   Billing process modified Emily Wright: Sent bill 20190118M0000038 using template L1G by post to Dorfstrasse 16, 3000 Bern, Schweiz
+2019-01-18-18-17-41  Notice   Billing process modified Brandon S. Butler: Sent bill 20190118M0000039 using template L1G by post to Bahnhofstrasse 19, 5400 Baden, Schweiz
+2019-01-18-18-17-42  Notice   admin changed tag Partizipationsmails
+2019-01-18-18-17-45  Notice   Billing process modified Donna L. M. Jackson: Sent bill 20190118M0000040 using template L1G by post to Holderweg 1, 4900 Langenthal, Schweiz
+2019-01-18-18-17-46  Notice   admin changed tag Verantstaltungsmails
+2019-01-18-18-17-48  Notice   admin changed tag Aktionsmails
+2019-01-18-18-17-49  Notice   Billing process modified James M. Mitchell: Sent bill 20190118M0000041 using template L1G by post to Bundesplatz 4, 8800 Thalwil, Schweiz
+2019-01-18-18-17-49  Notice   Mailing task complete

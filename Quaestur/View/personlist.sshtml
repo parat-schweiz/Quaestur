@@ -1,0 +1,193 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  var itemsPerPage = 10;
+  var currentPage = 0;
+  var ShowNumber = false;
+  var ShowUser = true;
+  var ShowName = true;
+  var ShowStreet = true;
+  var ShowPlace = true;
+  var ShowState = false;
+  var ShowMail = false;
+  var ShowPhone = false;
+  function setItemsPerPage(n){
+      itemsPerPage = n;
+      currentPage = 0;
+      updatepersonlist();
+  }
+  function setCurrentPage(n){
+      currentPage = n;
+      updatepersonlist();
+  }
+  function toggleShowNumber(){
+    ShowNumber = !ShowNumber;
+    if (ShowNumber){
+        $("#menuShowNumber").addClass('active');
+    }else{
+        $("#menuShowNumber").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowUser(){
+    ShowUser = !ShowUser;
+    if (ShowUser){
+        $("#menuShowUser").addClass('active');
+    }else{
+        $("#menuShowUser").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowName(){
+    ShowName = !ShowName;
+    if (ShowName){
+        $("#menuShowName").addClass('active');
+    }else{
+        $("#menuShowName").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowStreet(){
+    ShowStreet = !ShowStreet;
+    if (ShowStreet){
+        $("#menuShowStreet").addClass('active');
+    }else{
+        $("#menuShowStreet").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowPlace(){
+    ShowPlace = !ShowPlace;
+    if (ShowPlace){
+        $("#menuShowPlace").addClass('active');
+    }else{
+        $("#menuShowPlace").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowState(){
+    ShowState = !ShowState;
+    if (ShowState){
+        $("#menuShowState").addClass('active');
+    }else{
+        $("#menuShowState").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowMail(){
+    ShowMail = !ShowMail;
+    if (ShowMail){
+        $("#menuShowMail").addClass('active');
+    }else{
+        $("#menuShowMail").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function toggleShowPhone(){
+    ShowPhone = !ShowPhone;
+    if (ShowPhone){
+        $("#menuShowPhone").addClass('active');
+    }else{
+        $("#menuShowPhone").removeClass('active');
+    }
+    updatepersonlist()
+  }
+  function updatepersonlist(){
+      searchSettings = new Object();
+      searchSettings.FilterText = $("#filtertext")[0].value
+      searchSettings.ItemsPerPage = itemsPerPage;
+      searchSettings.CurrentPage = currentPage;
+      searchSettings.ShowNumber = ShowNumber;
+      searchSettings.ShowUser = ShowUser;
+      searchSettings.ShowName = ShowName;
+      searchSettings.ShowStreet = ShowStreet;
+      searchSettings.ShowPlace = ShowPlace;
+      searchSettings.ShowState = ShowState;
+      searchSettings.ShowMail = ShowMail;
+      searchSettings.ShowPhone = ShowPhone;
+      $.post("/person/list/data", JSON.stringify(searchSettings), function(personListData, status){
+          if (personListData){
+              $("#personlist").html(personListData);
+          }
+      });
+      $.post("/person/list/pages", JSON.stringify(searchSettings), function(personPagesData, status){
+          if (personPagesData){
+              $("#personpages").html(personPagesData);
+          }
+      });
+  }
+  $(document).ready(function(){
+      if (ShowNumber){
+        $("#menuShowNumber").addClass('active');
+      }
+      if (ShowUser){
+        $("#menuShowUser").addClass('active');
+      }
+      if (ShowName){
+        $("#menuShowName").addClass('active');
+      }
+      if (ShowStreet){
+        $("#menuShowStreet").addClass('active');
+      }
+      if (ShowPlace){
+        $("#menuShowPlace").addClass('active');
+      }
+      if (ShowState){
+        $("#menuShowState").addClass('active');
+      }
+      if (ShowMail){
+        $("#menuShowMail").addClass('active');
+      }
+      if (ShowPhone){
+        $("#menuShowPhone").addClass('active');
+      }
+      $("#filtertext").keypress(function (e) {
+          if(e.which == 13) {
+              updatepersonlist();
+              e.preventDefault();
+              return false;
+          }
+      });
+      $("#filtersubmit").click(function(event) {
+        updatepersonlist();
+        event.preventDefault();  
+      });
+      updatepersonlist();
+  });
+</script>
+@EndSection
+    
+@Section['input']
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <form class="form-inline">
+    <input class="form-control mr-sm-2" type="text" placeholder="@Model.PhraseSearch" aria-label="@Model.PhraseShowSearch" id="filtertext"/>
+    <input class="btn btn-primary" id="filtersubmit" type="submit" value="@Model.PhraseFilter"/>
+  </form>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#personListNavBar" aria-controls="personListNavBar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="personListNavBar">
+    <ul class="nav navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.PhraseShowColumns <span class="caret"></span></a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a id="menuShowNumber" class="dropdown-item" onclick="toggleShowNumber()" href="javascript:void(0);">@Model.PhraseShowNumber</a>
+          <a id="menuShowUser" class="dropdown-item" onclick="toggleShowUser()" href="javascript:void(0);">@Model.PhraseShowUser</a>
+          <a id="menuShowName" class="dropdown-item" onclick="toggleShowName()" href="javascript:void(0);">@Model.PhraseShowName</a>
+          <a id="menuShowStreet" class="dropdown-item" onclick="toggleShowStreet()" href="javascript:void(0);">@Model.PhraseShowStreet</a>
+          <a id="menuShowPlace" class="dropdown-item" onclick="toggleShowPlace()" href="javascript:void(0);">@Model.PhraseShowPlace</a>
+          <a id="menuShowState" class="dropdown-item" onclick="toggleShowState()" href="javascript:void(0);">@Model.PhraseShowState</a>
+          <a id="menuShowMail" class="dropdown-item" onclick="toggleShowMail()" href="javascript:void(0);">@Model.PhraseShowMail</a>
+          <a id="menuShowPhone" class="dropdown-item" onclick="toggleShowPhone()" href="javascript:void(0);">@Model.PhraseShowPhone</a>
+        </div>
+      </li>
+    </ul>
+    <ul class="nav navbar-nav ml-auto" id="personpages"/>
+  </div>
+</nav>
+@EndSection
+
+@Section['data']
+<div id="personlist" class="container"/>
+@EndSection

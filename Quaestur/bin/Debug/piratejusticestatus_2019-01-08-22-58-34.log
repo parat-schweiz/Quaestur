@@ -1,0 +1,13 @@
+2019-01-08-22-58-34  Notice   Starting Nancy on http://localhost:8888
+2019-01-08-22-58-45  Notice   Application started
+2019-01-08-22-58-45  Notice   Running mailing task
+2019-01-08-22-58-45  Notice   Mailing task complete
+2019-01-08-22-59-01  Notice   User admin id 23e6b47c-5b73-4750-a8ac-950dd886c77a logged in.
+2019-01-08-22-59-40  Error    System.Exception: String gpgkeyid must not be null.
+2019-01-08-22-59-40  Error    at Quaestur.StringField.Validate () [0x0000f] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Field.cs:441
+2019-01-08-22-59-40  Error    at Quaestur.DatabaseObject.Validate () [0x00019] in /Dev/Code/Quaestur/Quaestur/Infrastructure/DatabaseObject.cs:33
+2019-01-08-22-59-40  Error    at Quaestur.PostgresDatabase.Update (Quaestur.DatabaseObject obj) [0x0002a] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:418
+2019-01-08-22-59-40  Error    at Quaestur.PostgresDatabase.Save (Quaestur.DatabaseObject obj) [0x00059] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:503
+2019-01-08-22-59-40  Error    at Quaestur.GroupEdit.<.ctor>b__0_3 (System.Object parameters) [0x00137] in /Dev/Code/Quaestur/Quaestur/Module/GroupModule.cs:197
+2019-01-08-22-59-40  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-08-22-59-40  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

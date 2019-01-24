@@ -1,0 +1,13 @@
+2019-01-14-18-47-30  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-18-47-41  Notice   Application started
+2019-01-14-18-47-41  Notice   Running mailing task
+2019-01-14-18-47-41  Notice   Mailing task complete
+2019-01-14-18-47-41  Notice   Running billing task
+2019-01-14-18-47-43  Notice   Created bill 20190114M0000012 for Elizabeth Miller in Piratenpartei Zentralschweiz
+2019-01-14-18-47-44  Notice   Created bill 20190114M0000013 for Kimberly S. N. Wood in Piratenpartei Zentralschweiz
+2019-01-14-18-47-45  Notice   Created bill 20190114M0000014 for George Barnes in Piratenpartei Zentralschweiz
+2019-01-14-18-47-47  Notice   Created bill 20190114M0000015 for Elizabeth A. A. Turner in Piratenpartei Zentralschweiz
+2019-01-14-18-47-48  Notice   Created bill 20190114M0000016 for Angela Bryant in Piratenpartei Zentralschweiz
+2019-01-14-18-47-48  Notice   Billing task complete
+2019-01-14-18-47-52  Notice   User admin id 1a604734-b328-47d3-87a6-ad2d29e08200 logged in.
+2019-01-14-18-48-11  Notice   admin changed payment parameter types of Mitglied

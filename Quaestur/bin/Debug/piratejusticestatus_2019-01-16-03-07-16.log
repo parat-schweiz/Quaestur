@@ -1,0 +1,9 @@
+2019-01-16-03-07-16  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-03-07-27  Notice   Application started
+2019-01-16-03-07-27  Notice   Running mailing task
+2019-01-16-03-07-27  Notice   Mailing task complete
+2019-01-16-03-07-27  Notice   Running billing task
+2019-01-16-03-07-28  Notice   Billing task complete
+2019-01-16-03-07-37  Notice   User admin id f13b9927-5a4f-44e7-ae0d-cba406d46d51 logged in.
+2019-01-16-03-08-42  Notice   admin changed role Piratenpartei Zentralschweiz / Quaestur.MultiLanguageString / Quaestur.MultiLanguageString
+2019-01-16-03-08-49  Notice   admin changed role Piratenpartei Zentralschweiz / Quaestur.MultiLanguageString / Quaestur.MultiLanguageString

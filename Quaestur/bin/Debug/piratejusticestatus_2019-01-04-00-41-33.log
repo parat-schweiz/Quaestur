@@ -1,0 +1,6 @@
+2019-01-04-00-41-33  Error    System.NullReferenceException: Object reference not set to an instance of an object
+2019-01-04-00-41-33  Error    at Quaestur.HtmlWorker.MakePlainText (System.String dirtyHtml) [0x0006c] in /Dev/Code/Quaestur/Quaestur/Util/HtmlText.cs:73
+2019-01-04-00-41-33  Error    at Quaestur.HtmlWorker..ctor (System.String dirtyHtml) [0x00010] in /Dev/Code/Quaestur/Quaestur/Util/HtmlText.cs:58
+2019-01-04-00-41-33  Error    at Quaestur.MailingModule.<.ctor>b__2_1 (System.Object parameters) [0x0000d] in /Dev/Code/Quaestur/Quaestur/Module/MailingModule.cs:109
+2019-01-04-00-41-33  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-04-00-41-33  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

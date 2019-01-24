@@ -1,0 +1,17 @@
+2019-01-07-21-54-44  Notice   Starting Nancy on http://localhost:8888
+2019-01-07-21-54-55  Notice   Application started
+2019-01-07-21-54-55  Notice   Running mailing task
+2019-01-07-21-54-55  Notice   Mailing task complete
+2019-01-07-21-55-03  Notice   User admin id d6d9f80d-7ae4-4adc-b494-802f6a9b8f8b logged in.
+2019-01-07-21-55-17  Notice   admin modified Kenneth Alexander: Deleted document 210.pdf (Other)
+2019-01-07-21-55-28  Error    System.NullReferenceException: Object reference not set to an instance of an object
+2019-01-07-21-55-28  Error    at Quaestur.RoleAssignmentModule+<>c__DisplayClass2_0.<.ctor>b__6 (Quaestur.Translator t) [0x00000] in /Dev/Code/Quaestur/Quaestur/Module/RoleAssignmentModule.cs:263
+2019-01-07-21-55-28  Error    at Quaestur.QuaesturModule+<>c__DisplayClass32_0.<Journal>b__0 (System.Func`2[T,TResult] p) [0x00000] in /Dev/Code/Quaestur/Quaestur/Module/QuaesturModule.cs:423
+2019-01-07-21-55-28  Error    at System.Linq.Enumerable+SelectArrayIterator`2[TSource,TResult].MoveNext () [0x0003a] in <079d1695f1b940b981a821e75d331759>:0
+2019-01-07-21-55-28  Error    at Quaestur.Translation.ToStringArray (System.Collections.Generic.IEnumerable`1[T] parameters) [0x00027] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Translation.cs:36
+2019-01-07-21-55-28  Error    at Quaestur.Translation.Get (Quaestur.Language language, System.String key, System.String hint, System.String technical, System.Collections.Generic.IEnumerable`1[T] parameters) [0x0000e] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Translation.cs:46
+2019-01-07-21-55-28  Error    at Quaestur.Translator.Get (System.String key, System.String hint, System.String technical, System.Collections.Generic.IEnumerable`1[T] parameters) [0x00001] in /Dev/Code/Quaestur/Quaestur/Module/QuaesturModule.cs:28
+2019-01-07-21-55-28  Error    at Quaestur.QuaesturModule.Journal (Quaestur.Person person, System.String key, System.String hint, System.String technical, System.Func`2[Quaestur.Translator,System.String][] parameters) [0x0003a] in /Dev/Code/Quaestur/Quaestur/Module/QuaesturModule.cs:423
+2019-01-07-21-55-28  Error    at Quaestur.RoleAssignmentModule.<.ctor>b__2_3 (System.Object parameters) [0x00223] in /Dev/Code/Quaestur/Quaestur/Module/RoleAssignmentModule.cs:259
+2019-01-07-21-55-28  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-07-21-55-28  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

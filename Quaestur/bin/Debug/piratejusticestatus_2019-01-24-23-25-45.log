@@ -1,0 +1,32 @@
+2019-01-24-23-25-45  Notice   Starting Nancy on http://localhost:8888
+2019-01-24-23-25-46  Notice   Application started
+2019-01-24-23-25-46  Notice   Running mailing task
+2019-01-24-23-25-46  Notice   Mailing task complete
+2019-01-24-23-25-46  Notice   Running billing task
+2019-01-24-23-25-51  Notice   Billing task complete
+2019-01-24-23-25-51  Notice   Running mailing task
+2019-01-24-23-25-52  Notice   Mailing task complete
+2019-01-24-23-25-52  Notice   Login Process modified admin: Login with password succeeded
+2019-01-24-23-26-10  Notice   admin modified admin: Logged in with two-factor authentication
+2019-01-24-23-26-31  Verbose  Sending message to stefan@savvy.ch
+2019-01-24-23-26-32  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-24-23-26-32  Info     Message sent to stefan@savvy.ch
+2019-01-24-23-26-32  Notice   admin tests mailing with subject M1
+2019-01-24-23-26-57  Notice   admin changed mailing M1
+2019-01-24-23-27-27  Notice   admin changed mailing M1
+2019-01-24-23-27-35  Verbose  Sending message to stefan@savvy.ch
+2019-01-24-23-27-35  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-24-23-27-36  Info     Message sent to stefan@savvy.ch
+2019-01-24-23-27-36  Notice   admin tests mailing with subject M1
+2019-01-24-23-29-09  Notice   admin changed mailing M1
+2019-01-24-23-29-18  Verbose  Sending message to stefan@savvy.ch
+2019-01-24-23-29-18  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-24-23-29-18  Info     Message sent to stefan@savvy.ch
+2019-01-24-23-29-18  Notice   admin tests mailing with subject M1
+2019-01-24-23-30-29  Verbose  Sending message to stefan@savvy.ch
+2019-01-24-23-30-30  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-24-23-30-30  Info     Message sent to stefan@savvy.ch
+2019-01-24-23-30-30  Notice   admin tests mailing with subject M1
+2019-01-24-23-31-06  Notice   Running mailing task
+2019-01-24-23-31-08  Notice   Mailing task complete
+2019-01-24-23-31-08  Notice   Running billing task

@@ -1,0 +1,60 @@
+﻿<script>
+$("#documentRowAdd").click(function(){
+  showDocumentEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#documentRowEdit1@Current.Id").click(function(){
+  showDocumentEditDialog("edit", "@Current.Id");
+});
+$("#documentRowEdit2@Current.Id").click(function(){
+  showDocumentEditDialog("edit", "@Current.Id");
+});
+$("#documentRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/document/delete/@Current.Id", function(data, status){
+          showDocuments();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+function showDocumentEditDialog(method, id){
+  $.get("/document/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#documentEditDialog').replaceWith(data);
+      $('#documentEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="30%">@Model.PhraseHeaderFile</th>
+      <th width="30%">@Model.PhraseHeaderType</th>
+      <th width="30%">@Model.PhraseHeaderCreatedDate</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="30%"><a href="/document/download/@Current.Id">@Current.FileName</a></td>
+      <td width="30%" id="documentRowEdit1@Current.Id" class="@Model.Editable">@Current.Type</td>
+      <td width="30%" id="documentRowEdit2@Current.Id" class="@Model.Editable">@Current.CreatedDate</td>
+      <td width="10%" id="documentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" colspan="2" id="documentRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="documentEditDialog"/>

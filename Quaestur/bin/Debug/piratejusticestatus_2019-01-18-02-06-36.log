@@ -1,0 +1,18 @@
+2019-01-18-02-06-36  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-02-06-47  Notice   Application started
+2019-01-18-02-06-47  Notice   Running mailing task
+2019-01-18-02-06-47  Notice   Mailing task complete
+2019-01-18-02-06-47  Notice   Running billing task
+2019-01-18-02-06-50  Notice   Billing process modified Jennifer B. R. Roberts: Created bill 20190118M0000022 for Jennifer B. R. Roberts in Piratenpartei Zentralschweiz
+2019-01-18-02-06-51  Notice   Billing process modified Kevin Cook: Created bill 20190118M0000023 for Kevin Cook in Piratenpartei Zentralschweiz
+2019-01-18-02-06-52  Notice   Billing process modified Paul King: Created bill 20190118M0000024 for Paul King in Piratenpartei Zentralschweiz
+2019-01-18-02-06-53  Notice   Billing process modified Anna Mitchell: Created bill 20190118M0000025 for Anna Mitchell in Piratenpartei Zentralschweiz
+2019-01-18-02-06-54  Notice   Billing process modified David Jenkins: Created bill 20190118M0000026 for David Jenkins in Piratenpartei Zentralschweiz
+2019-01-18-02-06-54  Notice   Billing task complete
+2019-01-18-02-06-54  Notice   Running mailing task
+2019-01-18-02-07-46  Notice   Billing process modified Jennifer B. R. Roberts: Sent bill 20190118M0000022 using template L1G by post to Bundesplatz 13, 9100 Herisau, Schweiz
+2019-01-18-02-07-50  Notice   Billing process modified Kevin Cook: Sent bill 20190118M0000023 using template L1G by post to Holderweg 8, 6900 Lugano, Schweiz
+2019-01-18-02-07-53  Notice   Billing process modified Paul King: Sent bill 20190118M0000024 using template L1G by post to Lagerweg 2, 5000 Aarau, Schweiz
+2019-01-18-02-07-57  Notice   Billing process modified Anna Mitchell: Sent bill 20190118M0000025 using template L1G by post to Falkenweg 21, 2900 Porrentruy, Schweiz
+2019-01-18-02-08-01  Notice   Billing process modified David Jenkins: Sent bill 20190118M0000026 using template L1G by post to Rathausgasse 4, 3600 Thun, Schweiz
+2019-01-18-02-08-01  Notice   Mailing task complete

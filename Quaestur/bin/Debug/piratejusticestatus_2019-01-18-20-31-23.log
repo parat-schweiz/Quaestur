@@ -1,0 +1,34 @@
+2019-01-18-20-31-23  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-20-31-34  Notice   Application started
+2019-01-18-20-31-34  Notice   Running mailing task
+2019-01-18-20-31-34  Notice   Mailing task complete
+2019-01-18-20-31-34  Notice   Running billing task
+2019-01-18-20-31-38  Notice   Billing process modified Sarah Torres: Created bill 20190118M0000082 for Sarah Torres in Piratenpartei Zentralschweiz
+2019-01-18-20-31-39  Notice   Billing process modified Amanda Gonzales: Created bill 20190118M0000083 for Amanda Gonzales in Piratenpartei Zentralschweiz
+2019-01-18-20-31-40  Notice   Billing process modified Deborah L. Thompson: Created bill 20190118M0000084 for Deborah L. Thompson in Piratenpartei Zentralschweiz
+2019-01-18-20-31-40  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-20-31-41  Notice   Billing process modified Carol Young: Created bill 20190118M0000085 for Carol Young in Piratenpartei Zentralschweiz
+2019-01-18-20-31-43  Notice   Billing process modified James N. Bennett: Created bill 20190118M0000086 for James N. Bennett in Piratenpartei Zentralschweiz
+2019-01-18-20-31-43  Notice   Billing task complete
+2019-01-18-20-31-43  Notice   Running mailing task
+2019-01-18-20-31-43  Verbose  Sending message to "George Rogers" <stefan+george.rogers@savvy.ch>
+2019-01-18-20-31-43  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-31-43  Info     Message sent to "George Rogers" <stefan+george.rogers@savvy.ch>
+2019-01-18-20-31-43  Notice   Billing process modified George Rogers: Sent bill 20190118M0000081 using template L1G by e-mail to stefan+george.rogers@savvy.ch
+2019-01-18-20-31-43  Verbose  Sending message to "Sarah Torres" <stefan+sarah.torres@savvy.ch>
+2019-01-18-20-31-44  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-31-44  Info     Message sent to "Sarah Torres" <stefan+sarah.torres@savvy.ch>
+2019-01-18-20-31-44  Notice   Billing process modified Sarah Torres: Sent bill 20190118M0000082 using template L1G by e-mail to stefan+sarah.torres@savvy.ch
+2019-01-18-20-31-44  Verbose  Sending message to "Amanda Gonzales" <stefan+amanda.gonzales@savvy.ch>
+2019-01-18-20-31-44  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-31-44  Info     Message sent to "Amanda Gonzales" <stefan+amanda.gonzales@savvy.ch>
+2019-01-18-20-31-44  Notice   Billing process modified Amanda Gonzales: Sent bill 20190118M0000083 using template L1G by e-mail to stefan+amanda.gonzales@savvy.ch
+2019-01-18-20-31-44  Verbose  Sending message to "Deborah L. Thompson" <stefan+deborah.thompson@savvy.ch>
+2019-01-18-20-31-44  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-31-44  Info     Message sent to "Deborah L. Thompson" <stefan+deborah.thompson@savvy.ch>
+2019-01-18-20-31-44  Notice   Billing process modified Deborah L. Thompson: Sent bill 20190118M0000084 using template L1G by e-mail to stefan+deborah.thompson@savvy.ch
+2019-01-18-20-31-44  Verbose  Sending message to "Carol Young" <stefan+carol.young@savvy.ch>
+2019-01-18-20-31-44  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-31-44  Info     Message sent to "Carol Young" <stefan+carol.young@savvy.ch>
+2019-01-18-20-31-44  Notice   Billing process modified Carol Young: Sent bill 20190118M0000085 using template L1G by e-mail to stefan+carol.young@savvy.ch
+2019-01-18-20-31-44  Notice   Mailing task complete

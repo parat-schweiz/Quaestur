@@ -1,0 +1,5 @@
+2019-01-06-14-08-34  Notice   Starting Nancy on http://localhost:8888
+2019-01-06-14-08-45  Notice   Application started
+2019-01-06-14-08-45  Notice   Running mailing task
+2019-01-06-14-08-45  Notice   Mailing task complete
+2019-01-06-14-08-49  Info     Unsuccessful login attempt: Username  or password mismatch.

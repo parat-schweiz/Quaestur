@@ -1,0 +1,34 @@
+2019-01-18-23-09-01  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-23-09-12  Notice   Application started
+2019-01-18-23-09-12  Notice   Running mailing task
+2019-01-18-23-09-12  Notice   Mailing task complete
+2019-01-18-23-09-12  Notice   Running billing task
+2019-01-18-23-09-17  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-23-09-17  Notice   Billing process modified Brenda C. Wood: Created bill 20190118M0000155 for Brenda C. Wood in Piratenpartei Zentralschweiz
+2019-01-18-23-09-18  Notice   Billing process modified Edward Wright: Created bill 20190118M0000156 for Edward Wright in Piratenpartei Zentralschweiz
+2019-01-18-23-09-20  Notice   Billing process modified Nancy Campbell: Created bill 20190118M0000157 for Nancy Campbell in Piratenpartei Zentralschweiz
+2019-01-18-23-09-21  Notice   Billing process modified Shirley Richardson: Created bill 20190118M0000158 for Shirley Richardson in Piratenpartei Zentralschweiz
+2019-01-18-23-09-22  Notice   Billing process modified Jeffrey Williams: Created bill 20190118M0000159 for Jeffrey Williams in Piratenpartei Zentralschweiz
+2019-01-18-23-09-22  Notice   Billing task complete
+2019-01-18-23-09-22  Notice   Running mailing task
+2019-01-18-23-09-23  Verbose  Sending message to "Linda A. Lewis" <stefan+linda.lewis@savvy.ch>
+2019-01-18-23-09-23  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-23-09-23  Info     Message sent to "Linda A. Lewis" <stefan+linda.lewis@savvy.ch>
+2019-01-18-23-09-23  Notice   Billing process modified Linda A. Lewis: Sent bill 20190118M0000151 using template L1G by e-mail to stefan+linda.lewis@savvy.ch
+2019-01-18-23-09-23  Verbose  Sending message to "Brian G. Morris" <stefan+brian.morris@savvy.ch>
+2019-01-18-23-09-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-23-09-24  Info     Message sent to "Brian G. Morris" <stefan+brian.morris@savvy.ch>
+2019-01-18-23-09-24  Notice   Billing process modified Brian G. Morris: Sent bill 20190118M0000152 using template L1G by e-mail to stefan+brian.morris@savvy.ch
+2019-01-18-23-09-24  Verbose  Sending message to "Steven T. Wright" <stefan+steven.wright@savvy.ch>
+2019-01-18-23-09-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-23-09-24  Info     Message sent to "Steven T. Wright" <stefan+steven.wright@savvy.ch>
+2019-01-18-23-09-24  Notice   Billing process modified Steven T. Wright: Sent bill 20190118M0000153 using template L1G by e-mail to stefan+steven.wright@savvy.ch
+2019-01-18-23-09-24  Verbose  Sending message to "David J. J. Butler" <stefan+david.butler@savvy.ch>
+2019-01-18-23-09-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-23-09-24  Info     Message sent to "David J. J. Butler" <stefan+david.butler@savvy.ch>
+2019-01-18-23-09-24  Notice   Billing process modified David J. J. Butler: Sent bill 20190118M0000154 using template L1G by e-mail to stefan+david.butler@savvy.ch
+2019-01-18-23-09-24  Verbose  Sending message to "Brenda C. Wood" <stefan+brenda.wood@savvy.ch>
+2019-01-18-23-09-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-23-09-24  Info     Message sent to "Brenda C. Wood" <stefan+brenda.wood@savvy.ch>
+2019-01-18-23-09-24  Notice   Billing process modified Brenda C. Wood: Sent bill 20190118M0000155 using template L1G by e-mail to stefan+brenda.wood@savvy.ch
+2019-01-18-23-09-24  Notice   Mailing task complete

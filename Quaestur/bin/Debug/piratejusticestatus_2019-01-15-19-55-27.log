@@ -1,0 +1,12 @@
+2019-01-15-19-55-27  Notice   Starting Nancy on http://localhost:8888
+2019-01-15-19-55-38  Notice   Application started
+2019-01-15-19-55-38  Notice   Running mailing task
+2019-01-15-19-55-38  Notice   Mailing task complete
+2019-01-15-19-55-38  Notice   Running billing task
+2019-01-15-19-55-39  Notice   Billing task complete
+2019-01-15-19-55-44  Notice   User admin id 685c29e8-29a0-4016-b47f-653d39575b2c logged in.
+2019-01-15-19-56-47  Notice   admin added billTemplate Bill
+2019-01-15-20-00-39  Notice   Running mailing task
+2019-01-15-20-00-39  Notice   Mailing task complete
+2019-01-15-20-00-39  Notice   Running billing task
+2019-01-15-20-00-39  Notice   Billing task complete

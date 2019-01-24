@@ -1,0 +1,14 @@
+2019-01-16-17-09-42  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-17-09-54  Notice   Application started
+2019-01-16-17-09-54  Notice   Running mailing task
+2019-01-16-17-09-54  Notice   Mailing task complete
+2019-01-16-17-09-54  Notice   Running billing task
+2019-01-16-17-09-54  Notice   Billing task complete
+2019-01-16-17-09-58  Notice   User admin id e9e10edf-01c6-4d01-ac73-86bc7be6966d logged in.
+2019-01-16-17-10-13  Notice   admin changed membership type Mitglied
+2019-01-16-17-10-33  Error    System.NullReferenceException: Object reference not set to an instance of an object
+2019-01-16-17-10-33  Error    at Quaestur.BillDocument.Prepare () [0x00026] in /Dev/Code/Quaestur/Quaestur/Documents/BillDocument.cs:67
+2019-01-16-17-10-33  Error    at Quaestur.BillDocument.Create () [0x00001] in /Dev/Code/Quaestur/Quaestur/Documents/BillDocument.cs:50
+2019-01-16-17-10-33  Error    at Quaestur.MembershipTypeEditModule.<.ctor>b__0_9 (System.Object parameters) [0x00259] in /Dev/Code/Quaestur/Quaestur/Module/MembershipTypeEditModule.cs:428
+2019-01-16-17-10-33  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-16-17-10-33  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

@@ -1,0 +1,16 @@
+2018-12-29-00-40-34  Error    Npgsql.PostgresException (0x80004005): 42601: syntax error at or near "postaladdress"
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlConnector+<>c__DisplayClass161_0.<ReadMessage>g__ReadMessageLong|0 (Npgsql.DataRowLoadingMode dataRowLoadingMode2, System.Boolean readingNotifications2, System.Boolean isReadingPrependedMessage) [0x003ff] in C:\projects\npgsql\src\Npgsql\NpgsqlConnector.cs:1003
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlConnector+<>c__DisplayClass161_0.<ReadMessage>g__ReadMessageLong|0 (Npgsql.DataRowLoadingMode dataRowLoadingMode2, System.Boolean readingNotifications2, System.Boolean isReadingPrependedMessage) [0x004c0] in C:\projects\npgsql\src\Npgsql\NpgsqlConnector.cs:1032
+2018-12-29-00-40-34  Error    at System.Threading.Tasks.ValueTask`1[TResult].get_Result () [0x00022] in <db70987ec4f64c33bf9deb66e2bcbaba>:0
+2018-12-29-00-40-34  Error    at System.Runtime.CompilerServices.ValueTaskAwaiter`1[TResult].GetResult () [0x00000] in <db70987ec4f64c33bf9deb66e2bcbaba>:0
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlDataReader.NextResult (System.Boolean async, System.Boolean isConsuming) [0x0039c] in C:\projects\npgsql\src\Npgsql\NpgsqlDataReader.cs:444
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlDataReader.NextResult () [0x00064] in C:\projects\npgsql\src\Npgsql\NpgsqlDataReader.cs:340
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlCommand.ExecuteDbDataReader (System.Data.CommandBehavior behavior, System.Boolean async, System.Threading.CancellationToken cancellationToken) [0x002fd] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1229
+2018-12-29-00-40-34  Error    at System.Threading.Tasks.ValueTask`1[TResult].get_Result () [0x00022] in <db70987ec4f64c33bf9deb66e2bcbaba>:0
+2018-12-29-00-40-34  Error    at System.Runtime.CompilerServices.ValueTaskAwaiter`1[TResult].GetResult () [0x00000] in <db70987ec4f64c33bf9deb66e2bcbaba>:0
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlCommand.ExecuteNonQuery (System.Boolean async, System.Threading.CancellationToken cancellationToken) [0x00033] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1042
+2018-12-29-00-40-34  Error    at Npgsql.NpgsqlCommand.ExecuteNonQuery () [0x00000] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1025
+2018-12-29-00-40-34  Error    at Quaestur.PostgresDatabase.Delete (Quaestur.DatabaseObject obj) [0x0003f] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:131
+2018-12-29-00-40-34  Error    at Quaestur.PostalAddressEdit.<.ctor>b__1_4 (System.Object parameters) [0x000b8] in /Dev/Code/Quaestur/Quaestur/Module/PostalAddressEdit.cs:235
+2018-12-29-00-40-34  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2018-12-29-00-40-34  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

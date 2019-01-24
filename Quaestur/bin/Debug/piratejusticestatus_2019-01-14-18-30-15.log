@@ -1,0 +1,8 @@
+2019-01-14-18-30-15  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-18-30-26  Notice   Application started
+2019-01-14-18-30-26  Notice   Running mailing task
+2019-01-14-18-30-26  Notice   Mailing task complete
+2019-01-14-18-30-26  Notice   Running billing task
+2019-01-14-18-30-27  Notice   Billing task complete
+2019-01-14-18-31-18  Notice   User admin id 783092c6-3b5f-4a40-bfe3-bd9ca9ee7bfc logged in.
+2019-01-14-18-31-26  Notice   admin modified Kenneth Alexander: Downloaded bill 20190114M0000007

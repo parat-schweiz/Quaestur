@@ -1,0 +1,25 @@
+2019-01-14-03-48-34  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-03-48-45  Notice   Application started
+2019-01-14-03-48-45  Notice   Running mailing task
+2019-01-14-03-48-45  Notice   Mailing task complete
+2019-01-14-03-48-53  Notice   User admin id 3b5535fa-6490-4a45-8d00-53ff54850159 logged in.
+2019-01-14-03-49-04  Notice   admin added organization test
+2019-01-14-03-49-11  Notice   admin changed organization fdgsdfg
+2019-01-14-03-49-15  Error    Npgsql.PostgresException (0x80004005): 23503: update or delete on table "organization" violates foreign key constraint "membershiptype_organizationid_fkey" on table "membershiptype"
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlConnector+<>c__DisplayClass161_0.<ReadMessage>g__ReadMessageLong|0 (Npgsql.DataRowLoadingMode dataRowLoadingMode2, System.Boolean readingNotifications2, System.Boolean isReadingPrependedMessage) [0x003ff] in C:\projects\npgsql\src\Npgsql\NpgsqlConnector.cs:1003
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlConnector+<>c__DisplayClass161_0.<ReadMessage>g__ReadMessageLong|0 (Npgsql.DataRowLoadingMode dataRowLoadingMode2, System.Boolean readingNotifications2, System.Boolean isReadingPrependedMessage) [0x004c0] in C:\projects\npgsql\src\Npgsql\NpgsqlConnector.cs:1032
+2019-01-14-03-49-15  Error    at System.Threading.Tasks.ValueTask`1[TResult].get_Result () [0x00022] in <c50882760828481c927e00b7db67d1a5>:0
+2019-01-14-03-49-15  Error    at System.Runtime.CompilerServices.ValueTaskAwaiter`1[TResult].GetResult () [0x00000] in <c50882760828481c927e00b7db67d1a5>:0
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlDataReader.NextResult (System.Boolean async, System.Boolean isConsuming) [0x00643] in C:\projects\npgsql\src\Npgsql\NpgsqlDataReader.cs:489
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlDataReader.NextResult () [0x00064] in C:\projects\npgsql\src\Npgsql\NpgsqlDataReader.cs:340
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlCommand.ExecuteDbDataReader (System.Data.CommandBehavior behavior, System.Boolean async, System.Threading.CancellationToken cancellationToken) [0x002fd] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1229
+2019-01-14-03-49-15  Error    at System.Threading.Tasks.ValueTask`1[TResult].get_Result () [0x00022] in <c50882760828481c927e00b7db67d1a5>:0
+2019-01-14-03-49-15  Error    at System.Runtime.CompilerServices.ValueTaskAwaiter`1[TResult].GetResult () [0x00000] in <c50882760828481c927e00b7db67d1a5>:0
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlCommand.ExecuteNonQuery (System.Boolean async, System.Threading.CancellationToken cancellationToken) [0x00033] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1042
+2019-01-14-03-49-15  Error    at Npgsql.NpgsqlCommand.ExecuteNonQuery () [0x00000] in C:\projects\npgsql\src\Npgsql\NpgsqlCommand.cs:1025
+2019-01-14-03-49-15  Error    at Quaestur.PostgresDatabase.Delete (Quaestur.DatabaseObject obj) [0x00047] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:189
+2019-01-14-03-49-15  Error    at Quaestur.Organization.Delete (Quaestur.IDatabase db) [0x00138] in /Dev/Code/Quaestur/Quaestur/Model/Organization.cs:77
+2019-01-14-03-49-15  Error    at Quaestur.OrganizationEdit.<.ctor>b__0_6 (System.Object parameters) [0x000ce] in /Dev/Code/Quaestur/Quaestur/Module/OrganizationModule.cs:246
+2019-01-14-03-49-15  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-14-03-49-15  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0
+2019-01-14-03-49-29  Notice   admin deleted organization fdgsdfg

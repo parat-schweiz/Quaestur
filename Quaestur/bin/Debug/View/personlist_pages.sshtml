@@ -1,0 +1,17 @@
+﻿<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.PhrasePage @Model.CurrentPageNumber <span class="caret"></span></a>
+  <span class="caret"></span></button>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  @Each.Pages
+    <a class="dropdown-item @Current.State" onclick="setCurrentPage(@Current.Index)" href="javascript:void(0);">@Model.PhrasePage @Current.Number</a>
+  @EndEach
+  </div>
+</li>
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.CurrentItemsPerPage @Model.PhrasePerPage <span class="caret"></span></a>
+  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  @Each.ItemsPerPage
+    <a class="dropdown-item @Current.State" onclick="setItemsPerPage(@Current.Count)" href="javascript:void(0);">@Current.Count @Model.PhrasePerPage</a>
+  @EndEach
+  </div>
+</li>

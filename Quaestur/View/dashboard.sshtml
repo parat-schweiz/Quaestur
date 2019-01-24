@@ -1,0 +1,11 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+</div>
+@EndSection

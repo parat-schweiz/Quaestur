@@ -1,0 +1,20 @@
+2019-01-16-22-40-38  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-22-40-45  Notice   Application started
+2019-01-16-22-40-45  Notice   Running mailing task
+2019-01-16-22-40-45  Notice   Mailing task complete
+2019-01-16-22-40-45  Notice   Running billing task
+2019-01-16-22-40-46  Notice   Billing process modified Sarah Cook: Created bill 20190116M0000002 for Sarah Cook in Piratenpartei Zentralschweiz
+2019-01-16-22-40-48  Notice   Billing process modified Jacob J. Howard: Created bill 20190116M0000003 for Jacob J. Howard in Piratenpartei Zentralschweiz
+2019-01-16-22-40-49  Notice   Billing process modified Laura Long: Created bill 20190116M0000004 for Laura Long in Piratenpartei Zentralschweiz
+2019-01-16-22-40-50  Notice   Billing process modified Amy E. S. Watson: Created bill 20190116M0000005 for Amy E. S. Watson in Piratenpartei Zentralschweiz
+2019-01-16-22-40-51  Notice   Billing process modified Nancy Gonzales: Created bill 20190116M0000006 for Nancy Gonzales in Piratenpartei Zentralschweiz
+2019-01-16-22-40-51  Notice   Billing task complete
+2019-01-16-22-40-51  Notice   Running mailing task
+2019-01-16-22-40-51  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in French at level 1
+2019-01-16-22-40-51  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in French at level 1
+2019-01-16-22-40-51  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-16-22-40-51  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-16-22-40-51  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in French at level 1
+2019-01-16-22-40-51  Notice   Mailing task complete
+2019-01-16-22-41-11  Notice   User admin id 918c5b5c-f517-4e6e-947a-b38fd151cd9b logged in.
+2019-01-16-22-41-24  Notice   admin changed bill sending template L1G

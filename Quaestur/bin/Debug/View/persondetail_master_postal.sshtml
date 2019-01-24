@@ -1,0 +1,78 @@
+﻿<script>
+$("#postalAddressRowAdd").click(function(){
+  showPostalAddressEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#postalAddressRowEdit@Current.Id").click(function(){
+  showPostalAddressEditDialog("edit", "@Current.Id");
+});
+$("#postalAddressRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/postaladdress/delete/@Current.Id", function(data, status){
+          updateMasterDataPostal();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+$("#postalAddressRowMove@Current.Id").on('dragstart', function(evt){
+  evt.originalEvent.dataTransfer.setData("postalAddressDrag", "@Current.Id");
+});
+$("#postalAddressRowMove@Current.Id").on('dragover', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("postalAddressDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = "move"
+  }
+});
+$("#postalAddressRowMove@Current.Id").on('drop', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("postalAddressDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    var formData = new Object();
+    formData.SourceId = sourceId;
+    formData.TargetId = '@Current.Id';
+    $.post("/postaladdress/switch", JSON.stringify(formData), function(dummyData, status){
+      updateMasterDataPostal();
+    });
+  }
+});
+@EndEach
+function showPostalAddressEditDialog(method, id){
+  $.get("/postaladdress/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#postalAddressEditDialog').replaceWith(data);
+      $('#postalAddressEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="person-master-card">
+        @Each.List
+        <tr class="clickable-row">
+          <td width="80%" id="postalAddressRowEdit@Current.Id" class="@Model.Editable">@Current.Text</td>
+          <td width="10%" id="postalAddressRowMove@Current.Id" class="@Model.Editable" draggable="true"><span class="fas fa-grip-horizontal" ></span></td>
+          <td width="10%" id="postalAddressRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+        </tr>
+        @EndEach
+        <tr class="centering clickable-row">
+          <td width="80%" id="postalAddressRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+          <td width="10%"></td>
+          <td width="10%"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="postalAddressEditDialog"/>

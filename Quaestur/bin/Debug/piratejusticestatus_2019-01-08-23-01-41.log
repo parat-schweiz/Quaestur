@@ -1,0 +1,12 @@
+2019-01-08-23-01-41  Notice   Starting Nancy on http://localhost:8888
+2019-01-08-23-01-52  Notice   Application started
+2019-01-08-23-01-52  Notice   Running mailing task
+2019-01-08-23-01-52  Notice   Mailing task complete
+2019-01-08-23-01-57  Notice   User admin id 23e6b47c-5b73-4750-a8ac-950dd886c77a logged in.
+2019-01-08-23-02-27  Notice   admin changed group Piratenpartei Zentralschweiz / Vorstand
+2019-01-08-23-02-49  Notice   admin changed group Piratenpartei Zentralschweiz / Vorstand
+2019-01-08-23-02-58  Notice   admin changed group Piratenpartei Zentralschweiz / Vorstand
+2019-01-08-23-03-41  Verbose  Sending message to stefan@savvy.ch
+2019-01-08-23-03-41  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-08-23-03-42  Info     Message sent to stefan@savvy.ch
+2019-01-08-23-03-42  Notice   admin tests mailing with subject testb

@@ -1,0 +1,13 @@
+2019-01-14-03-45-32  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-03-45-43  Notice   Application started
+2019-01-14-03-45-43  Notice   Running mailing task
+2019-01-14-03-45-43  Notice   Mailing task complete
+2019-01-14-03-45-48  Notice   User admin id 3b5535fa-6490-4a45-8d00-53ff54850159 logged in.
+2019-01-14-03-46-29  Notice   admin modified Kenneth Alexander: Added bill 1241234214
+2019-01-14-03-46-47  Notice   admin modified Kenneth Alexander: Deleted bill 1241234214
+2019-01-14-03-47-07  Notice   admin modified Kenneth Alexander: Added bill §32§13§123
+2019-01-14-03-47-10  Notice   admin modified Kenneth Alexander: Changed bill §32§13§123
+2019-01-14-03-47-16  Notice   admin modified Kenneth Alexander: Downloaded bill §32§13§123
+2019-01-14-03-47-31  Notice   admin modified Kenneth Alexander: Changed bill 464356E21453
+2019-01-14-03-47-33  Notice   admin modified Kenneth Alexander: Downloaded bill 464356E21453
+2019-01-14-03-47-42  Notice   admin modified Kenneth Alexander: Deleted bill 464356E21453

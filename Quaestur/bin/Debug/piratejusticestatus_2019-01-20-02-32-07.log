@@ -1,0 +1,28 @@
+2019-01-20-02-32-07  Notice   Starting Nancy on http://localhost:8888
+2019-01-20-02-32-18  Notice   Application started
+2019-01-20-02-32-18  Notice   Running mailing task
+2019-01-20-02-32-18  Notice   Mailing task complete
+2019-01-20-02-32-18  Notice   Running billing task
+2019-01-20-02-32-23  Notice   Billing task complete
+2019-01-20-02-32-23  Notice   Running mailing task
+2019-01-20-02-32-24  Verbose  Sending message to "Sarah Cook" <stefan+sarah.cook@savvy.ch>
+2019-01-20-02-32-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-20-02-32-25  Info     Message sent to "Sarah Cook" <stefan+sarah.cook@savvy.ch>
+2019-01-20-02-32-25  Notice   Billing process modified Sarah Cook: Sent bill 20190117M0000002 using template L1G by e-mail to stefan+sarah.cook@savvy.ch
+2019-01-20-02-32-25  Verbose  Sending message to "Jacob J. Howard" <stefan+jacob.howard@savvy.ch>
+2019-01-20-02-32-25  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-20-02-32-25  Info     Message sent to "Jacob J. Howard" <stefan+jacob.howard@savvy.ch>
+2019-01-20-02-32-25  Notice   Billing process modified Jacob J. Howard: Sent bill 20190117M0000003 using template L1G by e-mail to stefan+jacob.howard@savvy.ch
+2019-01-20-02-32-25  Verbose  Sending message to "Laura Long" <stefan+laura.long@savvy.ch>
+2019-01-20-02-32-25  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-20-02-32-26  Info     Message sent to "Laura Long" <stefan+laura.long@savvy.ch>
+2019-01-20-02-32-26  Notice   Billing process modified Laura Long: Sent bill 20190117M0000004 using template L1G by e-mail to stefan+laura.long@savvy.ch
+2019-01-20-02-32-26  Verbose  Sending message to "Amy E. S. Watson" <stefan+amy.watson@savvy.ch>
+2019-01-20-02-32-26  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-20-02-32-26  Info     Message sent to "Amy E. S. Watson" <stefan+amy.watson@savvy.ch>
+2019-01-20-02-32-26  Notice   Billing process modified Amy E. S. Watson: Sent bill 20190117M0000005 using template L1G by e-mail to stefan+amy.watson@savvy.ch
+2019-01-20-02-32-26  Verbose  Sending message to "Nancy Gonzales" <stefan+nancy.gonzales@savvy.ch>
+2019-01-20-02-32-27  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-20-02-32-27  Info     Message sent to "Nancy Gonzales" <stefan+nancy.gonzales@savvy.ch>
+2019-01-20-02-32-27  Notice   Billing process modified Nancy Gonzales: Sent bill 20190117M0000006 using template L1G by e-mail to stefan+nancy.gonzales@savvy.ch
+2019-01-20-02-32-27  Notice   Mailing task complete

@@ -1,0 +1,80 @@
+﻿<script>
+$("#serviceAddressPhoneRowAdd").click(function(){
+  showServiceAddressPhoneEditDialog("add/phone", "@Model.Id");
+});
+@Each.List
+$("#serviceAddressPhoneRowEdit@Current.Id").click(function(){
+  showServiceAddressPhoneEditDialog("edit", "@Current.Id");
+});
+$("#serviceAddressPhoneRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/serviceaddress/delete/@Current.Id", function(data, status){
+          updateMasterDataEMail();
+          updateMasterDataPhone();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+$("#serviceAddressPhoneRowMove@Current.Id").on('dragstart', function(evt){
+  evt.originalEvent.dataTransfer.setData("serviceAddressDrag", "@Current.Id");
+});
+$("#serviceAddressPhoneRowMove@Current.Id").on('dragover', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("serviceAddressDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = "move"
+  }
+});
+$("#serviceAddressPhoneRowMove@Current.Id").on('drop', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("serviceAddressDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    var formData = new Object();
+    formData.SourceId = sourceId;
+    formData.TargetId = '@Current.Id';
+    $.post("/serviceaddress/switch", JSON.stringify(formData), function(dummyData, status){
+      updateMasterDataEMail();
+      updateMasterDataPhone();
+    });
+  }
+});
+@EndEach
+function showServiceAddressPhoneEditDialog(method, id){
+  $.get("/serviceaddress/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#serviceAddressPhoneEditDialog').replaceWith(data);
+      $('#serviceAddressPhoneEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="person-master-card">
+        @Each.List
+        <tr class="clickable-row">
+          <td width="80%" id="serviceAddressPhoneRowEdit@Current.Id" class="@Model.Editable">@Current.Text</td>
+          <td width="10%" id="serviceAddressPhoneRowMove@Current.Id" class="@Model.Editable" draggable="true"><span class="fas fa-grip-horizontal" ></span></td>
+          <td width="10%" id="serviceAddressPhoneRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+        </tr>
+        @EndEach
+        <tr class="centering clickable-row">
+          <td width="80%" id="serviceAddressPhoneRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+          <td width="10%"></td>
+          <td width="10%"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="serviceAddressPhoneEditDialog"/>

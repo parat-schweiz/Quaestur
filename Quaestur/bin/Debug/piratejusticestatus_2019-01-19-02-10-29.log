@@ -1,0 +1,12 @@
+2019-01-19-02-10-29  Notice   Starting Nancy on http://localhost:8888
+2019-01-19-02-10-41  Notice   Application started
+2019-01-19-02-10-41  Notice   Running mailing task
+2019-01-19-02-10-41  Notice   Mailing task complete
+2019-01-19-02-10-41  Notice   Running billing task
+2019-01-19-02-10-46  Notice   Billing task complete
+2019-01-19-02-10-46  Notice   Running mailing task
+2019-01-19-02-10-55  Verbose  Sending message to "Stefan Thöni" <stefan@savvy.ch>
+2019-01-19-02-10-55  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-19-02-10-56  Info     Message sent to "Stefan Thöni" <stefan@savvy.ch>
+2019-01-19-02-10-56  Notice   Billing process modified Stefan Thöni: Sent bill 20190119M0000224 using template L1G by e-mail to stefan@savvy.ch
+2019-01-19-02-10-56  Notice   Mailing task complete

@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateMembershipTypeList(){
+      $.get("/membershiptype/list/@Model.Id", function(data, status){
+          if (data){
+              $("#membershipTypeList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateMembershipTypeList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="membershipTypeList">
+</div>
+@EndSection

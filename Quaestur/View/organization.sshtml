@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateOrganizationList(){
+      $.get("/organization/list", function(data, status){
+          if (data){
+              $("#organizationList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateOrganizationList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="organizationList">
+</div>
+@EndSection

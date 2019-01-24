@@ -1,0 +1,7 @@
+2018-12-28-21-26-42  Error    System.ArgumentException: At least one object must implement IComparable.
+2018-12-28-21-26-42  Error    at System.Collections.Comparer.Compare (System.Object a, System.Object b) [0x00057] in <7b0d87324cab49bf96eac679025e77d1>:0
+2018-12-28-21-26-42  Error    at System.Collections.Generic.ObjectComparer`1[T].Compare (T x, T y) [0x00000] in <7b0d87324cab49bf96eac679025e77d1>:0
+2018-12-28-21-26-42  Error    at System.Linq.Enumerable.Max[TSource,TResult] (System.Collections.Generic.IEnumerable`1[T] source, System.Func`2[T,TResult] selector) [0x00076] in <079d1695f1b940b981a821e75d331759>:0
+2018-12-28-21-26-42  Error    at Quaestur.PostalAddressEdit.<.ctor>b__1_3 (System.Object parameters) [0x0019f] in /Dev/Code/Quaestur/Quaestur/Module/PostalAddressEdit.cs:212
+2018-12-28-21-26-42  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2018-12-28-21-26-42  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

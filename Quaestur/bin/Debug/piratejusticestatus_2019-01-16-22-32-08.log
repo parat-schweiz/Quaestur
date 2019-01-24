@@ -1,0 +1,19 @@
+2019-01-16-22-32-08  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-22-32-20  Notice   Application started
+2019-01-16-22-32-20  Notice   Running mailing task
+2019-01-16-22-32-20  Notice   Mailing task complete
+2019-01-16-22-32-20  Notice   Running billing task
+2019-01-16-22-32-24  Notice   Billing process modified Donald Harris: Created bill 20190116M0000140 for Donald Harris in Piratenpartei Zentralschweiz
+2019-01-16-22-32-25  Notice   Billing process modified Charles M. Richardson: Created bill 20190116M0000141 for Charles M. Richardson in Piratenpartei Zentralschweiz
+2019-01-16-22-32-26  Notice   Billing process modified Sharon D. D. Wood: Created bill 20190116M0000142 for Sharon D. D. Wood in Piratenpartei Zentralschweiz
+2019-01-16-22-32-27  Notice   Billing process modified Anthony Wright: Created bill 20190116M0000143 for Anthony Wright in Piratenpartei Zentralschweiz
+2019-01-16-22-32-28  Notice   Billing process modified Sandra E. Wright: Created bill 20190116M0000144 for Sandra E. Wright in Piratenpartei Zentralschweiz
+2019-01-16-22-32-28  Notice   Billing task complete
+2019-01-16-22-32-28  Notice   Running mailing task
+2019-01-16-22-32-29  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-16-22-32-29  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in Technical English at level 1
+2019-01-16-22-32-29  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-16-22-32-29  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in English at level 1
+2019-01-16-22-32-29  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-16-22-32-29  Notice   Mailing task complete
+2019-01-16-22-33-15  Notice   User admin id e9e10edf-01c6-4d01-ac73-86bc7be6966d logged in.

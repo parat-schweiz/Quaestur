@@ -1,0 +1,21 @@
+2019-01-01-03-44-30  Error    System.FormatException: Index (zero based) must be greater than or equal to zero and less than the size of the argument list.
+2019-01-01-03-44-30  Error    at System.Text.StringBuilder.AppendFormatHelper (System.IFormatProvider provider, System.String format, System.ParamsArray args) [0x000f9] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at System.String.FormatHelper (System.IFormatProvider provider, System.String format, System.ParamsArray args) [0x00023] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at System.String.Format (System.String format, System.Object[] args) [0x00020] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at Quaestur.Translation.Get (Quaestur.Language language, System.String key, System.String hint, System.String technical, System.Object[] parameters) [0x0013a] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Translation.cs:64
+2019-01-01-03-44-30  Error    at Quaestur.Translator.Get (System.String key, System.String hint, System.String technical, System.Object[] parameters) [0x00001] in /Dev/Code/Quaestur/Quaestur/Module/QuaesturModule.cs:22
+2019-01-01-03-44-30  Error    at Quaestur.RoleListItemViewModel.GetText (Quaestur.Translator translator, Quaestur.Permission permission) [0x00001] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:64
+2019-01-01-03-44-30  Error    at Quaestur.RoleListItemViewModel+<>c__DisplayClass5_0.<.ctor>b__0 (Quaestur.Permission p) [0x00000] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:76
+2019-01-01-03-44-30  Error    at System.Linq.Enumerable+SelectListIterator`2[TSource,TResult].ToArray () [0x00034] in <079d1695f1b940b981a821e75d331759>:0
+2019-01-01-03-44-30  Error    at System.Linq.Buffer`1[TElement]..ctor (System.Collections.Generic.IEnumerable`1[T] source) [0x0000a] in <079d1695f1b940b981a821e75d331759>:0
+2019-01-01-03-44-30  Error    at System.Linq.OrderedEnumerable`1+<GetEnumerator>d__3[TElement].MoveNext () [0x0001e] in <079d1695f1b940b981a821e75d331759>:0
+2019-01-01-03-44-30  Error    at System.String.Join (System.String separator, System.Collections.Generic.IEnumerable`1[T] values) [0x00015] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at Quaestur.RoleListItemViewModel..ctor (Quaestur.Translator translator, Quaestur.IDatabase database, Quaestur.Role role) [0x0004c] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:75
+2019-01-01-03-44-30  Error    at Quaestur.RoleListViewModel+<>c__DisplayClass7_0.<.ctor>b__1 (Quaestur.Role c) [0x00000] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:113
+2019-01-01-03-44-30  Error    at System.Linq.Enumerable+SelectIPartitionIterator`2[TSource,TResult].MoveNext () [0x00048] in <079d1695f1b940b981a821e75d331759>:0
+2019-01-01-03-44-30  Error    at System.Collections.Generic.List`1[T].AddEnumerable (System.Collections.Generic.IEnumerable`1[T] enumerable) [0x00059] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at System.Collections.Generic.List`1[T]..ctor (System.Collections.Generic.IEnumerable`1[T] collection) [0x00062] in <7b0d87324cab49bf96eac679025e77d1>:0
+2019-01-01-03-44-30  Error    at Quaestur.RoleListViewModel..ctor (Quaestur.Translator translator, Quaestur.IDatabase database, Quaestur.Group group) [0x0011f] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:110
+2019-01-01-03-44-30  Error    at Quaestur.RoleEdit.<.ctor>b__1_1 (System.Object parameters) [0x000a9] in /Dev/Code/Quaestur/Quaestur/Module/RoleModule.cs:149
+2019-01-01-03-44-30  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2019-01-01-03-44-30  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

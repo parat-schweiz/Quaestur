@@ -1,0 +1,15 @@
+2019-01-16-17-34-47  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-17-34-58  Notice   Application started
+2019-01-16-17-34-58  Notice   Running mailing task
+2019-01-16-17-34-58  Notice   Mailing task complete
+2019-01-16-17-34-58  Notice   Running billing task
+2019-01-16-17-35-00  Notice   Billing process modified Justin Patterson: Created bill 20190116M0000017 for Justin Patterson in Piratenpartei Zentralschweiz
+2019-01-16-17-35-02  Notice   Billing process modified Michael J. Torres: Created bill 20190116M0000018 for Michael J. Torres in Piratenpartei Zentralschweiz
+2019-01-16-17-35-02  Notice   User admin id e9e10edf-01c6-4d01-ac73-86bc7be6966d logged in.
+2019-01-16-17-35-03  Notice   Billing process modified Susan Thomas: Created bill 20190116M0000019 for Susan Thomas in Piratenpartei Zentralschweiz
+2019-01-16-17-35-04  Notice   Billing process modified Gary Brown: Created bill 20190116M0000020 for Gary Brown in Piratenpartei Zentralschweiz
+2019-01-16-17-35-05  Notice   Billing process modified Larry Turner: Created bill 20190116M0000021 for Larry Turner in Piratenpartei Zentralschweiz
+2019-01-16-17-35-05  Notice   Billing task complete
+2019-01-16-17-35-12  Verbose  Sending message to "admin" <stefan@savvy.ch>
+2019-01-16-17-35-12  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-16-17-35-12  Info     Message sent to "admin" <stefan@savvy.ch>

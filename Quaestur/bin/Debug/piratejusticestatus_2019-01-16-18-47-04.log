@@ -1,0 +1,12 @@
+2019-01-16-18-47-04  Notice   Starting Nancy on http://localhost:8888
+2019-01-16-18-47-16  Notice   Application started
+2019-01-16-18-47-16  Notice   Running mailing task
+2019-01-16-18-47-16  Notice   Mailing task complete
+2019-01-16-18-47-16  Notice   Running billing task
+2019-01-16-18-47-19  Notice   Billing process modified Richard Bailey: Created bill 20190116M0000077 for Richard Bailey in Piratenpartei Zentralschweiz
+2019-01-16-18-47-20  Notice   User admin id e9e10edf-01c6-4d01-ac73-86bc7be6966d logged in.
+2019-01-16-18-47-20  Notice   Billing process modified Joshua Jones: Created bill 20190116M0000078 for Joshua Jones in Piratenpartei Zentralschweiz
+2019-01-16-18-47-22  Notice   Billing process modified Ronald Jenkins: Created bill 20190116M0000079 for Ronald Jenkins in Piratenpartei Zentralschweiz
+2019-01-16-18-47-23  Notice   Billing process modified Jason Carter: Created bill 20190116M0000080 for Jason Carter in Piratenpartei Zentralschweiz
+2019-01-16-18-47-24  Notice   Billing process modified George Rogers: Created bill 20190116M0000081 for George Rogers in Piratenpartei Zentralschweiz
+2019-01-16-18-47-24  Notice   Billing task complete

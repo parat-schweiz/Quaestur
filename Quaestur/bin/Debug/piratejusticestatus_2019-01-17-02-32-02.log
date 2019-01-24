@@ -1,0 +1,39 @@
+2019-01-17-02-32-02  Notice   Starting Nancy on http://localhost:8888
+2019-01-17-02-32-03  Notice   Application started
+2019-01-17-02-32-03  Notice   Running mailing task
+2019-01-17-02-32-03  Notice   Mailing task complete
+2019-01-17-02-32-03  Notice   Running billing task
+2019-01-17-02-32-05  Notice   Billing process modified Sarah Cook: Created bill 20190117M0000002 for Sarah Cook in Piratenpartei Zentralschweiz
+2019-01-17-02-32-06  Notice   Billing process modified Jacob J. Howard: Created bill 20190117M0000003 for Jacob J. Howard in Piratenpartei Zentralschweiz
+2019-01-17-02-32-07  Notice   Billing process modified Laura Long: Created bill 20190117M0000004 for Laura Long in Piratenpartei Zentralschweiz
+2019-01-17-02-32-08  Notice   Billing process modified Amy E. S. Watson: Created bill 20190117M0000005 for Amy E. S. Watson in Piratenpartei Zentralschweiz
+2019-01-17-02-32-09  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-17-02-32-10  Notice   Billing process modified Nancy Gonzales: Created bill 20190117M0000006 for Nancy Gonzales in Piratenpartei Zentralschweiz
+2019-01-17-02-32-10  Notice   Billing task complete
+2019-01-17-02-32-10  Notice   Running mailing task
+2019-01-17-02-32-10  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-32-10  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-32-10  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-32-10  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-32-10  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-32-10  Notice   Mailing task complete
+2019-01-17-02-32-24  Verbose  Sending message to "admin" <stefan@savvy.ch>
+2019-01-17-02-32-24  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-17-02-32-24  Info     Message sent to "admin" <stefan@savvy.ch>
+2019-01-17-02-33-50  Notice   admin modified Sarah Cook: Downloaded bill 20190117M0000002
+2019-01-17-02-37-04  Notice   Running mailing task
+2019-01-17-02-37-04  Notice   Mailing task complete
+2019-01-17-02-37-04  Notice   Running billing task
+2019-01-17-02-37-06  Notice   Billing process modified Kenneth Alexander: Created bill 20190117M0000007 for Kenneth Alexander in Piratenpartei Zentralschweiz
+2019-01-17-02-37-07  Notice   Billing process modified Edward W. Powell: Created bill 20190117M0000008 for Edward W. Powell in Piratenpartei Zentralschweiz
+2019-01-17-02-37-08  Notice   Billing process modified Nicole L. J. Peterson: Created bill 20190117M0000009 for Nicole L. J. Peterson in Piratenpartei Zentralschweiz
+2019-01-17-02-37-09  Notice   Billing process modified Cynthia L. Murphy: Created bill 20190117M0000010 for Cynthia L. Murphy in Piratenpartei Zentralschweiz
+2019-01-17-02-37-11  Notice   Billing process modified Charles G. D. Lopez: Created bill 20190117M0000011 for Charles G. D. Lopez in Piratenpartei Zentralschweiz
+2019-01-17-02-37-11  Notice   Billing task complete
+2019-01-17-02-37-11  Notice   Running mailing task
+2019-01-17-02-37-11  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-37-11  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-37-11  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-37-11  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-37-11  Notice   No bill sending template for Mitglied in Piratenpartei Zentralschweiz in German at level 1
+2019-01-17-02-37-11  Notice   Mailing task complete

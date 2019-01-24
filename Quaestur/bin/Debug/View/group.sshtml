@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateGroupList(){
+      $.get("/group/list/@Model.Id", function(data, status){
+          if (data){
+              $("#groupList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateGroupList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="groupList">
+</div>
+@EndSection

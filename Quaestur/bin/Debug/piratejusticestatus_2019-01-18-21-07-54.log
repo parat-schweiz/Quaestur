@@ -1,0 +1,128 @@
+2019-01-18-21-07-54  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-21-08-05  Notice   Application started
+2019-01-18-21-08-05  Notice   Running mailing task
+2019-01-18-21-08-05  Notice   Mailing task complete
+2019-01-18-21-08-05  Notice   Running billing task
+2019-01-18-21-08-10  Notice   Billing process modified Sandra M. Howard: Created bill 20190118M0000130 for Sandra M. Howard in Piratenpartei Zentralschweiz
+2019-01-18-21-08-10  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-21-08-11  Notice   Billing process modified Melissa White: Created bill 20190118M0000131 for Melissa White in Piratenpartei Zentralschweiz
+2019-01-18-21-08-12  Notice   Billing process modified Mark A. Wright: Created bill 20190118M0000132 for Mark A. Wright in Piratenpartei Zentralschweiz
+2019-01-18-21-08-13  Notice   Billing process modified Christopher Kelly: Created bill 20190118M0000133 for Christopher Kelly in Piratenpartei Zentralschweiz
+2019-01-18-21-08-15  Notice   Billing process modified Karen Coleman: Created bill 20190118M0000134 for Karen Coleman in Piratenpartei Zentralschweiz
+2019-01-18-21-08-15  Notice   Billing task complete
+2019-01-18-21-08-15  Notice   Running mailing task
+2019-01-18-21-08-15  Verbose  Sending message to "Mary H. S. Perry" <stefan+mary.perry@savvy.ch>
+2019-01-18-21-08-15  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-08-16  Info     Message sent to "Mary H. S. Perry" <stefan+mary.perry@savvy.ch>
+2019-01-18-21-08-16  Notice   Billing process modified Mary H. S. Perry: Sent bill 20190118M0000126 using template L1G by e-mail to stefan+mary.perry@savvy.ch
+2019-01-18-21-08-16  Verbose  Sending message to "Joshua Lopez" <stefan+joshua.lopez@savvy.ch>
+2019-01-18-21-08-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-08-16  Info     Message sent to "Joshua Lopez" <stefan+joshua.lopez@savvy.ch>
+2019-01-18-21-08-16  Notice   Billing process modified Joshua Lopez: Sent bill 20190118M0000127 using template L1G by e-mail to stefan+joshua.lopez@savvy.ch
+2019-01-18-21-08-16  Verbose  Sending message to "Sarah Price" <stefan+sarah.price@savvy.ch>
+2019-01-18-21-08-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-08-16  Info     Message sent to "Sarah Price" <stefan+sarah.price@savvy.ch>
+2019-01-18-21-08-16  Notice   Billing process modified Sarah Price: Sent bill 20190118M0000128 using template L1G by e-mail to stefan+sarah.price@savvy.ch
+2019-01-18-21-08-16  Verbose  Sending message to "Elizabeth E. Long" <stefan+elizabeth.long@savvy.ch>
+2019-01-18-21-08-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-08-16  Info     Message sent to "Elizabeth E. Long" <stefan+elizabeth.long@savvy.ch>
+2019-01-18-21-08-16  Notice   Billing process modified Elizabeth E. Long: Sent bill 20190118M0000129 using template L1G by e-mail to stefan+elizabeth.long@savvy.ch
+2019-01-18-21-08-16  Verbose  Sending message to "Sandra M. Howard" <stefan+sandra.howard@savvy.ch>
+2019-01-18-21-08-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-08-16  Info     Message sent to "Sandra M. Howard" <stefan+sandra.howard@savvy.ch>
+2019-01-18-21-08-17  Notice   Billing process modified Sandra M. Howard: Sent bill 20190118M0000130 using template L1G by e-mail to stefan+sandra.howard@savvy.ch
+2019-01-18-21-08-17  Notice   Mailing task complete
+2019-01-18-21-13-06  Notice   Running mailing task
+2019-01-18-21-13-06  Notice   Mailing task complete
+2019-01-18-21-13-06  Notice   Running billing task
+2019-01-18-21-13-10  Notice   Billing process modified Kevin R. R. Barnes: Created bill 20190118M0000135 for Kevin R. R. Barnes in Piratenpartei Zentralschweiz
+2019-01-18-21-13-12  Notice   Billing process modified Mary Bryant: Created bill 20190118M0000136 for Mary Bryant in Piratenpartei Zentralschweiz
+2019-01-18-21-13-13  Notice   Billing process modified Sharon A. Bennett: Created bill 20190118M0000137 for Sharon A. Bennett in Piratenpartei Zentralschweiz
+2019-01-18-21-13-14  Notice   Billing process modified Linda C. S. Ross: Created bill 20190118M0000138 for Linda C. S. Ross in Piratenpartei Zentralschweiz
+2019-01-18-21-13-15  Notice   Billing process modified James M. Harris: Created bill 20190118M0000139 for James M. Harris in Piratenpartei Zentralschweiz
+2019-01-18-21-13-15  Notice   Billing task complete
+2019-01-18-21-13-15  Notice   Running mailing task
+2019-01-18-21-13-15  Verbose  Sending message to "Melissa White" <stefan+melissa.white@savvy.ch>
+2019-01-18-21-13-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-13-16  Info     Message sent to "Melissa White" <stefan+melissa.white@savvy.ch>
+2019-01-18-21-13-16  Notice   Billing process modified Melissa White: Sent bill 20190118M0000131 using template L1G by e-mail to stefan+melissa.white@savvy.ch
+2019-01-18-21-13-16  Verbose  Sending message to "Mark A. Wright" <stefan+mark.wright@savvy.ch>
+2019-01-18-21-13-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-13-16  Info     Message sent to "Mark A. Wright" <stefan+mark.wright@savvy.ch>
+2019-01-18-21-13-16  Notice   Billing process modified Mark A. Wright: Sent bill 20190118M0000132 using template L1G by e-mail to stefan+mark.wright@savvy.ch
+2019-01-18-21-13-16  Verbose  Sending message to "Christopher Kelly" <stefan+christopher.kelly@savvy.ch>
+2019-01-18-21-13-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-13-16  Info     Message sent to "Christopher Kelly" <stefan+christopher.kelly@savvy.ch>
+2019-01-18-21-13-16  Notice   Billing process modified Christopher Kelly: Sent bill 20190118M0000133 using template L1G by e-mail to stefan+christopher.kelly@savvy.ch
+2019-01-18-21-13-16  Verbose  Sending message to "Karen Coleman" <stefan+karen.coleman@savvy.ch>
+2019-01-18-21-13-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-13-16  Info     Message sent to "Karen Coleman" <stefan+karen.coleman@savvy.ch>
+2019-01-18-21-13-16  Notice   Billing process modified Karen Coleman: Sent bill 20190118M0000134 using template L1G by e-mail to stefan+karen.coleman@savvy.ch
+2019-01-18-21-13-16  Verbose  Sending message to "Kevin R. R. Barnes" <stefan+kevin.barnes@savvy.ch>
+2019-01-18-21-13-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-13-17  Info     Message sent to "Kevin R. R. Barnes" <stefan+kevin.barnes@savvy.ch>
+2019-01-18-21-13-17  Notice   Billing process modified Kevin R. R. Barnes: Sent bill 20190118M0000135 using template L1G by e-mail to stefan+kevin.barnes@savvy.ch
+2019-01-18-21-13-17  Notice   Mailing task complete
+2019-01-18-21-18-06  Notice   Running mailing task
+2019-01-18-21-18-06  Notice   Mailing task complete
+2019-01-18-21-18-06  Notice   Running billing task
+2019-01-18-21-18-10  Notice   Billing process modified Donald Harris: Created bill 20190118M0000140 for Donald Harris in Piratenpartei Zentralschweiz
+2019-01-18-21-18-11  Notice   Billing process modified Charles M. Richardson: Created bill 20190118M0000141 for Charles M. Richardson in Piratenpartei Zentralschweiz
+2019-01-18-21-18-12  Notice   Billing process modified Sharon D. D. Wood: Created bill 20190118M0000142 for Sharon D. D. Wood in Piratenpartei Zentralschweiz
+2019-01-18-21-18-13  Notice   Billing process modified Anthony Wright: Created bill 20190118M0000143 for Anthony Wright in Piratenpartei Zentralschweiz
+2019-01-18-21-18-15  Notice   Billing process modified Sandra E. Wright: Created bill 20190118M0000144 for Sandra E. Wright in Piratenpartei Zentralschweiz
+2019-01-18-21-18-15  Notice   Billing task complete
+2019-01-18-21-18-16  Notice   Running mailing task
+2019-01-18-21-18-16  Verbose  Sending message to "Mary Bryant" <stefan+mary.bryant@savvy.ch>
+2019-01-18-21-18-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-18-16  Info     Message sent to "Mary Bryant" <stefan+mary.bryant@savvy.ch>
+2019-01-18-21-18-16  Notice   Billing process modified Mary Bryant: Sent bill 20190118M0000136 using template L1G by e-mail to stefan+mary.bryant@savvy.ch
+2019-01-18-21-18-16  Verbose  Sending message to "Sharon A. Bennett" <stefan+sharon.bennett@savvy.ch>
+2019-01-18-21-18-16  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-18-16  Info     Message sent to "Sharon A. Bennett" <stefan+sharon.bennett@savvy.ch>
+2019-01-18-21-18-16  Notice   Billing process modified Sharon A. Bennett: Sent bill 20190118M0000137 using template L1G by e-mail to stefan+sharon.bennett@savvy.ch
+2019-01-18-21-18-16  Verbose  Sending message to "Linda C. S. Ross" <stefan+linda.ross@savvy.ch>
+2019-01-18-21-18-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-18-17  Info     Message sent to "Linda C. S. Ross" <stefan+linda.ross@savvy.ch>
+2019-01-18-21-18-17  Notice   Billing process modified Linda C. S. Ross: Sent bill 20190118M0000138 using template L1G by e-mail to stefan+linda.ross@savvy.ch
+2019-01-18-21-18-17  Verbose  Sending message to "James M. Harris" <stefan+james.harris@savvy.ch>
+2019-01-18-21-18-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-18-17  Info     Message sent to "James M. Harris" <stefan+james.harris@savvy.ch>
+2019-01-18-21-18-17  Notice   Billing process modified James M. Harris: Sent bill 20190118M0000139 using template L1G by e-mail to stefan+james.harris@savvy.ch
+2019-01-18-21-18-17  Verbose  Sending message to "Donald Harris" <stefan+donald.harris@savvy.ch>
+2019-01-18-21-18-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-18-17  Info     Message sent to "Donald Harris" <stefan+donald.harris@savvy.ch>
+2019-01-18-21-18-17  Notice   Billing process modified Donald Harris: Sent bill 20190118M0000140 using template L1G by e-mail to stefan+donald.harris@savvy.ch
+2019-01-18-21-18-17  Notice   Mailing task complete
+2019-01-18-21-23-06  Notice   Running mailing task
+2019-01-18-21-23-06  Notice   Mailing task complete
+2019-01-18-21-23-06  Notice   Running billing task
+2019-01-18-21-23-11  Notice   Billing process modified Joseph Ramirez: Created bill 20190118M0000145 for Joseph Ramirez in Piratenpartei Zentralschweiz
+2019-01-18-21-23-12  Notice   Billing process modified Carol K. Allen: Created bill 20190118M0000146 for Carol K. Allen in Piratenpartei Zentralschweiz
+2019-01-18-21-23-13  Notice   Billing process modified Shirley D. Lopez: Created bill 20190118M0000147 for Shirley D. Lopez in Piratenpartei Zentralschweiz
+2019-01-18-21-23-14  Notice   Billing process modified Charles Gonzalez: Created bill 20190118M0000148 for Charles Gonzalez in Piratenpartei Zentralschweiz
+2019-01-18-21-23-16  Notice   Billing process modified Margaret Stewart: Created bill 20190118M0000149 for Margaret Stewart in Piratenpartei Zentralschweiz
+2019-01-18-21-23-16  Notice   Billing task complete
+2019-01-18-21-23-17  Notice   Running mailing task
+2019-01-18-21-23-17  Verbose  Sending message to "Charles M. Richardson" <stefan+charles.richardson@savvy.ch>
+2019-01-18-21-23-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-23-17  Info     Message sent to "Charles M. Richardson" <stefan+charles.richardson@savvy.ch>
+2019-01-18-21-23-17  Notice   Billing process modified Charles M. Richardson: Sent bill 20190118M0000141 using template L1G by e-mail to stefan+charles.richardson@savvy.ch
+2019-01-18-21-23-17  Verbose  Sending message to "Sharon D. D. Wood" <stefan+sharon.wood@savvy.ch>
+2019-01-18-21-23-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-23-17  Info     Message sent to "Sharon D. D. Wood" <stefan+sharon.wood@savvy.ch>
+2019-01-18-21-23-17  Notice   Billing process modified Sharon D. D. Wood: Sent bill 20190118M0000142 using template L1G by e-mail to stefan+sharon.wood@savvy.ch
+2019-01-18-21-23-17  Verbose  Sending message to "Anthony Wright" <stefan+anthony.wright@savvy.ch>
+2019-01-18-21-23-17  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-23-18  Info     Message sent to "Anthony Wright" <stefan+anthony.wright@savvy.ch>
+2019-01-18-21-23-18  Notice   Billing process modified Anthony Wright: Sent bill 20190118M0000143 using template L1G by e-mail to stefan+anthony.wright@savvy.ch
+2019-01-18-21-23-18  Verbose  Sending message to "Sandra E. Wright" <stefan+sandra.wright@savvy.ch>
+2019-01-18-21-23-18  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-23-18  Info     Message sent to "Sandra E. Wright" <stefan+sandra.wright@savvy.ch>
+2019-01-18-21-23-18  Notice   Billing process modified Sandra E. Wright: Sent bill 20190118M0000144 using template L1G by e-mail to stefan+sandra.wright@savvy.ch
+2019-01-18-21-23-18  Verbose  Sending message to "Joseph Ramirez" <stefan+joseph.ramirez@savvy.ch>
+2019-01-18-21-23-18  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-21-23-18  Info     Message sent to "Joseph Ramirez" <stefan+joseph.ramirez@savvy.ch>
+2019-01-18-21-23-18  Notice   Billing process modified Joseph Ramirez: Sent bill 20190118M0000145 using template L1G by e-mail to stefan+joseph.ramirez@savvy.ch
+2019-01-18-21-23-18  Notice   Mailing task complete
+2019-01-18-21-28-07  Notice   Running mailing task

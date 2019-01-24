@@ -1,0 +1,34 @@
+2019-01-18-20-38-59  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-20-39-10  Notice   Application started
+2019-01-18-20-39-10  Notice   Running mailing task
+2019-01-18-20-39-10  Notice   Mailing task complete
+2019-01-18-20-39-10  Notice   Running billing task
+2019-01-18-20-39-14  Notice   Billing process modified Jacob Sanders: Created bill 20190118M0000102 for Jacob Sanders in Piratenpartei Zentralschweiz
+2019-01-18-20-39-14  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-20-39-15  Notice   Billing process modified Anna Carter: Created bill 20190118M0000103 for Anna Carter in Piratenpartei Zentralschweiz
+2019-01-18-20-39-17  Notice   Billing process modified Laura K. Lee: Created bill 20190118M0000104 for Laura K. Lee in Piratenpartei Zentralschweiz
+2019-01-18-20-39-18  Notice   Billing process modified Margaret D. B. Jackson: Created bill 20190118M0000105 for Margaret D. B. Jackson in Piratenpartei Zentralschweiz
+2019-01-18-20-39-19  Notice   Billing process modified Brian N. L. Taylor: Created bill 20190118M0000106 for Brian N. L. Taylor in Piratenpartei Zentralschweiz
+2019-01-18-20-39-19  Notice   Billing task complete
+2019-01-18-20-39-19  Notice   Running mailing task
+2019-01-18-20-39-19  Verbose  Sending message to "Matthew Rivera" <stefan+matthew.rivera@savvy.ch>
+2019-01-18-20-39-20  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-39-20  Info     Message sent to "Matthew Rivera" <stefan+matthew.rivera@savvy.ch>
+2019-01-18-20-39-20  Notice   Billing process modified Matthew Rivera: Sent bill 20190118M0000101 using template L1G by e-mail to stefan+matthew.rivera@savvy.ch
+2019-01-18-20-39-20  Verbose  Sending message to "Jacob Sanders" <stefan+jacob.sanders@savvy.ch>
+2019-01-18-20-39-20  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-39-20  Info     Message sent to "Jacob Sanders" <stefan+jacob.sanders@savvy.ch>
+2019-01-18-20-39-20  Notice   Billing process modified Jacob Sanders: Sent bill 20190118M0000102 using template L1G by e-mail to stefan+jacob.sanders@savvy.ch
+2019-01-18-20-39-20  Verbose  Sending message to "Anna Carter" <stefan+anna.carter@savvy.ch>
+2019-01-18-20-39-20  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-39-20  Info     Message sent to "Anna Carter" <stefan+anna.carter@savvy.ch>
+2019-01-18-20-39-20  Notice   Billing process modified Anna Carter: Sent bill 20190118M0000103 using template L1G by e-mail to stefan+anna.carter@savvy.ch
+2019-01-18-20-39-20  Verbose  Sending message to "Laura K. Lee" <stefan+laura.lee@savvy.ch>
+2019-01-18-20-39-20  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-39-20  Info     Message sent to "Laura K. Lee" <stefan+laura.lee@savvy.ch>
+2019-01-18-20-39-20  Notice   Billing process modified Laura K. Lee: Sent bill 20190118M0000104 using template L1G by e-mail to stefan+laura.lee@savvy.ch
+2019-01-18-20-39-20  Verbose  Sending message to "Margaret D. B. Jackson" <stefan+margaret.jackson@savvy.ch>
+2019-01-18-20-39-20  Verbose  Connected to mail server mail.savvy.ch:587
+2019-01-18-20-39-20  Info     Message sent to "Margaret D. B. Jackson" <stefan+margaret.jackson@savvy.ch>
+2019-01-18-20-39-20  Notice   Billing process modified Margaret D. B. Jackson: Sent bill 20190118M0000105 using template L1G by e-mail to stefan+margaret.jackson@savvy.ch
+2019-01-18-20-39-20  Notice   Mailing task complete

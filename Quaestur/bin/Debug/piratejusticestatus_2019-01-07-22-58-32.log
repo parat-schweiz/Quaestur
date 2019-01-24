@@ -1,0 +1,13 @@
+2019-01-07-22-58-32  Notice   Starting Nancy on http://localhost:8888
+2019-01-07-22-58-43  Notice   Application started
+2019-01-07-22-58-43  Notice   Running mailing task
+2019-01-07-22-58-43  Notice   Mailing task complete
+2019-01-07-22-58-58  Notice   User admin id d6d9f80d-7ae4-4adc-b494-802f6a9b8f8b logged in.
+2019-01-07-22-59-07  Notice   admin modified Kenneth Alexander: Changed demography Kenneth Alexander
+2019-01-07-22-59-14  Notice   admin modified Kenneth Alexander: Changed phone number +41 77 260 38 02
+2019-01-07-22-59-30  Notice   admin changed country Schweiz
+2019-01-07-22-59-37  Notice   admin changed state Graubünden
+2019-01-07-22-59-49  Notice   admin added tag test
+2019-01-07-22-59-53  Notice   admin changed tag testtest
+2019-01-07-22-59-58  Notice   admin deleted tag testtest
+2019-01-07-23-00-09  Notice   admin changed phrase Name

@@ -1,0 +1,11 @@
+2019-01-19-01-58-16  Notice   Starting Nancy on http://localhost:8888
+2019-01-19-01-58-27  Notice   Application started
+2019-01-19-01-58-27  Notice   Running mailing task
+2019-01-19-01-58-27  Notice   Mailing task complete
+2019-01-19-01-58-27  Notice   Running billing task
+2019-01-19-01-58-33  Notice   Billing task complete
+2019-01-19-01-58-33  Notice   Running mailing task
+2019-01-19-01-58-33  Notice   Mailing task complete
+2019-01-19-01-58-35  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-19-02-00-25  Notice   admin modified Stefan Thöni: Changed demography Stefan Thöni
+2019-01-19-02-00-34  Notice   admin modified Stefan Thöni: Deleted bill 20190119M0000224

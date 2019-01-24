@@ -1,0 +1,10 @@
+2019-01-14-02-36-23  Notice   Starting Nancy on http://localhost:8888
+2019-01-14-02-36-34  Notice   Application started
+2019-01-14-02-36-34  Notice   Running mailing task
+2019-01-14-02-36-34  Notice   Mailing task complete
+2019-01-14-02-36-47  Notice   User admin id 0970bd76-6eb6-4254-9724-8fb75a2bbf42 logged in.
+2019-01-14-02-36-55  Notice   admin modified Kenneth A. Alexander: Changed mail address stefan+kenneth.alexander@savvy.ch
+2019-01-14-02-37-02  Notice   admin modified Kenneth A. Alexander: Added mail address test
+2019-01-14-02-37-06  Notice   admin modified Kenneth A. Alexander: Deleted mail address test
+2019-01-14-02-37-10  Notice   admin modified Kenneth A. Alexander: Added postal address ,
+2019-01-14-02-37-14  Notice   admin modified Kenneth A. Alexander: Deleted postal address ,

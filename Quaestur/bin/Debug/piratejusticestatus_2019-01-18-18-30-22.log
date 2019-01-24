@@ -1,0 +1,22 @@
+2019-01-18-18-30-22  Notice   Starting Nancy on http://localhost:8888
+2019-01-18-18-30-34  Notice   Application started
+2019-01-18-18-30-34  Notice   Running mailing task
+2019-01-18-18-30-34  Notice   Mailing task complete
+2019-01-18-18-30-34  Notice   Running billing task
+2019-01-18-18-30-36  Notice   Billing process modified Andrew J. D. Hall: Created bill 20190118M0000047 for Andrew J. D. Hall in Piratenpartei Zentralschweiz
+2019-01-18-18-30-38  Notice   Billing process modified Amanda Phillips: Created bill 20190118M0000048 for Amanda Phillips in Piratenpartei Zentralschweiz
+2019-01-18-18-30-39  Notice   Billing process modified Stephanie Anderson: Created bill 20190118M0000049 for Stephanie Anderson in Piratenpartei Zentralschweiz
+2019-01-18-18-30-40  Notice   User admin id 2d14db38-9839-439e-94ca-6a332f8d56c6 logged in.
+2019-01-18-18-30-40  Notice   Billing process modified Joseph P. J. Parker: Created bill 20190118M0000050 for Joseph P. J. Parker in Piratenpartei Zentralschweiz
+2019-01-18-18-30-41  Notice   Billing process modified Gary S. C. Wood: Created bill 20190118M0000051 for Gary S. C. Wood in Piratenpartei Zentralschweiz
+2019-01-18-18-30-41  Notice   Billing task complete
+2019-01-18-18-30-41  Notice   Running mailing task
+2019-01-18-18-30-45  Notice   Billing process modified Ruth Clark: Sent bill 20190118M0000046 using template L1G by post to Nordring 7, 8700 Küsnacht, Schweiz
+2019-01-18-18-30-49  Notice   Billing process modified Andrew J. D. Hall: Sent bill 20190118M0000047 using template L1G by post to Quartiergasse 19, 8600 Dübendorf, Schweiz
+2019-01-18-18-30-53  Notice   Billing process modified Amanda Phillips: Sent bill 20190118M0000048 using template L1G by post to Finkenweg 16, 6900 Lugano, Schweiz
+2019-01-18-18-30-57  Notice   Billing process modified Stephanie Anderson: Sent bill 20190118M0000049 using template L1G by post to Quartiergasse 7, 5600 Lenzburg, Schweiz
+2019-01-18-18-31-01  Notice   Billing process modified Joseph P. J. Parker: Sent bill 20190118M0000050 using template L1G by post to Spiegelstrasse 16, 3900 Brig, Schweiz
+2019-01-18-18-31-01  Notice   Mailing task complete
+2019-01-18-18-31-27  Notice   admin added country Frankreich
+2019-01-18-18-31-34  Notice   admin changed country France
+2019-01-18-18-31-39  Notice   admin changed country Frankreich

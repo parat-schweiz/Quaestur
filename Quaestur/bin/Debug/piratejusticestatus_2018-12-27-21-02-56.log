@@ -1,0 +1,5 @@
+2018-12-27-21-02-56  Error    System.NullReferenceException: Object reference not set to an instance of an object
+2018-12-27-21-02-56  Error    at Quaestur.PostgresDatabase.Query[T] (System.String idString) [0x00001] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:471
+2018-12-27-21-02-56  Error    at Quaestur.PostalAddressEdit.<.ctor>b__1_3 (System.Object parameters) [0x0013b] in /Dev/Code/Quaestur/Quaestur/Module/PostalAddressEdit.cs:210
+2018-12-27-21-02-56  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
+2018-12-27-21-02-56  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

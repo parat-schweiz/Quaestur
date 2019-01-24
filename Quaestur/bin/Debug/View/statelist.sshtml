@@ -1,0 +1,55 @@
+﻿<script>
+$("#stateRowAdd").click(function(){
+  $.get("/state/add", function(data, status){
+    if (data){
+      $('#stateEditDialog').replaceWith(data);
+      $('#stateEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#stateRowEdit@Current.Id").click(function(){
+  $.get("/state/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#stateEditDialog').replaceWith(data);
+      $('#stateEditDialog').modal('show');
+    }
+  });
+});
+$("#stateRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/state/delete/@Current.Id", function(data, status){
+          updateStateList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="90%">@Model.PhraseHeaderName</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="90%" id="stateRowEdit@Current.Id" class="editable">@Current.Name</td>
+      <td width="10%" id="stateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" id="stateRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%" colspan="2"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="stateEditDialog"/>
