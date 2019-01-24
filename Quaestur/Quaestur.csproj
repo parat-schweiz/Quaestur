@@ -134,7 +134,6 @@
     <Compile Include="Infrastructure\UserController.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Model\Seeder.cs">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Compile>
     <Compile Include="Module\PersonListModule.cs" />
     <Compile Include="Module\PersonDetailModule.cs" />
