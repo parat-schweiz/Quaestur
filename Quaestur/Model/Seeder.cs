@@ -15,16 +15,9 @@ namespace Quaestur
             _rnd = new Random(0);
         }
 
-        public void Seed()
+        public void FullSeed()
         {
-            var settings = _db.Query<SystemWideSettings>().SingleOrDefault();
-
-            if (settings == null)
-            {
-                settings = new SystemWideSettings(Guid.NewGuid());
-                settings.Currency.Value = "CHF";
-                _db.Save(settings);
-            }
+            AddSystemWideSettings();
 
             AddAdmin();
 
@@ -39,6 +32,25 @@ namespace Quaestur
             foreach (var o in _db.Query<Organization>())
             {
                 AssignOrgans(o);
+            }
+        }
+
+        public void MinimalSeed()
+        {
+            AddSystemWideSettings();
+
+            AddAdmin();
+        }
+
+        private void AddSystemWideSettings()
+        {
+            var settings = _db.Query<SystemWideSettings>().SingleOrDefault();
+
+            if (settings == null)
+            {
+                settings = new SystemWideSettings(Guid.NewGuid());
+                settings.Currency.Value = "CHF";
+                _db.Save(settings);
             }
         }
 

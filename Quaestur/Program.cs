@@ -12,7 +12,7 @@ namespace Quaestur
             {
                 Model.Install(db);
                 var seeder = new Seeder(db);
-                seeder.Seed();
+                seeder.MinimalSeed();
             }
 
             var uri = "http://localhost:8888";
