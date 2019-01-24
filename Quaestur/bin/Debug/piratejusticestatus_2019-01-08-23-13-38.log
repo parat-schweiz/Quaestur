@@ -1,9 +1,0 @@
-2019-01-08-23-13-38  Notice   Starting Nancy on http://localhost:8888
-2019-01-08-23-13-49  Notice   Application started
-2019-01-08-23-13-49  Notice   Running mailing task
-2019-01-08-23-13-49  Notice   Mailing task complete
-2019-01-08-23-14-06  Notice   User admin id 23e6b47c-5b73-4750-a8ac-950dd886c77a logged in.
-2019-01-08-23-14-19  Verbose  Sending message to stefan@savvy.ch
-2019-01-08-23-14-20  Verbose  Connected to mail server mail.savvy.ch:587
-2019-01-08-23-14-20  Info     Message sent to stefan@savvy.ch
-2019-01-08-23-14-20  Notice   admin tests mailing with subject testc

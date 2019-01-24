@@ -1,8 +1,0 @@
-2018-12-28-23-06-59  Error    System.Exception: Reference personid must not be null.
-2018-12-28-23-06-59  Error    at Quaestur.ForeignKeyField`2[T,P].Validate () [0x00025] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Field.cs:703
-2018-12-28-23-06-59  Error    at Quaestur.DatabaseObject.Validate () [0x00019] in /Dev/Code/Quaestur/Quaestur/Infrastructure/DatabaseObject.cs:33
-2018-12-28-23-06-59  Error    at Quaestur.PostgresDatabase.Insert (Quaestur.DatabaseObject obj) [0x0001a] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:142
-2018-12-28-23-06-59  Error    at Quaestur.PostgresDatabase.Save (Quaestur.DatabaseObject obj) [0x00043] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:410
-2018-12-28-23-06-59  Error    at Quaestur.PostalAddressEdit.<.ctor>b__1_5 (System.Object parameters) [0x00097] in /Dev/Code/Quaestur/Quaestur/Module/PostalAddressEdit.cs:256
-2018-12-28-23-06-59  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
-2018-12-28-23-06-59  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

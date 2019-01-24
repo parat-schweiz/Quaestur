@@ -1,6 +1,0 @@
-2019-01-07-19-08-48  Notice   Starting Nancy on http://localhost:8888
-2019-01-07-19-08-59  Notice   Application started
-2019-01-07-19-08-59  Notice   Running mailing task
-2019-01-07-19-08-59  Notice   Mailing task complete
-2019-01-07-19-09-03  Notice   User admin id 5d941326-7f3b-4618-8572-e5e8303a77ce logged in.
-2019-01-07-19-09-12  Notice   admin modified Kenneth Alexander: Downloaded document System.Linq.Enumerable+SelectArrayIterator`2[System.Func`2[Quaestur.Translator,System.String],System.String]

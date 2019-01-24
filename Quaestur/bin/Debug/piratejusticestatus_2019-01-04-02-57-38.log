@@ -1,8 +1,0 @@
-2019-01-04-02-57-38  Error    System.Exception: String plaintext must not be null.
-2019-01-04-02-57-38  Error    at Quaestur.StringField.Validate () [0x0000f] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Field.cs:427
-2019-01-04-02-57-38  Error    at Quaestur.DatabaseObject.Validate () [0x00019] in /Dev/Code/Quaestur/Quaestur/Infrastructure/DatabaseObject.cs:33
-2019-01-04-02-57-38  Error    at Quaestur.PostgresDatabase.Insert (Quaestur.DatabaseObject obj) [0x0001a] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:199
-2019-01-04-02-57-38  Error    at Quaestur.PostgresDatabase.Save (Quaestur.DatabaseObject obj) [0x0004d] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:499
-2019-01-04-02-57-38  Error    at Quaestur.MailingElementEdit.<.ctor>b__1_5 (System.Object parameters) [0x000fc] in /Dev/Code/Quaestur/Quaestur/Module/MailingElementModule.cs:170
-2019-01-04-02-57-38  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
-2019-01-04-02-57-38  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0

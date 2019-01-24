@@ -1,9 +1,0 @@
-2019-01-14-18-21-33  Notice   Starting Nancy on http://localhost:8888
-2019-01-14-18-21-44  Notice   Application started
-2019-01-14-18-21-44  Notice   Running mailing task
-2019-01-14-18-21-44  Notice   Mailing task complete
-2019-01-14-18-21-44  Notice   Running billing task
-2019-01-14-18-21-45  Notice   Billing task complete
-2019-01-14-18-22-01  Notice   User admin id 783092c6-3b5f-4a40-bfe3-bd9ca9ee7bfc logged in.
-2019-01-14-18-22-15  Notice   admin changed membership type Mitglied
-2019-01-14-18-22-24  Notice   admin changed payment parameter types of Mitglied

@@ -1,8 +1,0 @@
-2019-01-04-19-59-15  Error    System.Exception: Reference creatorid must not be null.
-2019-01-04-19-59-15  Error    at Quaestur.ForeignKeyField`2[T,P].Validate () [0x00025] in /Dev/Code/Quaestur/Quaestur/Infrastructure/Field.cs:691
-2019-01-04-19-59-15  Error    at Quaestur.DatabaseObject.Validate () [0x00019] in /Dev/Code/Quaestur/Quaestur/Infrastructure/DatabaseObject.cs:33
-2019-01-04-19-59-15  Error    at Quaestur.PostgresDatabase.Insert (Quaestur.DatabaseObject obj) [0x0001a] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:199
-2019-01-04-19-59-15  Error    at Quaestur.PostgresDatabase.Save (Quaestur.DatabaseObject obj) [0x0004d] in /Dev/Code/Quaestur/Quaestur/Infrastructure/PostgresDatabase.cs:499
-2019-01-04-19-59-15  Error    at Quaestur.MailingModule.<.ctor>b__2_3 (System.Object parameters) [0x0018b] in /Dev/Code/Quaestur/Quaestur/Module/MailingModule.cs:256
-2019-01-04-19-59-15  Error    at (wrapper dynamic-method) System.Object.CallSite.Target(System.Runtime.CompilerServices.Closure,System.Runtime.CompilerServices.CallSite,System.Func`2<object, object>,object)
-2019-01-04-19-59-15  Error    at Nancy.Routing.Route+<>c__DisplayClass15_0.<Wrap>b__0 (System.Object parameters, System.Threading.CancellationToken context) [0x00047] in <b19e8b2217d04f0da83734dfcf376ab0>:0
