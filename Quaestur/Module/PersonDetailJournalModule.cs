@@ -18,7 +18,7 @@ namespace Quaestur
         public PersonDetailJournalItemViewModel(Translator translator, JournalEntry entry)
         {
             Id = entry.Id.Value.ToString();
-            Moment = entry.Moment.Value.ToString("dd.MM.yyyy HH:mm");
+            Moment = entry.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
             Subject = entry.Subject.Value.EscapeHtml();
             Text = entry.Text.Value.EscapeHtml();
         }
