@@ -67,7 +67,7 @@ $("#@Model.ButtonId").click(function() {
 });
 $('.datepicker').datepicker({
     format: 'dd.mm.yyyy',
-    startDate: '-365d'
+    startDate: '-3650d'
 });
 $('.selectpicker').selectpicker();
 </script>

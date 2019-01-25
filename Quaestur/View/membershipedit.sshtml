@@ -50,7 +50,7 @@ $("#@Model.ButtonId").click(function() {
 });
 $('.datepicker').datepicker({
     format: 'dd.mm.yyyy',
-    startDate: '-1825d'
+    startDate: '-3650d'
 });
 $('.selectpicker').selectpicker();
 $('#membershipOrganization').on('change', function() {
