@@ -45,12 +45,12 @@ namespace Quaestur
 
         public override string ToString()
         {
-            return Group.ToString() + " / " + Name.Value;
+            return Group.ToString() + " / " + Name.Value.AnyValue;
         }
 
         public override string GetText(Translator translator)
         {
-            return Group.GetText(translator) + " / " + Name.Value;
+            return Group.GetText(translator) + " / " + Name.Value[translator.Language];
         }
     }
 }
