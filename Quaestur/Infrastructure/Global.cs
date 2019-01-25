@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Linq;
+using System.Collections.Generic;
+using System.IO;
 
 namespace Quaestur
 {
@@ -22,6 +25,28 @@ namespace Quaestur
             } 
         }
 
+        private static IEnumerable<string> ConfigPaths
+        {
+            get
+            {
+                yield return "/Security/Test/quaestur.xml";
+                yield return "config.xml";
+            }
+        }
+
+        private static string FirstFileExists(IEnumerable<string> paths)
+        {
+            foreach (var path in paths)
+            {
+                if (File.Exists(path))
+                {
+                    return path; 
+                }
+            }
+
+            return null;
+        }
+
         public static Config Config
 		{
 			get
@@ -29,7 +54,7 @@ namespace Quaestur
 				if (_config == null)
 				{
 					_config = new Config();
-					_config.Load("/Security/Test/quaestur.xml");
+					_config.Load(FirstFileExists(ConfigPaths));
 				}
 
 				return _config;
