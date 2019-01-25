@@ -251,7 +251,6 @@ namespace Quaestur
 
         public MailingListItemViewModel(Translator translator, Session session, Mailing mailing)
         {
-            Id = mailing.Id.Value.ToString();
             Title = mailing.Title.Value.EscapeHtml();
             Organization = mailing.RecipientOrganization.Value.Name.Value[translator.Language].EscapeHtml();
             Creator = mailing.Creator.Value.ShortHand.EscapeHtml();
@@ -296,10 +295,10 @@ namespace Quaestur
                     break;
             }
 
-            Editable =
-                session.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
-                mailing.Status.Value == MailingStatus.New ?
-                "editable" : "accessdenied";
+            bool editable = session.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
+                mailing.Status.Value == MailingStatus.New;
+            Editable = editable ? "editable" : "accessdenied";
+            Id = editable ? mailing.Id.Value.ToString() : string.Empty;
             PhraseDeleteConfirmationQuestion = translator.Get("Mailing.List.Delete.Confirm.Question", "Delete mailing confirmation question", "Do you really wish to delete mailing {0}?", mailing.GetText(translator)).EscapeHtml();
         }
     }
@@ -400,13 +399,14 @@ namespace Quaestur
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
 
-                if (mailing != null)
+                if (mailing != null &&
+                    mailing.Status.Value == MailingStatus.New)
                 {
                     return View["View/mailingedit.sshtml",
                         new MailingEditViewModel(Translator, Database, CurrentSession, mailing)];
                 }
 
-                return null;
+                return Response.AsRedirect("/mailing");
             };
             Post["/mailing/edit/{id}"] = parameters =>
             {
@@ -417,27 +417,34 @@ namespace Quaestur
 
                 if (status.ObjectNotNull(mailing))
                 {
-                    status.AssignStringRequired("Title", mailing.Title, model.Title);
-                    status.AssignObjectIdString("RecipientOrganization", mailing.RecipientOrganization, model.RecipientOrganization);
-                    status.AssignObjectIdString("RecipientTag", mailing.RecipientTag, model.RecipientTag);
-                    status.AssignEnumIntString("RecipientLanguage", mailing.RecipientLanguage, model.RecipientLanguage);
-                    status.AssignObjectIdString("SenderGroup", mailing.Sender, model.SenderGroup);
-                    status.AssignObjectIdString("Header", mailing.Header, model.Header);
-                    status.AssignObjectIdString("Footer", mailing.Footer, model.Footer);
-                    status.AssignStringRequired("Subject", mailing.Subject, model.Subject);
-                    var worker = new HtmlWorker(model.HtmlText);
-                    mailing.HtmlText.Value = worker.CleanHtml;
-                    mailing.PlainText.Value = worker.PlainText;
-                    mailing.Creator.Value = CurrentSession.User;
-
-                    if (status.IsSuccess)
+                    if (mailing.Status.Value == MailingStatus.New)
                     {
-                        if (status.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
-                            (mailing.Sender.Value == null || status.HasAccess(mailing.Sender.Value, PartAccess.Mailings, AccessRight.Write)))
+                        status.AssignStringRequired("Title", mailing.Title, model.Title);
+                        status.AssignObjectIdString("RecipientOrganization", mailing.RecipientOrganization, model.RecipientOrganization);
+                        status.AssignObjectIdString("RecipientTag", mailing.RecipientTag, model.RecipientTag);
+                        status.AssignEnumIntString("RecipientLanguage", mailing.RecipientLanguage, model.RecipientLanguage);
+                        status.AssignObjectIdString("SenderGroup", mailing.Sender, model.SenderGroup);
+                        status.AssignObjectIdString("Header", mailing.Header, model.Header);
+                        status.AssignObjectIdString("Footer", mailing.Footer, model.Footer);
+                        status.AssignStringRequired("Subject", mailing.Subject, model.Subject);
+                        var worker = new HtmlWorker(model.HtmlText);
+                        mailing.HtmlText.Value = worker.CleanHtml;
+                        mailing.PlainText.Value = worker.PlainText;
+                        mailing.Creator.Value = CurrentSession.User;
+
+                        if (status.IsSuccess)
                         {
-                            Database.Save(mailing);
-                            Notice("{0} changed mailing {1}", CurrentSession.User.ShortHand, mailing);
+                            if (status.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
+                                (mailing.Sender.Value == null || status.HasAccess(mailing.Sender.Value, PartAccess.Mailings, AccessRight.Write)))
+                            {
+                                Database.Save(mailing);
+                                Notice("{0} changed mailing {1}", CurrentSession.User.ShortHand, mailing);
+                            }
                         }
+                    }
+                    else
+                    {
+                        status.SetErrorAccessDenied(); 
                     }
                 }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using MimeKit;
 
 namespace Quaestur
 {
@@ -136,9 +137,13 @@ namespace Quaestur
                                 new GpgPrivateKeyInfo(
                                 mailing.Sender.Value.GpgKeyId.Value,
                                 mailing.Sender.Value.GpgKeyPassphrase.Value);
-                            var content = new MimeKit.Multipart("alternative");
-                            content.Add(new MimeKit.TextPart("plain") { Text = plainText });
-                            content.Add(new MimeKit.TextPart("html") { Text = htmlText });
+                            var content = new Multipart("alternative");
+                            var textPart = new TextPart("plain") { Text = plainText };
+                            textPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                            content.Add(textPart);
+                            var htmlPart = new TextPart("html") { Text = htmlText };
+                            htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                            content.Add(htmlPart);
 
                             Global.Mail.Send(from, to, senderKey, null, mailing.Subject.Value, content);
                             sending.Status.Value = SendingStatus.Sent;

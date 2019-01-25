@@ -3,7 +3,9 @@ $("#mailingRowAdd").click(function(){
   window.location.href = "/mailing/add";
 });
 function showEditMailing(id){
-  window.location.href = "/mailing/edit/" + id;
+  if (id){
+    window.location.href = "/mailing/edit/" + id;
+  }
 }
 @Each.List
 $("#mailingRowEdit1@Current.Id").click(function(){
