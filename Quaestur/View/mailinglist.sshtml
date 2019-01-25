@@ -9,16 +9,16 @@ function showEditMailing(id){
 }
 @Each.List
 $("#mailingRowEdit1@Current.Id").click(function(){
-  showEditMailing("@Current.Id");
+  showEditMailing("@Current.EditId");
 });
 $("#mailingRowEdit2@Current.Id").click(function(){
-  showEditMailing("@Current.Id");
+  showEditMailing("@Current.EditId");
 });
 $("#mailingRowEdit3@Current.Id").click(function(){
-  showEditMailing("@Current.Id");
+  showEditMailing("@Current.EditId");
 });
 $("#mailingRowEdit4@Current.Id").click(function(){
-  showEditMailing("@Current.Id");
+  showEditMailing("@Current.EditId");
 });
 $("#mailingRowDelete@Current.Id").click(function(){
   $.confirm({
@@ -58,8 +58,8 @@ $("#mailingRowCopy@Current.Id").click(function(){
       <td width="23%" id="mailingRowEdit2@Current.Id" class="@Current.Editable">@Current.Organization</td>
       <td width="23%" id="mailingRowEdit3@Current.Id" class="@Current.Editable">@Current.Status</td>
       <td width="23%" id="mailingRowEdit4@Current.Id" class="@Current.Editable">@Current.Creator</td>
-      <td width="4%" id="mailingRowCopy@Current.Id" class="@Current.Editable"><span class="fas fa-copy"></span></td>
-      <td width="4%" id="mailingRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="4%" id="mailingRowCopy@Current.Id" class="@Current.Copyable"><span class="fas fa-copy"></span></td>
+      <td width="4%" id="mailingRowDelete@Current.Id" class="@Current.Copyable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class='centering clickable-row'>

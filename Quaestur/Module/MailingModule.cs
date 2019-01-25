@@ -242,11 +242,13 @@ namespace Quaestur
     public class MailingListItemViewModel
     {
         public string Id;
+        public string EditId;
         public string Title;
         public string Organization;
         public string Status;
         public string Creator;
         public string Editable;
+        public string Copyable;
         public string PhraseDeleteConfirmationQuestion;
 
         public MailingListItemViewModel(Translator translator, Session session, Mailing mailing)
@@ -295,10 +297,12 @@ namespace Quaestur
                     break;
             }
 
-            bool editable = session.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
-                mailing.Status.Value == MailingStatus.New;
+            Id = mailing.Id.Value.ToString();
+            bool access = session.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write);
+            Copyable = access ? "editable" : "accessdenied";
+            bool editable = access && mailing.Status.Value == MailingStatus.New;
             Editable = editable ? "editable" : "accessdenied";
-            Id = editable ? mailing.Id.Value.ToString() : string.Empty;
+            EditId = editable ? mailing.Id.Value.ToString() : string.Empty;
             PhraseDeleteConfirmationQuestion = translator.Get("Mailing.List.Delete.Confirm.Question", "Delete mailing confirmation question", "Do you really wish to delete mailing {0}?", mailing.GetText(translator)).EscapeHtml();
         }
     }
