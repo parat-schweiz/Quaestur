@@ -1,6 +1,6 @@
-﻿@Master['View/dialog.sshtml']
+﻿@Master['View/master.sshtml']
 
-@Section['body']
+@Section['script']
 <script>
 function assignFieldValidation(field, result){
   var fieldId = '#mailingElement' + field;
@@ -33,23 +33,26 @@ function assignValidation(resultData){
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
-$("#@Model.ButtonId").click(function() {
-  var formData = new Object();
-  formData.Owner = $("#mailingElementOwner").val();
-  formData.Name = $("#mailingElementName").val();
-  formData.Type = $("#mailingElementType").val();
-  formData.HtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
-  $.post("/mailingelement/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
-    if (assignValidation(resultData)) {
-      $('#@Model.DialogId').modal('hide');
-      updateMailingElementList();
-      $('.modal-backdrop').remove();
-    }
+$(document).ready(function() {
+  $("#mailingCancelButton").click(function(event) {
+    window.location.href = "/mailingelement";
+    event.preventDefault();  
   });
-});
-$('.selectpicker').selectpicker();
-function initTinyMce(){
-  tinymce.init({
+  $("#mailingSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Owner = $("#mailingElementOwner").val();
+    formData.Name = $("#mailingElementName").val();
+    formData.Type = $("#mailingElementType").val();
+    formData.HtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
+    $.post("/mailingelement/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/mailingelement";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+    tinymce.init({
     selector: '#@Model.HtmlEditorId',
     theme: 'modern',
     height: 300,
@@ -59,8 +62,11 @@ function initTinyMce(){
       'save table contextmenu directionality emoticons template paste textcolor'
     ],
   });
-}
+});
 </script>
+@EndSection
+
+@Section['data']
 <div class="container">
   <form>
     <div class="form-row">
@@ -98,6 +104,8 @@ function initTinyMce(){
         <textarea id="@Model.HtmlEditorId">@Model.HtmlText</textarea>
       </div>
     </div>
+    <button id="mailingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="mailingSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
   </form>
 </div>
 @EndSection

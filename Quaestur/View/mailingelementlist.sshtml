@@ -1,31 +1,16 @@
 ﻿<script>
 $("#mailingElementRowAdd").click(function(){
-  $.get("/mailingelement/add", function(data, status){
-    if (data){
-      $('#mailingElementEditDialog').replaceWith(data);
-      $('#mailingElementEditDialog').modal('show');
-      initTinyMce();
-    }
-  });
+  window.location.href = "/mailingelement/add";
 });
-function showEditMailingElementDialog(id){
-  $.get("/mailingelement/edit/" + id, function(data, status){
-    if (data){
-      $('#mailingElementEditDialog').replaceWith(data);
-      $('#mailingElementEditDialog').modal('show');
-      initTinyMce();
-    }
-  });
-}
 @Each.List
 $("#mailingElementRowEdit1@Current.Id").click(function(){
-  showEditMailingElementDialog("@Current.Id");
+  window.location.href = "/mailingelement/edit/@Current.Id";
 });
 $("#mailingElementRowEdit2@Current.Id").click(function(){
-  showEditMailingElementDialog("@Current.Id");
+  window.location.href = "/mailingelement/edit/@Current.Id";
 });
 $("#mailingElementRowEdit3@Current.Id").click(function(){
-  showEditMailingElementDialog("@Current.Id");
+  window.location.href = "/mailingelement/edit/@Current.Id";
 });
 $("#mailingElementRowDelete@Current.Id").click(function(){
   $.confirm({
@@ -67,4 +52,3 @@ $("#mailingElementRowDelete@Current.Id").click(function(){
     </tr>
   </tbody>
 </table>
-<div id="mailingElementEditDialog"/>

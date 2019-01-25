@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace Quaestur
 {
-    public class MailingElementEditViewModel : DialogViewModel
+    public class MailingElementEditViewModel : MasterViewModel
     {
         public string Method;
         public string Id;
@@ -23,22 +23,26 @@ namespace Quaestur
         public string PhraseFieldName;
         public string PhraseFieldType;
         public string PhraseFieldHtmlText;
+        public string PhraseButtonCancel;
+        public string PhraseButtonSave;
 
         public MailingElementEditViewModel()
         { 
         }
 
-        public MailingElementEditViewModel(Translator translator)
-            : base(translator, translator.Get("MailingElement.Edit.Title", "Title of the mailingElement edit dialog", "Edit mailing element"), "mailingElementEditDialog")
+        public MailingElementEditViewModel(Translator translator, Session session)
+            : base(translator, translator.Get("MailingElement.Edit.Title", "Title of the mailingElement edit dialog", "Edit mailing element"), session)
         {
-            PhraseFieldOwner = translator.Get("MailingElement.Edit.Field.Owner", "Owner field in the mailingElement edit dialog", "Owner").EscapeHtml();
-            PhraseFieldName = translator.Get("MailingElement.Edit.Field.Name", "Name field in the mailingElement edit dialog", "Name").EscapeHtml();
-            PhraseFieldType = translator.Get("MailingElement.Edit.Field.Type", "Type field in the mailingElement edit dialog", "Type").EscapeHtml();
-            PhraseFieldHtmlText = translator.Get("MailingElement.Edit.Field.HtmlText", "Text field in the mailingElement edit dialog", "Text").EscapeHtml();
+            PhraseFieldOwner = translator.Get("MailingElement.Edit.Field.Owner", "Owner field in the mailing element edit page", "Owner").EscapeHtml();
+            PhraseFieldName = translator.Get("MailingElement.Edit.Field.Name", "Name field in the mailing element edit page", "Name").EscapeHtml();
+            PhraseFieldType = translator.Get("MailingElement.Edit.Field.Type", "Type field in the mailing element edit page", "Type").EscapeHtml();
+            PhraseFieldHtmlText = translator.Get("MailingElement.Edit.Field.HtmlText", "Text field in the mailing element edit page", "Text").EscapeHtml();
+            PhraseButtonCancel = translator.Get("MailingElement.Edit.Button.Cancel", "Cancel button in the mailing element edit page", "Cancel").EscapeHtml();
+            PhraseButtonSave = translator.Get("MailingElement.Edit.Button.Save", "Save button in the mailing element edit page", "Save").EscapeHtml();
         }
 
         public MailingElementEditViewModel(Translator translator, IDatabase db, Session session)
-            : this(translator)
+            : this(translator, session)
         {
             Method = "add";
             Id = "new";
@@ -58,7 +62,7 @@ namespace Quaestur
         }
 
         public MailingElementEditViewModel(Translator translator, IDatabase db, Session session, MailingElement mailingElement)
-            : this(translator)
+            : this(translator, session)
         {
             Method = "edit";
             Id = mailingElement.Id.ToString();
