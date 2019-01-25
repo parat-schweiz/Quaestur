@@ -20,7 +20,8 @@ namespace Quaestur
 
                 if (person != null)
                 {
-                    if (HasAccess(person, PartAccess.Contact, AccessRight.Write))
+                    if (HasAccess(person, PartAccess.Contact, AccessRight.Write) &&
+                        (person != CurrentSession.User))
                     {
                         person.Deleted.Value = true;
                         Database.Save(person);
@@ -40,7 +41,8 @@ namespace Quaestur
 
                 if (person != null)
                 {
-                    if (HasAccess(person, PartAccess.Deleted, AccessRight.Write))
+                    if (HasAccess(person, PartAccess.Deleted, AccessRight.Write) &&
+                        (person != CurrentSession.User))
                     {
                         person.Deleted.Value = false;
                         Database.Save(person);
@@ -60,7 +62,8 @@ namespace Quaestur
 
                 if (person != null)
                 {
-                    if (HasAccess(person, PartAccess.Deleted, AccessRight.Write))
+                    if (HasAccess(person, PartAccess.Deleted, AccessRight.Write) &&
+                        (person != CurrentSession.User))
                     {
                         using (var transaction = Database.BeginTransaction())
                         {

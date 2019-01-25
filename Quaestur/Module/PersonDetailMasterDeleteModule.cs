@@ -44,7 +44,8 @@ namespace Quaestur
             List = new List<PersonDetailDeleteItemViewModel>();
 
             if (!person.Deleted &&
-                session.HasAccess(person, PartAccess.Contact, AccessRight.Write))
+                session.HasAccess(person, PartAccess.Contact, AccessRight.Write) &&
+                (person != session.User))
             {
                 List.Add(new PersonDetailDeleteItemViewModel(
                     "personDeleteMark",
@@ -55,7 +56,8 @@ namespace Quaestur
             }
 
             if (person.Deleted &&
-                session.HasAccess(person, PartAccess.Deleted, AccessRight.Write))
+                session.HasAccess(person, PartAccess.Deleted, AccessRight.Write) &&
+                (person != session.User))
             {
                 List.Add(new PersonDetailDeleteItemViewModel(
                     "personDeleteUnmark",
@@ -66,7 +68,8 @@ namespace Quaestur
             }
 
             if (person.Deleted &&
-                session.HasAccess(person, PartAccess.Deleted, AccessRight.Write))
+                session.HasAccess(person, PartAccess.Deleted, AccessRight.Write) &&
+                (person != session.User))
             {
                 List.Add(new PersonDetailDeleteItemViewModel(
                     "personDeleteHard",
