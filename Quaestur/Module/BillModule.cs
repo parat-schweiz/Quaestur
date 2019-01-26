@@ -151,6 +151,7 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
+                            bill.Membership.Value.UpdateVotingRight(Database);
                             Database.Save(bill);
                             Journal(bill.Membership.Value.Person.Value,
                                 "Bill.Journal.Edit",
@@ -203,6 +204,7 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
+                            bill.Membership.Value.UpdateVotingRight(Database);
                             Database.Save(bill);
                             Journal(bill.Membership.Value.Person.Value,
                                 "Bill.Journal.Add",

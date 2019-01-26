@@ -99,15 +99,24 @@ namespace Quaestur
 
         public string HasVotingRight(IDatabase database, Translator translator)
         {
+            foreach (var membership in Memberships)
+            {
+                if (!membership.HasVotingRight.Value.HasValue)
+                {
+                    membership.UpdateVotingRight(database);
+                    database.Save(membership);
+                }
+            }
+
             if (Memberships.Count < 1)
             {
                 return translator.Get("Person.VotingRight.NotApplicable", "When voting right is not applicable because there is no membership", "N/A");
             }
-            else if (Memberships.All(m => m.HasVotingRight(database)))
+            else if (Memberships.All(m => m.HasVotingRight.Value.Value))
             {
                 return translator.Get("Person.VotingRight.Yes", "When the person has voting right in all of her memberships", "Yes");
             }
-            else if (Memberships.Any(m => m.HasVotingRight(database)))
+            else if (Memberships.Any(m => m.HasVotingRight.Value.Value))
             {
                 return translator.Get("Person.VotingRight.Partial", "When the person has voting right in some but not all of her memberships", "Partial");
             }

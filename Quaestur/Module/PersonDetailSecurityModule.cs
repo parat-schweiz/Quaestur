@@ -56,8 +56,7 @@ namespace Quaestur
                     translator.Get("Security.Password.None", "None value for the security tab of the person detail page", "Not set") :
                     translator.Get("Security.Password.Some", "Some value for the security tab of the person detail page", "************"),
                 person == session.User ? "/password/change/" : "/password/set/",
-                session.HasAccess(person, PartAccess.Security, AccessRight.Write) &&
-                session.HasAllAccessOf(person)));
+                true));
 
             if (session.User == person)
             {

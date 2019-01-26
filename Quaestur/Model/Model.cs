@@ -5,7 +5,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 4;
+        public static int CurrentVersion = 5;
 
         public static void Install(IDatabase database)
         {
@@ -76,6 +76,9 @@ namespace Quaestur
                     break;
                 case 4:
                     database.AddColumn<Person>(p => p.TwoFactorSecret);
+                    break;
+                case 5:
+                    database.AddColumn<Membership>(m => m.HasVotingRight);
                     break;
                 default:
                     throw new NotSupportedException();

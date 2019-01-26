@@ -9,16 +9,16 @@ function showEditMailing(id){
 }
 @Each.List
 $("#mailingRowEdit1@Current.Id").click(function(){
-  showEditMailing("@Current.EditId");
+  showEditMailing("@Current.Id");
 });
 $("#mailingRowEdit2@Current.Id").click(function(){
-  showEditMailing("@Current.EditId");
+  showEditMailing("@Current.Id");
 });
 $("#mailingRowEdit3@Current.Id").click(function(){
-  showEditMailing("@Current.EditId");
+  showEditMailing("@Current.Id");
 });
 $("#mailingRowEdit4@Current.Id").click(function(){
-  showEditMailing("@Current.EditId");
+  showEditMailing("@Current.Id");
 });
 $("#mailingRowDelete@Current.Id").click(function(){
   $.confirm({

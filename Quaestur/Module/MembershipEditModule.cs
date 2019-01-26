@@ -138,7 +138,8 @@ namespace Quaestur
                         status.AssignDateString("EndDate", membership.EndDate, model.EndDate);
 
                         if (status.IsSuccess)
-                        { 
+                        {
+                            membership.UpdateVotingRight(Database);
                             Database.Save(membership);
                             Journal(membership.Person.Value,
                                 "Membership.Journal.Edit",
@@ -187,6 +188,7 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
+                            membership.UpdateVotingRight(Database);
                             Database.Save(membership);
                             Journal(membership.Person.Value,
                                 "Membership.Journal.Add",

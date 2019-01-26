@@ -9,6 +9,137 @@ using MimeKit;
 
 namespace Quaestur
 {
+    public class MailingSendingViewModel
+    {
+        public string Name;
+        public string Address;
+        public string Status;
+
+        public MailingSendingViewModel(Translator translator, Sending sending)
+        {
+            Name = sending.Address.Value.Person.Value.ShortHand;
+            Address = sending.Address.Value.Address.Value;
+
+            var sentDate =
+                sending.SentDate.Value.HasValue ?
+                sending.SentDate.Value.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm") :
+                string.Empty;
+
+            switch (sending.Status.Value)
+            {
+                case SendingStatus.Created:
+                    Status = translator.Get("Mailing.Sending.Field.Status.Sending", "Sending value in the sending status field the scheduled mailing page", "Sending").EscapeHtml();
+                    break;
+                case SendingStatus.Sent:
+                    Status = translator.Get("Mailing.Sending.Field.Status.Sent", "Sent value in the sending status field the scheduled mailing page", "Sent at {0}", sentDate).EscapeHtml();
+                    break;
+                case SendingStatus.Failed:
+                    Status = translator.Get("Mailing.Sending.Field.Status.Failed", "Failed value in the sending status field the scheduled mailing page", "Failed at {0} width message '{1}'", sentDate, sending.FailureMessage.Value ?? string.Empty).EscapeHtml();
+                    break;
+                default:
+                    throw new NotSupportedException(); 
+            } 
+        }
+    }
+
+    public class MailingScheduledViewModel : MasterViewModel
+    {
+        public string PhraseFieldTitle;
+        public string PhraseFieldRecipients;
+        public string PhraseFieldSubject;
+        public string PhraseFieldStatus;
+        public string PhraseButtonAbort;
+        public string PhraseButtonBack;
+        public string PhraseFieldSendingName;
+        public string PhraseFieldSendingAddress;
+        public string PhraseFieldSendingStatus;
+
+        public string Id;
+        public string Recipients;
+        public string Subject;
+        public string Status;
+        public bool Cancelable;
+
+        public List<MailingSendingViewModel> Sendings;
+
+        private MailingScheduledViewModel(Translator translator, Session session)
+            : base(translator,
+                   translator.Get("Mailing.Scheduled.Title", "Title of the scheduled mailing page", "Scheduled mailing"),
+                   session)
+        {
+            PhraseFieldTitle = translator.Get("Mailing.Scheduled.Field.Title", "Title field the scheduled mailing page", "Title").EscapeHtml();
+            PhraseFieldRecipients = translator.Get("Mailing.Scheduled.Field.Recipients", "Recipients field the scheduled mailing page", "Recipients").EscapeHtml();
+            PhraseFieldSubject = translator.Get("Mailing.Scheduled.Field.Subject", "Subject field the scheduled mailing page", "Subject").EscapeHtml();
+            PhraseFieldStatus = translator.Get("Mailing.Scheduled.Field.Status", "Status field the scheduled mailing page", "Status").EscapeHtml();
+            PhraseButtonAbort = translator.Get("Mailing.Scheduled.Button.Abort", "Abort button the scheduled mailing page", "Abort").EscapeHtml();
+            PhraseButtonBack = translator.Get("Mailing.Scheduled.Button.Back", "Back button the scheduled mailing page", "Back").EscapeHtml();
+            PhraseFieldSendingName = translator.Get("Mailing.Sending.Field.Name", "Sending name field the scheduled mailing page", "Name").EscapeHtml();
+            PhraseFieldSendingAddress = translator.Get("Mailing.Sending.Field.Address", "Sending address field the scheduled mailing page", "Address").EscapeHtml();
+            PhraseFieldSendingStatus = translator.Get("Mailing.Sending.Field.Status", "Sending status field the scheduled mailing page", "Status").EscapeHtml();
+        }
+
+        public MailingScheduledViewModel(Translator translator, IDatabase db, Session session, Mailing mailing)
+            : this(translator, session)
+        {
+            Id = mailing.Id.Value.ToString();
+            Title = mailing.Title.Value.EscapeHtml();
+            Recipients = mailing.RecipientOrganization.Value.Name.Value[translator.Language];
+
+            if (mailing.RecipientTag.Value != null)
+            {
+                Recipients = " / " + mailing.RecipientTag.Value.Name.Value[translator.Language];
+            }
+
+            if (mailing.RecipientLanguage.Value.HasValue)
+            {
+                Recipients = " / " + mailing.RecipientLanguage.Value.Value.Translate(translator);
+            }
+
+            var number = db
+                .Query<Person>()
+                .Count(p => p.ActiveMemberships.Any(m => m.Organization == mailing.RecipientOrganization.Value) &&
+                      (mailing.RecipientTag.Value == null || p.TagAssignments.Any(t => t.Tag == mailing.RecipientTag.Value)));
+
+            Recipients +=  " / " + translator.Get("Mailing.Scheduled.Fields.Recipients.Contacts", "Contacts in the recipients field on the scheduled mailing page", "circa {0} contacts", number);
+
+            Subject = mailing.Subject.Value.EscapeHtml();
+
+            var sendingDate =
+                mailing.SendingDate.Value.HasValue ?
+                mailing.SendingDate.Value.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm") :
+                string.Empty;
+            var sentDate =
+                mailing.SentDate.Value.HasValue ?
+                mailing.SentDate.Value.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm") :
+                string.Empty;
+
+            switch (mailing.Status.Value)
+            {
+                case MailingStatus.Scheduled:
+                    Status = translator.Get("Mailing.Scheduled.Field.Status.Scheduled", "Scheduled status in the status field the scheduled mailing page", "Scheduled for {0}", sendingDate).EscapeHtml();
+                    break;
+                case MailingStatus.Sending:
+                    Status = translator.Get("Mailing.Scheduled.Field.Status.Sending", "Sending status in the status field the scheduled mailing page", "Sending since {0}", sendingDate).EscapeHtml();
+                    break;
+                case MailingStatus.Sent:
+                    Status = translator.Get("Mailing.Scheduled.Field.Status.Sent", "Sent status in the status field the scheduled mailing page", "Sent at {0}", sentDate).EscapeHtml();
+                    break;
+                case MailingStatus.Canceled:
+                    Status = translator.Get("Mailing.Scheduled.Field.Status.Canceled", "Canceled status in the status field the scheduled mailing page", "Canceled").EscapeHtml();
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+
+            Sendings = new List<MailingSendingViewModel>(db
+                .Query<Sending>(DC.Equal("mailingid", mailing.Id.Value))
+                .Select(s => new MailingSendingViewModel(translator, s)));
+
+            Cancelable = mailing.Status.Value == MailingStatus.Scheduled ||
+                         mailing.Status.Value == MailingStatus.Sending;
+        }
+    }
+
     public class MailingSendViewModel : MasterViewModel
     {
         public string PhraseFieldTitle;
@@ -242,13 +373,11 @@ namespace Quaestur
     public class MailingListItemViewModel
     {
         public string Id;
-        public string EditId;
         public string Title;
         public string Organization;
         public string Status;
         public string Creator;
         public string Editable;
-        public string Copyable;
         public string PhraseDeleteConfirmationQuestion;
 
         public MailingListItemViewModel(Translator translator, Session session, Mailing mailing)
@@ -299,10 +428,7 @@ namespace Quaestur
 
             Id = mailing.Id.Value.ToString();
             bool access = session.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write);
-            Copyable = access ? "editable" : "accessdenied";
-            bool editable = access && mailing.Status.Value == MailingStatus.New;
-            Editable = editable ? "editable" : "accessdenied";
-            EditId = editable ? mailing.Id.Value.ToString() : string.Empty;
+            Editable = access ? "editable" : "accessdenied";
             PhraseDeleteConfirmationQuestion = translator.Get("Mailing.List.Delete.Confirm.Question", "Delete mailing confirmation question", "Do you really wish to delete mailing {0}?", mailing.GetText(translator)).EscapeHtml();
         }
     }
@@ -403,11 +529,18 @@ namespace Quaestur
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
 
-                if (mailing != null &&
-                    mailing.Status.Value == MailingStatus.New)
+                if (mailing != null)
                 {
-                    return View["View/mailingedit.sshtml",
-                        new MailingEditViewModel(Translator, Database, CurrentSession, mailing)];
+                    if (mailing.Status.Value == MailingStatus.New)
+                    {
+                        return View["View/mailingedit.sshtml",
+                            new MailingEditViewModel(Translator, Database, CurrentSession, mailing)];
+                    }
+                    else
+                    {
+                        return View["View/mailingscheduled.sshtml",
+                            new MailingScheduledViewModel(Translator, Database, CurrentSession, mailing)];
+                    }
                 }
 
                 return Response.AsRedirect("/mailing");
@@ -578,6 +711,37 @@ namespace Quaestur
 
                 return status.CreateJsonData();
             };
+            Get["/mailing/cancel/{id}"] = parameters =>
+            {
+                string idString = parameters.id;
+                var mailing = Database.Query<Mailing>(idString);
+                var status = CreateStatus();
+
+                if (status.ObjectNotNull(mailing))
+                {
+                    if (status.HasAccess(mailing.RecipientOrganization.Value, PartAccess.Mailings, AccessRight.Write) &&
+                        (mailing.Sender.Value == null || status.HasAccess(mailing.Sender.Value, PartAccess.Mailings, AccessRight.Write)))
+                    {
+                        if (mailing.Status.Value == MailingStatus.Scheduled ||
+                            mailing.Status.Value == MailingStatus.Sending)
+                        {
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                mailing.Status.Value = MailingStatus.Canceled;
+                                Database.Save(mailing);
+                                transaction.Commit();
+                                Notice("{0} canceled mailing {1}", CurrentSession.User.ShortHand, mailing);
+                            }
+                        }
+                        else
+                        {
+                            status.SetErrorAccessDenied(); 
+                        }
+                    }
+                }
+
+                return status.CreateJsonData();
+            }; 
             Get["/mailing/copy/{id}"] = parameters =>
             {
                 string idString = parameters.id;

@@ -11,6 +11,7 @@ namespace Quaestur
         public ForeignKeyField<MembershipType, Membership> Type { get; set; }
         public Field<DateTime> StartDate { get; set; }
         public FieldNull<DateTime> EndDate { get; set; }
+        public FieldNull<bool> HasVotingRight { get; set; }
 
         public Membership() : this(Guid.Empty)
         {
@@ -23,6 +24,7 @@ namespace Quaestur
             Type = new ForeignKeyField<MembershipType, Membership>(this, "membershiptypeid", false, null);
             StartDate = new Field<DateTime>(this, "startdate", DateTime.UtcNow);
             EndDate = new FieldNull<DateTime>(this, "enddate");
+            HasVotingRight = new FieldNull<bool>(this, "hasvotingright");
         }
 
         public override string GetText(Translator translator)
@@ -53,15 +55,15 @@ namespace Quaestur
             }
         }
 
-        public bool HasVotingRight(IDatabase database)
+        public void UpdateVotingRight(IDatabase database)
         {
             if (Type.Value.Rights.Value.HasFlag(MembershipRight.Voting))
             {
-                return HasVotingRightInternal(database, CollectionModel.Direct);
+                HasVotingRight.Value = HasVotingRightInternal(database, CollectionModel.Direct);
             }
             else
             {
-                return false;
+                HasVotingRight.Value = false;
             }
         }
 

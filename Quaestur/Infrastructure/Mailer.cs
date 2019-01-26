@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Net;
+using System.Net.Sockets;
 using MailKit;
 using MailKit.Net;
 using MailKit.Net.Smtp;
@@ -204,11 +206,11 @@ namespace Quaestur
                 }
                 else if (recipientKey != null)
                 {
-                    content = Encrypt(content, senderKey); 
+                    content = Encrypt(content, senderKey);
                 }
                 else if (senderKey != null)
                 {
-                    content = Sign(content, senderKey); 
+                    content = Sign(content, senderKey);
                 }
 
                 var message = new MimeMessage();
@@ -224,6 +226,7 @@ namespace Quaestur
             {
                 _log.Error("Error sending mail to {0}", to);
                 _log.Error(exception.ToString());
+                throw exception;
             }
         }
     }

@@ -59,6 +59,20 @@
     overflow: hidden;
 }
 
+.table-fixed-md tbody {
+    display: block;
+    height: calc(100vh - 24em);
+    overflow: auto;
+}
+.table-fixed-md thead, .table-fixed-md tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.table-fixed-md td, .table-fixed-md th {
+    overflow: hidden;
+}
+
 .person-master-card {
     height: 14em !important;
 }

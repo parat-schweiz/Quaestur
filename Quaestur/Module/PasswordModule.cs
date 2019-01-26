@@ -106,14 +106,10 @@ namespace Quaestur
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
 
-                if (person != null)
+                if (person == CurrentSession.User)
                 {
-                    if (HasAccess(person, PartAccess.Security, AccessRight.Write) &&
-                        HasAllAccessOf(person))
-                    {
-                        return View["View/passwordchange.sshtml",
-                            new PasswordEditViewModel(Translator, person, true)];
-                    }
+                    return View["View/passwordchange.sshtml",
+                        new PasswordEditViewModel(Translator, person, true)];
                 }
 
                 return null;
@@ -125,34 +121,34 @@ namespace Quaestur
                 var person = Database.Query<Person>(idString);
                 var status = CreateStatus();
 
-                if (status.ObjectNotNull(person))
+                if (person == CurrentSession.User)
                 {
-                    if (status.HasAccess(person, PartAccess.Security, AccessRight.Write) &&
-                        status.HasAllAccessOf(person))
+                    if (!UserController.VerifyHash(person.PasswordHash, model.CurrentPassword))
                     {
-                        if (!UserController.VerifyHash(person.PasswordHash, model.CurrentPassword))
-                        {
-                            status.SetValidationError("CurrentPassword", "Password.Edit.Validation.CurrentWrong", "Message when current password is wrong at password change", "Current password is wrong");
-                        }
-                        else if (model.NewPassword1 != model.NewPassword2)
-                        {
-                            status.SetValidationError("NewPassword2", "Password.Edit.Validation.NotEqual", "Message when new passwords are not equal at password change/set", "New passwords do not match");
-                        }
-                        else if (model.NewPassword1.Length < 12)
-                        {
-                            status.SetValidationError("NewPassword1", "Password.Edit.Validation.TooShort", "Message when new password is to short at password change/set", "New password must be at least 12 characters long");
-                        }
-
-                        if (status.IsSuccess)
-                        {
-                            person.PasswordHash.Value = UserController.CreateHash(model.NewPassword1);
-                            Database.Save(person);
-                            Journal(person,
-                                "Password.Journal.Edit",
-                                "Journal entry changed password",
-                                "Changed password");
-                        }
+                        status.SetValidationError("CurrentPassword", "Password.Edit.Validation.CurrentWrong", "Message when current password is wrong at password change", "Current password is wrong");
                     }
+                    else if (model.NewPassword1 != model.NewPassword2)
+                    {
+                        status.SetValidationError("NewPassword2", "Password.Edit.Validation.NotEqual", "Message when new passwords are not equal at password change/set", "New passwords do not match");
+                    }
+                    else if (model.NewPassword1.Length < 12)
+                    {
+                        status.SetValidationError("NewPassword1", "Password.Edit.Validation.TooShort", "Message when new password is to short at password change/set", "New password must be at least 12 characters long");
+                    }
+
+                    if (status.IsSuccess)
+                    {
+                        person.PasswordHash.Value = UserController.CreateHash(model.NewPassword1);
+                        Database.Save(person);
+                        Journal(person,
+                            "Password.Journal.Edit",
+                            "Journal entry changed password",
+                            "Changed password");
+                    }
+                }
+                else
+                {
+                    status.SetErrorAccessDenied();
                 }
 
                 return status.CreateJsonData();

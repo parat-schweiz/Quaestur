@@ -88,6 +88,7 @@ namespace Quaestur
                     person.Language.Value.Translate(translator),
                     level);
                 bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-7d);
+                bill.Membership.Value.UpdateVotingRight(database);
                 database.Save(bill);
                 return;
             }
@@ -99,12 +100,14 @@ namespace Quaestur
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else
                     {
                         SendingFailed(database, bill, level, person, template);
                         bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-9d);
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     break;
@@ -113,12 +116,14 @@ namespace Quaestur
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else
                     {
                         SendingFailed(database, bill, level, person, template);
                         bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-9d);
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     break;
@@ -127,18 +132,21 @@ namespace Quaestur
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else if (SendPostal(database, translator, bill, level, person, template))
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else
                     {
                         SendingFailed(database, bill, level, person, template);
                         bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-9d);
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     break;
@@ -147,18 +155,21 @@ namespace Quaestur
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else if (SendMail(database, bill, level, person, template))
                     {
                         bill.ReminderLevel.Value = level;
                         bill.ReminderDate.Value = DateTime.UtcNow;
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     else
                     {
                         SendingFailed(database, bill, level, person, template);
                         bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-9d);
+                        bill.Membership.Value.UpdateVotingRight(database);
                         database.Save(bill);
                     }
                     break;

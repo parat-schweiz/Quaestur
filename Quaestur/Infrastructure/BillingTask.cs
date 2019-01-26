@@ -92,6 +92,8 @@ namespace Quaestur
             if (billDocument.Create())
             {
                 database.Save(billDocument.Bill);
+                membership.UpdateVotingRight(database);
+                database.Save(membership);
                 Journal(
                     database,
                     membership,

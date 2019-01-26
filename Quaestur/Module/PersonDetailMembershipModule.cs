@@ -39,7 +39,13 @@ namespace Quaestur
                 Status = translator.Get("Person.Detail.Membership.Status.Ended", "Status 'Ended' on the membership tab in the person detail page", "Ended").EscapeHtml();
             }
 
-            VotingRight = membership.HasVotingRight(database) ?
+            if (!membership.HasVotingRight.Value.HasValue)
+            {
+                membership.UpdateVotingRight(database);
+                database.Save(membership); 
+            }
+
+            VotingRight = membership.HasVotingRight.Value.Value ?
                 translator.Get("Person.Detail.VotingRight.Yes", "Voting right 'Yes' on the membership tab in the person detail page", "Yes").EscapeHtml() :
                 translator.Get("Person.Detail.VotingRight.No", "Voting right 'No' on the membership tab in the person detail page", "No").EscapeHtml();
         }
