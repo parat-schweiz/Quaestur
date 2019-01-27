@@ -58,6 +58,7 @@ namespace Quaestur
         public string PhraseMenuListMailings = string.Empty;
         public string PhraseMenuMailingElement = string.Empty;
         public string PhraseMenuProfile = string.Empty;
+        public string PhraseMenuChangePassword = string.Empty;
         public string PhraseMenuLogout = string.Empty;
         public string PhraseMenuSettings = string.Empty;
         public string PhraseMenuOAuth2Clients = string.Empty;
@@ -93,6 +94,7 @@ namespace Quaestur
             PhraseMenuListMailings = translator.Get("Master.Menu.Mailings.List", "Item 'List mailings' under 'Mailings' in the main menu", "List").EscapeHtml();
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuProfile = translator.Get("Master.Menu.User.Profile", "Item 'Profile' under user in the main menu", "Profile").EscapeHtml();
+            PhraseMenuChangePassword = translator.Get("Master.Menu.User.ChangePassword", "Item 'Change password' under user in the main menu", "Change password").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();

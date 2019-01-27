@@ -94,11 +94,11 @@
     <Reference Include="AngleSharp">
       <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
-    <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.4.0.204\lib\net45\HtmlSanitizer.dll</HintPath>
-    </Reference>
     <Reference Include="JWT">
       <HintPath>..\packages\JWT.4.0.0\lib\net46\JWT.dll</HintPath>
+    </Reference>
+    <Reference Include="HtmlSanitizer">
+      <HintPath>..\packages\HtmlSanitizer.4.0.205\lib\net45\HtmlSanitizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -827,6 +827,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\oauth2clientlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\password.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

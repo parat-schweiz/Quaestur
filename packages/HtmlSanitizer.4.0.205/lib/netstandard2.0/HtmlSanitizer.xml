@@ -544,6 +544,15 @@
             <param name="outputFormatter">The formatter used to render the DOM. Using the <see cref="P:Ganss.XSS.HtmlSanitizer.OutputFormatter"/> if null.</param>
             <returns>The sanitized HTML document.</returns>
         </member>
+        <member name="M:Ganss.XSS.HtmlSanitizer.SanitizeDocument(System.IO.Stream,System.String,AngleSharp.IMarkupFormatter)">
+            <summary>
+            Sanitizes the specified HTML document. Even if only a fragment is given, a whole document will be returned.
+            </summary>
+            <param name="html">The HTML document to sanitize.</param>
+            <param name="baseUrl">The base URL relative URLs are resolved against. No resolution if empty.</param>
+            <param name="outputFormatter">The formatter used to render the DOM. Using the <see cref="P:Ganss.XSS.HtmlSanitizer.OutputFormatter"/> if null.</param>
+            <returns>The sanitized HTML document.</returns>
+        </member>
         <member name="M:Ganss.XSS.HtmlSanitizer.CreateParser">
             <summary>
             Creeates an instance of <see cref="T:AngleSharp.Parser.Html.HtmlParser"/>.

@@ -90,6 +90,7 @@
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.UserName</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/person/detail/@Model.UserId">@Model.PhraseMenuProfile</a>
+                    <a class="dropdown-item" href="/password">@Model.PhraseMenuChangePassword</a>
                     <a class="dropdown-item" href="/logout">@Model.PhraseMenuLogout</a>
                   </div>
                 </li>

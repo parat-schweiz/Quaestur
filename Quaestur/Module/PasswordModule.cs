@@ -19,6 +19,8 @@ namespace Quaestur
         public string PhraseFieldCurrentPassword;
         public string PhraseFieldNewPassword1;
         public string PhraseFieldNewPassword2;
+        public string PhraseButtonBack;
+        public string PhraseButtonChange;
         public bool Change;
 
         public PasswordEditViewModel()
@@ -37,6 +39,8 @@ namespace Quaestur
             PhraseFieldCurrentPassword = translator.Get("Password.Edit.Field.CurrentPassword", "Field 'Current password' in the edit password dialog", "Current password").EscapeHtml();
             PhraseFieldNewPassword1 = translator.Get("Password.Edit.Field.NewPassword1", "Field 'New password' in the edit password dialog", "New password").EscapeHtml();
             PhraseFieldNewPassword2 = translator.Get("Password.Edit.Field.NewPassword2", "Field 'Repeat password' in the edit password dialog", "Repeat password").EscapeHtml();
+            PhraseButtonBack = translator.Get("Password.Edit.Buttton.Back", "Back button in the edit password dialog", "Back").EscapeHtml();
+            PhraseButtonChange = translator.Get("Password.Edit.Button.Change", "Change password button in the edit password dialog", "Change").EscapeHtml();
             CurrentPassword = string.Empty;
             NewPassword1 = string.Empty;
             NewPassword2 = string.Empty;
@@ -100,6 +104,11 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
+            };
+            Get["/password"] = parameters =>
+            {
+                return View["View/password.sshtml",
+                    new PasswordEditViewModel(Translator, CurrentSession.User, true)];
             };
             Get["/password/change/{id}"] = parameters =>
             {
