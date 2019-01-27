@@ -44,6 +44,8 @@ namespace Quaestur
             database.CreateTable<Phrase>();
             database.CreateTable<PhraseTranslation>();
             database.CreateTable<SystemWideSettings>();
+            database.CreateTable<Oauth2Client>();
+            database.CreateTable<Oauth2Session>();
         }
 
         private static void Migrate(IDatabase database)

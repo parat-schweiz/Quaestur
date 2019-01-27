@@ -441,6 +441,7 @@ namespace Quaestur
         ParameterizedText,
         SafeLatex,
         SafeHtml,
+        UnsecureText,
     }
 
     public class StringField : ProtoField<string>
@@ -487,6 +488,9 @@ namespace Quaestur
                         break;
                     case AllowStringType.SafeLatex:
                         base.Value = value.SafeLatex();
+                        break;
+                    case AllowStringType.UnsecureText:
+                        base.Value = value;
                         break;
                     default:
                         throw new NotSupportedException();
@@ -535,6 +539,9 @@ namespace Quaestur
                             break;
                         case AllowStringType.SafeLatex:
                             base.Value = value.SafeLatex();
+                            break;
+                        case AllowStringType.UnsecureText:
+                            base.Value = value;
                             break;
                         default:
                             throw new NotSupportedException();

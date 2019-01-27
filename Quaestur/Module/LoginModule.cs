@@ -15,6 +15,7 @@ namespace Quaestur
         public string Password = string.Empty;
         public string Problems = string.Empty;
         public string Valid = string.Empty;
+        public string ReturnUrl = string.Empty;
 
         public string PhraseFieldUsername;
         public string PhraseFieldPassword;
@@ -25,7 +26,7 @@ namespace Quaestur
         { 
         }
 
-        public LoginViewModel(Translator translator)
+        public LoginViewModel(Translator translator, string returnUrl)
             : base(translator, 
                 translator.Get("Login.Title", "Title of the login page", "Login"), 
                 null)
@@ -34,22 +35,37 @@ namespace Quaestur
             PhraseFieldPassword = translator.Get("Login.Field.Password", "Password field on login page", "Password").EscapeHtml();
             PhraseButtonLogin = translator.Get("Login.Button.Login", "Login button on login page", "Login").EscapeHtml();
             PhrasePasswordReset = translator.Get("Login.Link.PasswordReset", "Password reset link on login page", "Reset password").EscapeHtml();
+            ReturnUrl = returnUrl;
         }
     }
 
     public class LoginModule : QuaesturModule
     {
+        private string ValidateReturnUrl(string returnUrl)
+        {
+            if (returnUrl.StartsWith("/", StringComparison.Ordinal))
+            {
+                return returnUrl;
+            }
+            else
+            {
+                return string.Empty; 
+            }
+        }
+
         public LoginModule()
         {
             Get["/login"] = parameters =>
             {
-                return View["View/login.sshtml", new LoginViewModel(Translator)];
+                var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
+                return View["View/login.sshtml", new LoginViewModel(Translator, returnUrl)];
             };
             Post["/login"] = parameters =>
             {
                 var login = this.Bind<LoginViewModel>();
+                var returnUrl = ValidateReturnUrl(login.ReturnUrl);
                 var result = UserController.Login(Database, login.UserName, login.Password);
-                var newLogin = new LoginViewModel(Translator);
+                var newLogin = new LoginViewModel(Translator, returnUrl);
 
                 switch (result.Item2)
                 {
@@ -65,6 +81,7 @@ namespace Quaestur
                         break;
                     case LoginResult.Success:
                         var session = Global.Sessions.Add(result.Item1);
+                        session.ReturnUrl = returnUrl;
                         Journal(Translate(
                             "Password.Journal.Auth.Process",
                             "Journal entry subject on authentication",

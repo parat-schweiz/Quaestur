@@ -32,7 +32,7 @@ function assignValidation(resultData){
   assignFieldValidation("French", result);
   assignFieldValidation("Italian", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
-  return result.IsSuccess;s
+  return result.IsSuccess;
 }
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();

@@ -97,6 +97,9 @@
     <Reference Include="HtmlSanitizer">
       <HintPath>..\packages\HtmlSanitizer.4.0.204\lib\net45\HtmlSanitizer.dll</HintPath>
     </Reference>
+    <Reference Include="JWT">
+      <HintPath>..\packages\JWT.4.0.0\lib\net46\JWT.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -229,6 +232,10 @@
     <Compile Include="Otp\VerificationWindow.cs" />
     <Compile Include="Util\Base32.cs" />
     <Compile Include="Module\TwoFactorModule.cs" />
+    <Compile Include="Model\Oauth2Client.cs" />
+    <Compile Include="Model\Oauth2Session.cs" />
+    <Compile Include="Module\Oauth2Module.cs" />
+    <Compile Include="Module\Oauth2ClientModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -808,6 +815,18 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\mailingscheduled.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\oauth2auth.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\oauth2client.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\oauth2clientedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\oauth2clientlist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

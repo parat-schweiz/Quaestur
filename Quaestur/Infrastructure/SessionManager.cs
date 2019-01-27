@@ -40,6 +40,7 @@ namespace Quaestur
         public DateTime LastAccess { get; private set; }
         public bool CompleteAuth { get; set; }
         public bool TwoFactorAuth { get; set; }
+        public string ReturnUrl { get; set; }
 
         public bool HasPersonNewAccess()
         {

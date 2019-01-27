@@ -42,6 +42,7 @@ namespace Quaestur
         public bool NavExport = false;
         public bool NavMailing = false;
         public bool NavOrganization = false;
+        public bool NavSettings = false;
         public string PhraseMenuPersons = string.Empty;
         public string PhraseMenuPersonsList = string.Empty;
         public string PhraseMenuPersonNew = string.Empty;
@@ -58,6 +59,8 @@ namespace Quaestur
         public string PhraseMenuMailingElement = string.Empty;
         public string PhraseMenuProfile = string.Empty;
         public string PhraseMenuLogout = string.Empty;
+        public string PhraseMenuSettings = string.Empty;
+        public string PhraseMenuOAuth2Clients = string.Empty;
 
         public MasterViewModel()
         { 
@@ -74,6 +77,7 @@ namespace Quaestur
             NavExport = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Read);
             NavMailing = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Write);
             NavOrganization = session != null && session.HasAnyOrganizationAccess(PartAccess.Structure, AccessRight.Read);
+            NavSettings = session != null && session.HasAnyOrganizationAccess(PartAccess.Crypto, AccessRight.Read);
             PhraseMenuPersons = translator.Get("Master.Menu.Persons", "Item 'Persons' in the main menu", "Persons").EscapeHtml();
             PhraseMenuPersonsList = translator.Get("Master.Menu.Persons.List", "Item 'List' under 'Persons' in the main menu", "List").EscapeHtml();
             PhraseMenuPersonNew = translator.Get("Master.Menu.Persons.New", "Item 'New' under 'Persons' in the main menu", "New").EscapeHtml();
@@ -90,6 +94,8 @@ namespace Quaestur
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuProfile = translator.Get("Master.Menu.User.Profile", "Item 'Profile' under user in the main menu", "Profile").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
+            PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
+            PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
         }
     }
 

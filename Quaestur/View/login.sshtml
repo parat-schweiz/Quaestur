@@ -3,6 +3,7 @@
 @Section['input']
 <div class="container">
   <form action="/login" method="post">
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl"/>
     <div class="form-row">
       <div class="col-6 mb-3">
         <label for="loginUsername">@Model.PhraseFieldUsername</label>

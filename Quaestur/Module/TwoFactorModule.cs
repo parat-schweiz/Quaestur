@@ -273,7 +273,14 @@ namespace Quaestur
                         "TwoFactor.Journal.Auth.Null",
                         "Journal entry login without 2FA",
                         "Logged in without two-factor authentication");
-                    return Response.AsRedirect("/");
+                    if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))
+                    {
+                        return Response.AsRedirect("/");
+                    }
+                    else
+                    {
+                        return Response.AsRedirect(CurrentSession.ReturnUrl);
+                    }
                 }
                 else
                 {
@@ -295,7 +302,14 @@ namespace Quaestur
                         "TwoFactor.Journal.Auth.2FA.Success",
                         "Journal entry login with 2FA",
                         "Logged in with two-factor authentication");
-                    return Response.AsRedirect("/");
+                    if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))
+                    {
+                        return Response.AsRedirect("/");
+                    }
+                    else
+                    {
+                        return Response.AsRedirect(CurrentSession.ReturnUrl);
+                    }
                 }
                 else
                 {
