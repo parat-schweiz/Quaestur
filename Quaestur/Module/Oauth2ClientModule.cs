@@ -15,6 +15,7 @@ namespace Quaestur
         public List<MultiItemViewModel> Name;
         public string Secret;
         public string RedirectUri;
+        public string PhraseFieldId;
         public string PhraseFieldSecret;
         public string PhraseFieldRedirectUri;
 
@@ -25,6 +26,7 @@ namespace Quaestur
         public Oauth2ClientEditViewModel(Translator translator)
             : base(translator, translator.Get("Oauth2Client.Edit.Title", "Title of the OAuth2 client edit dialog", "Edit client"), "clientEditDialog")
         {
+            PhraseFieldId = translator.Get("Oauth2Client.Edit.Field.Id", "Client ID field in the OAuth2 client edit dialog", "Client ID");
             PhraseFieldSecret = translator.Get("Oauth2Client.Edit.Field.Secret", "Secret field in the OAuth2 client edit dialog", "Secret");
             PhraseFieldRedirectUri = translator.Get("Oauth2Client.Edit.Field.RedirectUri", "Redirect URI field in the OAuth2 client edit dialog", "Redirect URI");
         }

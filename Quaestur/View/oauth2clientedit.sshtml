@@ -84,6 +84,12 @@ $("#@Model.ButtonId").click(function() {
     </div>
     <div class="form-row">
       <div class="col-12 mb-3">
+        <label for="clientSecret">@Model.PhraseFieldId</label>
+        <input type="text" id="clientSecret" class="form-control" value="@Model.Id" readonly/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
         <label for="clientSecret">@Model.PhraseFieldSecret</label>
         <input type="text" id="clientSecret" class="form-control" value="@Model.Secret"/>
         <div id="clientSecretFeedback" class="valid-feedback"></div>

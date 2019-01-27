@@ -56,6 +56,7 @@ namespace Quaestur
                 string responseType = Request.Query["response_type"];
                 if (responseType != "code")
                 {
+                    Global.Log.Notice("OAuth2: Response type {0} is not supported", responseType);
                     return OAuth2Error("Oauth2.Error.Text.ResponseType",
                                        "Unsupported response type text in OAuth2",
                                        "Response type is not supported");
@@ -69,13 +70,16 @@ namespace Quaestur
 
                     if (client == null)
                     {
+                        Global.Log.Notice("OAuth2: Unknown client ID {0}", clientIdString);
                         return OAuth2Error("Oauth2.Error.Text.UnknownClientId",
                                            "Unkonwn client ID in OAuth2",
                                            "Unknown client ID");
                     }
 
-                    if (client.RedirectUri.Value != Request.Query["redirect_uri"])
+                    string redirectUri = Request.Query["redirect_uri"];
+                    if (client.RedirectUri.Value != redirectUri)
                     {
+                        Global.Log.Notice("OAuth2: Invalid redirect URI {0}", redirectUri);
                         return OAuth2Error("Oauth2.Error.Text.InvalidRedirectUri",
                                            "Invalid redirect URI in OAuth2",
                                            "Invalid redirect URI");
@@ -86,6 +90,7 @@ namespace Quaestur
                     if (string.IsNullOrEmpty(state) ||
                         state.Length < 8)
                     {
+                        Global.Log.Notice("OAuth2: Invalid state {0}", state);
                         return OAuth2Error("Oauth2.Error.Text.BadClientId",
                                            "Invalid state in OAuth2",
                                            "Invalid state");
@@ -95,7 +100,8 @@ namespace Quaestur
                 }
                 else
                 {
-                    return OAuth2Error("Oauth2.Error.Text.BadClientId",
+                    Global.Log.Notice("OAuth2: Bad client ID {0}", clientIdString);
+                    return OAuth2Error("OAuth2.Error.Text.BadClientId",
                                        "Bad client ID in OAuth2",
                                        "Bad client ID");
                 }
@@ -117,6 +123,12 @@ namespace Quaestur
                     session.Moment.Value = DateTime.UtcNow;
                     session.Expiry.Value = DateTime.UtcNow.AddHours(1);
                     Database.Save(session);
+
+                    Journal(session.User.Value,
+                        "Oauth2.Authenticated",
+                        "Authenticated client with OAuth2",
+                        "Client {0} authenticated using OAuth2",
+                        t => session.Client.Value.Name.Value[t.Language]);
 
                     var uri = string.Format("{0}?code={1}&state={2}",
                                             client.RedirectUri.Value,
@@ -223,10 +235,12 @@ namespace Quaestur
                             new JProperty("token_type", "Bearer"),
                             new JProperty("expires_in", 3600),
                             new JProperty("id_token", idToken.ToString()));
+                        Global.Log.Notice("OAuth2 token issued for user {0}", session.User.Value.ShortHand);
                         return Response.AsText(response.ToString(), "application/json");
                     }
                 }
 
+                Global.Log.Notice("Invalid OAuth2 token request");
                 var error = new JObject(
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
