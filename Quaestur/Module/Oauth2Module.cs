@@ -77,8 +77,7 @@ namespace Quaestur
                     }
 
                     string redirectUri = Request.Query["redirect_uri"];
-                    if (client.RedirectUri.Value != redirectUri &&
-                        client.RedirectUri.Value != redirectUri.Replace("http://", "https://"))
+                    if (client.RedirectUri.Value != redirectUri)
                     {
                         Global.Log.Notice("OAuth2: Invalid redirect URI {0}", redirectUri);
                         return OAuth2Error("Oauth2.Error.Text.InvalidRedirectUri",
