@@ -290,8 +290,8 @@ namespace Quaestur
             };
             Post["/twofactor/auth"] = parameters =>
             {
+                Global.Throttle.Check(CurrentSession.UserName, true);
                 var model = this.Bind<TwoFactorAuthViewModel>();
-
                 var totp = new Totp(CurrentSession.User.TwoFactorSecret.Value);
 
                 if (totp.VerifyTotp(model.Code, out long timeStepMatched))
@@ -319,6 +319,7 @@ namespace Quaestur
                         "When code does not match when authentication using TOTP 2FA",
                         "Code incorrect");
                     newModel.Valid = "is-invalid";
+                    Global.Throttle.Fail(CurrentSession.UserName, true);
                     Journal(CurrentSession.User,
                         "TwoFactor.Journal.Auth.2FA.Failed",
                         "Journal entry login with 2FA failed",

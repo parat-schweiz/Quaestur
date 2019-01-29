@@ -22,6 +22,11 @@
         <input type="submit" class="btn btn-primary" value="@Model.PhraseButtonLogin"/>
       </div>
     </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <a href="/password/reset/request">@Model.PhrasePasswordReset</a>
+      </div>
+    </div>
   </form>
 </div>
 @EndSection

@@ -236,6 +236,8 @@
     <Compile Include="Model\Oauth2Session.cs" />
     <Compile Include="Module\Oauth2Module.cs" />
     <Compile Include="Module\Oauth2ClientModule.cs" />
+    <Compile Include="Module\PasswordResetModule.cs" />
+    <Compile Include="Infrastructure\SecurityThrottle.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -830,6 +832,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\password.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\passwordresetrequest.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\passwordresetchange.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
