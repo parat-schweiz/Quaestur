@@ -303,19 +303,12 @@ namespace Quaestur
 
         protected void Journal(Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
         {
-            var translator = GetTranslator(person.Language.Value);
-            var entry = new JournalEntry(Guid.NewGuid());
-            entry.Moment.Value = DateTime.UtcNow;
-            entry.Text.Value = translator.Get(key, hint, technical, parameters.Select(p => p(translator)));
-            entry.Subject.Value = CurrentSession.User.ShortHand;
-            entry.Person.Value = person;
-            Database.Save(entry);
+            Journal(CurrentSession.User, person, key, hint, technical, parameters);
+        }
 
-            var technicalTranslator = GetTranslator(Language.Technical);
-            Global.Log.Notice("{0} modified {1}: {2}",
-                entry.Subject.Value,
-                entry.Person.Value.ShortHand,
-                technicalTranslator.Get(key, hint, technical, parameters.Select(p => p(technicalTranslator))));
+        protected void Journal(Person subject, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
+        {
+            Journal(subject.ShortHand, person, key, hint, technical, parameters);
         }
 
         public void Dispose()

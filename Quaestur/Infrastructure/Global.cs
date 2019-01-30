@@ -11,6 +11,20 @@ namespace Quaestur
 		private static Logger _logger;
 		private static Mailer _mailer;
         private static SessionManager _login;
+        private static SecurityThrottle _throttle;
+
+        public static SecurityThrottle Throttle
+        {
+            get
+            {
+                if (_throttle == null)
+                {
+                    _throttle = new SecurityThrottle();
+                }
+
+                return _throttle;
+            }
+        }
 
         public static SessionManager Sessions
         {

@@ -63,6 +63,7 @@ namespace Quaestur
             Post["/login"] = parameters =>
             {
                 var login = this.Bind<LoginViewModel>();
+                Global.Throttle.Check(login.UserName, false);
                 var returnUrl = ValidateReturnUrl(login.ReturnUrl);
                 var result = UserController.Login(Database, login.UserName, login.Password);
                 var newLogin = new LoginViewModel(Translator, returnUrl);
@@ -73,6 +74,7 @@ namespace Quaestur
                         newLogin.Problems = Translate("Login.Result.Wrong", "Wrong username of password message after try at login page", "Username or password wrong.");
                         newLogin.Valid = "is-invalid";
                         Global.Log.Notice("Wrong login with username {0}", login.UserName);
+                        Global.Throttle.Fail(login.UserName, false);
                         break;
                     case LoginResult.Locked:
                         newLogin.Problems = Translate("Login.Result.Locket", "User locked message after try at login page", "This account is locked.");

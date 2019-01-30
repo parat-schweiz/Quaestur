@@ -44,6 +44,12 @@ namespace Quaestur
             IsSuccess = false;
         }
 
+        public void SetSuccess(string key, string hint, string text, params object[] arguments)
+        {
+            SuccessText = _translator.Get(key, hint, text, arguments).EscapeHtml();
+            IsSuccess = true;
+        }
+
         public PostStatus(IDatabase db, Translator translator, Session session)
         {
             _db = db;
