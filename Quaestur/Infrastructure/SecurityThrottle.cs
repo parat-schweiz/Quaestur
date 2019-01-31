@@ -8,10 +8,24 @@ namespace Quaestur
     public class SecurityThrottle
     {
         private Dictionary<string, List<DateTime>> _fails;
+        private Semaphore _globalLock = new Semaphore(10, 10);
 
         public SecurityThrottle()
         {
             _fails = new Dictionary<string, List<DateTime>>();
+        }
+
+        public List<DateTime> GetFailList(string username)
+        {
+            lock (_fails)
+            {
+                if (!_fails.ContainsKey(username))
+                {
+                    _fails.Add(username, new List<DateTime>());
+                }
+
+                return _fails[username];
+            }
         }
 
         public void Fail(string username, bool secondFactor)
@@ -27,32 +41,27 @@ namespace Quaestur
         {
             if (secondFactor)
             {
-                username += "___________________2FA";
+                username += ":2fa";
+            }
+            else
+            {
+                username += ":pwd";
             }
 
             int timeCount = 0;
+            var list = GetFailList(username);
 
-            lock (_fails)
+            lock (list)
             {
-                if (_fails.ContainsKey(username))
+                foreach (var time in list
+                    .Where(t => DateTime.UtcNow.Subtract(t).TotalHours > 1d)
+                    .ToList())
                 {
-                    var times = _fails[username];
-
-                    foreach (var time in times
-                        .Where(t => DateTime.UtcNow.Subtract(t).TotalHours > 1d)
-                        .ToList())
-                    {
-                        times.Remove(time);
-                    }
-
-                    times.Add(DateTime.UtcNow);
-                    timeCount = times.Count;
+                    list.Remove(time);
                 }
-                else
-                {
-                    _fails.Add(username, new List<DateTime>(new[] { DateTime.UtcNow }));
-                    timeCount = 1;
-                }
+
+                list.Add(DateTime.UtcNow);
+                timeCount = list.Count;
             }
 
             if (global)
@@ -89,63 +98,77 @@ namespace Quaestur
 
         public void Check(string username, bool secondFactor)
         {
-            int globalTimeCount = CheckInternal(string.Empty, secondFactor);
-            int userTimeCount = CheckInternal(username, secondFactor);
-
-            if (userTimeCount >= 20 ||
-                globalTimeCount >= 200)
-            {
-                Thread.Sleep(2000);
-            }
-            else if (userTimeCount >= 10 ||
-                     globalTimeCount >= 100)
-            {
-                Thread.Sleep(1000);
-            }
-            else if (userTimeCount >= 5 ||
-                     globalTimeCount >= 50)
-            {
-                Thread.Sleep(500);
-            }
-            else if (userTimeCount >= 3 ||
-                     globalTimeCount >= 30)
-            {
-                Thread.Sleep(200);
-            }
-            else if (userTimeCount >= 1 ||
-                     globalTimeCount >= 10)
-            {
-                Thread.Sleep(100);
-            }
-        }
-
-        private int CheckInternal(string username, bool secondFactor)
-        {
             if (secondFactor)
             {
-                username += "___________________2FA";
+                username += ":2fa";
+            }
+            else
+            {
+                username += ":pwd";
             }
 
-            int timeCount = 0;
+            var globalList = GetFailList(string.Empty);
+            var userList = GetFailList(username);
+            var globalTimeCount = 0;
 
-            lock (_fails)
+            lock (globalList)
             {
-                if (_fails.ContainsKey(username))
+                foreach (var time in globalList
+                    .Where(t => DateTime.UtcNow.Subtract(t).TotalHours > 1d)
+                    .ToList())
                 {
-                    var times = _fails[username];
+                    globalList.Remove(time);
+                }
 
-                    foreach (var time in times
+                globalTimeCount = globalList.Count;
+            }
+
+            _globalLock.WaitOne();
+
+            try
+            {
+                lock (userList)
+                {
+                    foreach (var time in userList
                         .Where(t => DateTime.UtcNow.Subtract(t).TotalHours > 1d)
                         .ToList())
                     {
-                        times.Remove(time);
+                        userList.Remove(time);
                     }
 
-                    timeCount = times.Count;
+                    var userTimeCount = userList.Count;
+
+                    if (userTimeCount >= 20 ||
+                        globalTimeCount >= 200)
+                    {
+                        Thread.Sleep(2000);
+                    }
+                    else if (userTimeCount >= 10 ||
+                             globalTimeCount >= 100)
+                    {
+                        Thread.Sleep(1000);
+                    }
+                    else if (userTimeCount >= 5 ||
+                             globalTimeCount >= 50)
+                    {
+                        Thread.Sleep(500);
+                    }
+                    else if (userTimeCount >= 3 ||
+                             globalTimeCount >= 30)
+                    {
+                        Thread.Sleep(200);
+                    }
+                    else if (userTimeCount >= 1 ||
+                             globalTimeCount >= 10)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
             }
-
-            return timeCount;
+            finally
+            {
+                _globalLock.Release(); 
+            }
         }
     }
 }

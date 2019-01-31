@@ -114,9 +114,10 @@ namespace Quaestur
                         .Query<ServiceAddress>(DC.Equal("address", model.Email))
                         .FirstOrDefault();
 
-                    if (address == null)
+                    if (address == null ||
+                        address.Person.Value.UserStatus.Value == UserStatus.Locked)
                     {
-                        System.Threading.Thread.Sleep(500);
+                        System.Threading.Thread.Sleep(700);
                     }
                     else
                     {
