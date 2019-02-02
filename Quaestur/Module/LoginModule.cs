@@ -43,13 +43,14 @@ namespace Quaestur
     {
         private string ValidateReturnUrl(string returnUrl)
         {
-            if (returnUrl.StartsWith("/", StringComparison.Ordinal))
+            if (!string.IsNullOrEmpty(returnUrl) &&
+                returnUrl.StartsWith("/", StringComparison.Ordinal))
             {
                 return returnUrl;
             }
             else
             {
-                return string.Empty; 
+                return string.Empty;
             }
         }
 

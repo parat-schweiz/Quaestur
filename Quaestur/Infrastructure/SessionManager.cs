@@ -112,7 +112,7 @@ namespace Quaestur
                 .Select(ra => ra.Role.Value)
                 .SelectMany(r => r.Permissions.Select(p => new RolePermission(r, p))));
 
-            return personAccess.All(rp => HasThisAccess(rp));
+            return personAccess.All(HasThisAccess);
         }
 
         private bool HasThisAccess(RolePermission rp)
