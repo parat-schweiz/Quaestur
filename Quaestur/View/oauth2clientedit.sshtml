@@ -62,6 +62,7 @@ $("#@Model.ButtonId").click(function() {
   @EndEach
   formData.Secret = $("#clientSecret").val();
   formData.RedirectUri = $("#clientRedirectUri").val();
+  formData.RequireTwoFactor = $('#clientRequireTwoFactor').is(':checked');
   $.post("/oauth2client/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -100,6 +101,19 @@ $("#@Model.ButtonId").click(function() {
         <label for="clientRedirectUri">@Model.PhraseFieldRedirectUri</label>
         <input type="text" id="clientRedirectUri" class="form-control" value="@Model.RedirectUri"/>
         <div id="clientRedirectUriFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          @If.RequireTwoFactor
+          <input type="checkbox" class="form-check-input" id="clientRequireTwoFactor" checked>
+          @EndIf
+          @IfNot.RequireTwoFactor
+          <input type="checkbox" class="form-check-input" id="clientRequireTwoFactor">
+          @EndIf
+          <label class="form-check-label" for="clientRequireTwoFactor">@Model.PhraseFieldRequireTwoFactor</label>
+        </div>
       </div>
     </div>
   </form>

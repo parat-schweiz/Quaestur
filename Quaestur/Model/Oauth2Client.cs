@@ -8,6 +8,7 @@ namespace Quaestur
 		public MultiLanguageStringField Name { get; private set; }
         public StringField Secret { get; private set; }
         public StringField RedirectUri { get; private set; }
+        public Field<bool> RequireTwoFactor { get; private set; }
 
         public Oauth2Client() : this(Guid.Empty)
         {
@@ -18,6 +19,7 @@ namespace Quaestur
             Name = new MultiLanguageStringField(this, "name");
             Secret = new StringField(this, "secret", 256);
             RedirectUri = new StringField(this, "redirecturi", 256, AllowStringType.UnsecureText);
+            RequireTwoFactor = new Field<bool>(this, "requiretwofactor", false);
         }
 
         public override string ToString()

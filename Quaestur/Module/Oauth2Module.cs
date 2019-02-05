@@ -49,7 +49,7 @@ namespace Quaestur
 
         public Oauth2AuthModule()
         {
-            RequireCompleteLogin();
+            this.RequiresAuthentication();
 
             Get["/oauth2/authorize/"] = parameters =>
             {
@@ -74,6 +74,13 @@ namespace Quaestur
                         return OAuth2Error("Oauth2.Error.Text.UnknownClientId",
                                            "Unkonwn client ID in OAuth2",
                                            "Unknown client ID");
+                    }
+
+                    if (client.RequireTwoFactor &&
+                        CurrentSession.CompleteAuth)
+                    {
+                        CurrentSession.ReturnUrl = "/oauth2/authorize/" + Request.Url.Query;
+                        return Response.AsRedirect("/twofactor/auth"); 
                     }
 
                     string redirectUri = Request.Query["redirect_uri"];
@@ -113,6 +120,12 @@ namespace Quaestur
 
                 if (client != null)
                 {
+                    if (client.RequireTwoFactor &&
+                        CurrentSession.CompleteAuth)
+                    {
+                        return null;
+                    }
+
                     var state = ReadBody();
 
                     var session = new Oauth2Session(Guid.NewGuid());

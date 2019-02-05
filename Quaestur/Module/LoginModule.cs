@@ -84,7 +84,6 @@ namespace Quaestur
                         break;
                     case LoginResult.Success:
                         var session = Global.Sessions.Add(result.Item1);
-                        session.ReturnUrl = returnUrl;
                         Journal(Translate(
                             "Password.Journal.Auth.Process",
                             "Journal entry subject on authentication",
@@ -93,7 +92,16 @@ namespace Quaestur
                             "Password.Journal.Auth.Success",
                             "Journal entry when authentication with password succeeded",
                             "Login with password succeeded");
-                        return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), "/twofactor/auth");
+
+                        if (returnUrl.StartsWith("/oauth2/authorize", StringComparison.Ordinal))
+                        {
+                            return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), returnUrl);
+                        }
+                        else
+                        {
+                            session.ReturnUrl = returnUrl;
+                            return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), "/twofactor/auth");
+                        }
                 }
 
                 return View["View/login.sshtml", newLogin];

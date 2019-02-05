@@ -14,10 +14,12 @@ namespace Quaestur
         public string Id;
         public List<MultiItemViewModel> Name;
         public string Secret;
+        public bool RequireTwoFactor;
         public string RedirectUri;
         public string PhraseFieldId;
         public string PhraseFieldSecret;
         public string PhraseFieldRedirectUri;
+        public string PhraseFieldRequireTwoFactor;
 
         public Oauth2ClientEditViewModel()
         { 
@@ -29,6 +31,7 @@ namespace Quaestur
             PhraseFieldId = translator.Get("Oauth2Client.Edit.Field.Id", "Client ID field in the OAuth2 client edit dialog", "Client ID");
             PhraseFieldSecret = translator.Get("Oauth2Client.Edit.Field.Secret", "Secret field in the OAuth2 client edit dialog", "Secret");
             PhraseFieldRedirectUri = translator.Get("Oauth2Client.Edit.Field.RedirectUri", "Redirect URI field in the OAuth2 client edit dialog", "Redirect URI");
+            PhraseFieldRequireTwoFactor = translator.Get("Oauth2Client.Edit.Field.RequireTwoFactor", "Require second factor field in the OAuth2 client edit dialog", "Require second factor");
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db)
@@ -39,6 +42,7 @@ namespace Quaestur
             Name = translator.CreateLanguagesMultiItem("Oauth2Client.Edit.Field.Name", "Name field in the OAuth2 client edit dialog", "Name ({0})", new MultiLanguageString());
             Secret = string.Empty;
             RedirectUri = string.Empty;
+            RequireTwoFactor = false;
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db, Oauth2Client client)
@@ -49,6 +53,7 @@ namespace Quaestur
             Name = translator.CreateLanguagesMultiItem("Oauth2Client.Edit.Field.Name", "Name field in the OAuth2 client edit dialog", "Name ({0})", client.Name.Value);
             Secret = client.Secret.Value;
             RedirectUri = client.RedirectUri.Value;
+            RequireTwoFactor = client.RequireTwoFactor.Value;
         }
     }
 
@@ -148,6 +153,7 @@ namespace Quaestur
                         status.AssignMultiLanguageRequired("Name", client.Name, model.Name);
                         status.AssignStringRequired("Secret", client.Secret, model.Secret);
                         status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
+                        client.RequireTwoFactor.Value = model.RequireTwoFactor;
 
                         if (status.IsSuccess)
                         {
@@ -180,6 +186,7 @@ namespace Quaestur
                     status.AssignMultiLanguageRequired("Name", client.Name, model.Name);
                     status.AssignStringRequired("Secret", client.Secret, model.Secret);
                     status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
+                    client.RequireTwoFactor.Value = model.RequireTwoFactor;
 
                     if (status.IsSuccess)
                     {
