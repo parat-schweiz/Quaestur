@@ -283,6 +283,7 @@ namespace Quaestur
         {
             Post["/oauth2/token"] = parameters =>
             {
+                ExpireSessions();
                 var post = this.Bind<Oauth2TokenPost>();
 
                 if (post.grant_type == "authorization_code" &&
