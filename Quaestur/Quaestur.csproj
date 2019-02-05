@@ -238,6 +238,8 @@
     <Compile Include="Module\Oauth2ClientModule.cs" />
     <Compile Include="Module\PasswordResetModule.cs" />
     <Compile Include="Infrastructure\SecurityThrottle.cs" />
+    <Compile Include="Infrastructure\UnauthorizedHandler.cs" />
+    <Compile Include="Model\Oauth2Authorization.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

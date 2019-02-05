@@ -341,6 +341,16 @@ namespace Quaestur
                 entry.Delete(database);
             }
 
+            foreach (var authorization in database.Query<Oauth2Authorization>(DC.Equal("userid", Id.Value)))
+            {
+                authorization.Delete(database);
+            }
+
+            foreach (var session in database.Query<Oauth2Session>(DC.Equal("userid", Id.Value)))
+            {
+                session.Delete(database);
+            }
+
             database.Delete(this); 
         }
     }

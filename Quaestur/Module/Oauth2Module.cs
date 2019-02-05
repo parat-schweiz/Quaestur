@@ -103,7 +103,41 @@ namespace Quaestur
                                            "Invalid state");
                     }
 
-                    return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Translator, CurrentSession, client, state)];
+                    bool hasAuthorization = false;
+
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        var authorization = Database.Query<Oauth2Authorization>(
+                        DC.Equal("userid", CurrentSession.User.Id.Value)
+                        .And(DC.Equal("clientid", client.Id.Value)))
+                        .SingleOrDefault();
+
+                        if (authorization != null &&
+                            DateTime.UtcNow > authorization.Expiry)
+                        {
+                            authorization.Delete(Database);
+                            authorization = null;
+                        }
+
+                        transaction.Commit();
+                        hasAuthorization = authorization != null;
+                    }
+
+                    if (hasAuthorization)
+                    {
+                        Oauth2Session session = CreateSession(client);
+
+                        var uri = string.Format("{0}?code={1}&state={2}",
+                                                client.RedirectUri.Value,
+                                                session.AuthCode.Value,
+                                                state);
+
+                        return Response.AsRedirect(uri);
+                    }
+                    else
+                    {
+                        return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Translator, CurrentSession, client, state)];
+                    }
                 }
                 else
                 {
@@ -126,22 +160,36 @@ namespace Quaestur
                         return null;
                     }
 
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        var authorization = Database.Query<Oauth2Authorization>(
+                            DC.Equal("userid", CurrentSession.User.Id.Value)
+                            .And(DC.Equal("clientid", client.Id.Value)))
+                            .SingleOrDefault();
+
+                        if (authorization != null &&
+                            DateTime.UtcNow > authorization.Expiry)
+                        {
+                            authorization.Delete(Database);
+                            authorization = null;
+                        }
+
+                        if (authorization == null)
+                        {
+                            authorization = new Oauth2Authorization(Guid.NewGuid());
+                            authorization.Client.Value = client;
+                            authorization.User.Value = CurrentSession.User;
+                            authorization.Moment.Value = DateTime.UtcNow;
+                            authorization.Expiry.Value = DateTime.UtcNow.AddDays(180);
+                            Database.Save(authorization);
+                        }
+
+                        transaction.Commit();
+                    }
+
                     var state = ReadBody();
 
-                    var session = new Oauth2Session(Guid.NewGuid());
-                    session.Client.Value = client;
-                    session.User.Value = CurrentSession.User;
-                    session.AuthCode.Value = Rng.Get(16).ToHexString();
-                    session.Token.Value = session.Id.Value.ToString() + "." + Rng.Get(16).ToHexString();
-                    session.Moment.Value = DateTime.UtcNow;
-                    session.Expiry.Value = DateTime.UtcNow.AddHours(1);
-                    Database.Save(session);
-
-                    Journal(session.User.Value,
-                        "Oauth2.Authenticated",
-                        "Authenticated client with OAuth2",
-                        "Client {0} authenticated using OAuth2",
-                        t => session.Client.Value.Name.Value[t.Language]);
+                    Oauth2Session session = CreateSession(client);
 
                     var uri = string.Format("{0}?code={1}&state={2}",
                                             client.RedirectUri.Value,
@@ -153,6 +201,26 @@ namespace Quaestur
 
                 return null;
             };
+        }
+
+        private Oauth2Session CreateSession(Oauth2Client client)
+        {
+            var session = new Oauth2Session(Guid.NewGuid());
+            session.Client.Value = client;
+            session.User.Value = CurrentSession.User;
+            session.AuthCode.Value = Rng.Get(16).ToHexString();
+            session.Token.Value = session.Id.Value.ToString() + "." + Rng.Get(16).ToHexString();
+            session.Moment.Value = DateTime.UtcNow;
+            session.Expiry.Value = DateTime.UtcNow.AddHours(1);
+            Database.Save(session);
+
+            Journal(session.User.Value,
+                "Oauth2.Authenticated",
+                "Authenticated client with OAuth2",
+                "Client {0} authenticated using OAuth2",
+                t => session.Client.Value.Name.Value[t.Language]);
+
+            return session;
         }
     }
 

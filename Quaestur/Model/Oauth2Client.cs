@@ -29,6 +29,11 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
+            foreach (var authorization in database.Query<Oauth2Authorization>(DC.Equal("clientid", Id.Value)))
+            {
+                authorization.Delete(database);
+            }
+
             foreach (var session in database.Query<Oauth2Session>(DC.Equal("clientid", Id.Value)))
             {
                 session.Delete(database); 
