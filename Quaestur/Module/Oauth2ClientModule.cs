@@ -73,7 +73,7 @@ namespace Quaestur
     {
         public Oauth2ClientViewModel(Translator translator, Session session)
             : base(translator, 
-            translator.Get("Oauth2Client.List.Title", "Title of the OAuth2 client list page", "Countries"), 
+            translator.Get("Oauth2Client.List.Title", "Title of the OAuth2 client list page", "OAuth2 Clients"), 
             session)
         { 
         }
