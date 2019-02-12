@@ -76,9 +76,9 @@ namespace Quaestur
                         {
                             Database.Save(person);
                             Journal(person,
-                                "Password.Journal.Edit",
-                                "Journal entry set password",
-                                "Set password");
+                                "User.Status.Journal.Edit",
+                                "Journal entry updated user status",
+                                "Updated status");
                         }
                     }
                 }

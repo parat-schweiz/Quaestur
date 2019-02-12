@@ -121,17 +121,7 @@ namespace Quaestur
                                            "Invalid redirect URI");
                     }
 
-                    string state = Request.Query["state"];
-
-                    if (string.IsNullOrEmpty(state) ||
-                        state.Length < 8)
-                    {
-                        Global.Log.Notice("OAuth2: Invalid state {0}", state);
-                        return OAuth2Error("Oauth2.Error.Text.BadClientId",
-                                           "Invalid state in OAuth2",
-                                           "Invalid state");
-                    }
-
+                    string state = Request.Query["state"] ?? string.Empty;
                     bool hasAuthorization = false;
 
                     using (var transaction = Database.BeginTransaction())
@@ -156,10 +146,14 @@ namespace Quaestur
                     {
                         Oauth2Session session = CreateSession(client);
 
-                        var uri = string.Format("{0}?code={1}&state={2}",
-                                                client.RedirectUri.Value,
-                                                session.AuthCode.Value,
-                                                state);
+                        var uri = string.IsNullOrEmpty(state) ?
+                            string.Format("{0}?code={1}",
+                                client.RedirectUri.Value,
+                                session.AuthCode.Value) :
+                            string.Format("{0}?code={1}&state={2}",
+                                client.RedirectUri.Value,
+                                session.AuthCode.Value,
+                                state);
 
                         return Response.AsRedirect(uri);
                     }
@@ -220,10 +214,14 @@ namespace Quaestur
 
                     Oauth2Session session = CreateSession(client);
 
-                    var uri = string.Format("{0}?code={1}&state={2}",
-                                            client.RedirectUri.Value,
-                                            session.AuthCode.Value,
-                                            state);
+                    var uri = string.IsNullOrEmpty(state) ?
+                        string.Format("{0}?code={1}",
+                            client.RedirectUri.Value,
+                            session.AuthCode.Value) :
+                        string.Format("{0}?code={1}&state={2}",
+                            client.RedirectUri.Value,
+                            session.AuthCode.Value,
+                            state);
 
                     return uri;
                 }
