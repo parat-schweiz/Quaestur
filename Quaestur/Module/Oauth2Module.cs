@@ -386,8 +386,8 @@ namespace Quaestur
                     if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Fullname))
                     {
                         response.Add(new JProperty("fullname", session.User.Value.FullName));
-                        response.Add(new JProperty("firstname", session.User.Value.FirstName));
-                        response.Add(new JProperty("lastname", session.User.Value.LastName));
+                        response.Add(new JProperty("firstname", session.User.Value.FirstName.Value));
+                        response.Add(new JProperty("lastname", session.User.Value.LastName.Value));
                     }
 
                     return Response.AsText(response.ToString(), "application/json");
