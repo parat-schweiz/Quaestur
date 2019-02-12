@@ -32,7 +32,36 @@ namespace Quaestur
 
             Id = client.Id.Value.ToString();
             State = state;
-            Message = translator.Get("OAuth2.Message", "Messge on the OAuth2 page", "{0} requests authorization to authenticate you and access your username, membership and voting rights. Do you wish to allow this?", client.Name.Value[translator.Language]);
+            Message = translator.Get("OAuth2.Message", "Messge on the OAuth2 page", "{0} requests authorization to authenticate you and access your {1}. Do you wish to allow this?", 
+                client.Name.Value[translator.Language], GetAccessString(translator, client));
+        }
+
+        private string GetAccessString(Translator translator, Oauth2Client client)
+        {
+            var list = new List<string>();
+            list.Add(translator.Get("OAuth2.Message.Access.Username", "Username access in OAuth2 authorization message", "username"));
+
+            foreach (Oauth2ClientAccess access in Enum.GetValues(typeof(Oauth2ClientAccess)))
+            {
+                if ((int)access > 0 &&
+                    client.Access.Value.HasFlag(access))
+                { 
+                    switch (access)
+                    {
+                        case Oauth2ClientAccess.Membership:
+                            list.Add(translator.Get("OAuth2.Message.Access.Membership", "Membership access in OAuth2 authorization message", "membership and voting rights"));
+                            break;
+                        case Oauth2ClientAccess.Email:
+                            list.Add(translator.Get("OAuth2.Message.Access.Email", "Email access in OAuth2 authorization message", "e-mail address"));
+                            break;
+                        case Oauth2ClientAccess.Fullname:
+                            list.Add(translator.Get("OAuth2.Message.Access.Fullname", "Fullname access in OAuth2 authorization message", "full name"));
+                            break;
+                    }
+                }
+            }
+
+            return string.Join(", ", list);
         }
     }
 
@@ -350,6 +379,19 @@ namespace Quaestur
                 {
                     var response = new JObject(
                         new JProperty("username", session.User.Value.UserName.Value));
+
+                    if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Email))
+                    {
+                        response.Add(new JProperty("mail", session.User.Value.PrimaryMailAddress));
+                    }
+
+                    if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Fullname))
+                    {
+                        response.Add(new JProperty("fullname", session.User.Value.FullName));
+                        response.Add(new JProperty("firstname", session.User.Value.FirstName));
+                        response.Add(new JProperty("lastname", session.User.Value.LastName));
+                    }
+
                     return Response.AsText(response.ToString(), "application/json");
                 }
 
@@ -361,7 +403,8 @@ namespace Quaestur
             {
                 var session = FindSession();
 
-                if (session != null)
+                if (session != null &&
+                    session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Membership))
                 {
                     var response = new JObject(
                         new JProperty("type", GetUserType(session.User.Value)),

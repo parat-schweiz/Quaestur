@@ -5,7 +5,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 6;
+        public static int CurrentVersion = 7;
 
         public static void Install(IDatabase database)
         {
@@ -85,6 +85,9 @@ namespace Quaestur
                     break;
                 case 6:
                     database.AddColumn<Oauth2Client>(c => c.RequireTwoFactor);
+                    break;
+                case 7:
+                    database.AddColumn<Oauth2Client>(c => c.Access);
                     break;
                 default:
                     throw new NotSupportedException();

@@ -15,11 +15,14 @@ namespace Quaestur
         public List<MultiItemViewModel> Name;
         public string Secret;
         public bool RequireTwoFactor;
+        public string[] Access;
+        public List<NamedIntViewModel> Accesses;
         public string RedirectUri;
         public string PhraseFieldId;
         public string PhraseFieldSecret;
         public string PhraseFieldRedirectUri;
         public string PhraseFieldRequireTwoFactor;
+        public string PhraseFieldAccess;
 
         public Oauth2ClientEditViewModel()
         { 
@@ -32,6 +35,7 @@ namespace Quaestur
             PhraseFieldSecret = translator.Get("Oauth2Client.Edit.Field.Secret", "Secret field in the OAuth2 client edit dialog", "Secret");
             PhraseFieldRedirectUri = translator.Get("Oauth2Client.Edit.Field.RedirectUri", "Redirect URI field in the OAuth2 client edit dialog", "Redirect URI");
             PhraseFieldRequireTwoFactor = translator.Get("Oauth2Client.Edit.Field.RequireTwoFactor", "Require second factor field in the OAuth2 client edit dialog", "Require second factor");
+            PhraseFieldAccess = translator.Get("Oauth2Client.Edit.Field.Access", "Access field in the OAuth2 client edit dialog", "Access");
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db)
@@ -40,9 +44,13 @@ namespace Quaestur
             Method = "add";
             Id = "new";
             Name = translator.CreateLanguagesMultiItem("Oauth2Client.Edit.Field.Name", "Name field in the OAuth2 client edit dialog", "Name ({0})", new MultiLanguageString());
-            Secret = string.Empty;
+            Secret = Rng.Get(16).ToHexString();
             RedirectUri = string.Empty;
             RequireTwoFactor = false;
+            Accesses = new List<NamedIntViewModel>();
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, false));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, false));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Fullname, false));
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db, Oauth2Client client)
@@ -54,6 +62,10 @@ namespace Quaestur
             Secret = client.Secret.Value;
             RedirectUri = client.RedirectUri.Value;
             RequireTwoFactor = client.RequireTwoFactor.Value;
+            Accesses = new List<NamedIntViewModel>();
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, client.Access.Value.HasFlag(Oauth2ClientAccess.Membership)));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, client.Access.Value.HasFlag(Oauth2ClientAccess.Email)));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Fullname, client.Access.Value.HasFlag(Oauth2ClientAccess.Fullname)));
         }
     }
 
@@ -153,6 +165,7 @@ namespace Quaestur
                         status.AssignMultiLanguageRequired("Name", client.Name, model.Name);
                         status.AssignStringRequired("Secret", client.Secret, model.Secret);
                         status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
+                        status.AssignFlagIntsString("Access", client.Access, model.Access);
                         client.RequireTwoFactor.Value = model.RequireTwoFactor;
 
                         if (status.IsSuccess)
@@ -186,6 +199,7 @@ namespace Quaestur
                     status.AssignMultiLanguageRequired("Name", client.Name, model.Name);
                     status.AssignStringRequired("Secret", client.Secret, model.Secret);
                     status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
+                    status.AssignFlagIntsString("Access", client.Access, model.Access);
                     client.RequireTwoFactor.Value = model.RequireTwoFactor;
 
                     if (status.IsSuccess)

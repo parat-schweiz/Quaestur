@@ -48,6 +48,7 @@ function assignValidation(resultData){
   @EndEach
   assignFieldValidation("Secret", result);
   assignFieldValidation("RedirectUri", result);
+  assignFieldValidation("Access", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -63,6 +64,7 @@ $("#@Model.ButtonId").click(function() {
   formData.Secret = $("#clientSecret").val();
   formData.RedirectUri = $("#clientRedirectUri").val();
   formData.RequireTwoFactor = $('#clientRequireTwoFactor').is(':checked');
+  formData.Access = $("#clientAccess").val();
   $.post("/oauth2client/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -71,6 +73,7 @@ $("#@Model.ButtonId").click(function() {
     }
   });
 });
+$('.selectpicker').selectpicker();
 </script>
 <div class="container">
   <form>
@@ -85,8 +88,8 @@ $("#@Model.ButtonId").click(function() {
     </div>
     <div class="form-row">
       <div class="col-12 mb-3">
-        <label for="clientSecret">@Model.PhraseFieldId</label>
-        <input type="text" id="clientSecret" class="form-control" value="@Model.Id" readonly/>
+        <label for="clientId">@Model.PhraseFieldId</label>
+        <input type="text" id="clientId" class="form-control" value="@Model.Id" readonly/>
       </div>
     </div>
     <div class="form-row">
@@ -114,6 +117,17 @@ $("#@Model.ButtonId").click(function() {
           @EndIf
           <label class="form-check-label" for="clientRequireTwoFactor">@Model.PhraseFieldRequireTwoFactor</label>
         </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="clientAccess">@Model.PhraseFieldAccess</label>
+        <select id="clientAccess" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.Accesses
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="clientAccessFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

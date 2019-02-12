@@ -129,5 +129,10 @@ namespace Quaestur
         : this((int)status, status.Translate(translator), selected)
         {
         }
+
+        public NamedIntViewModel(Translator translator, Oauth2ClientAccess access, bool selected)
+        : this((int)access, access.Translate(translator), selected)
+        {
+        }
     }
 }
