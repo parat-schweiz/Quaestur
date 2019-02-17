@@ -57,6 +57,9 @@ namespace Quaestur
                         case Oauth2ClientAccess.Fullname:
                             list.Add(translator.Get("OAuth2.Message.Access.Fullname", "Fullname access in OAuth2 authorization message", "full name"));
                             break;
+                        case Oauth2ClientAccess.Roles:
+                            list.Add(translator.Get("OAuth2.Message.Access.Roles", "Roles access in OAuth2 authorization message", "assigned roles"));
+                            break;
                     }
                 }
             }
@@ -397,6 +400,33 @@ namespace Quaestur
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
             };
+            Get["/api/v1/roles/"] = parameters =>
+            {
+                var session = FindSession();
+
+                if (session != null)
+                {
+                    var list = new List<JObject>();
+
+                    foreach (var role in Database.Query<Role>())
+                    {
+                        list.Add(
+                            new JObject(
+                                new JProperty("id", role.Id.Value),
+                                new JProperty("name", 
+                                    (role.Group.Value.Organization.Value.Name.Value + " / " +
+                                    role.Group.Value.Name.Value + " / " + role.Name.Value).ToJson())));
+                    }
+
+                    var response = new JArray(list);
+
+                    return Response.AsText(response.ToString(), "application/json");
+                }
+
+                var error = new JObject(
+                    new JProperty("error", "invalid_request"));
+                return Response.AsText(error.ToString(), "application/json");
+            };
             Get["/api/v1/user/membership/"] = parameters =>
             {
                 var session = FindSession();
@@ -409,6 +439,20 @@ namespace Quaestur
                         new JProperty("verified", false),
                         new JProperty("nested_groups", GetUserGroups(session.User.Value)),
                         new JProperty("all_nested_groups", GetUserGroups(session.User.Value)));
+                    return Response.AsText(response.ToString(), "application/json");
+                }
+
+                return null;
+            };
+            Get["/api/v1/user/roles/"] = parameters =>
+            {
+                var session = FindSession();
+
+                if (session != null &&
+                    session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Roles))
+                {
+                    var response = new JArray(session.User.Value.RoleAssignments
+                        .Select(ra => ra.Role.Value.Id.ToString()));
                     return Response.AsText(response.ToString(), "application/json");
                 }
 

@@ -51,6 +51,7 @@ namespace Quaestur
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, false));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, false));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Fullname, false));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Roles, false));
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db, Oauth2Client client)
@@ -66,6 +67,7 @@ namespace Quaestur
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, client.Access.Value.HasFlag(Oauth2ClientAccess.Membership)));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, client.Access.Value.HasFlag(Oauth2ClientAccess.Email)));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Fullname, client.Access.Value.HasFlag(Oauth2ClientAccess.Fullname)));
+            Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Roles, client.Access.Value.HasFlag(Oauth2ClientAccess.Roles)));
         }
     }
 

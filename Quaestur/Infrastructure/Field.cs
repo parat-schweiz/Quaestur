@@ -908,7 +908,7 @@ namespace Quaestur
 
         public override void AddValue(NpgsqlCommand command)
         {
-            command.AddParam(VariableName, _value.ToJson());
+            command.AddParam(VariableName, _value.ToJson().ToString());
         }
 
         public override void Read(NpgsqlDataReader reader)
@@ -999,13 +999,7 @@ namespace Quaestur
 
             try
             {
-                var array = JArray.Parse(jsonData);
-                foreach (JObject obj in array)
-                {
-                    var language = (Language)(int)obj["language"];
-                    var text = (string)obj["text"];
-                    _values.Add(language, text);
-                }
+                Assign(JArray.Parse(jsonData));
             }
             catch
             {
@@ -1013,13 +1007,29 @@ namespace Quaestur
             }
         }
 
-        public string ToJson()
+        public MultiLanguageString(JArray array)
+        {
+            Assign(array); 
+        }
+
+        public void Assign(JArray array)
+        {
+            _values = new Dictionary<Language, string>();
+
+            foreach (JObject obj in array)
+            {
+                var language = (Language)(int)obj["language"];
+                var text = (string)obj["text"];
+                _values.Add(language, text);
+            }
+        }
+
+        public JArray ToJson()
         { 
-            var array = new JArray(
+            return new JArray(
                 _values.Select(v => new JObject(
                     new JProperty("language", (int)v.Key),
                     new JProperty("text", v.Value))));
-            return array.ToString();
         }
 
         public string AnyValue
@@ -1043,6 +1053,41 @@ namespace Quaestur
             {
                 return string.Empty;
             }
+        }
+
+        public static MultiLanguageString operator +(MultiLanguageString a, string b)
+        {
+            return a.Concat(b); 
+        }
+
+        public static MultiLanguageString operator +(MultiLanguageString a, MultiLanguageString b)
+        {
+            return a.Concat(b);
+        }
+
+        public MultiLanguageString Concat(string suffix)
+        {
+            var result = new MultiLanguageString();
+
+            foreach (var v in _values)
+            {
+                result._values.Add(v.Key, v.Value + suffix); 
+            }
+
+            return result;
+        }
+
+        public MultiLanguageString Concat(MultiLanguageString suffix)
+        {
+            var result = new MultiLanguageString();
+            var keys = _values.Keys.Concat(suffix._values.Keys).Distinct().ToList();
+
+            foreach (var k in keys)
+            {
+                result[k] = this[k] + suffix[k];
+            }
+
+            return result;
         }
 
         public string this[Language language]

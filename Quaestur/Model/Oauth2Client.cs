@@ -10,6 +10,7 @@ namespace Quaestur
         Membership = 1,
         Email = 2,
         Fullname = 4,
+        Roles = 8,
     }
 
     public static class Oauth2ClientAccessExtensions
@@ -26,6 +27,8 @@ namespace Quaestur
                     return translator.Get("Enum.Oauth2ClientAccess.Email", "E-Mail value in the OAuth2 client access flag enum", "E-Mail");
                 case Oauth2ClientAccess.Fullname:
                     return translator.Get("Enum.Oauth2ClientAccess.Fullname", "Full name value in the OAuth2 client access flag enum", "Full name");
+                case Oauth2ClientAccess.Roles:
+                    return translator.Get("Enum.Oauth2ClientAccess.Roles", "Roles value in the OAuth2 client access flag enum", "Roles");
                 default:
                     throw new NotSupportedException();
             }
