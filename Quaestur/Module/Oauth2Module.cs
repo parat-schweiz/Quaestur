@@ -109,7 +109,7 @@ namespace Quaestur
                     }
 
                     if (client.RequireTwoFactor &&
-                        CurrentSession.CompleteAuth)
+                        !CurrentSession.CompleteAuth)
                     {
                         CurrentSession.ReturnUrl = "/oauth2/authorize/" + Request.Url.Query;
                         return Response.AsRedirect("/twofactor/auth"); 
