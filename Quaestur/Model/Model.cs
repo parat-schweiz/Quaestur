@@ -47,6 +47,7 @@ namespace Quaestur
             database.CreateTable<Oauth2Client>();
             database.CreateTable<Oauth2Session>();
             database.CreateTable<Oauth2Authorization>();
+            database.CreateTable<SearchSettings>();
         }
 
         private static void Migrate(IDatabase database)

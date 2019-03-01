@@ -4,6 +4,7 @@ using System;
 using Nancy;
 using Nancy.Security;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Quaestur
 {
@@ -104,14 +105,14 @@ namespace Quaestur
 
         public PersonListDataViewModel(Translator translator, IEnumerable<Person> persons, SearchSettings settings, Session session)
         {
-            ShowNumber = settings.ShowNumber;
-            ShowUser = settings.ShowUser;
-            ShowName = settings.ShowName;
-            ShowStreet = settings.ShowStreet;
-            ShowPlace = settings.ShowPlace;
-            ShowState = settings.ShowState;
-            ShowMail = settings.ShowMail;
-            ShowPhone = settings.ShowPhone;
+            ShowNumber = settings.ShowNumber.Value;
+            ShowUser = settings.ShowUser.Value;
+            ShowName = settings.ShowName.Value;
+            ShowStreet = settings.ShowStreet.Value;
+            ShowPlace = settings.ShowPlace.Value;
+            ShowState = settings.ShowState.Value;
+            ShowMail = settings.ShowMail.Value;
+            ShowPhone = settings.ShowPhone.Value;
             List = new List<PersonListItemViewModel>(persons.Select(p => new PersonListItemViewModel(translator, p, this, session)));
 
             PhraseHeaderNumber = translator.Get("Person.List.Header.Number", "Column 'Number' in the person list page", "#").EscapeHtml();
@@ -164,37 +165,22 @@ namespace Quaestur
 
         public PersonPagesViewModel(Translator translator, int pageCount, SearchSettings settings)
         {
-            CurrentPageNumber = (settings.CurrentPage + 1).ToString();
+            CurrentPageNumber = (settings.CurrentPage.Value + 1).ToString();
             Pages = new List<PersonPageViewModel>();
             for (int i = 0; i < pageCount; i++)
             {
-                Pages.Add(new PersonPageViewModel(i, settings.CurrentPage == i));
+                Pages.Add(new PersonPageViewModel(i, settings.CurrentPage.Value == i));
             }
-            CurrentItemsPerPage = settings.ItemsPerPage.ToString();
+            CurrentItemsPerPage = settings.ItemsPerPage.Value.ToString();
             ItemsPerPage = new List<PersonItemsPerPageViewModel>();
             foreach (int i in new int[] { 10, 15, 20, 25, 30, 40, 50 })
             {
-                ItemsPerPage.Add(new PersonItemsPerPageViewModel(i, settings.ItemsPerPage == i));
+                ItemsPerPage.Add(new PersonItemsPerPageViewModel(i, settings.ItemsPerPage.Value == i));
             }
 
             PhrasePage = translator.Get("Person.List.Pages.Page", "In paging of the person list page", "Page").EscapeHtml();
             PhrasePerPage = translator.Get("Person.List.Pages.PerPage", "In paging of the person list page", "per Page").EscapeHtml();
         }
-    }
-
-    public class SearchSettings
-    {
-        public string FilterText;
-        public int ItemsPerPage;
-        public int CurrentPage;
-        public bool ShowNumber;
-        public bool ShowUser;
-        public bool ShowName;
-        public bool ShowStreet;
-        public bool ShowPlace;
-        public bool ShowState;
-        public bool ShowMail;
-        public bool ShowPhone;
     }
 
     public class PersonListViewModel : MasterViewModel
@@ -230,16 +216,69 @@ namespace Quaestur
         }
     }
 
+    public class SearchSettingsUpdate
+    {
+        public Guid Id;
+        public string Name;
+        public string FilterText;
+        public int ItemsPerPage;
+        public int CurrentPage;
+        public bool ShowNumber;
+        public bool ShowUser;
+        public bool ShowName;
+        public bool ShowStreet;
+        public bool ShowPlace;
+        public bool ShowState;
+        public bool ShowMail;
+        public bool ShowPhone;
+
+        public SearchSettingsUpdate()
+        { }
+
+        public SearchSettingsUpdate(SearchSettings settings)
+        {
+            Id = settings.Id.Value;
+            Name = settings.Name.Value;
+            FilterText = settings.FilterText.Value;
+            ItemsPerPage = settings.ItemsPerPage.Value;
+            CurrentPage = settings.CurrentPage.Value;
+            ShowNumber = settings.ShowNumber.Value;
+            ShowUser = settings.ShowUser.Value;
+            ShowName = settings.ShowName.Value;
+            ShowStreet = settings.ShowStreet.Value;
+            ShowPlace = settings.ShowPlace.Value;
+            ShowState = settings.ShowState.Value;
+            ShowMail = settings.ShowMail.Value;
+            ShowPhone = settings.ShowPhone.Value;
+        }
+
+        public void Apply(SearchSettings settings)
+        {
+            settings.Name.Value = Name;
+            settings.FilterText.Value = FilterText;
+            settings.ItemsPerPage.Value = ItemsPerPage;
+            settings.CurrentPage.Value = CurrentPage;
+            settings.ShowNumber.Value = ShowNumber;
+            settings.ShowUser.Value = ShowUser;
+            settings.ShowName.Value = ShowName;
+            settings.ShowStreet.Value = ShowStreet;
+            settings.ShowPlace.Value = ShowPlace;
+            settings.ShowState.Value = ShowState;
+            settings.ShowMail.Value = ShowMail;
+            settings.ShowPhone.Value = ShowPhone;
+        }
+    }
+
     public class PersonListModule : QuaesturModule
     {
         private bool Filter(Person person, SearchSettings settings)
         {
             var textFilter =
-                person.Number.ToString() == settings.FilterText ||
-                person.UserName.Value.Contains(settings.FilterText) ||
-                person.FullName.Contains(settings.FilterText) ||
-                person.ServiceAddresses.Any(a => a.Address.Value.Contains(settings.FilterText)) ||
-                person.PostalAddresses.Any(a => a.Text(Translator).Contains(settings.FilterText));
+                person.Number.ToString() == settings.FilterText.Value ||
+                person.UserName.Value.Contains(settings.FilterText.Value) ||
+                person.FullName.Contains(settings.FilterText.Value) ||
+                person.ServiceAddresses.Any(a => a.Address.Value.Contains(settings.FilterText.Value)) ||
+                person.PostalAddresses.Any(a => a.Text(Translator).Contains(settings.FilterText.Value));
             var accessFilter = HasAccess(person, PartAccess.Anonymous, AccessRight.Read);
             return textFilter && accessFilter;
         }
@@ -252,23 +291,97 @@ namespace Quaestur
             {
                 return View["View/personlist.sshtml", new PersonListViewModel(Translator, CurrentSession)];
             };
-            Post["/person/list/data"] = parameters =>
+            Get["/person/list/settings/list"] = parameters =>
             {
-                var settings = JsonConvert.DeserializeObject<SearchSettings>(ReadBody());
-                var page = Database.Query<Person>()
-                    .Where(p => Filter(p, settings))
+                var settingsList = Database
+                    .Query<SearchSettings>(DC.Equal("personid", CurrentSession.User.Id.Value))
+                    .ToList();
+                var result = new JArray();
+
+                if (!settingsList.Any())
+                {
+                    var settings = new SearchSettings(Guid.NewGuid());
+                    settings.Person.Value = CurrentSession.User;
+                    settings.Name.Value = Translate("Person.List.Settings.DefaultName", "Default name for new search settings", "Default");
+                    Database.Save(settings);
+                    settingsList.Add(settings);
+                }
+
+                foreach (var settings in settingsList)
+                {
+                    result.Add(
+                        new JObject(
+                            new JProperty("Id", settings.Id.Value), 
+                            new JProperty("Name", settings.Name.Value)));
+                }
+
+                return result.ToString();
+            };
+            Get["/person/list/settings/get/{ssid}"] = parameters =>
+            {
+                string searchSettingsId = parameters.ssid;
+                var settings = Database.Query<SearchSettings>(searchSettingsId);
+
+                if (settings == null || 
+                    settings.Person.Value != CurrentSession.User)
+                {
+                    return null;
+                }
+
+                var update = new SearchSettingsUpdate(settings);
+                return JsonConvert.SerializeObject(update).ToString();
+            };
+            Post["/person/list/settings/set/{ssid}"] = parameters =>
+            {
+                var update = JsonConvert.DeserializeObject<SearchSettingsUpdate>(ReadBody());
+                string searchSettingsId = parameters.ssid;
+                var settings = Database.Query<SearchSettings>(searchSettingsId);
+                var status = CreateStatus();
+
+                if (settings == null)
+                {
+                    settings = new SearchSettings(Guid.NewGuid());
+                    settings.Person.Value = CurrentSession.User;
+                }
+                else if (settings.Person.Value != CurrentSession.User)
+                {
+                    status.SetErrorAccessDenied(); 
+                }
+
+                update.Apply(settings);
+                Database.Save(settings);
+                return status.CreateJsonData();
+            };
+            Get["/person/list/data/{ssid}"] = parameters =>
+            {
+                string searchSettingsId = parameters.ssid;
+                var settings = Database.Query<SearchSettings>(searchSettingsId);
+                if (settings == null) return null;
+                var persons = Database.Query<Person>()
+                    .Where(p => Filter(p, settings));
+                var skip = settings.ItemsPerPage * settings.CurrentPage;
+                if (skip > persons.Count()) skip = 0;
+                var page = persons
                     .OrderBy(p => p.LastName.Value)
-                    .Skip(settings.ItemsPerPage * settings.CurrentPage)
+                    .Skip(skip)
                     .Take(settings.ItemsPerPage);
                 return View["View/personlist_data.sshtml", new PersonListDataViewModel(Translator, page, settings, CurrentSession)];
             };
-            Post["/person/list/pages"] = parameters =>
+            Get["/person/list/pages/{ssid}"] = parameters =>
             {
-                var settings = JsonConvert.DeserializeObject<SearchSettings>(ReadBody());
+                string searchSettingsId = parameters.ssid;
+                var settings = Database.Query<SearchSettings>(searchSettingsId);
+                if (settings == null) return null;
                 var personCount = Database.Query<Person>()
-                    .Where(p => Filter(p, settings))
-                    .Count();
+                    .Count(p => Filter(p, settings));
                 var pageCount = (personCount / settings.ItemsPerPage) + Math.Min(personCount % settings.ItemsPerPage, 1);
+
+                if (settings.CurrentPage.Value >= pageCount)
+                {
+                    settings.CurrentPage.Value = 0;
+                    Database.Save(settings);
+                }
+
                 return View["View/personlist_pages.sshtml", new PersonPagesViewModel(Translator, pageCount, settings)];
             };
         }

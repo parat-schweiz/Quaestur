@@ -240,6 +240,7 @@
     <Compile Include="Infrastructure\SecurityThrottle.cs" />
     <Compile Include="Infrastructure\UnauthorizedHandler.cs" />
     <Compile Include="Model\Oauth2Authorization.cs" />
+    <Compile Include="Model\SearchSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
