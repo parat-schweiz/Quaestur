@@ -150,8 +150,20 @@ namespace Quaestur
 
                     var membership = new Membership(Guid.NewGuid());
                     membership.Organization.Value = organization;
-                    membership.Type.Value = organization.MembershipTypes.FirstOrDefault();
+                    membership.Type.Value = organization.MembershipTypes
+                        .OrderBy(Value)
+                        .FirstOrDefault();
                     membership.Person.Value = person;
+
+                    foreach (var tag in Database.Query<Tag>())
+                    {
+                        if (tag.Mode.Value.HasFlag(TagMode.Default))
+                        {
+                            var tagAssignment = new TagAssignment(Guid.NewGuid());
+                            tagAssignment.Tag.Value = tag;
+                            tagAssignment.Person.Value = person;
+                        }
+                    }
 
                     Database.Save(person);
                     Journal(person,
@@ -200,6 +212,14 @@ namespace Quaestur
 
                 return null;
             };
+        }
+
+        private static long Value(MembershipType type)
+        {
+            var value = 0L;
+            value += type.Rights.Value.HasFlag(MembershipRight.Voting) ? (1 << 60) : 0;
+            value += type.Payment.Value != PaymentModel.None ? (1 << 30) : 0;
+            return value; 
         }
     }
 }
