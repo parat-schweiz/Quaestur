@@ -134,5 +134,10 @@ namespace Quaestur
         : this((int)access, access.Translate(translator), selected)
         {
         }
+
+        public NamedIntViewModel(Translator translator, PersonColumns columns, bool selected)
+        : this((int)columns, columns.TranslateFlag(translator), selected)
+        {
+        }
     }
 }

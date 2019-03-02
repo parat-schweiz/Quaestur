@@ -93,6 +93,13 @@ namespace Quaestur
             Selected = selected;
         }
 
+        public NamedIdViewModel(Translator translator, Organization organization, MembershipType type, bool selected)
+        {
+            Id = type.Id.ToString();
+            Name = organization.Name.Value[translator.Language].EscapeHtml() + " / " + type.Name.Value[translator.Language].EscapeHtml();
+            Selected = selected;
+        }
+
         public NamedIdViewModel(Translator translator, Membership membership, bool selected)
         {
             Id = membership.Id.ToString();

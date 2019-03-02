@@ -1,17 +1,27 @@
-﻿<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.PhrasePage @Model.CurrentPageNumber <span class="caret"></span></a>
-  <span class="caret"></span></button>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-  @Each.Pages
-    <a class="dropdown-item @Current.State" onclick="setCurrentPage(@Current.Index)" href="javascript:void(0);">@Model.PhrasePage @Current.Number</a>
-  @EndEach
-  </div>
-</li>
-<li class="nav-item dropdown">
-  <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.CurrentItemsPerPage @Model.PhrasePerPage <span class="caret"></span></a>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-  @Each.ItemsPerPage
-    <a class="dropdown-item @Current.State" onclick="setItemsPerPage(@Current.Count)" href="javascript:void(0);">@Current.Count @Model.PhrasePerPage</a>
-  @EndEach
-  </div>
-</li>
+﻿    <select id="currentPage" class="selectpicker form-control mr-sm-2 personpage">
+      @Each.Pages
+      <option value="@Current.Index" @Current.Options>@Model.PhrasePage @Current.Number</option>
+      @EndEach
+    </select>
+    <select id="itemsPerPage" class="selectpicker form-control mr-sm-2 personpage">
+      @Each.ItemsPerPage
+      <option value="@Current.Count" @Current.Options>@Current.Count @Model.PhrasePerPage</option>
+      @EndEach
+    </select>
+    <script>
+      function activatePages(){
+        $("#currentPage").selectpicker();
+        $("#itemsPerPage").selectpicker();
+        $("#currentPage").change(function() {
+          setSettings(function(){
+            updatePersonList();
+          });
+        });
+        $("#itemsPerPage").change(function() {
+          $("#currentPage").value = '0';
+          setSettings(function(){
+            updatePersonList();
+          });
+        });
+      }
+    </script>

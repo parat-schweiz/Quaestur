@@ -17,20 +17,6 @@
       updatePersonList();
     });
   }
-  function applySetting(setting){
-    if (searchSettings[setting]){
-      $("#menu" + setting).addClass('active');
-    }else{
-      $("#menu" + setting).removeClass('active');
-    }
-  }
-  function toggleSettings(setting){
-    searchSettings[setting] = !searchSettings[setting];
-    setSettings(function(){
-      applySetting(setting);
-      updatePersonList();
-    });
-  }
   function listSettings(callback){
     $.get("/person/list/settings/list", function(resultData){
       if (resultData){
@@ -43,34 +29,52 @@
     $.get("/person/list/settings/get/" + id, function(resultData){
       if (resultData){
         searchSettings = JSON.parse(resultData);
+        $("#filtertext").val(searchSettings.FilterText);
+        $("#filterMembership").val(searchSettings.FilterMembershipId);
+        $("#filterTag").val(searchSettings.FilterTagId);
+        $("#columns").val(searchSettings.Columns);
+        $("#itemsPerPage").val(searchSettings.ItemsPerPage);
+        $("#currentPage").val(searchSettings.CurrentPage);
         if (callback) callback();
       }
     });
   }
   function setSettings(callback){
-      $.post("/person/list/settings/set/" + searchSettings.Id, JSON.stringify(searchSettings), function(resultData){
-        if (callback) callback();
-      });
+    searchSettings.FilterText = $("#filtertext").val();
+    searchSettings.FilterMembershipId = $("#filterMembership").val();
+    searchSettings.FilterTagId = $("#filterTag").val();
+    searchSettings.Columns = $("#columns").val();
+    searchSettings.ItemsPerPage = $("#itemsPerPage").val();
+    searchSettings.CurrentPage = $("#currentPage").val();
+    $.post("/person/list/settings/set/" + searchSettings.Id, JSON.stringify(searchSettings), function(resultData){
+      if (callback) callback();
+    });
   }
   $(document).ready(function(){
+    $('.selectpicker').selectpicker();
+    $("#filtertext").on('input', function() {
+      setSettings(function(){
+        updatePersonList();
+      });
+    });
+    $("#filterMembership").change(function() {
+      setSettings(function(){
+        updatePersonList();
+      });
+    });
+    $("#columns").change(function() {
+      setSettings(function(){
+        updatePersonList();
+      });
+    });
+    $("#filterTag").change(function() {
+      setSettings(function(){
+        updatePersonList();
+      });
+    });
     listSettings(function(){
       getSettings(settingsList[0].Id, function(){
-        $("#filtertext").value = searchSettings.FilterText;
-        applySetting('ShowNumber');
-        applySetting('ShowUser');
-        applySetting('ShowName');
-        applySetting('ShowStreet');
-        applySetting('ShowPlace');
-        applySetting('ShowState');
-        applySetting('ShowMail');
-        applySetting('ShowPhone');
         updatePersonList();
-        $("#filtertext").on('input', function() {
-          searchSettings.FilterText = $("#filtertext").val();
-          setSettings(function(){
-            updatePersonList();
-          });
-        });
       });
     });
   });
@@ -82,37 +86,39 @@
     });
     $.get("/person/list/pages/" + searchSettings.Id, function(personPagesData, status){
       if (personPagesData){
-        $("#personpages").html(personPagesData);
+        $(".personpage").remove();
+        $("#personListNavBar").append(personPagesData);
+        activatePages();
       }
     });
-  }</script>
+  }
+  </script>
 @EndSection
     
 @Section['input']
 <nav class="navbar navbar-expand-md navbar-light bg-light">
   <form class="form-inline">
-    <input class="form-control mr-sm-2" type="text" placeholder="@Model.PhraseSearch" aria-label="@Model.PhraseShowSearch" id="filtertext"/>
+    <input class="form-control mr-sm-2 navbar-field-margin" type="text" placeholder="@Model.PhraseSearch" aria-label="@Model.PhraseShowSearch" id="filtertext"/>
   </form>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#personListNavBar" aria-controls="personListNavBar" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="personListNavBar">
-    <ul class="nav navbar-nav">
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#">@Model.PhraseShowColumns <span class="caret"></span></a>
-        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-          <a id="menuShowNumber" class="dropdown-item" onclick="toggleSettings('ShowNumber');" href="javascript:void(0);">@Model.PhraseShowNumber</a>
-          <a id="menuShowUser" class="dropdown-item" onclick="toggleSettings('ShowUser');" href="javascript:void(0);">@Model.PhraseShowUser</a>
-          <a id="menuShowName" class="dropdown-item" onclick="toggleSettings('ShowName');" href="javascript:void(0);">@Model.PhraseShowName</a>
-          <a id="menuShowStreet" class="dropdown-item" onclick="toggleSettings('ShowStreet');" href="javascript:void(0);">@Model.PhraseShowStreet</a>
-          <a id="menuShowPlace" class="dropdown-item" onclick="toggleSettings('ShowPlace');" href="javascript:void(0);">@Model.PhraseShowPlace</a>
-          <a id="menuShowState" class="dropdown-item" onclick="toggleSettings('ShowState');" href="javascript:void(0);">@Model.PhraseShowState</a>
-          <a id="menuShowMail" class="dropdown-item" onclick="toggleSettings('ShowMail');" href="javascript:void(0);">@Model.PhraseShowMail</a>
-          <a id="menuShowPhone" class="dropdown-item" onclick="toggleSettings('ShowPhone');" href="javascript:void(0);">@Model.PhraseShowPhone</a>
-        </div>
-      </li>
-    </ul>
-    <ul class="nav navbar-nav ml-auto" id="personpages"/>
+    <select id="filterMembership" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Memberships
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="filterTag" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Tags
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="columns" class="selectpicker form-control mr-sm-2" data-live-search="true" multiple>
+      @Each.Columns
+      <option value="@Current.Value" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
   </div>
 </nav>
 @EndSection

@@ -18,6 +18,10 @@ namespace Quaestur
         public bool ShowState;
         public bool ShowMail;
         public bool ShowPhone;
+        public bool ShowMemberships;
+        public bool ShowVotingRight;
+        public bool ShowRoles;
+        public bool ShowTags;
 
         public string Id;
         public string Number;
@@ -29,19 +33,30 @@ namespace Quaestur
         public string Street;
         public string Place;
         public string State;
+        public string Memberships;
+        public string VotingRight;
+        public string Roles;
+        public string Tags;
 
-        public PersonListItemViewModel(Translator translator, Person person, PersonListDataViewModel parent, Session session)
+        public PersonListItemViewModel(IDatabase database, Translator translator, Session session, Person person, SearchSettings settings)
         {
-            ShowNumber = parent.ShowNumber;
-            ShowUser = parent.ShowUser;
-            ShowName = parent.ShowName;
-            ShowStreet = parent.ShowStreet;
-            ShowPlace = parent.ShowPlace;
-            ShowState = parent.ShowState;
-            ShowMail = parent.ShowMail;
-            ShowPhone = parent.ShowPhone;
+            ShowNumber = settings.Columns.Value.HasFlag(PersonColumns.Number);
+            ShowUser = settings.Columns.Value.HasFlag(PersonColumns.User);
+            ShowName = settings.Columns.Value.HasFlag(PersonColumns.Name);
+            ShowStreet = settings.Columns.Value.HasFlag(PersonColumns.Street);
+            ShowPlace = settings.Columns.Value.HasFlag(PersonColumns.Place);
+            ShowState = settings.Columns.Value.HasFlag(PersonColumns.State);
+            ShowMail = settings.Columns.Value.HasFlag(PersonColumns.Mail);
+            ShowPhone = settings.Columns.Value.HasFlag(PersonColumns.Phone);
+            ShowMemberships = settings.Columns.Value.HasFlag(PersonColumns.Memberships);
+            ShowVotingRight = settings.Columns.Value.HasFlag(PersonColumns.VotingRight);
+            ShowRoles = settings.Columns.Value.HasFlag(PersonColumns.Roles);
+            ShowTags = settings.Columns.Value.HasFlag(PersonColumns.Tags);
 
             var contactAccess = session.HasAccess(person, PartAccess.Contact, AccessRight.Read);
+            var membershipsAccess = session.HasAccess(person, PartAccess.Membership, AccessRight.Read);
+            var tagsAccess = session.HasAccess(person, PartAccess.TagAssignments, AccessRight.Read);
+            var rolesAccess = session.HasAccess(person, PartAccess.RoleAssignments, AccessRight.Read);
 
             Id = person.Id.ToString();
             Number = contactAccess ?
@@ -78,6 +93,27 @@ namespace Quaestur
                 .Select(p => p.StateOrCountry(translator).EscapeHtml())
                 .FirstOrDefault() ?? string.Empty :
                 string.Empty;
+            Memberships = membershipsAccess ?
+                string.Join(", ",
+                person.Memberships
+                .Select(m => m.Organization.Value.GetText(translator) + " / " + m.Type.Value.GetText(translator))
+                .OrderBy(m => m)) :
+                string.Empty;
+            VotingRight = membershipsAccess ?
+                person.HasVotingRight(database, translator) :
+                string.Empty;
+            Roles = rolesAccess ?
+                string.Join(", ",
+                person.RoleAssignments
+                .Select(r => r.Role.Value.GetText(translator))
+                .OrderBy(r => r)) :
+                string.Empty;
+            Tags = tagsAccess ?
+                string.Join(", ",
+                person.TagAssignments
+                .Select(t => t.Tag.Value.GetText(translator))
+                .OrderBy(t => t)) :
+                string.Empty;
         }
     }
 
@@ -91,6 +127,10 @@ namespace Quaestur
         public bool ShowState;
         public bool ShowMail;
         public bool ShowPhone;
+        public bool ShowMemberships;
+        public bool ShowVotingRight;
+        public bool ShowRoles;
+        public bool ShowTags;
         public List<PersonListItemViewModel> List;
 
         public string PhraseHeaderNumber = string.Empty;
@@ -102,18 +142,26 @@ namespace Quaestur
         public string PhraseHeaderState = string.Empty;
         public string PhraseHeaderMail = string.Empty;
         public string PhraseHeaderPhone = string.Empty;
+        public string PhraseHeaderMemberships = string.Empty;
+        public string PhraseHeaderVotingRight = string.Empty;
+        public string PhraseHeaderRoles = string.Empty;
+        public string PhraseHeaderTags = string.Empty;
 
-        public PersonListDataViewModel(Translator translator, IEnumerable<Person> persons, SearchSettings settings, Session session)
+        public PersonListDataViewModel(IDatabase database, Translator translator, IEnumerable<Person> persons, SearchSettings settings, Session session)
         {
-            ShowNumber = settings.ShowNumber.Value;
-            ShowUser = settings.ShowUser.Value;
-            ShowName = settings.ShowName.Value;
-            ShowStreet = settings.ShowStreet.Value;
-            ShowPlace = settings.ShowPlace.Value;
-            ShowState = settings.ShowState.Value;
-            ShowMail = settings.ShowMail.Value;
-            ShowPhone = settings.ShowPhone.Value;
-            List = new List<PersonListItemViewModel>(persons.Select(p => new PersonListItemViewModel(translator, p, this, session)));
+            ShowNumber = settings.Columns.Value.HasFlag(PersonColumns.Number);
+            ShowUser = settings.Columns.Value.HasFlag(PersonColumns.User);
+            ShowName = settings.Columns.Value.HasFlag(PersonColumns.Name);
+            ShowStreet = settings.Columns.Value.HasFlag(PersonColumns.Street);
+            ShowPlace = settings.Columns.Value.HasFlag(PersonColumns.Place);
+            ShowState = settings.Columns.Value.HasFlag(PersonColumns.State);
+            ShowMail = settings.Columns.Value.HasFlag(PersonColumns.Mail);
+            ShowPhone = settings.Columns.Value.HasFlag(PersonColumns.Phone);
+            ShowMemberships = settings.Columns.Value.HasFlag(PersonColumns.Memberships);
+            ShowVotingRight = settings.Columns.Value.HasFlag(PersonColumns.VotingRight);
+            ShowRoles = settings.Columns.Value.HasFlag(PersonColumns.Roles);
+            ShowTags = settings.Columns.Value.HasFlag(PersonColumns.Tags);
+            List = new List<PersonListItemViewModel>(persons.Select(p => new PersonListItemViewModel(database, translator, session, p, settings)));
 
             PhraseHeaderNumber = translator.Get("Person.List.Header.Number", "Column 'Number' in the person list page", "#").EscapeHtml();
             PhraseHeaderUser = translator.Get("Person.List.Header.UserName", "Column 'Username' in the person list page", "Username").EscapeHtml();
@@ -124,6 +172,10 @@ namespace Quaestur
             PhraseHeaderState = translator.Get("Person.List.Header.State", "Column 'State' in the person list page", "State/Country").EscapeHtml();
             PhraseHeaderMail = translator.Get("Person.List.Header.Mail", "Column 'E-Mail' in the person list page", "E-Mail").EscapeHtml();
             PhraseHeaderPhone = translator.Get("Person.List.Header.Phone", "Column 'Phone' in the person list page", "Phone").EscapeHtml();
+            PhraseHeaderMemberships = translator.Get("Person.List.Header.Memberships", "Column 'Memberships' in the person list page", "Memberships").EscapeHtml();
+            PhraseHeaderVotingRight = translator.Get("Person.List.Header.VotingRight", "Column 'Voting right' in the person list page", "Voting right").EscapeHtml();
+            PhraseHeaderRoles = translator.Get("Person.List.Header.Roles", "Column 'Roles' in the person list page", "Roles").EscapeHtml();
+            PhraseHeaderTags = translator.Get("Person.List.Header.Tags", "Column 'Tags' in the person list page", "Tags").EscapeHtml();
         }
     }
 
@@ -131,25 +183,25 @@ namespace Quaestur
     {
         public string Index;
         public string Number;
-        public string State;
+        public string Options;
 
-        public PersonPageViewModel(int index, bool active)
+        public PersonPageViewModel(int index, bool selected)
         {
             Index = index.ToString();
             Number = (index + 1).ToString();
-            State = active ? "active" : string.Empty;
+            Options = selected ? "selected" : string.Empty;
         }
     }
 
     public class PersonItemsPerPageViewModel
     {
         public string Count;
-        public string State;
+        public string Options;
 
-        public PersonItemsPerPageViewModel(int count, bool active)
+        public PersonItemsPerPageViewModel(int count, bool selected)
         {
             Count = count.ToString();
-            State = active ? "active" : string.Empty;
+            Options = selected ? "selected" : string.Empty;
         }
     }
 
@@ -185,34 +237,32 @@ namespace Quaestur
 
     public class PersonListViewModel : MasterViewModel
     {
-        public string PhraseShowNumber = string.Empty;
-        public string PhraseShowUser = string.Empty;
-        public string PhraseShowName = string.Empty;
-        public string PhraseShowStreet = string.Empty;
-        public string PhraseShowPlace = string.Empty;
-        public string PhraseShowState = string.Empty;
-        public string PhraseShowMail = string.Empty;
-        public string PhraseShowPhone = string.Empty;
-        public string PhraseShowColumns = string.Empty;
         public string PhraseSearch = string.Empty;
         public string PhraseFilter = string.Empty;
+        public List<NamedIdViewModel> Memberships;
+        public List<NamedIdViewModel> Tags;
+        public List<NamedIntViewModel> Columns;
 
-        public PersonListViewModel(Translator translator, Session session)
+        public PersonListViewModel(IDatabase database, Translator translator, Session session)
             : base(translator, 
                    translator.Get("Person.List.Title", "Title of the person list page", "Liste"), 
                    session)
         {
-            PhraseShowNumber = translator.Get("Person.List.Show.Number", "Show column 'Number' in the person list page", "#").EscapeHtml();
-            PhraseShowUser = translator.Get("Person.List.Show.UserName", "Show column 'Username' in the person list page", "Username").EscapeHtml();
-            PhraseShowName = translator.Get("Person.List.Show.Name", "Show columns 'Name' in the person list page", "Name").EscapeHtml();
-            PhraseShowStreet = translator.Get("Person.List.Show.Street", "Show column 'Street' in the person list page", "Street").EscapeHtml();
-            PhraseShowPlace = translator.Get("Person.List.Show.Place", "Show column 'Place' in the person list page", "Place").EscapeHtml();
-            PhraseShowState = translator.Get("Person.List.Show.State", "Show column 'State/Country' in the person list page", "State/Country").EscapeHtml();
-            PhraseShowMail = translator.Get("Person.List.Show.Mail", "Show column 'E-Mail' in the person list page", "E-Mail").EscapeHtml();
-            PhraseShowPhone = translator.Get("Person.List.Show.Phone", "Show column 'Phone' in the person list page", "Phone").EscapeHtml();
-            PhraseShowColumns = translator.Get("Person.List.Show.Columns", "Dropdown 'Columns' in the person list page", "Columns").EscapeHtml();
             PhraseSearch = translator.Get("Person.List.Search", "Hint in the search box of the person list page", "Search").EscapeHtml();
             PhraseFilter = translator.Get("Person.List.Filter", "Button 'Filter' on the person list page", "Filter").EscapeHtml();
+
+            Memberships = new List<NamedIdViewModel>(database
+                .Query<MembershipType>()
+                .Select(mt => new NamedIdViewModel(translator, mt.Organization.Value, mt, false))
+                .OrderBy(mt => mt.Name));
+            Memberships.Add(new NamedIdViewModel(translator.Get("Person.List.Filter.None", "None filter value", "None"), false, true));
+            Tags = new List<NamedIdViewModel>(database
+                .Query<Tag>()
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
+            Tags.Add(new NamedIdViewModel(translator.Get("Person.List.Filter.None", "None filter value", "None"), false, true));
+            Columns = new List<NamedIntViewModel>(PersonColumnsExtensions.Flags
+                .Select(f => new NamedIntViewModel(translator, f, false)));
         }
     }
 
@@ -220,17 +270,12 @@ namespace Quaestur
     {
         public Guid Id;
         public string Name;
+        public string FilterMembershipId;
+        public string FilterTagId;
         public string FilterText;
+        public int[] Columns;
         public int ItemsPerPage;
         public int CurrentPage;
-        public bool ShowNumber;
-        public bool ShowUser;
-        public bool ShowName;
-        public bool ShowStreet;
-        public bool ShowPlace;
-        public bool ShowState;
-        public bool ShowMail;
-        public bool ShowPhone;
 
         public SearchSettingsUpdate()
         { }
@@ -239,33 +284,37 @@ namespace Quaestur
         {
             Id = settings.Id.Value;
             Name = settings.Name.Value;
+            FilterMembershipId =
+                settings.FilterMembership.Value == null ?
+                string.Empty :
+                settings.FilterMembership.Value.Id.Value.ToString();
+            FilterTagId =
+                settings.FilterTag.Value == null ?
+                string.Empty :
+                settings.FilterTag.Value.Id.Value.ToString();
             FilterText = settings.FilterText.Value;
             ItemsPerPage = settings.ItemsPerPage.Value;
             CurrentPage = settings.CurrentPage.Value;
-            ShowNumber = settings.ShowNumber.Value;
-            ShowUser = settings.ShowUser.Value;
-            ShowName = settings.ShowName.Value;
-            ShowStreet = settings.ShowStreet.Value;
-            ShowPlace = settings.ShowPlace.Value;
-            ShowState = settings.ShowState.Value;
-            ShowMail = settings.ShowMail.Value;
-            ShowPhone = settings.ShowPhone.Value;
+            Columns = PersonColumnsExtensions.Flags
+                .Where(f => settings.Columns.Value.HasFlag(f))
+                .Select(f => (int)f)
+                .ToArray();
         }
 
-        public void Apply(SearchSettings settings)
+        public void Apply(IDatabase database, SearchSettings settings)
         {
             settings.Name.Value = Name;
+            settings.FilterMembership.Value = database.Query<MembershipType>(FilterMembershipId);
+            settings.FilterTag.Value = database.Query<Tag>(FilterTagId);
             settings.FilterText.Value = FilterText;
             settings.ItemsPerPage.Value = ItemsPerPage;
             settings.CurrentPage.Value = CurrentPage;
-            settings.ShowNumber.Value = ShowNumber;
-            settings.ShowUser.Value = ShowUser;
-            settings.ShowName.Value = ShowName;
-            settings.ShowStreet.Value = ShowStreet;
-            settings.ShowPlace.Value = ShowPlace;
-            settings.ShowState.Value = ShowState;
-            settings.ShowMail.Value = ShowMail;
-            settings.ShowPhone.Value = ShowPhone;
+            var flag = PersonColumns.None;
+            foreach (var f in Columns)
+            {
+                flag |= (PersonColumns)f;
+            }
+            settings.Columns.Value = flag;
         }
     }
 
@@ -273,6 +322,12 @@ namespace Quaestur
     {
         private bool Filter(Person person, SearchSettings settings)
         {
+            var membershipFilter =
+                settings.FilterMembership.Value == null ||
+                person.Memberships.Any(m => m.Type.Value == settings.FilterMembership.Value);
+            var tagFilter =
+                settings.FilterTag.Value == null ||
+                person.TagAssignments.Any(t => t.Tag.Value == settings.FilterTag.Value);
             var textFilter =
                 person.Number.ToString() == settings.FilterText.Value ||
                 person.UserName.Value.Contains(settings.FilterText.Value) ||
@@ -280,7 +335,7 @@ namespace Quaestur
                 person.ServiceAddresses.Any(a => a.Address.Value.Contains(settings.FilterText.Value)) ||
                 person.PostalAddresses.Any(a => a.Text(Translator).Contains(settings.FilterText.Value));
             var accessFilter = HasAccess(person, PartAccess.Anonymous, AccessRight.Read);
-            return textFilter && accessFilter;
+            return membershipFilter && tagFilter && textFilter && accessFilter;
         }
 
         public PersonListModule()
@@ -289,7 +344,7 @@ namespace Quaestur
 
             Get["/person/list"] = parameters =>
             {
-                return View["View/personlist.sshtml", new PersonListViewModel(Translator, CurrentSession)];
+                return View["View/personlist.sshtml", new PersonListViewModel(Database, Translator, CurrentSession)];
             };
             Get["/person/list/settings/list"] = parameters =>
             {
@@ -348,7 +403,7 @@ namespace Quaestur
                     status.SetErrorAccessDenied(); 
                 }
 
-                update.Apply(settings);
+                update.Apply(Database, settings);
                 Database.Save(settings);
                 return status.CreateJsonData();
             };
@@ -365,7 +420,7 @@ namespace Quaestur
                     .OrderBy(p => p.LastName.Value)
                     .Skip(skip)
                     .Take(settings.ItemsPerPage);
-                return View["View/personlist_data.sshtml", new PersonListDataViewModel(Translator, page, settings, CurrentSession)];
+                return View["View/personlist_data.sshtml", new PersonListDataViewModel(Database, Translator, page, settings, CurrentSession)];
             };
             Get["/person/list/pages/{ssid}"] = parameters =>
             {

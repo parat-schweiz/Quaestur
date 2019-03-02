@@ -142,3 +142,8 @@ input[type=checkbox] {
     white-space: nowrap;
     width: 1%;
 }
+
+.navbar-field-margin {
+    margin-bottom: 0px !important;
+    padding-bottom: 0.35em;
+}

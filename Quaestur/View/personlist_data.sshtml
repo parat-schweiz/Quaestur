@@ -31,6 +31,18 @@
       @If.ShowPhone
       <th>@Model.PhraseHeaderPhone</th>
       @EndIf
+      @If.ShowMemberships
+      <th>@Model.PhraseHeaderMemberships</th>
+      @EndIf
+      @If.ShowVotingRight
+      <th>@Model.PhraseHeaderVotingRight</th>
+      @EndIf
+      @If.ShowRoles
+      <th>@Model.PhraseHeaderRoles</th>
+      @EndIf
+      @If.ShowTags
+      <th>@Model.PhraseHeaderTags</th>
+      @EndIf
     </tr>
   </thead>
   <tbody>
@@ -60,6 +72,18 @@
       @EndIf
       @If.ShowPhone
       <td>@Current.PhoneNumber</td>
+      @EndIf
+      @If.ShowMemberships
+      <td>@Current.Memberships</td>
+      @EndIf
+      @If.ShowVotingRight
+      <td>@Current.VotingRight</td>
+      @EndIf
+      @If.ShowRoles
+      <td>@Current.Roles</td>
+      @EndIf
+      @If.ShowTags
+      <td>@Current.Tags</td>
       @EndIf
     </tr>
     @EndEach
