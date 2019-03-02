@@ -1,31 +1,16 @@
 ﻿<script>
 $("#billSendingTemplateRowAdd").click(function(){
-  $.get("/billSendingTemplate/add/@Model.Id", function(data, status){
-    if (data){
-      $('#billSendingTemplateEditDialog').replaceWith(data);
-      $('#billSendingTemplateEditDialog').modal('show');
-      initTinyMce();
-    }
-  });
+  window.location.href = "/billSendingTemplate/add/@Model.Id";
 });
-function showEditBillSendingTemplateDialog(id){
-  $.get("/billSendingTemplate/edit/" + id, function(data, status){
-    if (data){
-      $('#billSendingTemplateEditDialog').replaceWith(data);
-      $('#billSendingTemplateEditDialog').modal('show');
-      initTinyMce();
-    }
-  });
-}
 @Each.List
 $("#billSendingTemplateRowEdit1@Current.Id").click(function(){
-  showEditBillSendingTemplateDialog("@Current.Id");
+  window.location.href = "/billSendingTemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowEdit2@Current.Id").click(function(){
-  showEditBillSendingTemplateDialog("@Current.Id");
+  window.location.href = "/billSendingTemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowEdit3@Current.Id").click(function(){
-  showEditBillSendingTemplateDialog("@Current.Id");
+  window.location.href = "/billSendingTemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowDelete@Current.Id").click(function(){
   $.confirm({

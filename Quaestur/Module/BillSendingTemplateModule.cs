@@ -8,10 +8,11 @@ using Newtonsoft.Json;
 
 namespace Quaestur
 {
-    public class BillSendingTemplateEditViewModel : DialogViewModel
+    public class BillSendingTemplateEditViewModel : MasterViewModel
     {
         public string Method;
         public string Id;
+        public string ParentId;
         public string Language;
         public string Name;
         public string MinReminderLevel;
@@ -33,32 +34,39 @@ namespace Quaestur
         public string PhraseFieldMailSender;
         public string PhraseFieldLetterLatex;
         public string PhraseFieldSendingMode;
+        public string PhraseButtonCancel;
+        public string PhraseButtonSave;
         public string HtmlEditorId;
 
         public BillSendingTemplateEditViewModel()
         { 
         }
 
-        public BillSendingTemplateEditViewModel(Translator translator)
-            : base(translator, translator.Get("BillSendingTemplate.Edit.Title", "Title of the billSendingTemplate edit dialog", "Edit bill sending template"), "billSendingTemplateEditDialog")
+        public BillSendingTemplateEditViewModel(Translator translator, Session session)
+            : base(translator, 
+            translator.Get("BillSendingTemplate.Edit.Title", "Title of the billSendingTemplate edit dialog", "Edit bill sending template"), 
+            session)
         {
-            PhraseFieldLanguage = translator.Get("BillSendingTemplate.Edit.Field.Language", "Language field in the bill sending template edit dialog", "Language").EscapeHtml();
-            PhraseFieldName = translator.Get("BillSendingTemplate.Edit.Field.Name", "Name field in the bill emplate edit dialog", "Name").EscapeHtml();
-            PhraseFieldMinReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MinReminderLevel", "Min reminder level field in the bill template edit dialog", "Min reminder level").EscapeHtml();
-            PhraseFieldMaxReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MaxReminderLevel", "Max reminder level field in the bill template edit dialog", "Max reminder level").EscapeHtml();
-            PhraseFieldMailSubject = translator.Get("BillSendingTemplate.Edit.Field.MailSubject", "Mail subject field in the bill template edit dialog", "Mail subject").EscapeHtml();
-            PhraseFieldMailHtmlText = translator.Get("BillSendingTemplate.Edit.Field.MailHtmlText", "Mail text field in the bill template edit dialog", "Mail text").EscapeHtml();
-            PhraseFieldMailSender = translator.Get("BillSendingTemplate.Edit.Field.MailSender", "Mail sender field in the bill template edit dialog", "Mail sender group").EscapeHtml();
-            PhraseFieldLetterLatex = translator.Get("BillSendingTemplate.Edit.Field.LetterLatex", "Letter LaTeX field in the bill template edit dialog", "Letter LaTeX").EscapeHtml();
-            PhraseFieldSendingMode = translator.Get("BillSendingTemplate.Edit.Field.SendingMode", "Sending mode field in the bill template edit dialog", "Sending mode").EscapeHtml();
+            PhraseFieldLanguage = translator.Get("BillSendingTemplate.Edit.Field.Language", "Language field in the bill sending template edit page", "Language").EscapeHtml();
+            PhraseFieldName = translator.Get("BillSendingTemplate.Edit.Field.Name", "Name field in the bill emplate edit page", "Name").EscapeHtml();
+            PhraseFieldMinReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MinReminderLevel", "Min reminder level field in the bill template edit page", "Min reminder level").EscapeHtml();
+            PhraseFieldMaxReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MaxReminderLevel", "Max reminder level field in the bill template edit page", "Max reminder level").EscapeHtml();
+            PhraseFieldMailSubject = translator.Get("BillSendingTemplate.Edit.Field.MailSubject", "Mail subject field in the bill template edit page", "Mail subject").EscapeHtml();
+            PhraseFieldMailHtmlText = translator.Get("BillSendingTemplate.Edit.Field.MailHtmlText", "Mail text field in the bill template edit page", "Mail text").EscapeHtml();
+            PhraseFieldMailSender = translator.Get("BillSendingTemplate.Edit.Field.MailSender", "Mail sender field in the bill template edit page", "Mail sender group").EscapeHtml();
+            PhraseFieldLetterLatex = translator.Get("BillSendingTemplate.Edit.Field.LetterLatex", "Letter LaTeX field in the bill template edit page", "Letter LaTeX").EscapeHtml();
+            PhraseFieldSendingMode = translator.Get("BillSendingTemplate.Edit.Field.SendingMode", "Sending mode field in the bill template edit page", "Sending mode").EscapeHtml();
+            PhraseButtonCancel = translator.Get("BillSendingTemplate.Edit.Button.Cancel", "Cancel button in the bill template edit page", "Cancel").EscapeHtml();
+            PhraseButtonSave = translator.Get("BillSendingTemplate.Edit.Button.Save", "Save button in the bill template edit page", "Save").EscapeHtml();
             HtmlEditorId = Guid.NewGuid().ToString();
         }
 
         public BillSendingTemplateEditViewModel(Translator translator, IDatabase db, Session session, MembershipType membershipType)
-            : this(translator)
+            : this(translator, session)
         {
             Method = "add";
             Id = membershipType.Id.Value.ToString();
+            ParentId = membershipType.Id.Value.ToString();
             Language = string.Empty;
             Name = string.Empty;
             MinReminderLevel = "1";
@@ -84,10 +92,11 @@ namespace Quaestur
         }
 
         public BillSendingTemplateEditViewModel(Translator translator, IDatabase db, Session session, BillSendingTemplate billSendingTemplate)
-            : this(translator)
+            : this(translator, session)
         {
             Method = "edit";
             Id = billSendingTemplate.Id.ToString();
+            ParentId = billSendingTemplate.MembershipType.Value.Id.Value.ToString();
             Language = string.Empty;
             Name = billSendingTemplate.Name.Value.EscapeHtml();
             MinReminderLevel = billSendingTemplate.MinReminderLevel.Value.ToString();

@@ -1,6 +1,6 @@
-﻿@Master['View/dialog.sshtml']
+﻿@Master['View/master.sshtml']
 
-@Section['body']
+@Section['script']
 <script>
 function assignFieldValidation(field, result){
   var fieldId = '#billSendingTemplate' + field;
@@ -38,27 +38,31 @@ function assignValidation(resultData){
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
-$("#@Model.ButtonId").click(function() {
-  var formData = new Object();
-  formData.Language = $("#billSendingTemplateLanguage").val();
-  formData.Name = $("#billSendingTemplateName").val();
-  formData.MinReminderLevel = $("#billSendingTemplateMinReminderLevel").val();
-  formData.MaxReminderLevel = $("#billSendingTemplateMaxReminderLevel").val();
-  formData.MailSubject = $("#billSendingTemplateMailSubject").val();
-  formData.MailHtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
-  formData.MailSender = $("#billSendingTemplateMailSender").val();
-  formData.LetterLatex = $("#billSendingTemplateLetterLatex").val();
-  formData.SendingMode = $("#billSendingTemplateSendingMode").val();
-  $.post("/billSendingTemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
-    if (assignValidation(resultData)) {
-      $('#@Model.DialogId').modal('hide');
-      updateBillSendingTemplateList();
-      $('.modal-backdrop').remove();
-    }
-  });
-});
 $('.selectpicker').selectpicker();
-function initTinyMce(){
+$(document).ready(function() {
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "/billsendingtemplate/@Model.ParentId";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Language = $("#billSendingTemplateLanguage").val();
+    formData.Name = $("#billSendingTemplateName").val();
+    formData.MinReminderLevel = $("#billSendingTemplateMinReminderLevel").val();
+    formData.MaxReminderLevel = $("#billSendingTemplateMaxReminderLevel").val();
+    formData.MailSubject = $("#billSendingTemplateMailSubject").val();
+    formData.MailHtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
+    formData.MailSender = $("#billSendingTemplateMailSender").val();
+    formData.LetterLatex = $("#billSendingTemplateLetterLatex").val();
+    formData.SendingMode = $("#billSendingTemplateSendingMode").val();
+    $.post("/billSendingTemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/billsendingtemplate/@Model.ParentId";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
   tinymce.init({
     selector: '#@Model.HtmlEditorId',
     theme: 'modern',
@@ -69,8 +73,11 @@ function initTinyMce(){
       'save table contextmenu directionality emoticons template paste textcolor'
     ],
   });
-}
+});
 </script>
+@EndSection
+
+@Section['data']
 <div class="container">
   <form>
     <div class="form-row">
@@ -145,6 +152,8 @@ function initTinyMce(){
         <div id="billSendingTemplateSendingModeFeedback" class="valid-feedback"></div>
       </div>
     </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
   </form>
 </div>
 @EndSection
