@@ -12,16 +12,7 @@
       function activatePages(){
         $("#currentPage").selectpicker();
         $("#itemsPerPage").selectpicker();
-        $("#currentPage").change(function() {
-          setSettings(function(){
-            updatePersonList();
-          });
-        });
-        $("#itemsPerPage").change(function() {
-          $("#currentPage").value = '0';
-          setSettings(function(){
-            updatePersonList();
-          });
-        });
+        $("#currentPage").change(set);
+        $("#itemsPerPage").change(set);
       }
     </script>

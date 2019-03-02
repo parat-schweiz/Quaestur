@@ -20,6 +20,7 @@
     <script src="/Assets/bootstrap-editor/js/editor.js"></script>
     <script src="/Assets/tinymce/tinymce.min.js"></script>
     <script src="/Assets/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="/Assets/waitdialog.js"></script>
     @Section['script'];
   </head>
   <body>

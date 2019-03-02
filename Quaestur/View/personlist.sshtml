@@ -4,24 +4,41 @@
 <script>
   var searchSettings = null;
   var settingsList = null;
+  var getting = false;
   function setItemsPerPage(n){
     searchSettings.ItemsPerPage = n;
     searchSettings.CurrentPage = 0;
+    waitingDialog.show();
     setSettings(function(){
-        updatePersonList();
+      updatePersonList(function(success){
+        if (success){
+          waitingDialog.hide();
+        }else{
+          waitingDialog.hide();
+        }
+      });
     });
   }
   function setCurrentPage(n){
     searchSettings.CurrentPage = n;
+    waitingDialog.show();
     setSettings(function(){
-      updatePersonList();
+      updatePersonList(function(success){
+        if (success){
+          waitingDialog.hide();
+        }else{
+          waitingDialog.hide();
+        }
+      });
     });
   }
   function listSettings(callback){
     $.get("/person/list/settings/list", function(resultData){
       if (resultData){
         settingsList = JSON.parse(resultData);
-        if (callback) callback();
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
       }
     });
   }
@@ -29,13 +46,20 @@
     $.get("/person/list/settings/get/" + id, function(resultData){
       if (resultData){
         searchSettings = JSON.parse(resultData);
+        getting = true;
         $("#filtertext").val(searchSettings.FilterText);
         $("#filterMembership").val(searchSettings.FilterMembershipId);
         $("#filterTag").val(searchSettings.FilterTagId);
         $("#columns").val(searchSettings.Columns);
         $("#itemsPerPage").val(searchSettings.ItemsPerPage);
         $("#currentPage").val(searchSettings.CurrentPage);
-        if (callback) callback();
+        $("#filterMembership").change();
+        $("#filterTag").change();
+        $("#columns").change();
+        getting = false;
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
       }
     });
   }
@@ -50,45 +74,63 @@
       if (callback) callback();
     });
   }
+  function set(){
+    if (!getting){
+      waitingDialog.show();
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      });
+    }
+  }
   $(document).ready(function(){
     $('.selectpicker').selectpicker();
-    $("#filtertext").on('input', function() {
-      setSettings(function(){
-        updatePersonList();
-      });
-    });
-    $("#filterMembership").change(function() {
-      setSettings(function(){
-        updatePersonList();
-      });
-    });
-    $("#columns").change(function() {
-      setSettings(function(){
-        updatePersonList();
-      });
-    });
-    $("#filterTag").change(function() {
-      setSettings(function(){
-        updatePersonList();
-      });
-    });
-    listSettings(function(){
-      getSettings(settingsList[0].Id, function(){
-        updatePersonList();
-      });
-    });
-  });
-  function updatePersonList(){
-    $.get("/person/list/data/" + searchSettings.Id, function(personListData, status){
-      if (personListData){
-        $("#personlist").html(personListData);
+    $("#filtertext").on('input', set);
+    $("#filterMembership").change(set);
+    $("#columns").change(set);
+    $("#filterTag").change(set);
+    waitingDialog.show();
+    listSettings(function(success){
+      if (success){
+        getSettings(settingsList[0].Id, function(success){
+          if (success){
+            updatePersonList(function(success){
+              if (success){
+                waitingDialog.hide();
+              }else{
+                waitingDialog.hide();
+              }
+            });
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      }else{
+        waitingDialog.hide();
       }
     });
+  });
+  function updatePersonList(callback){
     $.get("/person/list/pages/" + searchSettings.Id, function(personPagesData, status){
       if (personPagesData){
         $(".personpage").remove();
         $("#personListNavBar").append(personPagesData);
         activatePages();
+        $.get("/person/list/data/" + searchSettings.Id, function(personListData, status){
+          if (personListData){
+            $("#personlist").html(personListData);
+            if (callback) callback(true);
+          }else{
+            if (callback) callback(false);
+          }
+        });
+      }else{
+        if (callback) callback(false);
       }
     });
   }

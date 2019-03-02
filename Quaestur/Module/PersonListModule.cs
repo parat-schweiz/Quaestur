@@ -429,7 +429,8 @@ namespace Quaestur
                 if (settings == null) return null;
                 var personCount = Database.Query<Person>()
                     .Count(p => Filter(p, settings));
-                var pageCount = (personCount / settings.ItemsPerPage) + Math.Min(personCount % settings.ItemsPerPage, 1);
+                var itemsPerPage = Math.Max(1, settings.ItemsPerPage.Value);
+                var pageCount = Math.Max(1, (personCount / itemsPerPage) + Math.Min(personCount % itemsPerPage, 1));
 
                 if (settings.CurrentPage.Value >= pageCount)
                 {
