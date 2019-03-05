@@ -26,7 +26,7 @@ var waitingDialog = waitingDialog || (function ($) {
          *                options.dialogSize - bootstrap postfix for dialog size, e.g. "sm", "m";
          *                options.progressType - bootstrap postfix for progress bar type, e.g. "success", "warning".
          */
-        show: function (message, options) {
+        show: function (message, options, callback) {
             // Assigning defaults
             if (typeof options === 'undefined') {
                 options = {};
@@ -55,6 +55,13 @@ var waitingDialog = waitingDialog || (function ($) {
             }
             // Opening dialog
             $dialog.modal();
+
+            // Wait for the dialog to be shown            
+            if (callback){
+                $dialog.on('shown.bs.modal', function () {
+                    callback();
+                });
+            }
         },
         /**
          * Closes dialog

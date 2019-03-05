@@ -417,7 +417,7 @@ namespace Quaestur
                 var skip = settings.ItemsPerPage * settings.CurrentPage;
                 if (skip > persons.Count()) skip = 0;
                 var page = persons
-                    .OrderBy(p => p.LastName.Value)
+                    .OrderBy(p => p.SortName)
                     .Skip(skip)
                     .Take(settings.ItemsPerPage);
                 return View["View/personlist_data.sshtml", new PersonListDataViewModel(Database, Translator, page, settings, CurrentSession)];

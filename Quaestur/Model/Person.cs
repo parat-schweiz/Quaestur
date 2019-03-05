@@ -239,6 +239,28 @@ namespace Quaestur
             }
         }
 
+        public string SortName
+        {
+            get
+            {
+                if (LastName.Value.Length > 0)
+                {
+                    var name = LastName.Value;
+
+                    if (ShortFirstNames.Length > 0)
+                    {
+                        name += ", " + ShortFirstNames;
+                    }
+
+                    return name;
+                }
+                else
+                {
+                    return UserName;
+                }
+            }
+        }
+
         public override string ToString()
         {
             return "Person " + ShortHand;

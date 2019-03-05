@@ -8,27 +8,29 @@
   function setItemsPerPage(n){
     searchSettings.ItemsPerPage = n;
     searchSettings.CurrentPage = 0;
-    waitingDialog.show();
-    setSettings(function(){
-      updatePersonList(function(success){
-        if (success){
-          waitingDialog.hide();
-        }else{
-          waitingDialog.hide();
-        }
+    waitingDialog.show(undefined, undefined, function(){
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
       });
     });
   }
   function setCurrentPage(n){
     searchSettings.CurrentPage = n;
-    waitingDialog.show();
-    setSettings(function(){
-      updatePersonList(function(success){
-        if (success){
-          waitingDialog.hide();
-        }else{
-          waitingDialog.hide();
-        }
+    waitingDialog.show(undefined, undefined, function(){
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
       });
     });
   }
