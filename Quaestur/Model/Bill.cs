@@ -38,7 +38,7 @@ namespace Quaestur
         public DecimalField Amount { get; private set; }
         public Field<DateTime> CreatedDate { get; private set; }
         public FieldNull<DateTime> PayedDate { get; private set; }
-        public FieldClass<byte[]> DocumentData { get; private set; }
+        public ByteArrayField DocumentData { get; private set; }
         public FieldNull<DateTime> ReminderDate { get; private set; }
         public Field<int> ReminderLevel { get; private set; }
 
@@ -56,7 +56,7 @@ namespace Quaestur
             Amount = new DecimalField(this, "amount", 16, 4);
             CreatedDate = new Field<DateTime>(this, "createddate", new DateTime(1850, 1, 1));
             PayedDate = new FieldNull<DateTime>(this, "payeddate");
-            DocumentData = new FieldClass<byte[]>(this, "documentdata", false);
+            DocumentData = new ByteArrayField(this, "documentdata", false);
             ReminderDate = new FieldNull<DateTime>(this, "reminderdate");
             ReminderLevel = new Field<int>(this, "reminderlevel", 0);
         }

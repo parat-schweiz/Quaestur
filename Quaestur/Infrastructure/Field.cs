@@ -10,7 +10,7 @@ namespace Quaestur
 {
     public abstract class Field : IEquatable<Field>
     {
-        public bool Dirty { get; protected set; }
+        public abstract bool Dirty { get; protected set; }
 
         public abstract void Validate();
 
@@ -59,6 +59,8 @@ namespace Quaestur
             : base(obj, columnName, nullable)
         {
         }
+
+        public override bool Dirty { get; protected set; }
 
         public abstract T Value { get; set; }
 
@@ -153,8 +155,11 @@ namespace Quaestur
             }
             set
             {
-                Dirty = true;
-                _value = value;
+                if (!_value.Equals(value))
+                {
+                    Dirty = true;
+                    _value = value;
+                }
             }
         }
 
@@ -199,8 +204,11 @@ namespace Quaestur
             }
             set
             {
-                Dirty = true;
-                _value = value;
+                if (!_value.Equals(value))
+                {
+                    Dirty = true;
+                    _value = value;
+                }
             }
         }
 
@@ -253,8 +261,11 @@ namespace Quaestur
             }
             set
             {
-                Dirty = true;
-                _value = value;
+                if (!_value.Equals(value))
+                {
+                    Dirty = true;
+                    _value = value;
+                }
             }
         }
 
@@ -310,7 +321,86 @@ namespace Quaestur
         }
     }
 
-    public class FieldClass<T> : ValueField<T> where T : class
+    public class ByteArrayField : ValueField<byte[]>
+    {
+        protected byte[] _value;
+
+        public override byte[] Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                if (!ReferenceEquals(_value, value) &&
+                    (_value is null ||
+                    value is null ||
+                    !_value.AreEqual(value)))
+                {
+                    Dirty = true;
+                    _value = value;
+                }
+            }
+        }
+
+        public override Type BaseType
+        {
+            get { return typeof(byte[]); }
+        }
+
+        public override void AddValue(NpgsqlCommand command)
+        {
+            if (_value == null)
+            {
+                command.AddParam(VariableName, DBNull.Value);
+            }
+            else
+            {
+                command.AddParam(VariableName, _value);
+            }
+        }
+
+        public override void Updated()
+        {
+            Dirty = false;
+        }
+
+        public override void Read(NpgsqlDataReader reader)
+        {
+            if (reader[ColumnName] is DBNull)
+            {
+                _value = null;
+            }
+            else
+            {
+                _value = (byte[])reader[ColumnName];
+            }
+
+            Dirty = false;
+        }
+
+        public static implicit operator byte[](ByteArrayField field)
+        {
+            return field.Value;
+        }
+
+        public override void Validate()
+        {
+            if ((_value == null) && (!Nullable))
+            {
+                throw Except("Field {0} must not be null.", ColumnName);
+            }
+        }
+
+        public ByteArrayField(DatabaseObject obj, string columnName, bool nullable)
+            : base(obj, columnName, nullable)
+        {
+            _value = null;
+        }
+    }
+
+    public class FieldClass<T> : ValueField<T> where T : class, IEquatable<T>
     {
         protected T _value;
 
@@ -322,8 +412,14 @@ namespace Quaestur
             }
             set
             {
-                Dirty = true;
-                _value = value;
+                if (!ReferenceEquals(_value, value) &&
+                    (_value is null || 
+                    value is null ||
+                    !_value.Equals(value)))
+                {
+                    Dirty = true;
+                    _value = value;
+                }
             }
         }
 
@@ -444,6 +540,28 @@ namespace Quaestur
         UnsecureText,
     }
 
+    public static class AllowStringTypeExtensions
+    {
+        public static string Sanatize(this AllowStringType allowType, string input)
+        {
+            switch (allowType)
+            {
+                case AllowStringType.SimpleText:
+                    return input.RemoveHtml().RemoveParameters();
+                case AllowStringType.ParameterizedText:
+                    return input.RemoveHtml();
+                case AllowStringType.SafeHtml:
+                    return input.SafeHtml();
+                case AllowStringType.SafeLatex:
+                    return input.SafeLatex();
+                case AllowStringType.UnsecureText:
+                    return input;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+
     public class StringField : ProtoField<string>
     {
         public AllowStringType AllowType { get; private set; }
@@ -475,26 +593,7 @@ namespace Quaestur
                     throw new NotSupportedException(); 
                 }
 
-                switch (AllowType)
-                {
-                    case AllowStringType.SimpleText:
-                        base.Value = value.RemoveHtml().RemoveParameters();
-                        break;
-                    case AllowStringType.ParameterizedText:
-                        base.Value = value.RemoveHtml();
-                        break;
-                    case AllowStringType.SafeHtml:
-                        base.Value = value.SafeHtml();
-                        break;
-                    case AllowStringType.SafeLatex:
-                        base.Value = value.SafeLatex();
-                        break;
-                    case AllowStringType.UnsecureText:
-                        base.Value = value;
-                        break;
-                    default:
-                        throw new NotSupportedException();
-                }
+                base.Value = AllowType.Sanatize(value);
             }
         }
 
@@ -900,10 +999,13 @@ namespace Quaestur
 
     public class MultiLanguageStringField : FieldClass<MultiLanguageString>
     {
-        public MultiLanguageStringField(DatabaseObject obj, string columnName)
+        public AllowStringType AllowType { get; private set; }
+
+        public MultiLanguageStringField(DatabaseObject obj, string columnName, AllowStringType allowType = AllowStringType.SimpleText)
             : base(obj, columnName, false)
         {
-            _value = new MultiLanguageString();
+            AllowType = allowType;
+            _value = new MultiLanguageString(allowType);
         }
 
         public override void AddValue(NpgsqlCommand command)
@@ -913,17 +1015,61 @@ namespace Quaestur
 
         public override void Read(NpgsqlDataReader reader)
         {
-            _value = new MultiLanguageString((string)reader[ColumnName]);
+            _value = new MultiLanguageString((string)reader[ColumnName], AllowType);
         }
 
         public override Type BaseType
         {
             get { return typeof(string); }
         }
+
+        public override bool Dirty
+        {
+            get
+            {
+                return base.Dirty || Value.Dirty;
+            }
+            protected set
+            {
+                base.Dirty = value;
+            }
+        }
+
+        public override MultiLanguageString Value
+        {
+            get
+            {
+                return base.Value;
+            }
+            set
+            {
+                if (!(value is null) && (value.AllowType != AllowType))
+                {
+                    throw new InvalidOperationException("Allowed string mismatch."); 
+                }
+
+                base.Value = value;
+            }
+        }
     }
 
-    public class StringListField : FieldClass<IEnumerable<string>>
+    public class StringListField : ValueField<IEnumerable<string>>
     {
+        private IEnumerable<string> _value;
+
+        public override void Updated()
+        {
+            Dirty = false;
+        }
+
+        public override void Validate()
+        {
+            if ((_value == null) && (!Nullable))
+            {
+                throw Except("Field {0} must not be null.", ColumnName);
+            }
+        }
+
         public AllowStringType AllowType { get; private set; }
 
         public StringListField(DatabaseObject obj, string columnName, AllowStringType allowType = AllowStringType.SimpleText)
@@ -933,36 +1079,19 @@ namespace Quaestur
             _value = new List<string>();
         }
 
-        private string Sanatize(string value)
-        {
-            switch (AllowType)
-            {
-                case AllowStringType.SimpleText:
-                    return value.RemoveHtml().RemoveParameters();
-                case AllowStringType.ParameterizedText:
-                    return value.RemoveHtml();
-                case AllowStringType.SafeHtml:
-                    return value.SafeHtml();
-                case AllowStringType.SafeLatex:
-                    return value.SafeLatex();
-                default:
-                    throw new NotSupportedException();
-            } 
-        }
-
         public override IEnumerable<string> Value
         {
-            get { return base.Value; }
+            get { return _value; }
             set
             {
                 var list = new List<string>();
 
                 foreach (var v in value)
                 {
-                    list.Add(Sanatize(v)); 
+                    list.Add(AllowType.Sanatize(v)); 
                 }
 
-                base.Value = list;
+                _value = list;
             }
         }
 
@@ -984,17 +1113,24 @@ namespace Quaestur
         }
     }
 
-    public class MultiLanguageString
+    public class MultiLanguageString : IEquatable<MultiLanguageString>
     {
+        public bool Dirty { get; private set; }
+
+        public AllowStringType AllowType { get; private set; }
+
         private Dictionary<Language, string> _values;
 
-        public MultiLanguageString()
+        public MultiLanguageString(AllowStringType allowType = AllowStringType.SimpleText)
         {
+            AllowType = allowType;
             _values = new Dictionary<Language, string>();
+            Dirty = false;
         }
 
-        public MultiLanguageString(string jsonData)
+        public MultiLanguageString(string jsonData, AllowStringType allowType = AllowStringType.SimpleText)
         {
+            AllowType = allowType;
             _values = new Dictionary<Language, string>();
 
             try
@@ -1005,11 +1141,15 @@ namespace Quaestur
             {
                 _values.Add(Language.German, jsonData); 
             }
+
+            Dirty = false;
         }
 
-        public MultiLanguageString(JArray array)
+        public MultiLanguageString(JArray array, AllowStringType allowType = AllowStringType.SimpleText)
         {
-            Assign(array); 
+            AllowType = allowType;
+            Assign(array);
+            Dirty = false;
         }
 
         public void Assign(JArray array)
@@ -1090,6 +1230,21 @@ namespace Quaestur
             return result;
         }
 
+        public bool Equals(MultiLanguageString other)
+        {
+            foreach (var k in _values.Keys.Concat(other._values.Keys).Distinct())
+            {
+                if (!_values.ContainsKey(k) ||
+                    !other._values.ContainsKey(k) ||
+                    _values[k] != other._values[k])
+                {
+                    return false; 
+                }
+            }
+
+            return true;
+        }
+
         public string this[Language language]
         {
             get 
@@ -1109,11 +1264,13 @@ namespace Quaestur
                 {
                     if (_values.ContainsKey(language))
                     {
-                        _values[language] = value.RemoveHtml().RemoveParameters();
+                        _values[language] = AllowType.Sanatize(value);
+                        Dirty = true;
                     }
                     else
                     {
-                        _values.Add(language, value.RemoveHtml().RemoveParameters());
+                        _values.Add(language, AllowType.Sanatize(value));
+                        Dirty = true;
                     }
                 }
                 else if (_values.ContainsKey(language))

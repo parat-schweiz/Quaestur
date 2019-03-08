@@ -98,6 +98,10 @@ namespace Quaestur
             {
                 return "text";
             }
+            else if (field is ByteArrayField)
+            {
+                return "bytea";
+            }
             else if (field is DecimalField)
             {
                 return string.Format("numeric({0}, {1})", ((DecimalField)field).Precision, ((DecimalField)field).Scale);
@@ -121,8 +125,6 @@ namespace Quaestur
                     return "timestamp";
                 case "System.Decimal":
                     throw new InvalidOperationException("Type decimal should not arrive here.");
-                case "System.Byte[]":
-                    return "bytea";
                 case "System.Boolean":
                     return "boolean";
                 default:

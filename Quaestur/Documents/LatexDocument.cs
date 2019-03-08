@@ -13,7 +13,7 @@ namespace Quaestur
     {
         private const string XelatexBinary = "xelatex";
 
-        protected abstract string TexDocument { get; }
+        public abstract string TexDocument { get; }
 
         public string ErrorText { get; private set; }
 
@@ -57,8 +57,8 @@ namespace Quaestur
 
                 if (!process.HasExited)
                 {
-                    ErrorText = process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
                     process.Kill();
+                    ErrorText = process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
                     return null;
                 }
 

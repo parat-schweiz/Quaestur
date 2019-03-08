@@ -110,7 +110,7 @@ namespace Quaestur
             Rights = new EnumField<MembershipRight>(this, "membershiprights", MembershipRight.None, MembershipRightExtensions.Translate);
             Payment = new EnumField<PaymentModel>(this, "paymentmode", PaymentModel.None, PaymentModelExtensions.Translate);
             Collection = new EnumField<CollectionModel>(this, "collectionmodel", CollectionModel.None, CollectionModelExtensions.Translate);
-            BillTemplateLatex = new MultiLanguageStringField(this, "billtemplatelatex");
+            BillTemplateLatex = new MultiLanguageStringField(this, "billtemplatelatex", AllowStringType.SafeLatex);
         }
 
         public override IEnumerable<MultiCascade> Cascades

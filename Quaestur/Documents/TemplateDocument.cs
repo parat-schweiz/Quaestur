@@ -15,7 +15,7 @@ namespace Quaestur
 
         protected abstract string TexTemplate { get; }
 
-        protected override string TexDocument
+        public override string TexDocument
         {
             get 
             {

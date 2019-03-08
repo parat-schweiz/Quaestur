@@ -148,7 +148,7 @@ namespace Quaestur
             _messages.Add(new JProperty(fieldName + "Validation", message));
         }
 
-        public void AssingDataUrlString(string fieldName, FieldClass<byte[]> dataField, StringField contentTypeField, string stringValue, bool required)
+        public void AssingDataUrlString(string fieldName, ByteArrayField dataField, StringField contentTypeField, string stringValue, bool required)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -458,7 +458,7 @@ namespace Quaestur
         {
             if (multiItems != null)
             {
-                var newValue = new MultiLanguageString();
+                var newValue = new MultiLanguageString(field.AllowType);
 
                 foreach (var item in multiItems)
                 {
@@ -501,7 +501,7 @@ namespace Quaestur
         {
             if (multiItems != null)
             {
-                var newValue = new MultiLanguageString();
+                var newValue = new MultiLanguageString(field.AllowType);
 
                 foreach (var item in multiItems)
                 {

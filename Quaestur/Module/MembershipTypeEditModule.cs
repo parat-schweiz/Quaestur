@@ -85,7 +85,7 @@ namespace Quaestur
             Right = new string[0];
             Payment = string.Empty;
             Collection = string.Empty;
-            BillTemplateLatex = translator.CreateLanguagesMultiItem("MembershipType.Edit.Field.BillTemplateLatex", "Bill template LaTeX field in the membership type edit dialog", "Bill template LaTeX ({0})", new MultiLanguageString());
+            BillTemplateLatex = translator.CreateLanguagesMultiItem("MembershipType.Edit.Field.BillTemplateLatex", "Bill template LaTeX field in the membership type edit dialog", "Bill template LaTeX ({0})", new MultiLanguageString(), EscapeMode.Latex);
             Rights = new List<NamedIntViewModel>();
             Rights.Add(new NamedIntViewModel(translator, MembershipRight.Voting, false));
             Payments = new List<NamedIntViewModel>();
@@ -107,7 +107,7 @@ namespace Quaestur
             Right = new string[0];
             Payment = string.Empty;
             Collection = string.Empty;
-            BillTemplateLatex = translator.CreateLanguagesMultiItem("MembershipType.Edit.Field.BillTemplateLatex", "Bill template LaTeX field in the membership type edit dialog", "Bill template LaTeX ({0})", membershipType.BillTemplateLatex.Value);
+            BillTemplateLatex = translator.CreateLanguagesMultiItem("MembershipType.Edit.Field.BillTemplateLatex", "Bill template LaTeX field in the membership type edit dialog", "Bill template LaTeX ({0})", membershipType.BillTemplateLatex.Value, EscapeMode.Latex);
             Rights = new List<NamedIntViewModel>();
             Rights.Add(new NamedIntViewModel(translator, MembershipRight.Voting, membershipType.Rights.Value.HasFlag(MembershipRight.Voting)));
             Payments = new List<NamedIntViewModel>();
@@ -445,6 +445,13 @@ namespace Quaestur
                                         documentPart.ContentTransferEncoding = ContentEncoding.Base64;
                                         content.Add(documentPart);
                                     }
+
+                                    var latexPart = new TextPart("plain") { Text = billDocument.TexDocument };
+                                    latexPart.ContentType.Name = language.ToString() + ".tex";
+                                    latexPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                                    latexPart.ContentDisposition.FileName = language.ToString() + ".tex";
+                                    latexPart.ContentTransferEncoding = ContentEncoding.Base64;
+                                    content.Add(latexPart);
 
                                     var errorPart = new TextPart("plain") { Text = billDocument.ErrorText };
                                     errorPart.ContentType.Name = language.ToString() + ".output.txt";

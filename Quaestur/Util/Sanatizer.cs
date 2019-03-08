@@ -4,6 +4,13 @@ using Ganss.XSS;
 
 namespace Quaestur
 {
+    public enum EscapeMode
+    {
+        None = 0,
+        Html = 1,
+        Latex = 2,
+    }
+
     public static class Sanatizer
     {
         public static bool IsImageDataUrl(string value)
@@ -59,7 +66,22 @@ namespace Quaestur
             }
         }
 
-		public static string EscapeHtml(this string value, bool allowNewLine = false)
+        public static string Escape(this string value, EscapeMode mode = EscapeMode.Html)
+        {
+            switch (mode)
+            {
+                case EscapeMode.Html:
+                    return value.EscapeHtml();
+                case EscapeMode.Latex:
+                    return value;
+                case EscapeMode.None:
+                    return value;
+                default:
+                    throw new NotSupportedException(); 
+            }
+        }
+
+        public static string EscapeHtml(this string value, bool allowNewLine = false)
 		{
             string result = string.Empty;
 

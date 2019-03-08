@@ -33,7 +33,7 @@ namespace Quaestur
     {
         public Field<int> Number { get; private set; }
         public StringField UserName { get; private set; }
-        public FieldClass<byte[]> PasswordHash { get; private set; }
+        public ByteArrayField PasswordHash { get; private set; }
         public StringField Title { get; private set; }
         public StringField FirstName { get; private set; }
         public StringField MiddleNames { get; private set; }
@@ -48,7 +48,7 @@ namespace Quaestur
         public List<TagAssignment> TagAssignments { get; private set; }
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
-        public FieldClass<byte[]> TwoFactorSecret { get; private set; }
+        public ByteArrayField TwoFactorSecret { get; private set; }
 
         public Person() : this(Guid.Empty)
         {
@@ -58,7 +58,7 @@ namespace Quaestur
         {
             Number = new Field<int>(this, "number", 0);
             UserName = new StringField(this, "username", 32);
-            PasswordHash = new FieldClass<byte[]>(this, "passwordhash", true);
+            PasswordHash = new ByteArrayField(this, "passwordhash", true);
             Title = new StringField(this, "title", 256);
             FirstName = new StringField(this, "firstname", 256);
             MiddleNames = new StringField(this, "middlenames", 256);
@@ -67,7 +67,7 @@ namespace Quaestur
             UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtension.Translate);
             Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
-            TwoFactorSecret = new FieldClass<byte[]>(this, "twofactorsecret", true);
+            TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();
             Memberships = new List<Membership>();

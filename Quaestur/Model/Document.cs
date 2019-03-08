@@ -32,7 +32,7 @@ namespace Quaestur
         public Field<DateTime> CreatedDate { get; private set; }
         public StringField FileName { get; private set; }
         public StringField ContentType { get; private set; }
-        public FieldClass<byte[]> Data { get; private set; }
+        public ByteArrayField Data { get; private set; }
         public EnumField<DocumentType> Type { get; private set; }
 
         public Document() : this(Guid.Empty)
@@ -46,7 +46,7 @@ namespace Quaestur
             CreatedDate = new Field<DateTime>(this, "createddate", DateTime.UtcNow);
             FileName = new StringField(this, "filename", 512);
             ContentType = new StringField(this, "contenttype", 128);
-            Data = new FieldClass<byte[]>(this, "data", false);
+            Data = new ByteArrayField(this, "data", false);
             Type = new EnumField<DocumentType>(this, "documenttype", DocumentType.Other, DocumentTypeExtensions.Translate);
         }
 

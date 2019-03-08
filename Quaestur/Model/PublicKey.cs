@@ -26,7 +26,7 @@ namespace Quaestur
     public class PublicKey : DatabaseObject
     {
         public ForeignKeyField<Person, PublicKey> Person { get; private set; }
-        public FieldClass<byte[]> Data { get; private set; }
+        public ByteArrayField Data { get; private set; }
         public StringField KeyId { get; private set; }
         public EnumField<PublicKeyType> Type { get; private set; }
 
@@ -37,7 +37,7 @@ namespace Quaestur
 		public PublicKey(Guid id) : base(id)
         {
             Person = new ForeignKeyField<Person, PublicKey>(this, "personid", false, p => p.PublicKeys);
-            Data = new FieldClass<byte[]>(this, "data", false);
+            Data = new ByteArrayField(this, "data", false);
             KeyId = new StringField(this, "keyid", 256);
             Type = new EnumField<PublicKeyType>(this, "type", PublicKeyType.OpenPGP, PublicKeyTypeExtensions.Translate);
         }
