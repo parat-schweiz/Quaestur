@@ -201,17 +201,6 @@ namespace Quaestur
             var text = new StringBuilder();
             var totalAmount = 0m;
 
-            text.Append("~ & ");
-            text.Append(_translator.Get("Document.Bill.YearlyFee", "Yearly fee in the bill document", "Yearly fee"));
-            text.Append(" & ");
-            text.Append(Bill.FromDate.Value.ToString("dd.MM.yyyy"));
-            text.Append(" - ");
-            text.Append(Bill.UntilDate.Value.ToString("dd.MM.yyyy"));
-            text.Append(" & ");
-            text.Append(_settings.Currency);
-            text.Append(@" \\");
-            text.AppendLine();
-
             foreach (var included in _allIncluded)
             {
                 var periodDays = Math.Round((decimal)Bill.UntilDate.Value.Date.Subtract(Bill.FromDate.Value.Date).TotalDays, 0) + 1m;
@@ -250,26 +239,51 @@ namespace Quaestur
                         break;
                 }
 
-                totalAmount += periodAmount;    
+                totalAmount += periodAmount;
 
+                text.Append(@"\textbf{");
                 text.Append(included.Item1.Organization.Value);
-                text.Append(" & ");
+                text.Append(@"} & ~ & ~ \\");
+                text.AppendLine();
+
+                text.Append(@"~~~~~");
+                text.Append(_translator.Get(
+                    "Document.Bill.YearlyFee", 
+                    "Yearly fee in the bill document", 
+                    "Yearly fee"));
+                text.Append(@" & ");
                 text.Append(string.Format("{0:0.00}", Math.Round(yearlyAmount, 2)));
-                text.Append(" & ");
-                text.Append(string.Format("{0:0.00}", Math.Round(periodAmount, 2)));
-                text.Append(" & ");
+                text.Append(@" & ");
                 text.Append(_settings.Currency);
                 text.Append(@" \\");
                 text.AppendLine();
+
+                text.Append(@"~~~~~");
+                text.Append(_translator.Get(
+                    "Document.Bill.PeriodFee",
+                    "Yearly fee in the bill document",
+                    "Fee from {0} until {1}",
+                    Bill.FromDate.Value.ToString("dd.MM.yyyy"),
+                    Bill.UntilDate.Value.ToString("dd.MM.yyyy")));
+                text.Append(@" & ");
+                text.Append(string.Format("{0:0.00}", Math.Round(periodAmount, 2)));
+                text.Append(@" & ");
+                text.Append(_settings.Currency);
+                text.Append(@" \\");
+                text.AppendLine();
+
+                text.Append(@"~ & ~ & ~ \\");
+                text.AppendLine();
             }
 
-            text.Append(@"\hline");
-            text.AppendLine();
-
-            text.Append(_translator.Get("Document.Bill.Total", "Total amount of a bill", "Total"));
-            text.Append(" & ~ & ");
+            text.Append(@"\textbf{");
+            text.Append(_translator.Get(
+                "Document.Bill.Total", 
+                "Total amount of a bill", 
+                "Total"));
+            text.Append(@"} & ");
             text.Append(string.Format("{0:0.00}", Math.Round(totalAmount, 2)));
-            text.Append(" & ");
+            text.Append(@" & ");
             text.Append(_settings.Currency);
             text.Append(@" \\");
             text.AppendLine();
