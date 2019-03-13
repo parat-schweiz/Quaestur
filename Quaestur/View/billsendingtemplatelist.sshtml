@@ -1,16 +1,16 @@
 ﻿<script>
 $("#billSendingTemplateRowAdd").click(function(){
-  window.location.href = "/billSendingTemplate/add/@Model.Id";
+  window.location.href = "/billsendingtemplate/add/@Model.Id";
 });
 @Each.List
 $("#billSendingTemplateRowEdit1@Current.Id").click(function(){
-  window.location.href = "/billSendingTemplate/edit/@Current.Id";
+  window.location.href = "/billsendingtemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowEdit2@Current.Id").click(function(){
-  window.location.href = "/billSendingTemplate/edit/@Current.Id";
+  window.location.href = "/billsendingtemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowEdit3@Current.Id").click(function(){
-  window.location.href = "/billSendingTemplate/edit/@Current.Id";
+  window.location.href = "/billsendingtemplate/edit/@Current.Id";
 });
 $("#billSendingTemplateRowDelete@Current.Id").click(function(){
   $.confirm({
@@ -18,12 +18,17 @@ $("#billSendingTemplateRowDelete@Current.Id").click(function(){
     content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
     buttons: {
       confirm: function () {
-        $.get("/billSendingTemplate/delete/@Current.Id", function(data, status){
+        $.get("/billsendingtemplate/delete/@Current.Id", function(data, status){
           updateBillSendingTemplateList();
         });
       },
       cancel: function () {},
     }
+  });
+});
+$("#billSendingTemplateRowCopy@Current.Id").click(function(){
+  $.get("/billsendingtemplate/copy/@Current.Id", function(data, status){
+    updateBillSendingTemplateList();
   });
 });
 @EndEach
@@ -40,7 +45,8 @@ $("#billSendingTemplateRowDelete@Current.Id").click(function(){
       <td width="20%" id="billSendingTemplateRowEdit1@Current.Id class="editable">@Current.Language</td>
       <td width="50%" id="billSendingTemplateRowEdit2@Current.Id" class="editable">@Current.Name</td>
       <td width="20%" id="billSendingTemplateRowEdit3@Current.Id" class="editable">@Current.ReminderLevel</td>
-      <td width="10%" id="billSendingTemplateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="5%" id="billSendingTemplateRowCopy@Current.Id" class="editable"><span class="fas fa-copy"></span></td>
+      <td width="5%" id="billSendingTemplateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class='centering clickable-row'>

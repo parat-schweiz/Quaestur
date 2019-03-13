@@ -245,6 +245,35 @@ namespace Quaestur
 
                 return null;
             };
+            Get["/billsendingtemplate/copy/{id}"] = parameters =>
+            {
+                string idString = parameters.id;
+                var billSendingTemplate = Database.Query<BillSendingTemplate>(idString);
+                var status = CreateStatus();
+
+                if (status.ObjectNotNull(billSendingTemplate))
+                {
+                    if (status.HasAccess(billSendingTemplate.MembershipType.Value.Organization.Value, PartAccess.Structure, AccessRight.Write))
+                    {
+                        var newTemplate = new BillSendingTemplate(Guid.NewGuid());
+                        newTemplate.MembershipType.Value = billSendingTemplate.MembershipType.Value;
+                        newTemplate.Name.Value = billSendingTemplate.Name.Value +=
+                            Translate("BillSendingTemplate.Copy.NameSuffix", "Suffix on copyied bill sending template", " (Copy)");
+                        newTemplate.Language.Value = billSendingTemplate.Language.Value;
+                        newTemplate.LetterLatex.Value = billSendingTemplate.LetterLatex.Value;
+                        newTemplate.MailHtmlText.Value = billSendingTemplate.MailHtmlText.Value;
+                        newTemplate.MailPlainText.Value = billSendingTemplate.MailPlainText.Value;
+                        newTemplate.MailSender.Value = billSendingTemplate.MailSender.Value;
+                        newTemplate.MailSubject.Value = billSendingTemplate.MailSubject.Value;
+                        newTemplate.MaxReminderLevel.Value = billSendingTemplate.MaxReminderLevel.Value;
+                        newTemplate.MinReminderLevel.Value = billSendingTemplate.MinReminderLevel.Value;
+                        newTemplate.SendingMode.Value = billSendingTemplate.SendingMode.Value;
+                        Database.Save(newTemplate);
+                    }
+                }
+
+                return status.CreateJsonData();
+            };
             Post["/billsendingtemplate/edit/{id}"] = parameters =>
             {
                 string idString = parameters.id;
