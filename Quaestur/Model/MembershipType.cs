@@ -137,6 +137,13 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
+            foreach (var billSendingTemplate in database
+                .Query<BillSendingTemplate>(DC.Equal("membershiptypeid", Id.Value))
+                .ToList())
+            {
+                billSendingTemplate.Delete(database);
+            }
+
             foreach (var membership in database
                 .Query<Membership>(DC.Equal("membershiptypeid", Id.Value))
                 .ToList())
