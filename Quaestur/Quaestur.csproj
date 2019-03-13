@@ -252,6 +252,7 @@
     <Compile Include="Model\Oauth2Authorization.cs" />
     <Compile Include="Model\SearchSettings.cs" />
     <Compile Include="Module\DialogViewModel.cs" />
+    <Compile Include="Infrastructure\VotingRightsUpdateTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

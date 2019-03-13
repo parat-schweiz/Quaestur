@@ -19,6 +19,7 @@ namespace Quaestur
             _task.Add(new MailingTask());
             _task.Add(new BillingTask());
             _task.Add(new BillingReminderTask());
+            _task.Add(new VotingRightsUpdateTask());
             _database = Global.CreateDatabase();
         }
 
