@@ -66,13 +66,16 @@ namespace Quaestur
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
             var lastBill = database
                 .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
-                .Where(b => b.Status.Value == BillStatus.Payed)
                 .OrderByDescending(m => m.UntilDate.Value)
                 .FirstOrDefault();
 
             if (lastBill == null)
             {
                 return false;
+            }
+            else if (lastBill.Status.Value == BillStatus.Payed)
+            {
+                return true;
             }
             else
             {
