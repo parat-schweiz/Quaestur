@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using SecurityServiceClient;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -12,6 +14,34 @@ namespace Quaestur
 		private static Mailer _mailer;
         private static SessionManager _login;
         private static SecurityThrottle _throttle;
+        private static SecurityService _security;
+        private static Gpg _gpg;
+
+        public static Gpg Gpg
+        {
+            get
+            {
+                if (_gpg == null)
+                {
+                    _gpg = new SecurityServiceGpg(Security);
+                }
+
+                return _gpg;
+            }
+        }
+
+        public static SecurityService Security
+        {
+            get
+            {
+                if (_security == null)
+                {
+                    _security = new SecurityService(Config.SecurityServiceUrl, Config.SecurityServiceKey);
+                }
+
+                return _security;
+            }
+        }
 
         public static SecurityThrottle Throttle
         {
@@ -99,7 +129,7 @@ namespace Quaestur
             {
 				if (_mailer == null)
                 {
-					_mailer = new Mailer(Log, Config);
+					_mailer = new Mailer(Log, Config, Gpg);
                 }
 
 				return _mailer;

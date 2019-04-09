@@ -10,6 +10,7 @@ using Nancy.Security;
 using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using BaseLibrary;
 
 namespace Quaestur
 {

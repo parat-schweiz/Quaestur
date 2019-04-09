@@ -438,6 +438,21 @@ namespace Quaestur
             }
         }
 
+        public const string UnchangedGpgPassphraseValue = "_______________________________";
+
+        public void AssignGpgPassphrase(string fieldName, StringField field, string stringValue)
+        {
+            if (stringValue == null)
+            {
+                field.Value = string.Empty;
+            }
+            else if (stringValue != UnchangedGpgPassphraseValue)
+            {
+                var gpgPassphraseData = Global.Security.SecureGpgPassphrase(stringValue);
+                field.Value = Convert.ToBase64String(gpgPassphraseData);
+            }
+        }
+
         public void AssignStringRequired(string fieldName, StringField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))

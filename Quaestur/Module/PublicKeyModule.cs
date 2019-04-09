@@ -7,6 +7,8 @@ using Nancy.ModelBinding;
 using Nancy.Responses;
 using Nancy.Security;
 using Newtonsoft.Json;
+using SecurityServiceClient;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -82,8 +84,7 @@ namespace Quaestur
             Types = new List<NamedIntViewModel>();
             Types.Add(new NamedIntViewModel(translator, PublicKeyType.OpenPGP, publicKey.Type.Value == PublicKeyType.OpenPGP));
 
-            var gpg = new GpgWrapper(GpgWrapper.LinuxGpgBinaryPath, Global.Config.GpgHomedir);
-            Uids = new List<GpgUidItem>(gpg
+            Uids = new List<GpgUidItem>(Global.Gpg
                 .ImportKeys(publicKey.Data.Value)
                 .SelectMany(k => k.Uids)
                 .Select(u => new GpgUidItem(u.Trust.ToString(), u.Mail))
@@ -245,13 +246,12 @@ namespace Quaestur
 
                 if (keyFileData != null)
                 {
-                    var gpg = new GpgWrapper(GpgWrapper.LinuxGpgBinaryPath, Global.Config.GpgHomedir);
-                    var keys = gpg.ImportKeys(keyFileData);
+                    var keys = Global.Gpg.ImportKeys(keyFileData);
 
                     if (keys.Count() == 1)
                     {
                         var key = keys.Single();
-                        publicKey.Data.Value = gpg.ExportKeyBinary(key.Id);
+                        publicKey.Data.Value = Global.Gpg.ExportKeyBinary(key.Id);
                         publicKey.KeyId.Value = key.Id;
                     }
                     else

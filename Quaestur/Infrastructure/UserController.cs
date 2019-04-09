@@ -12,15 +12,6 @@ namespace Quaestur
 {
     public static class UserController
     {
-        public static byte[] CreateHash(string password)
-        {
-            var salt = Rng.Get(16);
-            var pre = salt.Concat(Encoding.UTF8.GetBytes(password));
-            var sha256 = new SHA256Managed();
-            var hash = sha256.ComputeHash(pre);
-            return salt.Concat(hash);
-        }
-
         public static bool VerifyHash(byte[] passwordHash, string password)
         {
             var salt = passwordHash.Part(0, 16);
@@ -41,9 +32,24 @@ namespace Quaestur
                 return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
             }
 
-            if (!VerifyHash(user.PasswordHash, password))
+            switch (user.PasswordType.Value)
             {
-                return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
+                case PasswordType.None:
+                    return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
+                case PasswordType.Local:
+                    if (!VerifyHash(user.PasswordHash, password))
+                    {
+                        return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
+                    }
+                    break;
+                case PasswordType.SecurityService:
+                    if (!Global.Security.VerifyPassword(user.PasswordHash, password))
+                    {
+                        return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException();
             }
 
             if (user.Deleted.Value)

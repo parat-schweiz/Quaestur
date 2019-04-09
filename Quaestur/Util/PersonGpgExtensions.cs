@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -15,8 +16,7 @@ namespace Quaestur
 
         private static GpgPublicKeyInfo CheckPublicKey(Person person, PublicKey key)
         {
-            var gpg = new GpgWrapper(GpgWrapper.LinuxGpgBinaryPath, Global.Config.GpgHomedir);
-            var keyInfo = gpg.ImportKeys(key.Data.Value).FirstOrDefault();
+            var keyInfo = Global.Gpg.ImportKeys(key.Data.Value).FirstOrDefault();
 
             if (keyInfo.Status != GpgKeyStatus.Active)
             {
@@ -42,8 +42,7 @@ namespace Quaestur
 
         private static GpgPublicKeyInfo CheckPublicKey(ServiceAddress address, PublicKey key)
         {
-            var gpg = new GpgWrapper(GpgWrapper.LinuxGpgBinaryPath, Global.Config.GpgHomedir);
-            var keyInfo = gpg.ImportKeys(key.Data.Value).FirstOrDefault();
+            var keyInfo = Global.Gpg.ImportKeys(key.Data.Value).FirstOrDefault();
 
             if (keyInfo.Status != GpgKeyStatus.Active)
             {

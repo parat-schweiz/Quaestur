@@ -13,9 +13,9 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using QRCoder;
-using OtpNet;
 using MimeKit;
 using System.Security.Cryptography;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -127,9 +127,7 @@ namespace Quaestur
                         var to = new MailboxAddress(
                             address.Person.Value.ShortHand,
                             address.Address.Value);
-                        var senderKey = new GpgPrivateKeyInfo(
-                            Global.Config.SystemMailGpgKeyId,
-                            Global.Config.SystemMailGpgKeyPassphrase);
+                        var senderKey = GpgPrivateKeyInfo.SystemMailKey;
                         var recipientKey = address.GetPublicKey();
                         var content = new Multipart("mixed");
                         var id = address.Person.Value.Id.Value;
@@ -250,7 +248,9 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            person.PasswordHash.Value = UserController.CreateHash(newPassword1);
+                            person.PasswordHash.Value = Global.Security.SecurePassword(newPassword1);
+                            person.PasswordType.Value = PasswordType.SecurityService;
+
                             Database.Save(person);
                             Journal(
                                 person,

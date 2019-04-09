@@ -62,7 +62,8 @@ namespace Quaestur
                 user = new Person(Guid.NewGuid());
                 user.Number.Value = 1;
                 user.UserName.Value = "admin";
-                user.PasswordHash.Value = UserController.CreateHash("admin");
+                user.PasswordHash.Value = Global.Security.SecurePassword("admin");
+                user.PasswordType.Value = PasswordType.SecurityService;
                 user.UserStatus.Value = UserStatus.Active;
                 _db.Save(user);
 
@@ -285,7 +286,8 @@ namespace Quaestur
             person.BirthDate.Value = new DateTime(1960, 1, 1).AddDays(_rnd.NextDouble() * 40d * 365d);
             person.Number.Value = number;
             person.UserName.Value = "user" + person.Number;
-            person.PasswordHash.Value = UserController.CreateHash(person.UserName.Value);
+            person.PasswordHash.Value = Global.Security.SecurePassword(person.UserName.Value);
+            person.PasswordType.Value = PasswordType.SecurityService;
             person.UserStatus.Value = UserStatus.Active;
 
             var homeMail = new ServiceAddress(Guid.NewGuid());

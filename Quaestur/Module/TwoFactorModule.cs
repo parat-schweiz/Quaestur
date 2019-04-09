@@ -10,7 +10,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using Newtonsoft.Json;
 using QRCoder;
-using OtpNet;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -162,9 +162,9 @@ namespace Quaestur
                             status.SetErrorAccessDenied();
                         }
 
-                        var totp = new Totp(key);
+                        var totpData = Global.Security.SecureTotp(key);
 
-                        if (!totp.VerifyTotp(model.Code, out long timeStepMatched))
+                        if (!Global.Security.VerifyTotp(totpData, model.Code))
                         {
                             status.SetValidationError(
                                 "Code",
@@ -175,7 +175,7 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            person.TwoFactorSecret.Value = key;
+                            person.TwoFactorSecret.Value = totpData;
                             Database.Save(person);
                             Journal(person,
                                 "TwoFactor.Journal.Edit",
@@ -185,9 +185,7 @@ namespace Quaestur
                     }
                     else
                     {
-                        var totp = new Totp(person.TwoFactorSecret.Value);
-
-                        if (!totp.VerifyTotp(model.Code, out long timeStepMatched))
+                        if (!Global.Security.VerifyTotp(person.TwoFactorSecret.Value, model.Code))
                         {
                             status.SetValidationError(
                                 "Code",
@@ -213,9 +211,7 @@ namespace Quaestur
                 if (person == CurrentSession.User &&
                     person.TwoFactorSecret.Value != null)
                 {
-                    var totp = new Totp(person.TwoFactorSecret.Value);
-
-                    if (totp.VerifyTotp(model.Code, out long timeStepMatched))
+                    if (Global.Security.VerifyTotp(person.TwoFactorSecret.Value, model.Code))
                     {
                         Journal(person,
                             "TwoFactor.Journal.Show",
@@ -292,9 +288,8 @@ namespace Quaestur
             {
                 Global.Throttle.Check(CurrentSession.UserName, true);
                 var model = this.Bind<TwoFactorAuthViewModel>();
-                var totp = new Totp(CurrentSession.User.TwoFactorSecret.Value);
 
-                if (totp.VerifyTotp(model.Code, out long timeStepMatched))
+                if (Global.Security.VerifyTotp(CurrentSession.User.TwoFactorSecret.Value, model.Code))
                 {
                     CurrentSession.CompleteAuth = true;
                     CurrentSession.TwoFactorAuth = true;

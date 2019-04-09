@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using MimeKit;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -17,7 +18,7 @@ namespace Quaestur
 
         public void Run(IDatabase database)
         {
-            if (DateTime.UtcNow > _lastSending.AddMinutes(5))
+            if (DateTime.UtcNow > _lastSending.AddMinutes(3))
             {
                 _lastSending = DateTime.UtcNow;
                 _maxMailsCount = 5;

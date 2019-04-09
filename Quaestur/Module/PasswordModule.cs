@@ -93,7 +93,7 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            person.PasswordHash.Value = UserController.CreateHash(model.NewPassword1);
+                            person.PasswordHash.Value = Global.Security.SecurePassword(model.NewPassword1);
                             Database.Save(person);
                             Journal(person,
                                 "Password.Journal.Edit",
@@ -147,7 +147,8 @@ namespace Quaestur
 
                     if (status.IsSuccess)
                     {
-                        person.PasswordHash.Value = UserController.CreateHash(model.NewPassword1);
+                        person.PasswordHash.Value = Global.Security.SecurePassword(model.NewPassword1);
+                        person.PasswordType.Value = PasswordType.SecurityService;
                         Database.Save(person);
                         Journal(person,
                             "Password.Journal.Edit",

@@ -3,6 +3,14 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quaestur", "Quaestur\Quaestur.csproj", "{0F367296-D297-46AA-ACCD-D89F22525906}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityService", "SecurityService\SecurityService.csproj", "{7C1E3715-E9E1-410B-86DB-61C0C4542D81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecureChannel", "SecureChannel\SecureChannel.csproj", "{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SecurityServiceClient", "SecurityServiceClient\SecurityServiceClient.csproj", "{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLibrary", "BaseLibrary\BaseLibrary.csproj", "{64AB460A-DE0F-4141-99C7-EC983E22D8B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,5 +21,26 @@ Global
 		{0F367296-D297-46AA-ACCD-D89F22525906}.Debug|x86.Build.0 = Debug|x86
 		{0F367296-D297-46AA-ACCD-D89F22525906}.Release|x86.ActiveCfg = Release|x86
 		{0F367296-D297-46AA-ACCD-D89F22525906}.Release|x86.Build.0 = Release|x86
+		{7C1E3715-E9E1-410B-86DB-61C0C4542D81}.Debug|x86.ActiveCfg = Debug|x86
+		{7C1E3715-E9E1-410B-86DB-61C0C4542D81}.Debug|x86.Build.0 = Debug|x86
+		{7C1E3715-E9E1-410B-86DB-61C0C4542D81}.Release|x86.ActiveCfg = Release|x86
+		{7C1E3715-E9E1-410B-86DB-61C0C4542D81}.Release|x86.Build.0 = Release|x86
+		{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}.Debug|x86.Build.0 = Debug|Any CPU
+		{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}.Release|x86.ActiveCfg = Release|Any CPU
+		{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}.Release|x86.Build.0 = Release|Any CPU
+		{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}.Debug|x86.Build.0 = Debug|Any CPU
+		{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}.Release|x86.ActiveCfg = Release|Any CPU
+		{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}.Release|x86.Build.0 = Release|Any CPU
+		{64AB460A-DE0F-4141-99C7-EC983E22D8B6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{64AB460A-DE0F-4141-99C7-EC983E22D8B6}.Debug|x86.Build.0 = Debug|Any CPU
+		{64AB460A-DE0F-4141-99C7-EC983E22D8B6}.Release|x86.ActiveCfg = Release|Any CPU
+		{64AB460A-DE0F-4141-99C7-EC983E22D8B6}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		Policies = $0
+		$0.DotNetNamingPolicy = $1
+		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
 	EndGlobalSection
 EndGlobal

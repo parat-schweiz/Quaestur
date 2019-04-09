@@ -7,13 +7,38 @@ using Nancy.Authentication.Forms;
 
 namespace Quaestur
 {
+    public enum PasswordType
+    {
+        None = 0,
+        Local = 1,
+        SecurityService = 2,
+    }
+
+    public static class PasswordTypeExtensions
+    {
+        public static string Translate(this PasswordType type, Translator translator)
+        {
+            switch (type)
+            {
+                case PasswordType.None:
+                    return translator.Get("Enum.PasswordType.None", "None value in the password type enum", "None");
+                case PasswordType.Local:
+                    return translator.Get("Enum.PasswordType.Local", "Local value in the password type enum", "Local");
+                case PasswordType.SecurityService:
+                    return translator.Get("Enum.PasswordType.SecurityService", "Security service value in the password type enum", "Security service");
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+
     public enum UserStatus
     {
         Locked = 0,
         Active = 1,
     }
 
-    public static class UserStatusExtension
+    public static class UserStatusExtensions
     {
         public static string Translate(this UserStatus status, Translator translator)
         {
@@ -33,6 +58,7 @@ namespace Quaestur
     {
         public Field<int> Number { get; private set; }
         public StringField UserName { get; private set; }
+        public EnumField<PasswordType> PasswordType { get; private set; }
         public ByteArrayField PasswordHash { get; private set; }
         public StringField Title { get; private set; }
         public StringField FirstName { get; private set; }
@@ -58,13 +84,14 @@ namespace Quaestur
         {
             Number = new Field<int>(this, "number", 0);
             UserName = new StringField(this, "username", 32);
+            PasswordType = new EnumField<PasswordType>(this, "passwordtype", Quaestur.PasswordType.None, PasswordTypeExtensions.Translate);
             PasswordHash = new ByteArrayField(this, "passwordhash", true);
             Title = new StringField(this, "title", 256);
             FirstName = new StringField(this, "firstname", 256);
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
-            UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtension.Translate);
+            UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtensions.Translate);
             Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);

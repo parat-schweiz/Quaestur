@@ -5,7 +5,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 7;
+        public static int CurrentVersion = 10;
 
         public static void Install(IDatabase database)
         {
@@ -90,8 +90,55 @@ namespace Quaestur
                 case 7:
                     database.AddColumn<Oauth2Client>(c => c.Access);
                     break;
+                case 8:
+                    database.AddColumn<Person>(p => p.PasswordType);
+                    UpdatePasswordTypes(database);
+                    break;
+                case 9:
+                    SecureTotpSecrets(database);
+                    break;
+                case 10:
+                    database.ModifyColumnType<Group>(g => g.GpgKeyPassphrase);
+                    EncryptGpgPassphrases(database);
+                    break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private static void EncryptGpgPassphrases(IDatabase database)
+        {
+            foreach (var group in database.Query<Group>())
+            {
+                var passphraseData = Global.Security.SecureGpgPassphrase(group.GpgKeyPassphrase.Value);
+                group.GpgKeyPassphrase.Value = Convert.ToBase64String(passphraseData);
+                database.Save(group);
+            }
+        }
+
+        private static void SecureTotpSecrets(IDatabase database)
+        {
+            foreach (var person in database.Query<Person>())
+            {
+                if (person.TwoFactorSecret.Value != null)
+                {
+                    var totpData = Global.Security.SecureTotp(person.TwoFactorSecret.Value);
+                    person.TwoFactorSecret.Value = totpData;
+                    database.Save(person);
+                }
+            }
+        }
+
+        private static void UpdatePasswordTypes(IDatabase database)
+        { 
+            foreach (var person in database.Query<Person>())
+            {
+                if (person.PasswordType.Value == PasswordType.None &&
+                    person.PasswordHash.Value != null)
+                {
+                    person.PasswordType.Value = PasswordType.Local;
+                    database.Save(person);
+                }
             }
         }
 

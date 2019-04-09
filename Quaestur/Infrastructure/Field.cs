@@ -155,7 +155,15 @@ namespace Quaestur
             }
             set
             {
-                if (!_value.Equals(value))
+                if (ReferenceEquals(_value, null))
+                { 
+                    if (!ReferenceEquals(value, null))
+                    {
+                        Dirty = true;
+                        _value = value;
+                    }
+                }
+                else if (!_value.Equals(value))
                 {
                     Dirty = true;
                     _value = value;
