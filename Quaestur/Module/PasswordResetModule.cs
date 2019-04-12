@@ -139,11 +139,11 @@ namespace Quaestur
                             id.ToString(),
                             time.Ticks.ToString(),
                             ComputeHmac(id, time).ToHexString());
-                        var subject = Translate("PasswordReset.Request.Subject", "Subject in the password reset request mail", "Quaestur Password Reset");
-                        var greeting = Translate("PasswordReset.Request.Greeting", "Greeting in the password reset request mail", "Hello,");
-                        var message = Translate("PasswordReset.Request.Message", "Message in the password reset request mail", "you can reset your password using the following link:");
-                        var regards = Translate("PasswordReset.Request.Regards", "Regards in the password reset request mail", "Best regards");
-                        var plainText = string.Format("{0}\n\n{1}\n{2}\n\n{3}", greeting, message, url, regards);
+                        var subject = Translate("PasswordReset.Request.Mail.Subject", "Subject in the password reset request mail", "Quaestur Password Reset");
+                        var greeting = Translate("PasswordReset.Request.Mail.Greeting", "Greeting in the password reset request mail", "Hello {0},", address.Person.Value.FirstOrUserName);
+                        var message = Translate("PasswordReset.Request.Mail.Message", "Message in the password reset request mail", "you can reset your password using the following link:");
+                        var regards = Translate("PasswordReset.Request.Mail.Regards", "Regards in the password reset request mail", "Best regards");
+                        var plainText = string.Format("{0}\n\n{1}\n{2}\n\n{3}\n{4}", greeting, message, url, regards, Global.Config.SiteName);
                         var alternative = new Multipart("alternative");
                         var plainPart = new TextPart("plain") { Text = plainText };
                         plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;

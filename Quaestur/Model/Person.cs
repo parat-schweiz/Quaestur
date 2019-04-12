@@ -266,6 +266,21 @@ namespace Quaestur
             return "Person " + ShortHand;
         }
 
+        public string FirstOrUserName
+        {
+            get 
+            {
+                if (!string.IsNullOrEmpty(FirstName.Value))
+                {
+                    return FirstName.Value; 
+                }
+                else
+                {
+                    return UserName.Value;
+                }
+            }
+        }
+
         public string ShortFirstNames
         {
             get
