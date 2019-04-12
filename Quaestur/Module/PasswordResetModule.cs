@@ -34,7 +34,7 @@ namespace Quaestur
 
         public PasswordResetRequestViewModel(Translator translator)
             : base(translator,
-                   translator.Get("PasswordReset.Request.Title", "Title of the password reset request page", "Rest Password"),
+                   translator.Get("PasswordReset.Request.Title", "Title of the password reset request page", "Reset Password"),
                    null)
         {
             PhraseFieldEmail = translator.Get("PasswordReset.Request.Field.Email", "Email field on the password reset page", "Email").EscapeHtml();
