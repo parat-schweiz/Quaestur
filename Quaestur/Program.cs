@@ -13,14 +13,6 @@ namespace Quaestur
                 Model.Install(db);
                 var seeder = new Seeder(db);
                 seeder.MinimalSeed();
-
-                var user = db.Query<Person>(DC.Equal("username", "admin")).Single();
-
-                foreach (var address in user.ServiceAddresses)
-                {
-                    address.Address.Value = "stefan+admin@savvy.ch";
-                    db.Save(address); 
-                }
             }
 
             var uri = "http://localhost:8888";
