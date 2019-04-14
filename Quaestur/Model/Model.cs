@@ -5,7 +5,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 10;
+        public static int CurrentVersion = 12;
 
         public static void Install(IDatabase database)
         {
@@ -92,13 +92,17 @@ namespace Quaestur
                     break;
                 case 8:
                     database.AddColumn<Person>(p => p.PasswordType);
-                    UpdatePasswordTypes(database);
                     break;
                 case 9:
-                    SecureTotpSecrets(database);
+                    UpdatePasswordTypes(database);
                     break;
                 case 10:
+                    SecureTotpSecrets(database);
+                    break;
+                case 11:
                     database.ModifyColumnType<Group>(g => g.GpgKeyPassphrase);
+                    break;
+                case 12:
                     EncryptGpgPassphrases(database);
                     break;
                 default:
