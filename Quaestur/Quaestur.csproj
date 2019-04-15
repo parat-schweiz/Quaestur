@@ -236,6 +236,23 @@
     <Compile Include="Module\DialogViewModel.cs" />
     <Compile Include="Infrastructure\VotingRightsUpdateTask.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
+    <Compile Include="Model\Ballot.cs" />
+    <Compile Include="Model\BallotTemplate.cs" />
+    <Compile Include="Module\BallotTemplateModule.cs" />
+    <Compile Include="Model\SendingTemplate.cs" />
+    <Compile Include="Model\SendingTemplateLanguage.cs" />
+    <Compile Include="Module\SendingTemplateModule.cs" />
+    <Compile Include="Module\BallotModule.cs" />
+    <Compile Include="Module\BallotPaperModule.cs" />
+    <Compile Include="Util\Html.cs" />
+    <Compile Include="Model\BallotPaper.cs" />
+    <Compile Include="Infrastructure\BallotTask.cs" />
+    <Compile Include="Documents\BallotPaperContentProvider.cs" />
+    <Compile Include="Infrastructure\MailCounter.cs" />
+    <Compile Include="Documents\BallotPaperDocument.cs" />
+    <Compile Include="Module\LoginLinkModule.cs" />
+    <Compile Include="Model\LoginLink.cs" />
+    <Compile Include="Module\LinkLoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -839,6 +856,43 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\waitdialog.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballottemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballotlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballotedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\sendingtemplatelanguageedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballot.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballottemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballottemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballotpaper.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Documents\ballotpaper_de.tex" />
+    <None Include="View\ballotpaperverify.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\loginlink.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\loginlinkcurrent.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\linklogin.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

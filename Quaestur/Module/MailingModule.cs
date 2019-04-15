@@ -622,7 +622,7 @@ namespace Quaestur
                         sender.MailName.Value[language],
                         sender.MailAddress.Value[language]);
                     var to = new MailboxAddress(model.TestAddress);
-                    var senderKey = sender.GpgKeyId.Value == null ? null :
+                    var senderKey = string.IsNullOrEmpty(sender.GpgKeyId.Value) ? null :
                         new GpgPrivateKeyInfo(
                         sender.GpgKeyId.Value,
                         sender.GpgKeyPassphrase.Value);
@@ -634,6 +634,7 @@ namespace Quaestur
                     htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
                     content.Add(htmlPart);
 
+                    Global.MailCounter.Used();
                     Global.Mail.Send(from, to, senderKey, null, model.Subject, content);
                     Notice("{0} tests mailing with subject {1}", CurrentSession.User.ShortHand, model.Subject);
 

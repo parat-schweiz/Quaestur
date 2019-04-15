@@ -120,6 +120,20 @@ namespace System
             return string.Join(string.Empty, data.Select(b => string.Format("{0:x2}", b)).ToArray());
         }
 
+        public static string ToHexStringGroupFour(this byte[] data)
+        {
+            var parts = new List<string>();
+
+            for (int i = 0; i < data.Length; i += 4)
+            {
+                var length = Math.Min(4, data.Length - i);
+                var part = data.Part(i, length).ToHexString();
+                parts.Add(part);
+            }
+
+            return string.Join(" ", parts);
+        }
+
         public static byte[] Concat(this byte[] part0, params byte[][] parts)
         {
             if (part0 == null)

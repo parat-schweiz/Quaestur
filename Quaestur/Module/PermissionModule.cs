@@ -46,6 +46,7 @@ namespace Quaestur
             Subject = string.Empty;
             Right = string.Empty;
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Anonymous, false));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Ballot, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Billing, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Contact, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Crypto, false));
@@ -77,6 +78,7 @@ namespace Quaestur
             Subject = ((int)permission.Subject.Value).ToString();
             Right = ((int)permission.Right.Value).ToString();
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Anonymous, permission.Part.Value == PartAccess.Anonymous));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Ballot, permission.Part.Value == PartAccess.Ballot));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Billing, permission.Part.Value == PartAccess.Billing));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Contact, permission.Part.Value == PartAccess.Contact));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Crypto, permission.Part.Value == PartAccess.Crypto));

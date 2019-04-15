@@ -32,6 +32,29 @@ namespace Quaestur
                     throw new NotSupportedException();
             }
         }
+
+        public static IEnumerable<Language> All
+        {
+            get
+            {
+                yield return Language.English;
+                yield return Language.German;
+                yield return Language.French;
+                yield return Language.Italian;
+                yield return Language.Technical;
+            }
+        }
+
+        public static IEnumerable<Language> Natural
+        {
+            get
+            {
+                yield return Language.English;
+                yield return Language.German;
+                yield return Language.French;
+                yield return Language.Italian;
+            }
+        }
     }
 
     public class PhraseTranslation : DatabaseObject

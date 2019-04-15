@@ -149,6 +149,7 @@ namespace Quaestur
 
                         try
                         {
+                            Global.MailCounter.Used();
                             Global.Mail.Send(from, to, senderKey, recipientKey, subject, alternative);
                             Journal(
                                 address.Person.Value, 

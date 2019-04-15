@@ -208,7 +208,12 @@ namespace BaseLibrary
 
         public void Send(InternetAddress from, InternetAddress to, GpgPrivateKeyInfo senderKey, GpgPublicKeyInfo recipientKey, string subject, Multipart content)
         {
-            _log.Verbose("Sending message to {0}", to);
+            Send(Create(from, to, senderKey, recipientKey, subject, content));
+        }
+
+        public void Send(MimeMessage message)
+        {
+            _log.Verbose("Sending message to {0}", message.To[0]);
 
             try
             {
@@ -218,34 +223,39 @@ namespace BaseLibrary
                 client.Authenticate(_config.MailAccountName, _config.MailAccountPassword);
                 _log.Verbose("Connected to mail server {0}:{1}", _config.MailServerHost, _config.MailServerPort);
 
-                if (senderKey != null && recipientKey != null)
-                {
-                    content = EncryptAndSign(content, senderKey, recipientKey);
-                }
-                else if (recipientKey != null)
-                {
-                    content = Encrypt(content, senderKey);
-                }
-                else if (senderKey != null)
-                {
-                    content = Sign(content, senderKey);
-                }
-
-                var message = new MimeMessage();
-                message.From.Add(from);
-                message.To.Add(to);
-                message.Subject = subject;
-                message.Body = content;
                 client.Send(message);
-
-                _log.Info("Message sent to {0}", to);
+                _log.Info("Message sent to {0}", message.To[0]);
             }
             catch (Exception exception)
             {
-                _log.Error("Error sending mail to {0}", to);
+                _log.Error("Error sending mail to {0}", message.To[0]);
                 _log.Error(exception.ToString());
                 throw exception;
             }
+        }
+
+        public MimeMessage Create(InternetAddress from, InternetAddress to, GpgPrivateKeyInfo senderKey, GpgPublicKeyInfo recipientKey, string subject, Multipart content)
+        {
+            if (senderKey != null && recipientKey != null)
+            {
+                content = EncryptAndSign(content, senderKey, recipientKey);
+            }
+            else if (recipientKey != null)
+            {
+                content = Encrypt(content, recipientKey);
+            }
+            else if (senderKey != null)
+            {
+                content = Sign(content, senderKey);
+            }
+
+            var message = new MimeMessage();
+            message.From.Add(from);
+            message.To.Add(to);
+            message.Subject = subject;
+            message.Body = content;
+
+            return message;
         }
     }
 }

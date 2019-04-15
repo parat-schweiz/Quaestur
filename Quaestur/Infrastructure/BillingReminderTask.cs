@@ -9,7 +9,6 @@ namespace Quaestur
     public class BillingReminderTask : ITask
     {
         private DateTime _lastSending;
-        private int _maxMailsCount;
 
         public BillingReminderTask()
         {
@@ -33,7 +32,6 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                _maxMailsCount = 500;
                 Global.Log.Notice("Running mailing task");
 
                 foreach (var bill in database
@@ -42,9 +40,10 @@ namespace Quaestur
                     .Where(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod())
                     .OrderByDescending(DaysSinceLastReminder))
                 {
-                    Send(database, bill);
-                    _maxMailsCount--;
-                    if (_maxMailsCount < 1) break;
+                    if (Global.MailCounter.Available)
+                    {
+                        Send(database, bill);
+                    }
                 }
 
                 Global.Log.Notice("Mailing task complete");
@@ -289,7 +288,7 @@ namespace Quaestur
             var to = new MailboxAddress(
                 person.ShortHand,
                 person.PrimaryMailAddress);
-            var senderKey = template.MailSender.Value.GpgKeyId.Value == null ? null :
+            var senderKey = string.IsNullOrEmpty(template.MailSender.Value.GpgKeyId.Value) ? null :
                 new GpgPrivateKeyInfo(
                 template.MailSender.Value.GpgKeyId.Value,
                 template.MailSender.Value.GpgKeyPassphrase.Value);
@@ -319,6 +318,7 @@ namespace Quaestur
 
             try
             {
+                Global.MailCounter.Used();
                 Global.Mail.Send(from, to, senderKey, recipientKey, template.MailSubject, content);
 
                 if (level < 2)

@@ -1,0 +1,223 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#ballotTemplate' + field + key;
+  var feedbackId = '#ballotTemplate' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).removeClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#ballotTemplate' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("Organizer", result);
+  assignFieldValidation("ParticipantTag", result);
+  assignFieldValidation("PreparationDays", result);
+  assignFieldValidation("VotingDays", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function saveObject(callback){
+  var formData = new Object();
+    
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#ballotTemplateName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+    
+  formData.Organizer = $("#ballotTemplateOrganizer").val();
+  formData.ParticipantTag = $("#ballotTemplateParticipantTag").val();
+  formData.PreparationDays = $("#ballotTemplatePreparationDays").val();
+  formData.VotingDays = $("#ballotTemplateVotingDays").val();
+    
+  formData.BallotPaper = new Array();
+  @Each.BallotPaper
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#ballotTemplateBallotPaper@Current.Key").val()
+  formData.BallotPaper.push(obj@Current.Key);
+  @EndEach
+    
+  $.post("/ballottemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      callback(true);
+    }else{
+      callback(false);
+    }
+  });
+}
+$(document).ready(function() {
+  @Each.Announcement
+  $("#@Current.ButtonId").click(function(event) {
+    saveObject(function(success) {
+      if (success){
+        window.location.href = "@Current.Link";
+      }
+    });
+    event.preventDefault();
+  });
+  @EndEach
+  @Each.Invitation
+  $("#@Current.ButtonId").click(function(event) {
+    saveObject(function(success) {
+      if (success){
+        window.location.href = "@Current.Link";
+      }
+    });
+    event.preventDefault();  
+  });
+  @EndEach
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "/ballottemplate";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    saveObject(function(success) {
+      if (success){
+        window.location.href = "/ballottemplate";
+      }
+    });
+    event.preventDefault();  
+  });
+  $("#templateTestButton").click(function(event) {
+    saveObject(function(success) {
+      if (success){
+        $("#templateTestButton").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseButtonTest...");
+        $("#templateTestFeedback").html('');
+        $.get("/ballottemplate/test/@Model.Id", function(statusData, status){
+          var statusObject = JSON.parse(statusData);
+          if (statusObject.MessageType == "succss"){
+            $("#templateTestFeedback").removeClass('markred');
+            $("#templateTestFeedback").addClass('markgreen');
+          }else{
+            $("#templateTestFeedback").addClass('markred');
+            $("#templateTestFeedback").removeClass('markgreen');
+          }
+          $("#templateTestFeedback").html(statusObject.MessageText);
+          $("#templateTestButton").html("@Model.PhraseButtonTest");
+        });
+      }
+    });
+    event.preventDefault();
+  });
+  $('.selectpicker').selectpicker();
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="ballotTemplateName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="ballotTemplateNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateOrganizer">@Model.PhraseFieldOrganizer</label>
+        <select id="ballotTemplateOrganizer" class="selectpicker form-control" data-live-search="true">
+          @Each.Organizers
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotTemplateOrganizerFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateParticipantTag">@Model.PhraseFieldParticipantTag</label>
+        <select id="ballotTemplateParticipantTag" class="selectpicker form-control" data-live-search="true">
+          @Each.ParticipantTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotTemplateParticipantTagFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplatePreparationDays">@Model.PhraseFieldPreparationDays</label>
+        <input type="text" id="ballotTemplatePreparationDays" class="form-control" value="@Model.PreparationDays"/>
+        <div id="ballotTemplatePreparationDaysFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateVotingDays">@Model.PhraseFieldVotingDays</label>
+        <input type="text" id="ballotTemplateVotingDays" class="form-control" value="@Model.VotingDays"/>
+        <div id="ballotTemplateVotingDaysFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.Announcement
+      <div class="col-md-3 mb-3">
+        <button id="@Current.ButtonId" class="btn btn-primary mb-2">@Current.Text</button>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Invitation
+      <div class="col-md-3 mb-3">
+        <button id="@Current.ButtonId" class="btn btn-primary mb-2">@Current.Text</button>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.BallotPaper
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateBallotPaper@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateBallotPaper@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-md-3 mb-3">
+        <button id="templateTestButton" class="btn btn-primary mb-2">@Model.PhraseButtonTest</button>
+      </div>
+      <div class="col-md-3 mb-3">
+        <div id="templateTestFeedback"></div>
+      </div>
+    </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

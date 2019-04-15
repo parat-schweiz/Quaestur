@@ -456,7 +456,7 @@ namespace BaseLibrary
 
         public GpgResult Encrypt(Stream input, Stream output, string recpientId, bool armor = false)
         {
-            return ExecuteResult(input, output, "--encrypt", "--recipient " + recpientId, armor ? "--armor" : "");
+            return ExecuteResult(input, output, null, "--encrypt", "--recipient " + recpientId, armor ? "--armor" : "");
         }
 
         public GpgResult Decrypt(string input, out string output, string passphrase = null)
@@ -474,7 +474,7 @@ namespace BaseLibrary
 
         public GpgResult Decrypt(Stream input, Stream output, string passphrase = null)
         {
-            return ExecuteResult(input, output, "--decrypt", string.IsNullOrEmpty(passphrase) ? string.Empty : "--pinentry-mode loopback --passphrase " + passphrase);
+            return ExecuteResult(input, output, null, "--decrypt", string.IsNullOrEmpty(passphrase) ? string.Empty : "--pinentry-mode loopback --passphrase " + passphrase);
         }
 
         public GpgResult Sign(string input, out string output, string localUser = null, SignatureType type = SignatureType.Sign, bool armor = false, string passphrase = null)
@@ -537,7 +537,7 @@ namespace BaseLibrary
 
         public GpgResult Verify(Stream input, Stream output)
         {
-            return ExecuteResult(input, output, "--verify");
+            return ExecuteResult(input, output, null, "--verify");
         }
 
         private GpgResult ExecuteResult(Stream input, Stream output, string password, params string[] arguments)

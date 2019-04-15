@@ -1,0 +1,32 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+</script>
+@EndSection
+
+@Section['data']
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='clickable-row'>
+      <td width="25%">@Model.PhraseHeaderOrganization</td>
+      <td width="15%">@Model.PhraseHeaderAnnouncementDate</td>
+      <td width="15%">@Model.PhraseHeaderStartDate</td>
+      <td width="15%">@Model.PhraseHeaderEndDate</td>
+      <td width="15%">@Model.PhraseHeaderStatus</td>
+      <td width="15%"></td>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="25%">@Current.Organization</td>
+      <td width="15%">@Current.AnnouncementDate</td>
+      <td width="15%">@Current.StartDate</td>
+      <td width="15%">@Current.EndDate</td>
+      <td width="15%">@Current.Status</td>
+      <td width="15%">@Current.BallotPaperText</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>@EndSection

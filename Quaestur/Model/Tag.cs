@@ -74,6 +74,11 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
+            foreach (var ballotTemplate in database.Query<BallotTemplate>(DC.Equal("participanttagid", Id.Value)))
+            {
+                ballotTemplate.Delete(database);
+            }
+
             foreach (var mailing in database.Query<Mailing>(DC.Equal("recipienttagid", Id.Value)))
             {
                 mailing.RecipientTag.Value = null;

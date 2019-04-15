@@ -1,0 +1,25 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateCurrent(){
+    $.get("/linklogin/wait/@Model.Id", function(data, status){
+      if (data){
+        window.location.href = "/";
+      }else{
+        updateCurrent();
+      }
+    });
+  }
+  $(document).ready(function(){
+    updateCurrent();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+    <p>@Model.PhraseWaitingMessage</p>
+    <p>@Model.PhraseVerification @Model.Verification</p>
+</div>
+@EndSection
