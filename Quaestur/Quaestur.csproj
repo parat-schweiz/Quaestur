@@ -236,6 +236,9 @@
     <Compile Include="Module\DialogViewModel.cs" />
     <Compile Include="Infrastructure\VotingRightsUpdateTask.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
+    <Compile Include="Model\Ballot.cs" />
+    <Compile Include="Model\BallotTemplate.cs" />
+    <Compile Include="Module\BallotTemplateModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -15,6 +15,36 @@ namespace Quaestur
         public Translation Translation { get; private set; }
         public Language Language { get; private set; }
 
+        public CultureInfo Culture
+        {
+            get
+            {
+                switch (Language)
+                {
+                    case Language.German:
+                        return new CultureInfo("de-CH");
+                    case Language.French:
+                        return new CultureInfo("fr-CH");
+                    case Language.English:
+                        return new CultureInfo("en-US");
+                    case Language.Italian:
+                        return new CultureInfo("it-IT");
+                    default:
+                        return new CultureInfo("en-US");
+                }
+            }
+        }
+
+        public string FormatShortDate(DateTime date)
+        {
+            return date.ToString("d", Culture);
+        }
+
+        public string FormatLongDate(DateTime date)
+        {
+            return date.ToString("D", Culture);
+        }
+
         public Translator(Translation translation, Language language)
         {
             Translation = translation;

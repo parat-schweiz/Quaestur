@@ -48,6 +48,8 @@ namespace Quaestur
             database.CreateTable<Oauth2Session>();
             database.CreateTable<Oauth2Authorization>();
             database.CreateTable<SearchSettings>();
+            database.CreateTable<BallotTemplate>();
+            database.CreateTable<Ballot>();
         }
 
         private static void Migrate(IDatabase database)
