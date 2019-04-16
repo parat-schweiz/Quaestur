@@ -52,15 +52,14 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
-            foreach (var ballot in database.Query<Ballot>(DC.Equal("templateid", Id)))
+            foreach (var ballot in database.Query<Ballot>(DC.Equal("templateid", Id.Value)))
             {
                 ballot.Delete(database); 
             }
 
+            database.Delete(this);
             Announcement.Value.Delete(database);
             Invitation.Value.Delete(database);
-
-            database.Delete(this);
         }
 
         public override string GetText(Translator translator)

@@ -224,7 +224,20 @@ namespace Quaestur
                         newTemplate.VotingDays.Value = ballotTemplate.VotingDays.Value;
                         newTemplate.VoterCard.Value = ballotTemplate.VoterCard.Value;
                         newTemplate.BallotPaper.Value = ballotTemplate.BallotPaper.Value;
-                        Database.Save(newTemplate);
+
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            var announcementSendingTemplate = Database.Query<SendingTemplate>(
+                                DC.Equal("parentid", ballotTemplate.Id.Value).And(DC.Equal("fieldname", newTemplate.Announcement.ColumnName))).Single();
+                            CopyTemplateLanguages(announcementSendingTemplate, AddTemplate(newTemplate, newTemplate.Announcement));
+
+                            var invitationSendingTemplate = Database.Query<SendingTemplate>(
+                                DC.Equal("parentid", ballotTemplate.Id.Value).And(DC.Equal("fieldname", newTemplate.Invitation.ColumnName))).Single();
+                            CopyTemplateLanguages(invitationSendingTemplate, AddTemplate(newTemplate, newTemplate.Invitation));
+
+                            Database.Save(newTemplate);
+                            transaction.Commit();
+                        }
                     }
                 }
 
@@ -281,23 +294,16 @@ namespace Quaestur
                 status.AssignMultiLanguageFree("VoterCard", ballotTemplate.VoterCard, model.VoterCard);
                 status.AssignMultiLanguageFree("BallotPaper", ballotTemplate.BallotPaper, model.BallotPaper);
 
-                ballotTemplate.Announcement.Value = new SendingTemplate(Guid.NewGuid());
-                ballotTemplate.Announcement.Value.ParentType.Value = SendingTemplateParentType.BallotTemplate;
-                ballotTemplate.Announcement.Value.ParentId.Value = ballotTemplate.Id.Value;
-                ballotTemplate.Announcement.Value.FieldName.Value = ballotTemplate.Announcement.ColumnName;
-
-                ballotTemplate.Invitation.Value = new SendingTemplate(Guid.NewGuid());
-                ballotTemplate.Invitation.Value.ParentType.Value = SendingTemplateParentType.BallotTemplate;
-                ballotTemplate.Invitation.Value.ParentId.Value = ballotTemplate.Id.Value;
-                ballotTemplate.Invitation.Value.FieldName.Value = ballotTemplate.Invitation.ColumnName;
-
-                if (status.IsSuccess)
+                using (var transaction = Database.BeginTransaction())
                 {
-                    if (status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
+                    AddTemplate(ballotTemplate, ballotTemplate.Announcement);
+                    AddTemplate(ballotTemplate, ballotTemplate.Invitation);
+
+                    if (status.IsSuccess &&
+                        status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                     {
-                        Database.Save(ballotTemplate.Announcement.Value);
-                        Database.Save(ballotTemplate.Invitation.Value);
                         Database.Save(ballotTemplate);
+                        transaction.Commit();
                         Notice("{0} added ballot template {1}", CurrentSession.User.ShortHand, ballotTemplate);
                     }
                 }
@@ -324,6 +330,31 @@ namespace Quaestur
 
                 return null;
             };
+        }
+
+        private void CopyTemplateLanguages(SendingTemplate source, SendingTemplate destination)
+        { 
+            foreach (var sourceLanguage in source.Languages)
+            {
+                var newLanguage = new SendingTemplateLanguage(Guid.NewGuid());
+                newLanguage.Template.Value = destination;
+                newLanguage.Language.Value = sourceLanguage.Language.Value;
+                newLanguage.MailSubject.Value = sourceLanguage.MailSubject.Value;
+                newLanguage.MailHtmlText.Value = sourceLanguage.MailHtmlText.Value;
+                newLanguage.MailPlainText.Value = sourceLanguage.MailPlainText.Value;
+                newLanguage.LetterLatex.Value = sourceLanguage.LetterLatex.Value;
+                Database.Save(newLanguage);
+            }
+        }
+
+        private SendingTemplate AddTemplate(BallotTemplate ballotTemplate, ForeignKeyField<SendingTemplate, BallotTemplate> field)
+        {
+            field.Value = new SendingTemplate(Guid.NewGuid());
+            field.Value.ParentType.Value = SendingTemplateParentType.BallotTemplate;
+            field.Value.ParentId.Value = ballotTemplate.Id.Value;
+            field.Value.FieldName.Value = field.ColumnName;
+            Database.Save(field.Value);
+            return field.Value;
         }
     }
 }

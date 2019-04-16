@@ -70,7 +70,7 @@ $(document).ready(function() {
   <form>
     <div class="form-row">
       <div class="col-12 mb-3">
-        @Model.Name
+        <h2>@Model.Name</h2>
       </div>
     </div>
     <div class="form-row">
