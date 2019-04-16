@@ -1,0 +1,264 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#ballotTemplate' + field + key;
+  var feedbackId = '#ballotTemplate' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#ballotTemplate' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("Organizer", result);
+  assignFieldValidation("ParticipantTag", result);
+  assignFieldValidation("PreparationDays", result);
+  assignFieldValidation("VotingDays", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "/ballottemplate";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    var formData = new Object();
+    
+    formData.Name = new Array();
+    @Each.Name
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateName@Current.Key").val()
+    formData.Name.push(obj@Current.Key);
+    @EndEach
+    
+    formData.Organizer = $("#ballotTemplateOrganizer").val();
+    formData.ParticipantTag = $("#ballotTemplateParticipantTag").val();
+    formData.PreparationDays = $("#ballotTemplatePreparationDays").val();
+    formData.VotingDays = $("#ballotTemplateVotingDays").val();
+    
+    formData.AnnouncementMailSubject = new Array();
+    @Each.AnnouncementMailSubject
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateAnnouncementMailSubject@Current.Key").val()
+    formData.AnnouncementMailSubject.push(obj@Current.Key);
+    @EndEach
+    
+    formData.AnnouncementMailText = new Array();
+    @Each.AnnouncementMailText
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateAnnouncementMailText@Current.Key").val()
+    formData.AnnouncementMailText.push(obj@Current.Key);
+    @EndEach
+    
+    formData.AnnouncementLetter = new Array();
+    @Each.AnnouncementLetter
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateAnnouncementLetter@Current.Key").val()
+    formData.AnnouncementLetter.push(obj@Current.Key);
+    @EndEach
+    
+    formData.InvitationMailSubject = new Array();
+    @Each.InvitationMailSubject
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateInvitationMailSubject@Current.Key").val()
+    formData.InvitationMailSubject.push(obj@Current.Key);
+    @EndEach
+    
+    formData.InvitationMailText = new Array();
+    @Each.InvitationMailText
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateInvitationMailText@Current.Key").val()
+    formData.InvitationMailText.push(obj@Current.Key);
+    @EndEach
+    
+    formData.InvitationLetter = new Array();
+    @Each.InvitationLetter
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateInvitationLetter@Current.Key").val()
+    formData.InvitationLetter.push(obj@Current.Key);
+    @EndEach
+    
+    formData.VoterCard = new Array();
+    @Each.VoterCard
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateVoterCard@Current.Key").val()
+    formData.VoterCard.push(obj@Current.Key);
+    @EndEach
+    
+    formData.BallotPaper = new Array();
+    @Each.BallotPaper
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#ballotTemplateBallotPaper@Current.Key").val()
+    formData.BallotPaper.push(obj@Current.Key);
+    @EndEach
+    
+    $.post("/ballottemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/ballottemplate";
+      }
+      event.preventDefault();  
+    });
+  });
+  $('.selectpicker').selectpicker();
+  tinymce.init({
+    selector: '.tinyEditor',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+}
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateOrganizer">@Model.PhraseFieldOrganizer</label>
+        <select id="ballotTemplateOrganizer" class="selectpicker form-control" data-live-search="true">
+          @Each.Organizers
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotTemplateOrganizerFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateParticipantTag">@Model.PhraseFieldParticipantTag</label>
+        <select id="ballotTemplateParticipantTag" class="selectpicker form-control" data-live-search="true">
+          @Each.ParticipantTags
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotTemplateParticipantTagFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplatePreparationDays">@Model.PhraseFieldPreparationDays</label>
+        <input type="text" id="ballotTemplatePreparationDays" class="form-control">@Model.PreparationDays</textarea>
+        <div id="ballotTemplatePreparationDaysFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateVotingDays">@Model.PhraseFieldVotingDays</label>
+        <input type="text" id="ballotTemplateVotingDays" class="form-control">@Model.VotingDays</textarea>
+        <div id="ballotTemplateVotingDaysFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.AnnouncementMailSubject
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateAnnouncementMailSubject@Current.Key">@Current.Phrase</label>
+        <input type="text" id="ballotTemplateAnnouncementMailSubject@Current.Key" class="form-control" value="@Current.Value"/>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.AnnouncementMailText
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateAnnouncementMailText@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateAnnouncementMailText@Current.Key" class="form-control tinyEditor">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.AnnouncementLetter
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateAnnouncementLetter@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateAnnouncementLetter@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.InvitationMailSubject
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateInvitationMailSubject@Current.Key">@Current.Phrase</label>
+        <input type="text" id="ballotTemplateInvitationMailSubject@Current.Key" class="form-control" value="@Current.Value"/>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.InvitationMailText
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateInvitationMailText@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateInvitationMailText@Current.Key" class="form-control tinyEditor">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.InvitationLetter
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateInvitationLetter@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateInvitationLetter@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.VoterCard
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateVoterCard@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateVoterCard@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.BallotPaper
+      <div class="col-md-3 mb-3">
+        <label for="ballotTemplateBallotPaper@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotTemplateBallotPaper@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

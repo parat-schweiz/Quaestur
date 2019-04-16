@@ -41,6 +41,7 @@ namespace Quaestur
         public bool NavPersonNew = false;
         public bool NavExport = false;
         public bool NavMailing = false;
+        public bool NavBallot = false;
         public bool NavOrganization = false;
         public bool NavSettings = false;
         public string PhraseMenuPersons = string.Empty;
@@ -62,9 +63,12 @@ namespace Quaestur
         public string PhraseMenuLogout = string.Empty;
         public string PhraseMenuSettings = string.Empty;
         public string PhraseMenuOAuth2Clients = string.Empty;
+        public string PhraseMenuBallot = string.Empty;
+        public string PhraseMenuBallotList = string.Empty;
+        public string PhraseMenuBallotTemplates = string.Empty;
 
         public MasterViewModel()
-        { 
+        {
         }
 
         public MasterViewModel(Translator translator, string title, Session session)
@@ -77,6 +81,7 @@ namespace Quaestur
             NavPersonNew = session != null && session.HasPersonNewAccess();
             NavExport = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Read);
             NavMailing = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Write);
+            NavBallot = session != null && session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
             NavOrganization = session != null && session.HasAnyOrganizationAccess(PartAccess.Structure, AccessRight.Read);
             NavSettings = session != null && session.HasAnyOrganizationAccess(PartAccess.Crypto, AccessRight.Read);
             PhraseMenuPersons = translator.Get("Master.Menu.Persons", "Item 'Persons' in the main menu", "Persons").EscapeHtml();
@@ -98,6 +103,9 @@ namespace Quaestur
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
+            PhraseMenuBallot = translator.Get("Master.Menu.Settings.Ballot", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
+            PhraseMenuBallotList = translator.Get("Master.Menu.Settings.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
+            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Settings.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Tempaltes").EscapeHtml();
         }
     }
 

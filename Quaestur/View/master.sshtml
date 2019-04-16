@@ -60,6 +60,15 @@
                   </div>
                 </li>
                 @EndIf
+                @If.NavBallot
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuBallot</a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/ballot">@Model.PhraseMenuBallotList</a>
+                    <a class="dropdown-item" href="/ballottemplate">@Model.PhraseMenuBallotTemplates</a>
+                  </div>
+                </li>
+                @EndIf
                 @If.NavOrganization
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuCustom</a>

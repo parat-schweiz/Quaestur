@@ -56,19 +56,19 @@ namespace Quaestur
         {
             Method = "add";
             Id = string.Empty;
-            Name = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.Name", "Name field in the ballot template edit page", "Name", new MultiLanguageString());
+            Name = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.Name", "Name field in the ballot template edit page", "Name ({0})", new MultiLanguageString());
             Organizer = string.Empty;
             ParticipantTag = string.Empty;
             PreparationDays = string.Empty;
             VotingDays = string.Empty;
-            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject", new MultiLanguageString());
-            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text", new MultiLanguageString());
-            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter", new MultiLanguageString());
-            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject", new MultiLanguageString());
-            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text", new MultiLanguageString());
-            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter", new MultiLanguageString());
-            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card", new MultiLanguageString());
-            BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper", new MultiLanguageString());
+            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject ({0})", new MultiLanguageString());
+            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text ({0})", new MultiLanguageString());
+            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter ({0})", new MultiLanguageString());
+            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject ({0})", new MultiLanguageString());
+            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text ({0})", new MultiLanguageString());
+            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter ({0})", new MultiLanguageString());
+            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", new MultiLanguageString());
+            BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", new MultiLanguageString());
             Organizers = new List<NamedIdViewModel>(db
                 .Query<Group>()
                 .Where(g => session.HasAccess(g, PartAccess.Ballot, AccessRight.Write))
@@ -83,19 +83,19 @@ namespace Quaestur
         {
             Method = "edit";
             Id = ballotTemplate.Id.ToString();
-            Name = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.Name", "Name field in the ballot template edit page", "Name", ballotTemplate.Name.Value);
+            Name = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.Name", "Name field in the ballot template edit page", "Name ({0})", ballotTemplate.Name.Value);
             Organizer = string.Empty;
             ParticipantTag = string.Empty;
             PreparationDays = string.Empty;
             VotingDays = string.Empty;
-            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject", ballotTemplate.AnnouncementMailSubject);
-            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text", ballotTemplate.AnnouncementMailText);
-            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter", ballotTemplate.AnnouncementLetter);
-            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject", ballotTemplate.InvitationMailSubject);
-            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text", ballotTemplate.InvitationMailText);
-            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter", ballotTemplate.InvitationLetter);
-            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card", ballotTemplate.VoterCard);
-            BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper", ballotTemplate.BallotPaper);
+            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject ({0})", ballotTemplate.AnnouncementMailSubject);
+            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text ({0})", ballotTemplate.AnnouncementMailText);
+            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter ({0})", ballotTemplate.AnnouncementLetter);
+            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject ({0})", ballotTemplate.InvitationMailSubject);
+            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text ({0})", ballotTemplate.InvitationMailText);
+            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter ({0})", ballotTemplate.InvitationLetter);
+            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", ballotTemplate.VoterCard);
+            BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", ballotTemplate.BallotPaper);
             Organizers = new List<NamedIdViewModel>(db
                 .Query<Group>()
                 .Where(g => session.HasAccess(g.Organization.Value, PartAccess.Ballot, AccessRight.Write))
