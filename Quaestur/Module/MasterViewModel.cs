@@ -44,6 +44,7 @@ namespace Quaestur
         public bool NavBallot = false;
         public bool NavOrganization = false;
         public bool NavSettings = false;
+        public bool NavBallotPaper = false;
         public string PhraseMenuPersons = string.Empty;
         public string PhraseMenuPersonsList = string.Empty;
         public string PhraseMenuPersonNew = string.Empty;
@@ -66,6 +67,7 @@ namespace Quaestur
         public string PhraseMenuBallot = string.Empty;
         public string PhraseMenuBallotList = string.Empty;
         public string PhraseMenuBallotTemplates = string.Empty;
+        public string PhraseMenuBallotPaper = string.Empty;
 
         public MasterViewModel()
         {
@@ -84,6 +86,7 @@ namespace Quaestur
             NavBallot = session != null && session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
             NavOrganization = session != null && session.HasAnyOrganizationAccess(PartAccess.Structure, AccessRight.Read);
             NavSettings = session != null && session.HasAnyOrganizationAccess(PartAccess.Crypto, AccessRight.Read);
+            NavBallotPaper = session != null && session.CompleteAuth && session.User.Memberships.Any(m => m.HasVotingRight.Value ?? false);
             PhraseMenuPersons = translator.Get("Master.Menu.Persons", "Item 'Persons' in the main menu", "Persons").EscapeHtml();
             PhraseMenuPersonsList = translator.Get("Master.Menu.Persons.List", "Item 'List' under 'Persons' in the main menu", "List").EscapeHtml();
             PhraseMenuPersonNew = translator.Get("Master.Menu.Persons.New", "Item 'New' under 'Persons' in the main menu", "New").EscapeHtml();
@@ -99,13 +102,14 @@ namespace Quaestur
             PhraseMenuListMailings = translator.Get("Master.Menu.Mailings.List", "Item 'List mailings' under 'Mailings' in the main menu", "List").EscapeHtml();
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuProfile = translator.Get("Master.Menu.User.Profile", "Item 'Profile' under user in the main menu", "Profile").EscapeHtml();
+            PhraseMenuBallotPaper = translator.Get("Master.Menu.User.BallotPaper", "Item 'Ballots' under user in the main menu", "Ballots").EscapeHtml();
             PhraseMenuChangePassword = translator.Get("Master.Menu.User.ChangePassword", "Item 'Change password' under user in the main menu", "Change password").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
-            PhraseMenuBallot = translator.Get("Master.Menu.Settings.Ballot", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
-            PhraseMenuBallotList = translator.Get("Master.Menu.Settings.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
-            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Settings.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();
+            PhraseMenuBallot = translator.Get("Master.Menu.Ballots", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
+            PhraseMenuBallotList = translator.Get("Master.Menu.Ballots.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
+            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Ballots.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();
         }
     }
 

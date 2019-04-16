@@ -39,20 +39,22 @@ $("#ballotRowCopy@Current.Id").click(function(){
 <table class="table table-hover table-fixed">
   <thead>
     <tr class='clickable-row'>
-      <td width="20%">@Model.PhraseHeaderInvitationDate</td>
-      <td width="20%">@Model.PhraseHeaderStartDate</td>
-      <td width="20%">@Model.PhraseHeaderEndDate</td>
-      <td width="30%">@Model.PhraseHeaderStatus</td>
+      <td width="25%">@Model.PhraseHeaderOrganizer</td>
+      <td width="15%">@Model.PhraseHeaderAnnouncementDate</td>
+      <td width="15%">@Model.PhraseHeaderStartDate</td>
+      <td width="15%">@Model.PhraseHeaderEndDate</td>
+      <td width="20%">@Model.PhraseHeaderStatus</td>
       <td width="10%" colspan="2"></td>
     </tr>
   </thead>
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="20%" id="ballotRowEdit1@Current.Id" class="@Current.Editable">@Current.InvitationDate</td>
-      <td width="20%" id="ballotRowEdit2@Current.Id" class="@Current.Editable">@Current.StartDate</td>
-      <td width="20%" id="ballotRowEdit3@Current.Id" class="@Current.Editable">@Current.EndDate</td>
-      <td width="30%" id="ballotRowEdit4@Current.Id" class="@Current.Editable">@Current.Status</td>
+      <td width="25%" id="ballotRowEdit1@Current.Id" class="@Current.Editable">@Current.Organizer</td>
+      <td width="15%" id="ballotRowEdit2@Current.Id" class="@Current.Editable">@Current.AnnouncementDate</td>
+      <td width="15%" id="ballotRowEdit3@Current.Id" class="@Current.Editable">@Current.StartDate</td>
+      <td width="15%" id="ballotRowEdit4@Current.Id" class="@Current.Editable">@Current.EndDate</td>
+      <td width="20%" id="ballotRowEdit5@Current.Id" class="@Current.Editable">@Current.Status</td>
       <td width="5%" id="ballotRowCopy@Current.Id" class="@Current.Editable"><span class="fas fa-copy"></span></td>
       <td width="5%" id="ballotRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>

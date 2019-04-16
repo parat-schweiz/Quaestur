@@ -243,6 +243,10 @@
     <Compile Include="Model\SendingTemplateLanguage.cs" />
     <Compile Include="Module\SendingTemplateModule.cs" />
     <Compile Include="Module\BallotModule.cs" />
+    <Compile Include="Module\BallotPaperModule.cs" />
+    <Compile Include="Util\Html.cs" />
+    <Compile Include="Model\BallotPaper.cs" />
+    <Compile Include="Infrastructure\BallotTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -867,6 +871,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\ballottemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\ballotpaper.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

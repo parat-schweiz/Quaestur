@@ -6,7 +6,7 @@ namespace Quaestur
     public enum BallotStatus
     {
         New = 0,
-        Invited = 1,
+        Announcing = 1,
         Voting = 2,
         Finished = 3,
         Canceled = 4,
@@ -20,8 +20,8 @@ namespace Quaestur
             {
                 case BallotStatus.New:
                     return translator.Get("Enum.BallotStatus.New", "Value 'New' in BallotStatus enum", "New");
-                case BallotStatus.Invited:
-                    return translator.Get("Enum.BallotStatus.Invited", "Value 'Invited' in BallotStatus enum", "Invited");
+                case BallotStatus.Announcing:
+                    return translator.Get("Enum.BallotStatus.Announcing", "Value 'Announcing' in BallotStatus enum", "Announcing");
                 case BallotStatus.Voting:
                     return translator.Get("Enum.BallotStatus.Voting", "Value 'Voting' in BallotStatus enum", "Voting");
                 case BallotStatus.Finished:
@@ -42,7 +42,7 @@ namespace Quaestur
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
 
-        public DateTime InvitationDate
+        public DateTime AnnouncementDate
         {
             get
             {
@@ -78,6 +78,11 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
+            foreach (var ballotPaper in database.Query<BallotPaper>(DC.Equal("ballotid", Id.Value)))
+            {
+                ballotPaper.Delete(database); 
+            }
+
             database.Delete(this);
         }
 

@@ -126,14 +126,7 @@ namespace Quaestur
 
         public string HasVotingRight(IDatabase database, Translator translator)
         {
-            foreach (var membership in Memberships)
-            {
-                if (!membership.HasVotingRight.Value.HasValue)
-                {
-                    membership.UpdateVotingRight(database);
-                    database.Save(membership);
-                }
-            }
+            UpdateAllVotingRights(database);
 
             if (Memberships.Count < 1)
             {
@@ -150,6 +143,18 @@ namespace Quaestur
             else
             {
                 return translator.Get("Person.VotingRight.No", "When the person has voting right in none of her memberships", "No");
+            }
+        }
+
+        public void UpdateAllVotingRights(IDatabase database)
+        {
+            foreach (var membership in Memberships)
+            {
+                if (!membership.HasVotingRight.Value.HasValue)
+                {
+                    membership.UpdateVotingRight(database);
+                    database.Save(membership);
+                }
             }
         }
 

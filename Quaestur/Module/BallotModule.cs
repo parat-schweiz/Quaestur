@@ -82,7 +82,8 @@ namespace Quaestur
     public class BallotListItemViewModel
     {
         public string Id;
-        public string InvitationDate;
+        public string Organizer;
+        public string AnnouncementDate;
         public string StartDate;
         public string EndDate;
         public string Status;
@@ -92,7 +93,8 @@ namespace Quaestur
         public BallotListItemViewModel(Translator translator, Session session, Ballot ballot)
         {
             Id = ballot.Id.Value.ToString();
-            InvitationDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).ToString("dd.MM.yyyy");
+            Organizer = ballot.Template.Value.Organizer.Value.GetText(translator);
+            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).ToString("dd.MM.yyyy");
             StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).ToString("dd.MM.yyyy");
             EndDate = ballot.EndDate.Value.ToString("dd.MM.yyyy");
             Status = ballot.Status.Value.Translate(translator);
@@ -104,7 +106,8 @@ namespace Quaestur
 
     public class BallotListViewModel
     {
-        public string PhraseHeaderInvitationDate;
+        public string PhraseHeaderOrganizer;
+        public string PhraseHeaderAnnouncementDate;
         public string PhraseHeaderStartDate;
         public string PhraseHeaderEndDate;
         public string PhraseHeaderStatus;
@@ -115,7 +118,8 @@ namespace Quaestur
 
         public BallotListViewModel(Translator translator, IDatabase database, Session session)
         {
-            PhraseHeaderInvitationDate = translator.Get("Ballot.List.Header.InvitationDate", "Header part 'InvitationDate' in the ballot list", "Invitation date").EscapeHtml();
+            PhraseHeaderOrganizer = translator.Get("Ballot.List.Header.Organizer", "Header part 'Organizer' in the ballot list", "Organizer").EscapeHtml();
+            PhraseHeaderAnnouncementDate = translator.Get("Ballot.List.Header.AnnouncementDate", "Header part 'AnnouncementDate' in the ballot list", "Announcement date").EscapeHtml();
             PhraseHeaderStartDate = translator.Get("Ballot.List.Header.StartDate", "Header part 'StartDate' in the ballot list", "Start date").EscapeHtml();
             PhraseHeaderEndDate = translator.Get("Ballot.List.Header.EndDate", "Link 'EndDate' caption in the ballot list", "End date").EscapeHtml();
             PhraseHeaderStatus = translator.Get("Ballot.List.Header.Status", "Link 'Status' caption in the ballot list", "Status").EscapeHtml();
@@ -206,7 +210,7 @@ namespace Quaestur
                             if (status.IsSuccess &&
                                 status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                             {
-                                if (DateTime.Now.Date <= ballot.InvitationDate)
+                                if (DateTime.Now.Date <= ballot.AnnouncementDate)
                                 {
                                     Database.Save(ballot);
                                     Notice("{0} changed ballot {1}", CurrentSession.User.ShortHand, ballot);
@@ -245,7 +249,7 @@ namespace Quaestur
                 if (status.IsSuccess &&
                     status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                 {
-                    if (DateTime.Now.Date <= ballot.InvitationDate)
+                    if (DateTime.Now.Date <= ballot.AnnouncementDate)
                     {
                         Database.Save(ballot);
                         Notice("{0} added ballot {1}", CurrentSession.User.ShortHand, ballot);
