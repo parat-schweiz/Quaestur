@@ -34,7 +34,6 @@ namespace Quaestur
         }
     }
 
-
     public class Ballot : DatabaseObject
     {
         public ForeignKeyField<BallotTemplate, Ballot> Template { get; private set; }
@@ -42,6 +41,22 @@ namespace Quaestur
         public Field<DateTime> EndDate { get; private set; }
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
+
+        public DateTime InvitationDate
+        {
+            get
+            {
+                return EndDate.Value.AddDays(1 - Template.Value.VotingDays.Value - Template.Value.PreparationDays.Value);
+            }
+        }
+
+        public DateTime StartDate
+        {
+            get
+            {
+                return EndDate.Value.AddDays(1 - Template.Value.VotingDays.Value);
+            }
+        }
 
         public Ballot() : this(Guid.Empty)
         {

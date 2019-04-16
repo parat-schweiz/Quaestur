@@ -85,12 +85,8 @@ function saveObject(targetUrl){
   formData.BallotPaper.push(obj@Current.Key);
   @EndEach
     
-  console.log("posting");
   $.post("/ballottemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
-    console.log("posted");
-    console.log(resultData);
     if (assignValidation(resultData)) {
-      console.log("ok");
       window.location.href = targetUrl;
     }
   });

@@ -1,0 +1,136 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#ballot' + field + key;
+  var feedbackId = '#ballot' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).removeClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#ballot' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Template", result);
+  assignFieldValidation("EndDate", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function saveObject(targetUrl){
+  var formData = new Object();
+    
+  formData.Template = $("#ballotTemplate").val();
+  formData.EndDate = $("#ballotEndDate").val();
+    
+  formData.AnnouncementText = new Array();
+  @Each.AnnouncementText
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#ballotAnnouncementText@Current.Key").val()
+  formData.AnnouncementText.push(obj@Current.Key);
+  @EndEach
+    
+  formData.Questions = new Array();
+  @Each.Questions
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#ballotQuestions@Current.Key").val()
+  formData.Questions.push(obj@Current.Key);
+  @EndEach
+    
+  $.post("/ballot/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      window.location.href = targetUrl;
+    }
+  });
+}
+$(document).ready(function() {
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "/ballot";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    saveObject("/ballot");
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+  $('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-1d'
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="ballotTemplate">@Model.PhraseFieldTemplate</label>
+        <select id="ballotTemplate" class="selectpicker form-control" data-live-search="true">
+          @Each.Templates
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotTemplateFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ballotEndDate">@Model.PhraseFieldEndDate</label>
+        <input type="text" id="ballotEndDate" class="form-control datepicker" value="@Model.EndDate"/>
+        <div id="ballotEndDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.AnnouncementText
+      <div class="col-md-3 mb-3">
+        <label for="ballotAnnouncementText@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotAnnouncementText@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Questions
+      <div class="col-md-3 mb-3">
+        <label for="ballotQuestions@Current.Key">@Current.Phrase</label>
+        <textarea id="ballotQuestions@Current.Key" class="form-control">@Current.Value</textarea>
+      </div>
+      @EndEach
+    </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection
