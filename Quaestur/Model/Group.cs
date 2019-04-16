@@ -36,14 +36,19 @@ namespace Quaestur
             }
         }
 
-        public override void Delete(IDatabase db)
+        public override void Delete(IDatabase database)
         {
-            foreach (var role in Roles)
+            foreach (var ballotTemplate in database.Query<BallotTemplate>(DC.Equal("organizerid", Id.Value)))
             {
-                role.Delete(db);
+                ballotTemplate.Delete(database);
             }
 
-            db.Delete(this);
+            foreach (var role in Roles)
+            {
+                role.Delete(database);
+            }
+
+            database.Delete(this);
         }
 
         public override string ToString()

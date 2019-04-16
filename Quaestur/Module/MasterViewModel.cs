@@ -105,7 +105,7 @@ namespace Quaestur
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
             PhraseMenuBallot = translator.Get("Master.Menu.Settings.Ballot", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
             PhraseMenuBallotList = translator.Get("Master.Menu.Settings.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
-            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Settings.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Tempaltes").EscapeHtml();
+            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Settings.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();
         }
     }
 

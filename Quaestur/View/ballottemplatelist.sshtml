@@ -41,10 +41,10 @@ $("#ballotTemplateRowCopy@Current.Id").click(function(){
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="45%" id="ballotTemplateRowEdit1@Current.Id class="editable">@Current.Organizer</td>
-      <td width="45%" id="ballotTemplateRowEdit2@Current.Id" class="editable">@Current.Name</td>
-      <td width="5%" id="ballotTemplateRowCopy@Current.Id" class="editable"><span class="fas fa-copy"></span></td>
-      <td width="5%" id="ballotTemplateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="45%" id="ballotTemplateRowEdit1@Current.Id" class="@Current.Editable">@Current.Organizer</td>
+      <td width="45%" id="ballotTemplateRowEdit2@Current.Id" class="@Current.Editable">@Current.Name</td>
+      <td width="5%" id="ballotTemplateRowCopy@Current.Id" class="@Current.Editable"><span class="fas fa-copy"></span></td>
+      <td width="5%" id="ballotTemplateRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class='centering clickable-row'>

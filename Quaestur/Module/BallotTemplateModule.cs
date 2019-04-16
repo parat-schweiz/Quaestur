@@ -8,6 +8,30 @@ using Newtonsoft.Json;
 
 namespace Quaestur
 {
+    public class SendingTemplateLanguageEdit
+    {
+        public string Text { get; private set; }
+        public string Link { get; private set; }
+        public string ButtonId { get; private set; }
+
+        public SendingTemplateLanguageEdit(Translator translator, SendingTemplate sendingTemplate, Language language, string translationPrefix, string technicalName)
+        {
+            ButtonId = Guid.NewGuid().ToString();
+            var sendingTemplateLanguage = sendingTemplate.Languages.SingleOrDefault(stl => stl.Language.Value == language);
+
+            if (sendingTemplateLanguage == null)
+            {
+                Text = translator.Get(translationPrefix + ".Add", "Add button on a sending template for " + translationPrefix, "Add {0} " + technicalName, language.Translate(translator));
+                Link = string.Format("/sendingtemplatelanguage/add/{0}/{1}", sendingTemplate.Id.Value.ToString(), (int)language);
+            }
+            else
+            {
+                Text = translator.Get(translationPrefix + ".Edit", "Edit button on a sending template for " + translationPrefix, "Edit {0} " + technicalName, language.Translate(translator));
+                Link = string.Format("/sendingtemplatelanguage/edit/{0}", sendingTemplateLanguage.Id.Value.ToString());
+            }
+        }
+    }
+
     public class BallotTemplateEditViewModel : MasterViewModel
     {
         public string Method;
@@ -17,12 +41,8 @@ namespace Quaestur
         public string ParticipantTag;
         public string PreparationDays;
         public string VotingDays;
-        public List<MultiItemViewModel> AnnouncementMailSubject;
-        public List<MultiItemViewModel> AnnouncementMailText;
-        public List<MultiItemViewModel> AnnouncementLetter;
-        public List<MultiItemViewModel> InvitationMailSubject;
-        public List<MultiItemViewModel> InvitationMailText;
-        public List<MultiItemViewModel> InvitationLetter;
+        public List<SendingTemplateLanguageEdit> Announcement;
+        public List<SendingTemplateLanguageEdit> Invitation;
         public List<MultiItemViewModel> VoterCard;
         public List<MultiItemViewModel> BallotPaper;
         public List<NamedIdViewModel> Organizers;
@@ -61,12 +81,8 @@ namespace Quaestur
             ParticipantTag = string.Empty;
             PreparationDays = string.Empty;
             VotingDays = string.Empty;
-            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject ({0})", new MultiLanguageString());
-            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text ({0})", new MultiLanguageString());
-            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter ({0})", new MultiLanguageString());
-            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject ({0})", new MultiLanguageString());
-            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text ({0})", new MultiLanguageString());
-            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter ({0})", new MultiLanguageString());
+            Announcement = new List<SendingTemplateLanguageEdit>();
+            Invitation = new List<SendingTemplateLanguageEdit>();
             VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", new MultiLanguageString());
             BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", new MultiLanguageString());
             Organizers = new List<NamedIdViewModel>(db
@@ -86,14 +102,12 @@ namespace Quaestur
             Name = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.Name", "Name field in the ballot template edit page", "Name ({0})", ballotTemplate.Name.Value);
             Organizer = string.Empty;
             ParticipantTag = string.Empty;
-            PreparationDays = string.Empty;
-            VotingDays = string.Empty;
-            AnnouncementMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailSubject", "Announcement mail subject field in the ballot template edit page", "Announcement mail subject ({0})", ballotTemplate.AnnouncementMailSubject);
-            AnnouncementMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementMailText", "Announcement mail text field in the ballot template edit page", "Announcement mail text ({0})", ballotTemplate.AnnouncementMailText);
-            AnnouncementLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.AnnouncementLetter", "Announcement letter field in the ballot template edit page", "Announcement letter ({0})", ballotTemplate.AnnouncementLetter);
-            InvitationMailSubject = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailSubject", "Invitation mail subject field in the ballot template edit page", "Invitation mail subject ({0})", ballotTemplate.InvitationMailSubject);
-            InvitationMailText = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationMailText", "Invitation mail text field in the ballot template edit page", "Invitation mail text ({0})", ballotTemplate.InvitationMailText);
-            InvitationLetter = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.InvitationLetter", "Invitation letter field in the ballot template edit page", "Invitation letter ({0})", ballotTemplate.InvitationLetter);
+            PreparationDays = ballotTemplate.PreparationDays.Value.ToString();
+            VotingDays = ballotTemplate.VotingDays.Value.ToString();
+            Announcement = new List<SendingTemplateLanguageEdit>(LanguageExtensions.Natural
+                .Select(l => new SendingTemplateLanguageEdit(translator, ballotTemplate.Announcement.Value, l, "BallotTemplate.Announcement", "Announcement")));
+            Invitation = new List<SendingTemplateLanguageEdit>(LanguageExtensions.Natural
+                .Select(l => new SendingTemplateLanguageEdit(translator, ballotTemplate.Invitation.Value, l, "BallotTemplate.Invitation", "Invitation")));
             VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", ballotTemplate.VoterCard);
             BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", ballotTemplate.BallotPaper);
             Organizers = new List<NamedIdViewModel>(db
@@ -122,7 +136,7 @@ namespace Quaestur
         public string Organizer;
         public string Name;
         public string PhraseDeleteConfirmationQuestion;
-        public bool WriteAccess;
+        public string Editable;
 
         public BallotTemplateListItemViewModel(Translator translator, Session session, BallotTemplate ballotTemplate)
         {
@@ -130,7 +144,8 @@ namespace Quaestur
             Organizer = ballotTemplate.Organizer.Value.GetText(translator).EscapeHtml();
             Name = ballotTemplate.Name.Value[translator.Language].EscapeHtml();
             PhraseDeleteConfirmationQuestion = translator.Get("BallotTemplate.List.Delete.Confirm.Question", "Delete ballot sending template confirmation question", "Do you really wish to delete ballot template {0}?", ballotTemplate.GetText(translator));
-            WriteAccess = session.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write);
+            var writeAccess = session.HasAccess(ballotTemplate. Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write);
+            Editable = writeAccess ? "editable" : string.Empty;
         }
     }
 
@@ -145,7 +160,7 @@ namespace Quaestur
 
         public BallotTemplateListViewModel(Translator translator, IDatabase database, Session session)
         {
-            PhraseHeaderOrganizer = translator.Get("BallotTemplate.List.Header.Organizer", "Header part 'Organizer' in the ballot template list", "Language").EscapeHtml();
+            PhraseHeaderOrganizer = translator.Get("BallotTemplate.List.Header.Organizer", "Header part 'Organizer' in the ballot template list", "Organizer").EscapeHtml();
             PhraseHeaderName = translator.Get("BallotTemplate.List.Header.Name", "Link 'Name' caption in the ballot template list", "Name").EscapeHtml();
             PhraseDeleteConfirmationTitle = translator.Get("BallotTemplate.List.Delete.Confirm.Title", "Delete ballot template confirmation title", "Delete?").EscapeHtml();
             PhraseDeleteConfirmationInfo = translator.Get("BallotTemplate.List.Delete.Confirm.Info", "Delete ballot template confirmation info", "This will also delete all ballots using that template.").EscapeHtml();
@@ -207,12 +222,6 @@ namespace Quaestur
                             Translate("BallotTemplate.Copy.NameSuffix", "Suffix on copyied ballot template", " (Copy)");
                         newTemplate.PreparationDays.Value = ballotTemplate.PreparationDays.Value;
                         newTemplate.VotingDays.Value = ballotTemplate.VotingDays.Value;
-                        newTemplate.AnnouncementMailSubject.Value = ballotTemplate.AnnouncementMailSubject.Value;
-                        newTemplate.AnnouncementMailText.Value = ballotTemplate.AnnouncementMailText.Value;
-                        newTemplate.AnnouncementLetter.Value = ballotTemplate.AnnouncementLetter.Value;
-                        newTemplate.InvitationMailSubject.Value = ballotTemplate.InvitationMailSubject.Value;
-                        newTemplate.InvitationMailText.Value = ballotTemplate.InvitationMailText.Value;
-                        newTemplate.InvitationLetter.Value = ballotTemplate.InvitationLetter.Value;
                         newTemplate.VoterCard.Value = ballotTemplate.VoterCard.Value;
                         newTemplate.BallotPaper.Value = ballotTemplate.BallotPaper.Value;
                         Database.Save(newTemplate);
@@ -237,12 +246,6 @@ namespace Quaestur
                         status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
                         status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
                         status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
-                        status.AssignMultiLanguageFree("AnnouncementMailSubject", ballotTemplate.AnnouncementMailSubject, model.AnnouncementMailSubject);
-                        status.AssignMultiLanguageFree("AnnouncementMailText", ballotTemplate.AnnouncementMailText, model.AnnouncementMailText);
-                        status.AssignMultiLanguageFree("AnnouncementLetter", ballotTemplate.AnnouncementLetter, model.AnnouncementLetter);
-                        status.AssignMultiLanguageFree("InvitationMailSubject", ballotTemplate.InvitationMailSubject, model.InvitationMailSubject);
-                        status.AssignMultiLanguageFree("InvitationMailText", ballotTemplate.InvitationMailText, model.InvitationMailText);
-                        status.AssignMultiLanguageFree("InvitationLetter", ballotTemplate.InvitationLetter, model.InvitationLetter);
                         status.AssignMultiLanguageFree("VoterCard", ballotTemplate.VoterCard, model.VoterCard);
                         status.AssignMultiLanguageFree("BallotPaper", ballotTemplate.BallotPaper, model.BallotPaper);
 
@@ -275,19 +278,25 @@ namespace Quaestur
                 status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
                 status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
                 status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
-                status.AssignMultiLanguageFree("AnnouncementMailSubject", ballotTemplate.AnnouncementMailSubject, model.AnnouncementMailSubject);
-                status.AssignMultiLanguageFree("AnnouncementMailText", ballotTemplate.AnnouncementMailText, model.AnnouncementMailText);
-                status.AssignMultiLanguageFree("AnnouncementLetter", ballotTemplate.AnnouncementLetter, model.AnnouncementLetter);
-                status.AssignMultiLanguageFree("InvitationMailSubject", ballotTemplate.InvitationMailSubject, model.InvitationMailSubject);
-                status.AssignMultiLanguageFree("InvitationMailText", ballotTemplate.InvitationMailText, model.InvitationMailText);
-                status.AssignMultiLanguageFree("InvitationLetter", ballotTemplate.InvitationLetter, model.InvitationLetter);
                 status.AssignMultiLanguageFree("VoterCard", ballotTemplate.VoterCard, model.VoterCard);
                 status.AssignMultiLanguageFree("BallotPaper", ballotTemplate.BallotPaper, model.BallotPaper);
 
-                if (status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
+                ballotTemplate.Announcement.Value = new SendingTemplate(Guid.NewGuid());
+                ballotTemplate.Announcement.Value.ParentType.Value = SendingTemplateParentType.BallotTemplate;
+                ballotTemplate.Announcement.Value.ParentId.Value = ballotTemplate.Id.Value;
+                ballotTemplate.Announcement.Value.FieldName.Value = ballotTemplate.Announcement.ColumnName;
+
+                ballotTemplate.Invitation.Value = new SendingTemplate(Guid.NewGuid());
+                ballotTemplate.Invitation.Value.ParentType.Value = SendingTemplateParentType.BallotTemplate;
+                ballotTemplate.Invitation.Value.ParentId.Value = ballotTemplate.Id.Value;
+                ballotTemplate.Invitation.Value.FieldName.Value = ballotTemplate.Invitation.ColumnName;
+
+                if (status.IsSuccess)
                 {
-                    if (status.IsSuccess)
+                    if (status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                     {
+                        Database.Save(ballotTemplate.Announcement.Value);
+                        Database.Save(ballotTemplate.Invitation.Value);
                         Database.Save(ballotTemplate);
                         Notice("{0} added ballot template {1}", CurrentSession.User.ShortHand, ballotTemplate);
                     }

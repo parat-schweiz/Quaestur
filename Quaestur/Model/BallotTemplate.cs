@@ -10,12 +10,8 @@ namespace Quaestur
         public ForeignKeyField<Tag, BallotTemplate> ParticipantTag { get; private set; }
         public Field<int> PreparationDays { get; private set; }
         public Field<int> VotingDays { get; private set; }
-        public MultiLanguageStringField AnnouncementMailSubject { get; private set; }
-        public MultiLanguageStringField AnnouncementMailText { get; private set; }
-        public MultiLanguageStringField AnnouncementLetter { get; private set; }
-        public MultiLanguageStringField InvitationMailSubject { get; private set; }
-        public MultiLanguageStringField InvitationMailText { get; private set; }
-        public MultiLanguageStringField InvitationLetter { get; private set; }
+        public ForeignKeyField<SendingTemplate, BallotTemplate> Announcement { get; private set; }
+        public ForeignKeyField<SendingTemplate, BallotTemplate> Invitation { get; private set; }
         public MultiLanguageStringField VoterCard { get; private set; }
         public MultiLanguageStringField BallotPaper { get; private set; }
 
@@ -30,14 +26,23 @@ namespace Quaestur
             ParticipantTag = new ForeignKeyField<Tag, BallotTemplate>(this, "participanttagid", false, null);
             PreparationDays = new Field<int>(this, "preparationdays", 3);
             VotingDays = new Field<int>(this, "votingdays", 1);
-            AnnouncementMailSubject = new MultiLanguageStringField(this, "announcementmailsubject", AllowStringType.SimpleText);
-            AnnouncementMailText = new MultiLanguageStringField(this, "announcementmailtext", AllowStringType.SafeHtml);
-            AnnouncementLetter = new MultiLanguageStringField(this, "announcementletter", AllowStringType.SafeLatex);
-            InvitationMailSubject = new MultiLanguageStringField(this, "invitationmailsubject", AllowStringType.SimpleText);
-            InvitationMailText = new MultiLanguageStringField(this, "invitationmailtext", AllowStringType.SafeHtml);
-            InvitationLetter = new MultiLanguageStringField(this, "invitationletter", AllowStringType.SafeLatex);
+            Announcement = new ForeignKeyField<SendingTemplate, BallotTemplate>(this, "announcement", false, null);
+            Invitation = new ForeignKeyField<SendingTemplate, BallotTemplate>(this, "invitation", false, null);
             VoterCard = new MultiLanguageStringField(this, "votercard", AllowStringType.SafeLatex);
             BallotPaper = new MultiLanguageStringField(this, "ballotpaper", AllowStringType.SafeLatex);
+        }
+
+        public static string GetFieldNameTranslation(Translator translator, string fieldName)
+        { 
+            switch (fieldName)
+            {
+                case "announcement":
+                    return translator.Get("BallotTemplate.FieldName.Announcement", "Announcement field name of the ballot template", "Announcement");
+                case "invitation":
+                    return translator.Get("BallotTemplate.FieldName.Invitation", "Invitation field name of the ballot template", "Invitation");
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public override string ToString()
@@ -51,6 +56,9 @@ namespace Quaestur
             {
                 ballot.Delete(database); 
             }
+
+            Announcement.Value.Delete(database);
+            Invitation.Value.Delete(database);
 
             database.Delete(this);
         }
