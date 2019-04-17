@@ -45,7 +45,7 @@ namespace Quaestur
         public ForeignKeyField<Ballot, BallotPaper> Ballot { get; private set; }
         public ForeignKeyField<Membership, BallotPaper> Member { get; private set; }
         public EnumField<BallotPaperStatus> Status { get; private set; }
-        public Field<DateTime> LastUpdate { get; private set; }
+        public Field<DateTime> LastTry { get; private set; }
 
         public BallotPaper() : this(Guid.Empty)
         {
@@ -56,7 +56,7 @@ namespace Quaestur
             Ballot = new ForeignKeyField<Ballot, BallotPaper>(this, "ballotid", false, null);
             Member = new ForeignKeyField<Membership, BallotPaper>(this, "memberid", false, null);
             Status = new EnumField<BallotPaperStatus>(this, "status", BallotPaperStatus.New, BallotPaperStatusExtensions.Translate);
-            LastUpdate = new Field<DateTime>(this, "lastupdate", DateTime.UtcNow);
+            LastTry = new Field<DateTime>(this, "lasttry", DateTime.UtcNow);
         }
 
         public override string ToString()

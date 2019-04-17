@@ -69,14 +69,6 @@ function saveObject(targetUrl){
   formData.PreparationDays = $("#ballotTemplatePreparationDays").val();
   formData.VotingDays = $("#ballotTemplateVotingDays").val();
     
-  formData.VoterCard = new Array();
-  @Each.VoterCard
-  var obj@Current.Key = new Object();
-  obj@Current.Key['Key'] = "@Current.Key";
-  obj@Current.Key['Value'] = $("#ballotTemplateVoterCard@Current.Key").val()
-  formData.VoterCard.push(obj@Current.Key);
-  @EndEach
-    
   formData.BallotPaper = new Array();
   @Each.BallotPaper
   var obj@Current.Key = new Object();
@@ -170,14 +162,6 @@ $(document).ready(function() {
       @Each.Invitation
       <div class="col-md-3 mb-3">
         <button id="@Current.ButtonId" class="btn btn-primary mb-2">@Current.Text</button>
-      </div>
-      @EndEach
-    </div>
-    <div class="form-row">
-      @Each.VoterCard
-      <div class="col-md-3 mb-3">
-        <label for="ballotTemplateVoterCard@Current.Key">@Current.Phrase</label>
-        <textarea id="ballotTemplateVoterCard@Current.Key" class="form-control">@Current.Value</textarea>
       </div>
       @EndEach
     </div>

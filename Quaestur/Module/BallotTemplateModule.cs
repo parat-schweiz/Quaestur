@@ -43,7 +43,6 @@ namespace Quaestur
         public string VotingDays;
         public List<SendingTemplateLanguageEdit> Announcement;
         public List<SendingTemplateLanguageEdit> Invitation;
-        public List<MultiItemViewModel> VoterCard;
         public List<MultiItemViewModel> BallotPaper;
         public List<NamedIdViewModel> Organizers;
         public List<NamedIdViewModel> ParticipantTags;
@@ -83,7 +82,6 @@ namespace Quaestur
             VotingDays = string.Empty;
             Announcement = new List<SendingTemplateLanguageEdit>();
             Invitation = new List<SendingTemplateLanguageEdit>();
-            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", new MultiLanguageString());
             BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", new MultiLanguageString());
             Organizers = new List<NamedIdViewModel>(db
                 .Query<Group>()
@@ -108,7 +106,6 @@ namespace Quaestur
                 .Select(l => new SendingTemplateLanguageEdit(translator, ballotTemplate.Announcement.Value, l, "BallotTemplate.Announcement", "Announcement")));
             Invitation = new List<SendingTemplateLanguageEdit>(LanguageExtensions.Natural
                 .Select(l => new SendingTemplateLanguageEdit(translator, ballotTemplate.Invitation.Value, l, "BallotTemplate.Invitation", "Invitation")));
-            VoterCard = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.VoterCard", "Voter card field in the ballot template edit page", "Voter card ({0})", ballotTemplate.VoterCard);
             BallotPaper = translator.CreateLanguagesMultiItem("BallotTemplate.Edit.Field.BallotPaper", "Ballot paper field in the ballot template edit page", "Ballot paper ({0})", ballotTemplate.BallotPaper);
             Organizers = new List<NamedIdViewModel>(db
                 .Query<Group>()
@@ -222,7 +219,6 @@ namespace Quaestur
                             Translate("BallotTemplate.Copy.NameSuffix", "Suffix on copyied ballot template", " (Copy)");
                         newTemplate.PreparationDays.Value = ballotTemplate.PreparationDays.Value;
                         newTemplate.VotingDays.Value = ballotTemplate.VotingDays.Value;
-                        newTemplate.VoterCard.Value = ballotTemplate.VoterCard.Value;
                         newTemplate.BallotPaper.Value = ballotTemplate.BallotPaper.Value;
 
                         using (var transaction = Database.BeginTransaction())
@@ -259,7 +255,6 @@ namespace Quaestur
                         status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
                         status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
                         status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
-                        status.AssignMultiLanguageFree("VoterCard", ballotTemplate.VoterCard, model.VoterCard);
                         status.AssignMultiLanguageFree("BallotPaper", ballotTemplate.BallotPaper, model.BallotPaper);
 
                         if (status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
@@ -291,7 +286,6 @@ namespace Quaestur
                 status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
                 status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
                 status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
-                status.AssignMultiLanguageFree("VoterCard", ballotTemplate.VoterCard, model.VoterCard);
                 status.AssignMultiLanguageFree("BallotPaper", ballotTemplate.BallotPaper, model.BallotPaper);
 
                 using (var transaction = Database.BeginTransaction())

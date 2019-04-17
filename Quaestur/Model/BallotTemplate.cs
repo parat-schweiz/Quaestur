@@ -12,7 +12,6 @@ namespace Quaestur
         public Field<int> VotingDays { get; private set; }
         public ForeignKeyField<SendingTemplate, BallotTemplate> Announcement { get; private set; }
         public ForeignKeyField<SendingTemplate, BallotTemplate> Invitation { get; private set; }
-        public MultiLanguageStringField VoterCard { get; private set; }
         public MultiLanguageStringField BallotPaper { get; private set; }
 
         public BallotTemplate() : this(Guid.Empty)
@@ -28,7 +27,6 @@ namespace Quaestur
             VotingDays = new Field<int>(this, "votingdays", 1);
             Announcement = new ForeignKeyField<SendingTemplate, BallotTemplate>(this, "announcement", false, null);
             Invitation = new ForeignKeyField<SendingTemplate, BallotTemplate>(this, "invitation", false, null);
-            VoterCard = new MultiLanguageStringField(this, "votercard", AllowStringType.SafeLatex);
             BallotPaper = new MultiLanguageStringField(this, "ballotpaper", AllowStringType.SafeLatex);
         }
 

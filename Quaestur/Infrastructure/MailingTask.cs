@@ -9,7 +9,6 @@ namespace Quaestur
     public class MailingTask : ITask
     {
         private DateTime _lastSending;
-        private int _maxMailsCount;
 
         public MailingTask()
         {
@@ -18,10 +17,9 @@ namespace Quaestur
 
         public void Run(IDatabase database)
         {
-            if (DateTime.UtcNow > _lastSending.AddMinutes(3))
+            if (DateTime.UtcNow > _lastSending.AddMinutes(2))
             {
                 _lastSending = DateTime.UtcNow;
-                _maxMailsCount = 5;
                 Global.Log.Notice("Running mailing task");
 
                 foreach (var mailing in database.Query<Mailing>())
@@ -99,9 +97,8 @@ namespace Quaestur
             {
                 if (sending.Status.Value == SendingStatus.Created)
                 {
-                    if (_maxMailsCount > 0)
+                    if (Global.MailCounter.Available)
                     {
-                        _maxMailsCount--;
                         var header = mailing.Header.Value;
                         var footer = mailing.Footer.Value;
                         var htmlText = mailing.HtmlText.Value;
@@ -146,6 +143,7 @@ namespace Quaestur
                             htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
                             content.Add(htmlPart);
 
+                            Global.MailCounter.Used();
                             Global.Mail.Send(from, to, senderKey, null, mailing.Subject.Value, content);
                             sending.Status.Value = SendingStatus.Sent;
                             sending.SentDate.Value = DateTime.UtcNow;

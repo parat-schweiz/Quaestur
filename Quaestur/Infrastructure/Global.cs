@@ -16,6 +16,20 @@ namespace Quaestur
         private static SecurityThrottle _throttle;
         private static SecurityService _security;
         private static Gpg _gpg;
+        private static MailCounter _mailCounter;
+
+        public static MailCounter MailCounter
+        {
+            get
+            {
+                if (_mailCounter == null)
+                {
+                    _mailCounter = new MailCounter(100, 15);
+                }
+
+                return _mailCounter;
+            }
+        }
 
         public static Gpg Gpg
         {

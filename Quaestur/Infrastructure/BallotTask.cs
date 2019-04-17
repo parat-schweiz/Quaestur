@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using MimeKit;
+using MailKit;
+using BaseLibrary;
 
 namespace Quaestur
 {
     public class BallotTask : ITask
     {
-        private DateTime _lastSending;
-        private int _maxMailsCount;
+        private DateTime _lastAction;
 
         public BallotTask()
         {
-            _lastSending = DateTime.MinValue; 
+            _lastAction = DateTime.MinValue; 
         }
 
         public void Run(IDatabase database)
         {
-            if (DateTime.UtcNow > _lastSending.AddMinutes(5))
+            if (DateTime.UtcNow > _lastAction.AddMinutes(15))
             {
-                _lastSending = DateTime.UtcNow;
-                _maxMailsCount = 500;
+                _lastAction = DateTime.UtcNow;
                 Global.Log.Notice("Running ballot task");
 
                 RunAll(database);
@@ -28,15 +29,15 @@ namespace Quaestur
             }
         }
 
-        private void Journal(IDatabase db, Membership membership, string key, string hint, string technical, params Func<Translator, string>[] parameters)
+        private void Journal(IDatabase db, BallotPaper ballotPaper, string key, string hint, string technical, params Func<Translator, string>[] parameters)
         {
             var translation = new Translation(db);
-            var translator = new Translator(translation, membership.Person.Value.Language.Value);
+            var translator = new Translator(translation, ballotPaper.Member.Value.Person.Value.Language.Value);
             var entry = new JournalEntry(Guid.NewGuid());
             entry.Moment.Value = DateTime.UtcNow;
             entry.Text.Value = translator.Get(key, hint, technical, parameters.Select(p => p(translator)));
             entry.Subject.Value = translator.Get("Document.Billing.Process", "Billing process naming", "Billing process");
-            entry.Person.Value = membership.Person.Value;
+            entry.Person.Value = ballotPaper.Member.Value.Person.Value;
             db.Save(entry);
 
             var technicalTranslator = new Translator(translation, Language.Technical);
@@ -93,7 +94,7 @@ namespace Quaestur
                             ballot.Status.Value = BallotStatus.Announcing;
                             database.Save(ballot);
                         }
-                        UpdateMembers(database, ballot);
+                        UpdateBallot(database, ballot);
                     }
                     break;
                 case BallotStatus.Announcing:
@@ -103,18 +104,18 @@ namespace Quaestur
                             ballot.Status.Value = BallotStatus.Voting;
                             database.Save(ballot);
                         }
-                        UpdateMembers(database, ballot);
+                        UpdateBallot(database, ballot);
                     }
                     break;
                 case BallotStatus.Voting:
                     {
-                        UpdateMembers(database, ballot);
+                        UpdateBallot(database, ballot);
                     }
                     break;
             }
         }
 
-        private void UpdateMembers(IDatabase database, Ballot ballot)
+        private void UpdateBallot(IDatabase database, Ballot ballot)
         {
             var memberships = QueryAllMemberships(database, ballot);
             var ballotPapers = QueryAllBallotPapers(database, ballot);
@@ -126,77 +127,276 @@ namespace Quaestur
         {
             foreach (var ballotPaper in ballotPapers.Values)
             {
-                switch (ballotPaper.Status.Value)
+                if (DateTime.UtcNow >= ballotPaper.LastTry.Value.AddHours(7d))
                 {
-                    case BallotPaperStatus.New:
-                        if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
-                        {
-                            ballotPaper.Status.Value = BallotPaperStatus.Canceled;
-                            ballotPaper.LastUpdate.Value = DateTime.UtcNow;
-                            database.Save(ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Announcing)
-                        {
-                            Announce(database, ballot, ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Voting)
-                        {
-                            Invite(database, ballot, ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Finished)
-                        {
-                            CheckRight(database, ballot, ballotPaper);
-                        }
-                        break;
-                    case BallotPaperStatus.Informed:
-                        if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
-                        {
-                            ballotPaper.Status.Value = BallotPaperStatus.Canceled;
-                            ballotPaper.LastUpdate.Value = DateTime.UtcNow;
-                            database.Save(ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Voting)
-                        {
-                            Invite(database, ballot, ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Finished)
-                        {
-                            CheckRight(database, ballot, ballotPaper);
-                        }
-                        break;
-                    case BallotPaperStatus.Invited:
-                        if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
-                        {
-                            ballotPaper.Status.Value = BallotPaperStatus.Canceled;
-                            ballotPaper.LastUpdate.Value = DateTime.UtcNow;
-                            database.Save(ballotPaper);
-                        }
-                        else if (ballot.Status.Value == BallotStatus.Finished)
-                        {
-                            CheckRight(database, ballot, ballotPaper);
-                        }
-                        break;
-                    case BallotPaperStatus.Canceled:
-                        if (memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
-                        {
-                            ballotPaper.Status.Value = BallotPaperStatus.New;
-                            ballotPaper.LastUpdate.Value = DateTime.UtcNow;
-                            database.Save(ballotPaper);
-                        }
-                        break;
+                    UpdateMember(database, ballot, memberships, ballotPaper);
                 }
             }
         }
 
-        private void Announce(IDatabase database, Ballot ballot, BallotPaper ballotPaper)
+        private void UpdateMember(IDatabase database, Ballot ballot, IDictionary<Guid, Membership> memberships, BallotPaper ballotPaper)
         {
+            switch (ballotPaper.Status.Value)
+            {
+                case BallotPaperStatus.New:
+                    if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
+                    {
+                        ballotPaper.Status.Value = BallotPaperStatus.Canceled;
+                        database.Save(ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Announcing)
+                    {
+                        Announce(database, ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Voting)
+                    {
+                        Invite(database, ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Finished)
+                    {
+                        CheckRight(database, ballotPaper);
+                    }
+                    break;
+                case BallotPaperStatus.Informed:
+                    if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
+                    {
+                        ballotPaper.Status.Value = BallotPaperStatus.Canceled;
+                        database.Save(ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Voting)
+                    {
+                        Invite(database, ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Finished)
+                    {
+                        CheckRight(database, ballotPaper);
+                    }
+                    break;
+                case BallotPaperStatus.Invited:
+                    if (!memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
+                    {
+                        ballotPaper.Status.Value = BallotPaperStatus.Canceled;
+                        database.Save(ballotPaper);
+                    }
+                    else if (ballot.Status.Value == BallotStatus.Finished)
+                    {
+                        CheckRight(database, ballotPaper);
+                    }
+                    break;
+                case BallotPaperStatus.Canceled:
+                    if (memberships.ContainsKey(ballotPaper.Member.Value.Id.Value))
+                    {
+                        ballotPaper.Status.Value = BallotPaperStatus.New;
+                        database.Save(ballotPaper);
+                    }
+                    break;
+            }
         }
 
-        private void Invite(IDatabase database, Ballot ballot, BallotPaper ballotPaper)
+        private void Announce(IDatabase database, BallotPaper ballotPaper)
         {
+            if (Global.MailCounter.Available)
+            {
+                if (Send(database, ballotPaper, true))
+                {
+                    ballotPaper.Status.Value = BallotPaperStatus.Informed;
+                    database.Save(ballotPaper);
+                }
+            }
         }
 
-        private void CheckRight(IDatabase database, Ballot ballot, BallotPaper ballotPaper)
+        private void Invite(IDatabase database, BallotPaper ballotPaper)
+        {
+            if (Global.MailCounter.Available)
+            {
+                if (Send(database, ballotPaper, false))
+                {
+                    ballotPaper.Status.Value = BallotPaperStatus.Invited;
+                    database.Save(ballotPaper);
+                }
+                else
+                {
+                    ballotPaper.LastTry.Value = DateTime.UtcNow;
+                    database.Save(ballotPaper);
+                }
+            }
+        }
+
+        private bool Send(IDatabase database, BallotPaper ballotPaper, bool announcement)
+        {
+            var ballot = ballotPaper.Ballot.Value;
+            var template = ballot.Template.Value;
+            var person = ballotPaper.Member.Value.Person.Value;
+            var sendingTemplate = announcement ? template.Announcement.Value : template.Invitation.Value;
+
+            if (sendingTemplate.Languages.Any(stl => stl.Language.Value == person.Language.Value))
+            {
+                var sendingTemplateLanguage = sendingTemplate.Languages.Single(stl => stl.Language.Value == person.Language.Value);
+
+                if (SendMail(database, ballotPaper, sendingTemplateLanguage, announcement))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                if (announcement)
+                {
+                    Journal(database, ballotPaper,
+                    "Document.BallotPaper.NoLanguageTemplateAnnouncement",
+                    "When template in that language is available to send ballot announcement",
+                    "No mail address available to send ballot announcement for {0}",
+                    t => ballotPaper.Ballot.Value.GetText(t));
+                }
+                else
+                {
+                    Journal(database, ballotPaper,
+                    "Document.BallotPaper.NoLanguageTemplateInvitation",
+                    "When template in that language is available to send ballot invitation",
+                    "No mail address available to send ballot invitation for {0}",
+                    t => ballotPaper.Ballot.Value.GetText(t));
+                }
+                return false;
+            }
+        }
+
+        private bool SendMail(IDatabase database, BallotPaper ballotPaper, SendingTemplateLanguage sendingTemplateLanguage, bool announcement)
+        {
+            var ballot = ballotPaper.Ballot.Value;
+            var template = ballot.Template.Value;
+            var person = ballotPaper.Member.Value.Person.Value;
+
+            if (string.IsNullOrEmpty(person.PrimaryMailAddress))
+            {
+                if (announcement)
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.NoMailAddressAnnouncement",
+                        "When no mail address is available to send ballot announcement",
+                        "No mail address available to send ballot announcement for {0}",
+                        t => ballotPaper.Ballot.Value.GetText(t));
+                }
+                else
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.NoMailAddressInvitation",
+                        "When no mail address is available to send ballot invitation",
+                        "No mail address available to send ballot invitation for {0}",
+                        t => ballotPaper.Ballot.Value.GetText(t));
+                }
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(sendingTemplateLanguage.MailSubject.Value) ||
+                string.IsNullOrEmpty(sendingTemplateLanguage.MailHtmlText.Value) ||
+                string.IsNullOrEmpty(sendingTemplateLanguage.MailPlainText.Value))
+            {
+                if (announcement)
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.IncompleteTemplateAnnouncement",
+                        "When template to send announcement is incomplete",
+                        "Template to send ballot announcement for {0} in {1} is incomplete",
+                        t => ballotPaper.Ballot.Value.GetText(t),
+                        t => sendingTemplateLanguage.Language.Value.Translate(t));
+                }
+                else
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.IncompleteTemplateInvitation",
+                        "When template to send invitation is incomplete",
+                        "Template to send ballot invitation for {0} in {1} is incomplete",
+                        t => ballotPaper.Ballot.Value.GetText(t),
+                        t => sendingTemplateLanguage.Language.Value.Translate(t));
+                }
+                return false;
+            }
+
+            var from = new MailboxAddress(
+                template.Organizer.Value.MailName.Value[person.Language.Value],
+                template.Organizer.Value.MailAddress.Value[person.Language.Value]);
+            var to = new MailboxAddress(
+                person.ShortHand,
+                person.PrimaryMailAddress);
+            var senderKey = template.Organizer.Value.GpgKeyId.Value == null ? null :
+                new GpgPrivateKeyInfo(
+                template.Organizer.Value.GpgKeyId.Value,
+                template.Organizer.Value.GpgKeyPassphrase.Value);
+            var recipientKey = person.GetPublicKey();
+            var translation = new Translation(database);
+            var translator = new Translator(translation, person.Language.Value);
+            var templator = new Templator(
+                new PersonContentProvider(translator, person), 
+                new BallotPaperContentProvider(translator, ballotPaper));
+            var htmlText = templator.Apply(sendingTemplateLanguage.MailHtmlText);
+            var plainText = templator.Apply(sendingTemplateLanguage.MailPlainText);
+            var alternative = new Multipart("alternative");
+            var plainPart = new TextPart("plain") { Text = plainText };
+            plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(plainPart);
+            var htmlPart = new TextPart("html") { Text = htmlText };
+            htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(htmlPart);
+
+            try
+            {
+                Global.MailCounter.Used();
+                Global.Mail.Send(from, to, senderKey, recipientKey, sendingTemplateLanguage.MailSubject, alternative);
+
+                if (announcement)
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.SentAnnouncement",
+                        "Successfully sent announcement for ballot",
+                        "Sent announcement for {0} in {1} by e-mail to {2}",
+                        t => ballot.GetText(t),
+                        t => sendingTemplateLanguage.Language.Value.Translate(t),
+                        t => person.PrimaryMailAddress);
+                }
+                else
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.SentInvitation",
+                        "Successfully sent invitation for ballot",
+                        "Sent invitation to {0} in {1} by e-mail to {2}",
+                        t => ballot.GetText(t),
+                        t => sendingTemplateLanguage.Language.Value.Translate(t),
+                        t => person.PrimaryMailAddress);
+                }
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                if (announcement)
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.SendAnnouncementFail",
+                        "Failed to send announcement for ballot",
+                        "Failed to send announcement for {0} by e-mail to {1}",
+                        t => ballot.GetText(t),
+                        t => person.PrimaryMailAddress);
+                }
+                else
+                {
+                    Journal(database, ballotPaper,
+                        "Document.BallotPaper.SendInvitationFailed",
+                        "Failed to send invitation for ballot",
+                        "Failed to send invitation to {0} by e-mail to {1}",
+                        t => ballot.GetText(t),
+                        t => person.PrimaryMailAddress);
+                }
+
+                Global.Log.Error(exception.ToString());
+                return false;
+            }
+        }
+
+        private void CheckRight(IDatabase database, BallotPaper ballotPaper)
         {
             ballotPaper.Member.Value.UpdateVotingRight(database);
 
@@ -209,7 +409,7 @@ namespace Quaestur
                 ballotPaper.Status.Value = BallotPaperStatus.NoRight;
             }
 
-            ballotPaper.LastUpdate.Value = DateTime.UtcNow;
+            ballotPaper.LastTry.Value = DateTime.UtcNow;
             database.Save(ballotPaper);
         }
 
@@ -223,7 +423,7 @@ namespace Quaestur
                     newBallotPaper.Ballot.Value = ballot;
                     newBallotPaper.Member.Value = membership;
                     newBallotPaper.Status.Value = BallotPaperStatus.New;
-                    newBallotPaper.LastUpdate.Value = DateTime.UtcNow;
+                    newBallotPaper.LastTry.Value = DateTime.UtcNow.AddDays(-10);
                     database.Save(newBallotPaper);
                     ballotPapers.Add(newBallotPaper.Id.Value, newBallotPaper);
                 }

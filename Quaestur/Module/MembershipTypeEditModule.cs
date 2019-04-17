@@ -467,6 +467,7 @@ namespace Quaestur
                         {
                             var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
                             var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
+                            Global.MailCounter.Used();
                             Global.Mail.Send(to, subject, content);
 
                             result.MessageType = "succss";

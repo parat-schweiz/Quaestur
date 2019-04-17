@@ -247,6 +247,8 @@
     <Compile Include="Util\Html.cs" />
     <Compile Include="Model\BallotPaper.cs" />
     <Compile Include="Infrastructure\BallotTask.cs" />
+    <Compile Include="Documents\BallotPaperContentProvider.cs" />
+    <Compile Include="Infrastructure\MailCounter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
