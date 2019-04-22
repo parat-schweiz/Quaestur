@@ -52,6 +52,7 @@ namespace Quaestur
             database.CreateTable<SendingTemplateLanguage>();
             database.CreateTable<BallotTemplate>();
             database.CreateTable<Ballot>();
+            database.CreateTable<BallotPaper>();
         }
 
         private static void Migrate(IDatabase database)

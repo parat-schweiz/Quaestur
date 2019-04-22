@@ -19,6 +19,11 @@ namespace Quaestur
 
         public virtual bool Prepare() { return true; }
 
+        public virtual IEnumerable<Tuple<string, byte[]>> Files
+        {
+            get { return new Tuple<string, byte[]>[0];  }
+        }
+
         public byte[] Compile()
         {
             const string documentName = "document.tex";
@@ -32,6 +37,11 @@ namespace Quaestur
 
             try
             {
+                foreach (var file in Files)
+                {
+                    File.WriteAllBytes(Path.Combine(tempFolder, file.Item1), file.Item2);
+                }
+
                 File.WriteAllText(Path.Combine(tempFolder, documentName), TexDocument);
 
                 var start = new ProcessStartInfo(XelatexBinary, documentName);

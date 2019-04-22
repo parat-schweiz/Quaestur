@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.IO;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -72,6 +75,22 @@ namespace Quaestur
         public override string GetText(Translator translator)
         {
             return base.ToString();
+        }
+
+        public byte[] ComputeCode()
+        {
+            using (var serializer = new Serializer())
+            {
+                serializer.Write(Ballot.Value.Id.Value);
+                serializer.Write(Member.Value.Person.Value.Id.Value);
+                serializer.Write(Member.Value.Organization.Value.Id.Value);
+
+                using (var hmac = new HMACSHA256())
+                {
+                    hmac.Key = Ballot.Value.Secret.Value;
+                    return hmac.ComputeHash(serializer.Data);
+                }
+            }
         }
     }
 }

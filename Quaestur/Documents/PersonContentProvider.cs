@@ -45,6 +45,8 @@ namespace Quaestur
         {
             switch (variable)
             {
+                case "Person.Number":
+                    return _person.Number.Value.ToString();
                 case "Person.FirstName":
                     return _person.FirstName.Value;
                 case "Person.ShortFirstNames":

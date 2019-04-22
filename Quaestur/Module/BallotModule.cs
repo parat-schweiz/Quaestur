@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -183,6 +184,7 @@ namespace Quaestur
                         newBallot.AnnouncementText.Value = ballot.AnnouncementText.Value;
                         newBallot.Questions.Value = ballot.Questions.Value;
                         newBallot.EndDate.Value = DateTime.Now.AddDays(21).Date;
+                        newBallot.Secret.Value = Rng.Get(32);
                         Database.Save(newBallot);
                     }
                 }
@@ -245,6 +247,7 @@ namespace Quaestur
                 status.AssignDateString("EndDate", ballot.EndDate, model.EndDate);
                 status.AssignMultiLanguageFree("AnnouncementText", ballot.AnnouncementText, model.AnnouncementText);
                 status.AssignMultiLanguageFree("Questions", ballot.Questions, model.Questions);
+                ballot.Secret.Value = Rng.Get(32);
 
                 if (status.IsSuccess &&
                     status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))

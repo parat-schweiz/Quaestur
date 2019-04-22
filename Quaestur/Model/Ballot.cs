@@ -41,6 +41,7 @@ namespace Quaestur
         public Field<DateTime> EndDate { get; private set; }
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
+        public ByteArrayField Secret { get; private set; }
 
         public DateTime AnnouncementDate
         {
@@ -69,6 +70,7 @@ namespace Quaestur
             EndDate = new Field<DateTime>(this, "enddate", new DateTime(1850, 1, 3));
             AnnouncementText = new MultiLanguageStringField(this, "announcementtext", AllowStringType.SafeHtml);
             Questions = new MultiLanguageStringField(this, "questions", AllowStringType.SafeLatex);
+            Secret = new ByteArrayField(this, "secret", false);
         }
 
         public override string ToString()

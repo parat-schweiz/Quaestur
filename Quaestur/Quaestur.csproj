@@ -249,6 +249,7 @@
     <Compile Include="Infrastructure\BallotTask.cs" />
     <Compile Include="Documents\BallotPaperContentProvider.cs" />
     <Compile Include="Infrastructure\MailCounter.cs" />
+    <Compile Include="Documents\BallotPaperDocument.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -876,6 +877,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\ballotpaper.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Documents\ballotpaper_de.tex" />
+    <None Include="View\ballotpaperverify.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

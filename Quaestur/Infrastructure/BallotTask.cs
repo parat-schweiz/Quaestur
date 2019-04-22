@@ -36,7 +36,7 @@ namespace Quaestur
             var entry = new JournalEntry(Guid.NewGuid());
             entry.Moment.Value = DateTime.UtcNow;
             entry.Text.Value = translator.Get(key, hint, technical, parameters.Select(p => p(translator)));
-            entry.Subject.Value = translator.Get("Document.Billing.Process", "Billing process naming", "Billing process");
+            entry.Subject.Value = translator.Get("Document.Ballot.Process", "Ballot process naming", "Ballot process");
             entry.Person.Value = ballotPaper.Member.Value.Person.Value;
             db.Save(entry);
 
@@ -89,7 +89,7 @@ namespace Quaestur
             {
                 case BallotStatus.New:
                     {
-                        if (DateTime.Now.Date >= ballot.AnnouncementDate)
+                        if (DateTime.Now.Date >= ballot.AnnouncementDate.Date)
                         {
                             ballot.Status.Value = BallotStatus.Announcing;
                             database.Save(ballot);
@@ -99,7 +99,7 @@ namespace Quaestur
                     break;
                 case BallotStatus.Announcing:
                     {
-                        if (DateTime.Now.Date >= ballot.StartDate)
+                        if (DateTime.Now.Date >= ballot.StartDate.Date)
                         {
                             ballot.Status.Value = BallotStatus.Voting;
                             database.Save(ballot);

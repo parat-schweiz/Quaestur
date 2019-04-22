@@ -42,7 +42,19 @@ namespace Quaestur
 
         public string FormatLongDate(DateTime date)
         {
-            return date.ToString("D", Culture);
+            switch (Language)
+            {
+                case Language.German:
+                    return date.ToString("d. MMMM yyyy");
+                case Language.French:
+                    return date.ToString("d MMMM yyyy");
+                case Language.English:
+                    return date.ToString("MMMM dd yyyy");
+                case Language.Italian:
+                    return date.ToString("d MMMM yyyy");
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public Translator(Translation translation, Language language)

@@ -24,7 +24,7 @@ namespace Quaestur
             {
                 if (_mailCounter == null)
                 {
-                    _mailCounter = new MailCounter(100, 15);
+                    _mailCounter = new MailCounter(30, 3);
                 }
 
                 return _mailCounter;
