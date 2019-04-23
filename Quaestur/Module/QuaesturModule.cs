@@ -48,6 +48,7 @@ namespace Quaestur
                     return date.ToString("d. MMMM yyyy");
                 case Language.French:
                     return date.ToString("d MMMM yyyy");
+                case Language.Technical:
                 case Language.English:
                     return date.ToString("MMMM dd yyyy");
                 case Language.Italian:

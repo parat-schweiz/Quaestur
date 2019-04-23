@@ -250,6 +250,9 @@
     <Compile Include="Documents\BallotPaperContentProvider.cs" />
     <Compile Include="Infrastructure\MailCounter.cs" />
     <Compile Include="Documents\BallotPaperDocument.cs" />
+    <Compile Include="Module\LoginLinkModule.cs" />
+    <Compile Include="Model\LoginLink.cs" />
+    <Compile Include="Module\LinkLoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -881,6 +884,15 @@
     </None>
     <None Include="Documents\ballotpaper_de.tex" />
     <None Include="View\ballotpaperverify.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\loginlink.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\loginlinkcurrent.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\linklogin.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

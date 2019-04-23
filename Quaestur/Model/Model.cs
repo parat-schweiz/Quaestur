@@ -53,6 +53,7 @@ namespace Quaestur
             database.CreateTable<BallotTemplate>();
             database.CreateTable<Ballot>();
             database.CreateTable<BallotPaper>();
+            database.CreateTable<LoginLink>();
         }
 
         private static void Migrate(IDatabase database)

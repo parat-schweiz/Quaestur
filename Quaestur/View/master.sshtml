@@ -106,6 +106,7 @@
                     @EndIf
                     @If.NavBar
                     <a class="dropdown-item" href="/password">@Model.PhraseMenuChangePassword</a>
+                    <a class="dropdown-item" href="/loginlink">@Model.PhraseMenuLoginLink</a>
                     <a class="dropdown-item" href="/logout">@Model.PhraseMenuLogout</a>
                   </div>
                 </li>

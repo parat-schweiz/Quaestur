@@ -269,6 +269,13 @@ namespace Quaestur
                         "TwoFactor.Journal.Auth.Null",
                         "Journal entry login without 2FA",
                         "Logged in without two-factor authentication");
+
+                    foreach (var loginLink in Database
+                        .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
+                    {
+                        loginLink.Delete(Database);
+                    }
+
                     if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))
                     {
                         return Response.AsRedirect("/");

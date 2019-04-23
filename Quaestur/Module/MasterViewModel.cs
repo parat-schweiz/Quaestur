@@ -68,6 +68,7 @@ namespace Quaestur
         public string PhraseMenuBallotList = string.Empty;
         public string PhraseMenuBallotTemplates = string.Empty;
         public string PhraseMenuBallotPaper = string.Empty;
+        public string PhraseMenuLoginLink = string.Empty;
 
         public MasterViewModel()
         {
@@ -103,6 +104,7 @@ namespace Quaestur
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuProfile = translator.Get("Master.Menu.User.Profile", "Item 'Profile' under user in the main menu", "Profile").EscapeHtml();
             PhraseMenuBallotPaper = translator.Get("Master.Menu.User.BallotPaper", "Item 'Ballots' under user in the main menu", "Ballots").EscapeHtml();
+            PhraseMenuLoginLink = translator.Get("Master.Menu.User.LoginLink", "Item 'Login link' under user in the main menu", "Login device").EscapeHtml();
             PhraseMenuChangePassword = translator.Get("Master.Menu.User.ChangePassword", "Item 'Change password' under user in the main menu", "Change password").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
