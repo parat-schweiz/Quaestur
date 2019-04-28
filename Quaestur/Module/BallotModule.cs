@@ -50,7 +50,7 @@ namespace Quaestur
             Template = string.Empty;
             EndDate = DateTime.Now.AddDays(21).Date.ToString("dd.MM.yyyy");
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", new MultiLanguageString());
-            Questions =  translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", new MultiLanguageString());
+            Questions =  translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", new MultiLanguageString(AllowStringType.SafeLatex), EscapeMode.Latex);
             Templates = new List<NamedIdViewModel>(db
                 .Query<BallotTemplate>()
                 .Where(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
@@ -65,7 +65,7 @@ namespace Quaestur
             Template = string.Empty;
             EndDate = ballot.EndDate.Value.ToString("dd.MM.yyyy");
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", ballot.AnnouncementText.Value);
-            Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value);
+            Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value, EscapeMode.Latex);
             Templates = new List<NamedIdViewModel>(db
                 .Query<BallotTemplate>()
                 .Where(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
