@@ -20,10 +20,10 @@ namespace Quaestur
         {
             Template = new ForeignKeyField<SendingTemplate, SendingTemplateLanguage>(this, "templateid", false, st => st.Languages);
             Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
-            MailSubject = new StringField(this, "announcementmailsubject", 256, AllowStringType.SimpleText);
-            MailHtmlText = new StringField(this, "announcementmailtext", 4096, AllowStringType.SafeHtml);
-            MailPlainText = new StringField(this, "announcementletter", 4096, AllowStringType.SafeLatex);
-            LetterLatex = new StringField(this, "invitationmailsubject", 4096, AllowStringType.SimpleText);
+            MailSubject = new StringField(this, "mailsubject", 256, AllowStringType.SimpleText);
+            MailHtmlText = new StringField(this, "mailhtmltext", 262144, AllowStringType.SafeHtml);
+            MailPlainText = new StringField(this, "mailplaintext", 262144, AllowStringType.SafeLatex);
+            LetterLatex = new StringField(this, "letterlatex", 262144, AllowStringType.SimpleText);
         }
 
         public override string ToString()
