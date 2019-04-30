@@ -42,6 +42,11 @@ namespace Quaestur
         public bool TwoFactorAuth { get; set; }
         public string ReturnUrl { get; set; }
 
+        public void ReloadUser(IDatabase database)
+        {
+            User = database.Query<Person>(User.Id);
+        }
+
         public bool HasPersonNewAccess()
         {
             if (!TwoFactorAuth)

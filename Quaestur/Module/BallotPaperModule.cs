@@ -19,7 +19,6 @@ namespace Quaestur
         public string EndDate;
         public string Status;
         public string BallotPaperText;
-        public string PhraseDeleteConfirmationQuestion;
 
         public BallotPaperListItemViewModel(IDatabase database, Translator translator, Session session, Ballot ballot)
         {
@@ -29,7 +28,6 @@ namespace Quaestur
             StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).ToString("dd.MM.yyyy");
             EndDate = ballot.EndDate.Value.ToString("dd.MM.yyyy");
             Status = ballot.Status.Value.Translate(translator);
-            PhraseDeleteConfirmationQuestion = translator.Get("Ballot.List.Delete.Confirm.Question", "Delete ballot confirmation question", "Do you really wish to delete ballot {0}?", ballot.GetText(translator));
 
             if (ballot.Status.Value == BallotStatus.Voting)
             {
@@ -82,6 +80,7 @@ namespace Quaestur
             PhraseHeaderStatus = translator.Get("BallotPaper.List.Header.Status", "Link 'Status' caption in the ballot list", "Status").EscapeHtml();
             PhraseDeleteConfirmationTitle = translator.Get("BallotPaper.List.Delete.Confirm.Title", "Delete ballot confirmation title", "Delete?").EscapeHtml();
             PhraseDeleteConfirmationInfo = string.Empty;
+            session.ReloadUser(database);
             session.User.UpdateAllVotingRights(database);
             List = new List<BallotPaperListItemViewModel>(database
                 .Query<Ballot>()
