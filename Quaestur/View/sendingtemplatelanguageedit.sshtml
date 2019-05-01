@@ -32,7 +32,6 @@ function assignValidation(resultData){
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
-$('.selectpicker').selectpicker();
 $(document).ready(function() {
   $("#templateCancelButton").click(function(event) {
     window.location.href = "@Model.ParentLink";

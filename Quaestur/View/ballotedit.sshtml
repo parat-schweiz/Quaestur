@@ -58,7 +58,7 @@ function saveObject(targetUrl){
   @Each.AnnouncementText
   var obj@Current.Key = new Object();
   obj@Current.Key['Key'] = "@Current.Key";
-  obj@Current.Key['Value'] = $("#ballotAnnouncementText@Current.Key").val()
+  obj@Current.Key['Value'] = tinymce.get("ballotAnnouncementText@Current.Key").getContent();
   formData.AnnouncementText.push(obj@Current.Key);
   @EndEach
     
@@ -90,6 +90,16 @@ $(document).ready(function() {
     format: 'dd.mm.yyyy',
     startDate: '-1d'
   });
+  tinymce.init({
+    selector: '.tinymce',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
 });
 </script>
 @EndSection
@@ -117,7 +127,7 @@ $(document).ready(function() {
       @Each.AnnouncementText
       <div class="col-md-3 mb-3">
         <label for="ballotAnnouncementText@Current.Key">@Current.Phrase</label>
-        <textarea id="ballotAnnouncementText@Current.Key" class="form-control">@Current.Value</textarea>
+        <textarea id="ballotAnnouncementText@Current.Key" class="form-control tinymce">@Current.Value</textarea>
       </div>
       @EndEach
     </div>
