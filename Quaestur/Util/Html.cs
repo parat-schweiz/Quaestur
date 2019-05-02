@@ -8,5 +8,10 @@ namespace Quaestur
         {
             return string.Format("<a href=\"{0}\">{1}</a>", link, text);
         }
+
+        public static string LinkScript(string text, string script)
+        {
+            return string.Format("<a onclick=\"{0}\">{1}</a>", script, text);
+        }
     }
 }

@@ -2,6 +2,27 @@
 
 @Section['script']
 <script>
+function downloadUrlWait(url){
+  waitingDialog.show(undefined, undefined, function(){
+    $.get(url, function(resultData, status){
+        var result = JSON.parse(resultData);
+        if (result.IsSuccess){
+          const byteString = atob(result.Data);
+          var arrayBuffer = new ArrayBuffer(byteString.length);
+          var uint8Array = new Uint8Array(arrayBuffer);
+          for (var i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+          }
+          var blob = new Blob([arrayBuffer], {type: "application/pdf"});
+          waitingDialog.hide();
+          saveAs(blob, result.FileName);
+        }else{
+          waitingDialog.hide();
+          $.notify({ message: result.MessageText },{ type: result.MessageType });
+        }
+    });
+  });
+}
 </script>
 @EndSection
 

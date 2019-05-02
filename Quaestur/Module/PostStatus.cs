@@ -19,6 +19,8 @@ namespace Quaestur
         public bool IsSuccess { get; private set; }
         public string ErrorText { get; private set; }
         public string SuccessText { get; private set; }
+        public string Data { get; private set; }
+        public string FileName { get; private set; }
 
         public bool ObjectNotNull(DatabaseObject obj)
         {
@@ -47,6 +49,19 @@ namespace Quaestur
         public void SetSuccess(string key, string hint, string text, params object[] arguments)
         {
             SuccessText = _translator.Get(key, hint, text, arguments).EscapeHtml();
+            IsSuccess = true;
+        }
+
+        public void SetDataSuccess(string data)
+        {
+            Data = data;
+            IsSuccess = true;
+        }
+
+        public void SetDataSuccess(string data, string fileName)
+        {
+            Data = data;
+            FileName = fileName;
             IsSuccess = true;
         }
 
@@ -129,10 +144,21 @@ namespace Quaestur
                 statusObject.Add(new JProperty("MessageText", SuccessText.EscapeHtml()));
             }
 
+            if (!string.IsNullOrEmpty(Data))
+            {
+                statusObject.Add(new JProperty("Data", Data));
+            }
+
+            if (!string.IsNullOrEmpty(FileName))
+            {
+                statusObject.Add(new JProperty("FileName", FileName));
+            }
+
             foreach (var m in _messages)
             {
                 statusObject.Add(m);
             }
+
             return statusObject.ToString();
         }
 

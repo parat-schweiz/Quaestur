@@ -40,9 +40,9 @@ namespace Quaestur
 
                 if (membership.HasVotingRight.Value.Value)
                 {
-                    BallotPaperText = Html.Link(
+                    BallotPaperText = Html.LinkScript(
                         translator.Get("BallotPaper.List.Download", "Link text to download ballot paper", "Dowload"),
-                        "/ballotpaper/download/" + ballotPaper.Id.Value.ToString());
+                        string.Format("downloadUrlWait('/ballotpaper/download/{0}');", ballotPaper.Id.Value.ToString()));
                 }
                 else
                 {
@@ -194,23 +194,65 @@ namespace Quaestur
             {
                 string idString = parameters.id;
                 var ballotPaper = Database.Query<BallotPaper>(idString);
+                var status = CreateStatus();
 
-                if (ballotPaper != null &&
-                    ballotPaper.Member.Value.Person.Value == CurrentSession.User &&
-                    ballotPaper.Member.Value.HasVotingRight.Value.Value)
+                if (status.ObjectNotNull(ballotPaper))
                 {
-                    var document = new BallotPaperDocument(Translator, Database, ballotPaper);
-                    var stream = new MemoryStream(document.Compile());
-                    var response = new StreamResponse(() => stream, "application/pdf");
+                    if (ballotPaper.Member.Value.Person.Value == CurrentSession.User)
+                    {
+                        if (ballotPaper.Member.Value.HasVotingRight.Value.Value)
+                        {
+                            var document = new BallotPaperDocument(Translator, Database, ballotPaper);
+                            var pdf = document.Compile();
 
-                    var filename = Translate(
-                        "BallotPaper.Download.FileName",
-                        "Filename when ballot paper is downloaded",
-                        "Ballotpaper.pdf");
-                    return response.AsAttachment(filename, "application/pdf");
+                            if (pdf != null)
+                            {
+                                var filename = Translate(
+                                    "BallotPaper.Download.FileName",
+                                    "Filename when ballot paper is downloaded",
+                                    "Ballotpaper.pdf");
+
+                                File.WriteAllBytes("/home/stefan/Downloads/ballotpaper_.pdf", pdf);
+                                status.SetDataSuccess(Convert.ToBase64String(pdf), filename);
+                                Journal(
+                                    CurrentSession.User,
+                                    "BallotPaper.Journal.Download.Success",
+                                    "Journal entry when downloaded ballot paper",
+                                    "Downloaded ballot paper for {0}",
+                                    t => ballotPaper.Ballot.Value.GetText(t));
+                            }
+                            else
+                            {
+                                status.SetError(
+                                    "BallotPaper.Download.Status.Error.Compile",
+                                    "Status message when downloading ballot paper fails due to document creation error",
+                                    "Could not ballot paper fails due to document creation error");
+                                Journal(
+                                    CurrentSession.User,
+                                    "BallotPaper.Journal.Download.Error.Compile",
+                                    "Journal entry when failed to download ballot paper due to document creation error",
+                                    "Could not download ballot paper for {0} due to document creation error",
+                                    t => ballotPaper.Ballot.Value.GetText(t));
+                                Warning("Compile error in ballot paper document\n{0}", document.ErrorText);
+                            }
+                        }
+                        else
+                        {
+                            status.SetError(
+                                "BallotPaper.Download.Status.Error.NoVotingRight",
+                                "Status message when downloading ballot paper fails due to lack of voting right",
+                                "Could not ballot paper fails due to lack of voting right");
+                            Journal(
+                                CurrentSession.User,
+                                "BallotPaper.Journal.Download.Error.NoVotingRight",
+                                "Journal entry when failed to download ballot paper due to lack of voting right",
+                                "Could not download ballot paper for {0} due to lack of voting right",
+                                t => ballotPaper.Ballot.Value.GetText(t));
+                        }
+                    }
                 }
 
-                return null;
+                return status.CreateJsonData();
             };
             Get["/ballotpaper/verify/{id}/{code}"] = parameters =>
             {
