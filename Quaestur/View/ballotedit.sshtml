@@ -92,23 +92,16 @@ $(document).ready(function() {
     event.preventDefault();  
   });
   $("#ballotTestButton").click(function(event) {
-    saveObject(function(success) {
-      if (success){
-        $("#ballotTestButton").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseButtonTest...");
-        $("#ballotTestFeedback").html('');
-        $.get("/ballot/test/@Model.Id", function(statusData, status){
-          var statusObject = JSON.parse(statusData);
-          if (statusObject.MessageType == "succss"){
-            $("#ballotTestFeedback").removeClass('markred');
-            $("#ballotTestFeedback").addClass('markgreen');
-          }else{
-            $("#ballotTestFeedback").addClass('markred');
-            $("#ballotTestFeedback").removeClass('markgreen');
-          }
-          $("#ballotTestFeedback").html(statusObject.MessageText);
-          $("#ballotTestButton").html("@Model.PhraseButtonTest");
-        });
-      }
+    waitingDialog.show(undefined, undefined, function(){
+      saveObject(function(success) {
+        if (success){
+          $.get("/ballot/test/@Model.Id", function(statusData, status){
+            var statusObject = JSON.parse(statusData);
+            waitingDialog.hide();
+            $.notify({ message: statusObject.MessageText },{ type: statusObject.MessageType });
+          });
+        }
+      });
     });
     event.preventDefault();
   });
@@ -169,9 +162,6 @@ $(document).ready(function() {
     <div class="form-row">
       <div class="col-md-3 mb-3">
         <button id="ballotTestButton" class="btn btn-primary mb-2">@Model.PhraseButtonTest</button>
-      </div>
-      <div class="col-md-3 mb-3">
-        <div id="ballotTestFeedback"></div>
       </div>
     </div>
     <button id="ballotCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>

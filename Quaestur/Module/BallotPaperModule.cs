@@ -64,8 +64,7 @@ namespace Quaestur
         public string PhraseHeaderStartDate;
         public string PhraseHeaderEndDate;
         public string PhraseHeaderStatus;
-        public string PhraseDeleteConfirmationTitle;
-        public string PhraseDeleteConfirmationInfo;
+        public string PhraseDownloadWait;
         public List<BallotPaperListItemViewModel> List;
 
         public BallotPaperViewModel(Translator translator, IDatabase database, Session session)
@@ -78,8 +77,7 @@ namespace Quaestur
             PhraseHeaderStartDate = translator.Get("BallotPaper.List.Header.StartDate", "Header part 'StartDate' in the ballot list", "Start date").EscapeHtml();
             PhraseHeaderEndDate = translator.Get("BallotPaper.List.Header.EndDate", "Link 'EndDate' caption in the ballot list", "End date").EscapeHtml();
             PhraseHeaderStatus = translator.Get("BallotPaper.List.Header.Status", "Link 'Status' caption in the ballot list", "Status").EscapeHtml();
-            PhraseDeleteConfirmationTitle = translator.Get("BallotPaper.List.Delete.Confirm.Title", "Delete ballot confirmation title", "Delete?").EscapeHtml();
-            PhraseDeleteConfirmationInfo = string.Empty;
+            PhraseDownloadWait = translator.Get("BallotPaper.List.Download.Wait", "Message while waiting for download", "Creating document...").EscapeHtml();
             session.ReloadUser(database);
             session.User.UpdateAllVotingRights(database);
             List = new List<BallotPaperListItemViewModel>(database

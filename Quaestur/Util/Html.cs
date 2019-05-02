@@ -11,7 +11,7 @@ namespace Quaestur
 
         public static string LinkScript(string text, string script)
         {
-            return string.Format("<a onclick=\"{0}\">{1}</a>", script, text);
+            return string.Format("<a href=\"#\" onclick=\"{0}\">{1}</a>", script, text);
         }
     }
 }

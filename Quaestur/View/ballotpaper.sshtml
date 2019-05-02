@@ -3,7 +3,7 @@
 @Section['script']
 <script>
 function downloadUrlWait(url){
-  waitingDialog.show(undefined, undefined, function(){
+  waitingDialog.show("@Model.PhraseDownloadWait", undefined, function(){
     $.get(url, function(resultData, status){
         var result = JSON.parse(resultData);
         if (result.IsSuccess){
