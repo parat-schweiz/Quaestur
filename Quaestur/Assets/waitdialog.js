@@ -60,6 +60,7 @@ var waitingDialog = waitingDialog || (function ($) {
             if (callback){
                 $dialog.on('shown.bs.modal', function () {
                     callback();
+                    $dialog.off('shown.bs.modal');
                 });
             }
         },

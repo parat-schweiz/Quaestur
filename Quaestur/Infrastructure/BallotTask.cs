@@ -249,7 +249,7 @@ namespace Quaestur
                     Journal(database, ballotPaper,
                     "Document.BallotPaper.NoLanguageTemplateAnnouncement",
                     "When template in that language is available to send ballot announcement",
-                    "No mail address available to send ballot announcement for {0}",
+                    "No mail language template available to send ballot announcement for {0}",
                     t => ballotPaper.Ballot.Value.GetText(t));
                 }
                 else
@@ -257,7 +257,7 @@ namespace Quaestur
                     Journal(database, ballotPaper,
                     "Document.BallotPaper.NoLanguageTemplateInvitation",
                     "When template in that language is available to send ballot invitation",
-                    "No mail address available to send ballot invitation for {0}",
+                    "No mail language template available to send ballot invitation for {0}",
                     t => ballotPaper.Ballot.Value.GetText(t));
                 }
                 return false;
