@@ -21,6 +21,7 @@ namespace SecurityService
         private const string PresharedKeyTag = "PresharedKey";
         private const string SecretKeyTag = "SecretKey";
         private const string BindAddressTag = "BindAddress";
+        private const string LogFilePrefixTag = "LogFilePrefix";
 
         public string AdminMailAddress { get; set; }
 		public string SystemMailAddress { get; set; }
@@ -34,6 +35,7 @@ namespace SecurityService
         public byte[] PresharedKey { get; set; }
         public byte[] SecretKey { get; set; }
         public string BindAddress { get; set; }
+        public string LogFilePrefix { get; set; }
 
         public Config()
         {
@@ -56,6 +58,7 @@ namespace SecurityService
             PresharedKey = root.Element(PresharedKeyTag).Value.ParseHexBytes();
             SecretKey = root.Element(SecretKeyTag).Value.ParseHexBytes();
             BindAddress = root.Element(BindAddressTag).Value;
+            LogFilePrefix = root.Element(LogFilePrefixTag).Value;
         }
 
         public void Save(string filename)
@@ -76,6 +79,7 @@ namespace SecurityService
             root.Add(new XElement(PresharedKeyTag, PresharedKey.ToHexString()));
             root.Add(new XElement(SecretKeyTag, SecretKey.ToHexString()));
             root.Add(new XElement(BindAddressTag, BindAddress));
+            root.Add(new XElement(LogFilePrefixTag, LogFilePrefix));
 
             document.Save(filename);
 		}

@@ -26,6 +26,7 @@ namespace Quaestur
         private const string LinkKeyTag = "LinkKey";
         private const string SecurityServiceUrlTag = "SecurityServiceUrl";
         private const string SecurityServiceKeyTag = "SecurityServiceKey";
+        private const string LogFilePrefixTag = "LogFilePrefix";
 
         public string DatabaseServer { get; set; }
 		public int DatabasePort { get; set; }
@@ -44,6 +45,7 @@ namespace Quaestur
         public byte[] LinkKey { get; set; }
         public string SecurityServiceUrl { get; set; }
         public byte[] SecurityServiceKey { get; set; }
+        public string LogFilePrefix { get; set; }
 
         public Config()
         {
@@ -71,6 +73,7 @@ namespace Quaestur
             LinkKey = root.Element(LinkKeyTag).Value.ParseHexBytes();
             SecurityServiceUrl = root.Element(SecurityServiceUrlTag).Value;
             SecurityServiceKey = root.Element(SecurityServiceKeyTag).Value.ParseHexBytes();
+            LogFilePrefix = root.Element(LogFilePrefixTag).Value;
         }
 
         public void Save(string filename)
@@ -96,6 +99,7 @@ namespace Quaestur
             root.Add(new XElement(LinkKeyTag, LinkKey.ToHexString()));
             root.Add(new XElement(SecurityServiceUrlTag, SecurityServiceUrl));
             root.Add(new XElement(SecurityServiceKeyTag, SecurityServiceKey.ToHexString()));
+            root.Add(new XElement(LogFilePrefixTag, LogFilePrefix));
 
             document.Save(filename);
 		}

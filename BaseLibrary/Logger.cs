@@ -54,17 +54,13 @@ namespace BaseLibrary
 
         private DateTime _logFileDate;
 
-        private const string LogPath = "./";
+        public string LogFilePrefix { get; private set; }
 
-        public Logger()
+        public Logger(string logFilePrefix)
         {
+            LogFilePrefix = logFilePrefix;
             ConsoleSeverity = LogSeverity.Info;
             FileSeverity = LogSeverity.Verbose;
-
-            if (!Directory.Exists(LogPath))
-            {
-                Directory.CreateDirectory(LogPath);
-            }
         }
 
         public void Dispose()
@@ -81,16 +77,16 @@ namespace BaseLibrary
             if (_logFile == null)
             {
                 _logFileDate = DateTime.Now;
-				var filename = string.Format("piratejusticestatus_{0}.log", _logFileDate.ToString("yyyy-MM-dd-HH-mm-ss"));
-                _logFile = File.OpenWrite(Path.Combine(LogPath, filename));
+				var filePath = string.Format("{0}_{1}.log", LogFilePrefix, _logFileDate.ToString("yyyy-MM-dd-HH-mm-ss"));
+                _logFile = File.OpenWrite(filePath);
                 _logWriter = new StreamWriter(_logFile);
             }
             else if (DateTime.Now > _logFileDate.AddDays(1))
             {
                 _logFile.Close();
                 _logFileDate = DateTime.Now;
-				var filename = string.Format("piratejusticestatus_{0}.log", _logFileDate.ToString("yyyy-MM-dd-HH-mm-ss"));
-                _logFile = File.OpenWrite(Path.Combine(LogPath, filename));
+                var filePath = string.Format("{0}_{1}.log", LogFilePrefix, _logFileDate.ToString("yyyy-MM-dd-HH-mm-ss"));
+                _logFile = File.OpenWrite(filePath);
                 _logWriter = new StreamWriter(_logFile);
             }
         }

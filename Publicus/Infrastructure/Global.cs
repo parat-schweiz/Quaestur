@@ -130,7 +130,7 @@ namespace Publicus
             {
 				if (_logger == null)
                 {
-					_logger = new Logger();
+					_logger = new Logger(Config.LogFilePrefix);
                 }
 
 				return _logger;

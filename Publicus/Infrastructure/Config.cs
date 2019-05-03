@@ -16,14 +16,11 @@ namespace Publicus
 		private const string DatabasePasswordTag = "DatabasePassword";
 		private const string AdminMailAddressTag = "AdminMailAddress";
 		private const string SystemMailAddressTag = "SystemMailAddress";
-        private const string SystemMailGpgKeyIdTag = "SystemMailGpgKeyId";
-        private const string SystemMailGpgKeyPassphraseTag = "SystemMailGpgKeyPassphrase";
         private const string MailServerHostTag = "MailServerHost";
 		private const string MailServerPortTag = "MailServerPort";
 		private const string MailAccountNameTag = "MailAccountName";
 		private const string MailAccountPasswordTag = "MailAccountPassword";
 		private const string WebSiteAddressTag = "WebSiteAddress";
-        private const string GpgHomedirTag = "GpgHomedir";
         private const string PingenApiTokenTag = "PingenApiToken";
         private const string SiteNameTag = "SiteName";
         private const string LinkKeyTag = "LinkKey";
@@ -34,6 +31,7 @@ namespace Publicus
         private const string OAuth2ClientSecretTag = "OAuth2ClientSecret";
         private const string SecurityServiceUrlTag = "SecurityServiceUrl";
         private const string SecurityServiceKeyTag = "SecurityServiceKey";
+        private const string LogFilePrefixTag = "LogFilePrefix";
 
         public string DatabaseServer { get; set; }
 		public int DatabasePort { get; set; }
@@ -42,14 +40,11 @@ namespace Publicus
 		public string DatabasePassword { get; set; }
 		public string AdminMailAddress { get; set; }
 		public string SystemMailAddress { get; set; }
-        public string SystemMailGpgKeyId { get; set; }
-        public string SystemMailGpgKeyPassphrase { get; set; }
         public string MailServerHost { get; set; }
 		public int MailServerPort { get; set; }
 		public string MailAccountName { get; set; }
 		public string MailAccountPassword { get; set; }
 		public string WebSiteAddress { get; set; }
-		public string GpgHomedir { get; set; }
         public string PingenApiToken { get; set; }
         public string SiteName { get; set; }
         public byte[] LinkKey { get; set; }
@@ -60,6 +55,7 @@ namespace Publicus
         public string OAuth2ClientSecret { get; set; }
         public string SecurityServiceUrl { get; set; }
         public byte[] SecurityServiceKey { get; set; }
+        public string LogFilePrefix { get; set; }
 
         public Config()
         {
@@ -77,14 +73,11 @@ namespace Publicus
 			DatabasePassword = root.Element(DatabasePasswordTag).Value;
 			AdminMailAddress = root.Element(AdminMailAddressTag).Value;
 			SystemMailAddress = root.Element(SystemMailAddressTag).Value;
-            SystemMailGpgKeyId = root.Element(SystemMailGpgKeyIdTag).Value;
-            SystemMailGpgKeyPassphrase = root.Element(SystemMailGpgKeyPassphraseTag).Value;
             MailServerHost = root.Element(MailServerHostTag).Value;
 			MailServerPort = int.Parse(root.Element(MailServerPortTag).Value);
 			MailAccountName = root.Element(MailAccountNameTag).Value;
 			MailAccountPassword = root.Element(MailAccountPasswordTag).Value;
 			WebSiteAddress = root.Element(WebSiteAddressTag).Value;
-            GpgHomedir = root.Element(GpgHomedirTag).Value;
             PingenApiToken = root.Element(PingenApiTokenTag).Value;
             SiteName = root.Element(SiteNameTag).Value;
             LinkKey = root.Element(LinkKeyTag).Value.ParseHexBytes();
@@ -95,6 +88,7 @@ namespace Publicus
             OAuth2ClientSecret = root.Element(OAuth2ClientSecretTag).Value;
             SecurityServiceUrl = root.Element(SecurityServiceUrlTag).Value;
             SecurityServiceKey = root.Element(SecurityServiceKeyTag).Value.ParseHexBytes();
+            LogFilePrefix = root.Element(LogFilePrefixTag).Value;
         }
 
         public void Save(string filename)
@@ -110,14 +104,11 @@ namespace Publicus
 			root.Add(new XElement(DatabasePasswordTag, DatabasePassword));
 			root.Add(new XElement(AdminMailAddressTag, AdminMailAddress));
 			root.Add(new XElement(SystemMailAddressTag, SystemMailAddress));
-            root.Add(new XElement(SystemMailGpgKeyIdTag, SystemMailGpgKeyId));
-            root.Add(new XElement(SystemMailGpgKeyPassphraseTag, SystemMailGpgKeyPassphrase));
             root.Add(new XElement(MailServerHostTag, MailServerHost));
 			root.Add(new XElement(MailServerPortTag, MailServerPort));
 			root.Add(new XElement(MailAccountNameTag, MailAccountName));
 			root.Add(new XElement(MailAccountPasswordTag, MailAccountPassword));
 			root.Add(new XElement(WebSiteAddressTag, WebSiteAddress));
-            root.Add(new XElement(GpgHomedirTag, GpgHomedir));
             root.Add(new XElement(PingenApiTokenTag, PingenApiToken));
             root.Add(new XElement(SiteNameTag, SiteName));
             root.Add(new XElement(LinkKeyTag, LinkKey.ToHexString()));
@@ -128,6 +119,7 @@ namespace Publicus
             root.Add(new XElement(OAuth2ClientSecretTag, OAuth2ClientSecret));
             root.Add(new XElement(SecurityServiceUrlTag, SecurityServiceUrl));
             root.Add(new XElement(SecurityServiceKeyTag, SecurityServiceKey.ToHexString()));
+            root.Add(new XElement(LogFilePrefixTag, LogFilePrefix));
 
             document.Save(filename);
 		}
