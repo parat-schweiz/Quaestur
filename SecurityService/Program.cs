@@ -8,11 +8,12 @@ namespace SecurityService
     {
         public static void Main(string[] args)
         {
-            var uri = "http://localhost:8890";
-            Global.Log.Notice("Starting Security Service on " + uri);
+            Global.Config.Load(args[0]);
+
+            Global.Log.Notice("Starting Security Service on " + Global.Config.BindAddress);
 
             // initialize an instance of NancyHost
-            var host = new NancyHost(new Uri(uri));
+            var host = new NancyHost(new Uri(Global.Config.BindAddress));
             host.Start();  // start hosting
 
             Global.Log.Notice("Application started");

@@ -1,0 +1,60 @@
+﻿<script>
+$("#subscriptionRowAdd").click(function(){
+  showSubscriptionEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#subscriptionRowEdit1@Current.Id").click(function(){
+  showSubscriptionEditDialog("edit", "@Current.Id");
+});
+$("#subscriptionRowEdit2@Current.Id").click(function(){
+  showSubscriptionEditDialog("edit", "@Current.Id");
+});
+$("#subscriptionRowEdit3@Current.Id").click(function(){
+  showSubscriptionEditDialog("edit", "@Current.Id");
+});
+$("#subscriptionRowEdit4@Current.Id").click(function(){
+  showSubscriptionEditDialog("edit", "@Current.Id");
+});
+$("#subscriptionRowEdit@Current.Id").click(function(){
+  showSubscriptionEditDialog("edit", "@Current.Id");
+});
+$("#subscriptionRowDelete@Current.Id").click(function(){
+  $.get("/subscription/delete/@Current.Id", function(data, status){
+    showSubscriptions();
+  });
+});
+@EndEach
+function showSubscriptionEditDialog(method, id){
+  $.get("/subscription/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#subscriptionEditDialog').replaceWith(data);
+      $('#subscriptionEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="50%">@Model.PhraseHeaderFeed</th>
+      <th width="15%">@Model.PhraseHeaderStatus</th>
+      <th width="15%">@Model.PhraseHeaderVotingRight</th>
+      <th width="5%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class="clickable-row">
+      <td width="50%" id="subscriptionRowEdit1@Current.Id" class="@Model.Editable">@Current.Feed</td>
+      <td width="20%" id="subscriptionRowEdit3@Current.Id" class="@Model.Editable">@Current.Status</td>
+      <td width="20%" id="subscriptionRowEdit4@Current.Id" class="@Model.Editable">@Current.VotingRight</td>
+      <td width="10%" id="subscriptionRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class="centering clickable-row">
+      <td width="90%" colspan="2" id="subscriptionRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="subscriptionEditDialog"/>

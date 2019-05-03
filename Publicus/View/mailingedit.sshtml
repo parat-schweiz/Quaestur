@@ -1,0 +1,206 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function getFormData(){
+  var formData = new Object();
+  formData.Title = $("#mailingTitle").val();
+  formData.RecipientFeed = $("#mailingRecipientFeed").val();
+  formData.RecipientTag = $("#mailingRecipientTag").val();
+  formData.RecipientLanguage = $("#mailingRecipientLanguage").val();
+  formData.SenderGroup = $("#mailingSenderGroup").val();
+  formData.Header = $("#mailingHeader").val();
+  formData.Footer = $("#mailingFooter").val();
+  formData.Subject = $("#mailingSubject").val();
+  formData.HtmlText = tinymce.get('mailingHtmlText').getContent();
+  formData.TestAddress = $("#mailingTestAddress").val();
+  return formData;
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#mailing' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Title", result);
+  assignFieldValidation("RecipientFeed", result);
+  assignFieldValidation("SenderGroup", result);
+  assignFieldValidation("Subject", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  tinymce.init({
+    selector: '#mailingHtmlText',
+    theme: 'modern',
+    height: 270,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+  $("#mailingTestButton").click(function(event) {
+    $('#sendTestDialog').modal('show');
+    event.preventDefault();
+  });
+  $("#mailingTestDialogOkButton").click(function(event) {
+    $('#sendTestDialog').modal('hide');
+    var formData = getFormData();
+    $.post("/mailing/test", JSON.stringify(formData), function(statusData, status){
+      $('.modal-backdrop').remove();
+      var statusObject = JSON.parse(statusData);
+      $.notify({ message: statusObject.MessageText },{ type: statusObject.MessageType });
+    });
+    event.preventDefault();
+  });
+  $("#mailingSaveSendButton").click(function(event) {
+    var formData = getFormData();
+    $.post("/mailing/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)){
+        window.location.href = "/mailing/send/@Model.Id";
+      }
+    });
+    event.preventDefault();
+  });
+  $("#mailingSaveCloseButton").click(function(event) {
+    var formData = getFormData();
+    $.post("/mailing/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)){
+        window.location.href = "/mailing";
+      }
+    });
+    event.preventDefault();  
+  });
+  $("#mailingCancelButton").click(function(event) {
+    window.location.href = "/mailing";
+    event.preventDefault();  
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="mailingTitle">@Model.PhraseFieldTitle</label>
+        <input type="text" class="form-control" id="mailingTitle" value="@Model.Title">
+        <div id="mailingTitleFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientFeed">@Model.PhraseFieldRecipientFeed</label>
+        <select id="mailingRecipientFeed" class="selectpicker form-control" data-live-search="true">
+          @Each.RecipientFeeds
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailingRecipientFeedFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientTag">@Model.PhraseFieldRecipientTag</label>
+        <select id="mailingRecipientTag" class="selectpicker form-control" data-live-search="true">
+          @Each.RecipientTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientLanguage">@Model.PhraseFieldRecipientLanguage</label>
+        <select id="mailingRecipientLanguage" class="selectpicker form-control" data-live-search="true">
+          @Each.RecipientLanguages
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingSenderGroup">@Model.PhraseFieldSenderGroup</label>
+        <select id="mailingSenderGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.SenderGroups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailingSenderGroupFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingHeader">@Model.PhraseFieldHeader</label>
+        <select id="mailingHeader" class="selectpicker form-control" data-live-search="true">
+          @Each.Headers
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div class="valid-feedback"></div>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingFooter">@Model.PhraseFieldFooter</label>
+        <select id="mailingFooter" class="selectpicker form-control" data-live-search="true">
+          @Each.Footers
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div class="valid-feedback"></div>
+      </div>
+      <div class="col-md-8 mb-3">
+        <label for="mailingSubject">@Model.PhraseFieldSubject</label>
+        <input type="text" id="mailingSubject" class="form-control" value="@Model.Subject"/>
+        <div id="mailingSubjectFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-12 mb-3">
+        <label for="mailingHtmlText">@Model.PhraseFieldHtmlText</label>
+        <textarea id="mailingHtmlText">@Model.HtmlText</textarea>
+        <div class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="mailingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="mailingTestButton" class="btn btn-primary mb-2">@Model.PhraseButtonSendTest</button>
+    <button id="mailingSaveCloseButton" class="btn btn-primary mb-2">@Model.PhraseButtonSaveClose</button>
+    <button id="mailingSaveSendButton" class="btn btn-primary mb-2">@Model.PhraseButtonSaveSend</button>
+  </form>
+</div>
+<div class="modal fade" id="sendTestDialog" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">@Model.PhraseButtonSendTest</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row">
+            <div class="col-12 mb-3">
+              <label for="mailingTitle">@Model.PhraseFieldTestAddress</label>
+              <input type="text" class="form-control" id="mailingTestAddress" value="@Model.TestAddress">
+              <div class="valid-feedback"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="mailingTestDialogOkButton" type="button" class="btn btn-default btn-dialog">@Model.PhraseButtonOk</button>
+        <button type="button" class="btn btn-default btn-dialog" data-dismiss="modal">@Model.PhraseButtonCancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+@EndSection

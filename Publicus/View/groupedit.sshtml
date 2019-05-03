@@ -1,0 +1,139 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#group' + field + key;
+  var feedbackId = '#group' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#group' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  @If.CryptoAccess
+  assignFieldValidation("GpgKeyId", result);
+  assignFieldValidation("GpgKeyPassphrase", result);
+  @EndIf
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#groupName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  formData.MailName = new Array();
+  @Each.MailName
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#groupMailName@Current.Key").val()
+  formData.MailName.push(obj@Current.Key);
+  @EndEach
+  formData.MailAddress = new Array();
+  @Each.MailAddress
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#groupMailAddress@Current.Key").val()
+  formData.MailAddress.push(obj@Current.Key);
+  @EndEach
+  @If.CryptoAccess
+  formData.GpgKeyId = $("#groupGpgKeyId").val();
+  formData.GpgKeyPassphrase = $("#groupGpgKeyPassphrase").val();
+  @EndIf
+  $.post("/group/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateGroupList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="groupName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="groupName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="groupNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.MailName
+      <div class="col-12 mb-3">
+        <label for="groupMailName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="groupMailName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="groupMailNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.MailAddress
+      <div class="col-12 mb-3">
+        <label for="groupMailAddress@Current.Key">@Current.Phrase</label>
+        <input type="text" id="groupMailAddress@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="groupMailAddressFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    @If.CryptoAccess
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="groupGpgKeyId">@Model.PhraseFieldGpgKeyId</label>
+        <input type="text" id="groupGpgKeyId" class="form-control" value="@Model.GpgKeyId"/>
+        <div id="groupGpgKeyIdFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="groupGpgKeyPassphrase">@Model.PhraseFieldGpgKeyPassphrase</label>
+        <input type="password" id="groupGpgKeyPassphrase" class="form-control" value="@Model.GpgKeyPassphrase"/>
+        <div id="groupGpgKeyPassphraseFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    @EndIf
+  </form>
+</div>
+@EndSection

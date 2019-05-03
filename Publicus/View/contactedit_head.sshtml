@@ -1,0 +1,93 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#contact' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Organization", result);
+  assignFieldValidation("Titles", result);
+  assignFieldValidation("FirstName", result);
+  assignFieldValidation("MiddleNames", result);
+  assignFieldValidation("LastName", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Organization = $("#contactOrganization").val();
+  formData.Titles = $("#contactTitles").val();
+  formData.FirstName = $("#contactFirstName").val();
+  formData.MiddleNames = $("#contactMiddleNames").val();
+  formData.LastName = $("#contactLastName").val();
+  $.post("/contact/edit/head/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updatecontacthead();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactOrganization">@Model.PhraseFieldOrganization</label>
+        <input type="text" id="contactOrganization" class="form-control" value="@Model.Organization"/>
+        <div id="contactOrganizationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactTitles">@Model.PhraseFieldTitle</label>
+        <input type="text" id="contactTitles" class="form-control" value="@Model.Titles"/>
+        <div id="contactTitlesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactFirstName">@Model.PhraseFieldFirstName</label>
+        <input type="text" id="contactFirstName" class="form-control" value="@Model.FirstName"/>
+        <div id="contactFirstNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactMiddleNames">@Model.PhraseFieldMiddleNames</label>
+        <input type="text" id="contactMiddleNames" class="form-control" value="@Model.MiddleNames"/>
+        <div id="contactMiddleNamesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactLastName">@Model.PhraseFieldLastName</label>
+        <input type="text" id="contactLastName" class="form-control" value="@Model.LastName"/>
+        <div id="contactLastNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

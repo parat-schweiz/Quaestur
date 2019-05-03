@@ -1,0 +1,88 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#permission' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Part", result);
+  assignFieldValidation("Subject", result);
+  assignFieldValidation("Right", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;s
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Part = $("#permissionPart").val();
+  formData.Subject = $("#permissionSubject").val();
+  formData.Right = $("#permissionRight").val();
+  $.post("/permission/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updatePermissionList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="permissionPart">@Model.PhraseFieldPart</label>
+        <select id="permissionPart" class="selectpicker form-control" data-live-search="true">
+          @Each.Parts
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="permissionPartFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="permissionSubject">@Model.PhraseFieldSubject</label>
+        <select id="permissionSubject" class="selectpicker form-control" data-live-search="true">
+          @Each.Subjects
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="permissionSubjectFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="permissionRight">@Model.PhraseFieldRight</label>
+        <select id="permissionRight" class="selectpicker form-control" data-live-search="true">
+          @Each.Rights
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="permissionRightFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

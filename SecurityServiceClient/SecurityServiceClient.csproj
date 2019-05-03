@@ -38,11 +38,9 @@
     <Compile Include="Api\SecurityService.cs" />
     <Compile Include="Api\SecurityServiceProtocol.cs" />
     <Compile Include="Api\SecurityServiceGpg.cs" />
-    <Compile Include="Util\JObjectExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Api\" />
-    <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SecureChannel\SecureChannel.csproj">

@@ -1,0 +1,71 @@
+﻿<script>
+$("#mailingRowAdd").click(function(){
+  window.location.href = "/mailing/add";
+});
+function showEditMailing(id){
+  if (id){
+    window.location.href = "/mailing/edit/" + id;
+  }
+}
+@Each.List
+$("#mailingRowEdit1@Current.Id").click(function(){
+  showEditMailing("@Current.Id");
+});
+$("#mailingRowEdit2@Current.Id").click(function(){
+  showEditMailing("@Current.Id");
+});
+$("#mailingRowEdit3@Current.Id").click(function(){
+  showEditMailing("@Current.Id");
+});
+$("#mailingRowEdit4@Current.Id").click(function(){
+  showEditMailing("@Current.Id");
+});
+$("#mailingRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/mailing/delete/@Current.Id", function(data, status){
+          updateMailingList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+$("#mailingRowCopy@Current.Id").click(function(){
+  $.get("/mailing/copy/@Current.Id", function(data, status){
+    updateMailingList();
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="23%">@Model.PhraseHeaderTitle</th>
+      <th width="23%">@Model.PhraseHeaderFeed</th>
+      <th width="23%">@Model.PhraseHeaderStatus</th>
+      <th width="23%">@Model.PhraseHeaderCreator</th>
+      <th width="8%" colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="23%" id="mailingRowEdit1@Current.Id" class="@Current.Editable">@Current.Title</td>
+      <td width="23%" id="mailingRowEdit2@Current.Id" class="@Current.Editable">@Current.Feed</td>
+      <td width="23%" id="mailingRowEdit3@Current.Id" class="@Current.Editable">@Current.Status</td>
+      <td width="23%" id="mailingRowEdit4@Current.Id" class="@Current.Editable">@Current.Creator</td>
+      <td width="4%" id="mailingRowCopy@Current.Id" class="@Current.Copyable"><span class="fas fa-copy"></span></td>
+      <td width="4%" id="mailingRowDelete@Current.Id" class="@Current.Copyable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td columnspan="4" width="92%" id="mailingRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="8%" colspan="2"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="mailingEditDialog"/>

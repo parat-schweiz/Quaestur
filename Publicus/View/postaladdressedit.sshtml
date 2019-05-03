@@ -1,0 +1,120 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#postalAddress' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Street", result);
+  assignFieldValidation("CareOf", result);
+  assignFieldValidation("PostOfficeBox", result);
+  assignFieldValidation("PostalCode", result);
+  assignFieldValidation("Place", result);
+  assignFieldValidation("State", result);
+  assignFieldValidation("Country", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Street = $("#postalAddressStreet").val();
+  formData.CareOf = $("#postalAddressCareOf").val();
+  formData.PostOfficeBox = $("#postalAddressPostOfficeBox").val();
+  formData.PostalCode = $("#postalAddressPostalCode").val();
+  formData.Place = $("#postalAddressPlace").val();
+  formData.State = $("#postalAddressState").val();
+  formData.Country = $("#postalAddressCountry").val();
+  $.post("/postaladdress/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateMasterDataPostal();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressCareOf">@Model.PhraseFieldCareOf</label>
+        <input type="text" id="postalAddressCareOf" class="form-control" value="@Model.CareOf"/>
+        <div id="postalAddressCareOfFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressStreet">@Model.PhraseFieldStreet</label>
+        <input type="text" id="postalAddressStreet" class="form-control" value="@Model.Street"/>
+        <div id="postalAddressStreetFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressPostOfficeBox">@Model.PhraseFieldPostOfficeBox</label>
+        <input type="text" id="postalAddressPostOfficeBox" class="form-control" value="@Model.PostOfficeBox"/>
+        <div id="postalAddressPostOfficeBoxFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressPostalCode">@Model.PhraseFieldPostalCode</label>
+        <input type="text" id="postalAddressPostalCode" class="form-control" value="@Model.PostalCode"/>
+        <div id="postalAddressPostalCodeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressPlace">@Model.PhraseFieldPlace</label>
+        <input type="text" id="postalAddressPlace" class="form-control" value="@Model.Place"/>
+        <div id="postalAddressPlaceFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressState">@Model.PhraseFieldState</label>
+        <select id="postalAddressState" class="selectpicker form-control" data-live-search="true">
+          @Each.States
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="postalAddressStateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="postalAddressCountry">@Model.PhraseFieldCountry</label>
+        <select id="postalAddressCountry" class="selectpicker form-control" data-live-search="true">
+          @Each.Countries
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="postalAddressCountryFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

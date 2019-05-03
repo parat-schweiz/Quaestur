@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateTagList(){
+      $.get("/tag/list", function(data, status){
+          if (data){
+              $("#tagList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateTagList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="tagList">
+</div>
+@EndSection

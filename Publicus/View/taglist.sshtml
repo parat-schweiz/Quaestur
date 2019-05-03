@@ -1,0 +1,68 @@
+﻿<script>
+$("#tagRowAdd").click(function(){
+  $.get("/tag/add", function(data, status){
+    if (data){
+      $('#tagEditDialog').replaceWith(data);
+      $('#tagEditDialog').modal('show');
+    }
+  });
+});
+function showEditTagDialog(id){
+  $.get("/tag/edit/" + id, function(data, status){
+    if (data){
+      $('#tagEditDialog').replaceWith(data);
+      $('#tagEditDialog').modal('show');
+    }
+  });
+}
+@Each.List
+$("#tagRowEdit1@Current.Id").click(function(){
+    showEditTagDialog("@Current.Id");
+});
+$("#tagRowEdit2@Current.Id").click(function(){
+    showEditTagDialog("@Current.Id");
+});
+$("#tagRowEdit3@Current.Id").click(function(){
+    showEditTagDialog("@Current.Id");
+});
+$("#tagRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/tag/delete/@Current.Id", function(data, status){
+          updateTagList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="50%">@Model.PhraseHeaderName</th>
+      <th width="20%">@Model.PhraseHeaderUsage</th>
+      <th width="20%">@Model.PhraseHeaderMode</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="50%" id="tagRowEdit1@Current.Id" class="editable">@Current.Name</td>
+      <td width="20%" id="tagRowEdit2@Current.Id" class="editable">@Current.Usage</td>
+      <td width="20%" id="tagRowEdit3@Current.Id" class="editable">@Current.Mode</td>
+      <td width="10%" id="tagRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" colspan="3" id="tagRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="tagEditDialog"/>

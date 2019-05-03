@@ -1,0 +1,31 @@
+﻿<script>
+$(".demographyRowEdit").click(function(){
+  showDemographyEditDialog();
+});
+function showDemographyEditDialog(){
+  $.get("/demography/edit/@Model.Id", function(data, status){
+    if (data){
+      $('#demographyEditDialog').replaceWith(data);
+      $('#demographyEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="contact-master-card">
+        @Each.List
+        <tr class="clickable-row @Model.Editable">
+          <td width="50%" class="demographyRowEdit">@Current.Phrase</td>
+          <td width="50%" class="demographyRowEdit">@Current.Text</td>
+        </tr>
+        @EndEach
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="demographyEditDialog"/>

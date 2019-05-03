@@ -1,0 +1,144 @@
+﻿#header {
+  background-color: #3082fc;
+}
+
+#input {
+  background-color: #6087c3;
+}
+
+#messages {
+  height: 80vh;
+}
+
+.message-meta {
+  font-size: 0.7em;
+}
+
+.message {
+  border-style: solid;
+  border-width: 1px;
+  border-color: #697d9c;
+}
+
+.fullheight {
+  height: 100%;
+}
+
+.fullwidth {
+  width: 100%;
+}
+
+.leftside {
+  float: left;
+}
+
+.rightside {
+  float: right;
+}
+
+.vertmargin {
+  margin-bottom: 0.3em;
+  margin-top: 0.3em;
+}
+
+.left-space {
+  margin-left: 0.3em;
+}
+
+.table-fixed tbody {
+    display: block;
+    height: calc(100vh - 10em);
+    overflow: auto;
+}
+.table-fixed thead, .table-fixed tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.table-fixed td, .table-fixed th {
+    overflow: hidden;
+}
+
+.table-fixed-md tbody {
+    display: block;
+    height: calc(100vh - 24em);
+    overflow: auto;
+}
+.table-fixed-md thead, .table-fixed-md tbody tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+}
+.table-fixed-md td, .table-fixed-md th {
+    overflow: hidden;
+}
+
+.contact-master-card {
+    height: 14em !important;
+}
+
+.smallheadrow th {
+    font-size: 0.5em;
+}
+
+.btn-dialog {
+    width: 100px;
+}
+
+.inline-form-control {
+    display: inline;
+    width: auto;
+}
+
+.form-table tr {
+    line-height: 2.5em;
+}
+
+.centering {
+    text-align: center; 
+    vertical-align: middle;
+}
+
+input[type=checkbox] {
+    position: relative;
+    vertical-align: middle;
+    bottom: 1px;
+}
+
+.width-80p {
+  width: 80%;
+}
+
+.width-20p {
+  width: 20%;
+}
+
+.float-left {
+  float: left;
+}
+
+.editable {
+  cursor: pointer;
+}
+
+.accessdenied {
+  cursor: not-allowed;
+}
+
+.markred {
+  color: red;
+}
+
+.markgreen {
+  color: green;
+}
+
+.table th.fit {
+    white-space: nowrap;
+    width: 1%;
+}
+
+.table td.fit {
+    white-space: nowrap;
+    width: 1%;
+}

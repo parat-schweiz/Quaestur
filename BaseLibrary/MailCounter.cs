@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Quaestur
+namespace BaseLibrary
 {
     public class MailCounter
     {

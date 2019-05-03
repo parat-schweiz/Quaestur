@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateMailingElementList(){
+      $.get("/mailingelement/list", function(data, status){
+          if (data){
+              $("#mailingElementList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateMailingElementList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="mailingElementList">
+</div>
+@EndSection

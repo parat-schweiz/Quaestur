@@ -1,0 +1,62 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#roleAssignment' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Role", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Role = $("#roleAssignmentRole").val();
+  $.post("/roleassignment/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      showRoleAssignments();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="roleAssignmentRole">@Model.PhraseFieldRole</label>
+        <select id="roleAssignmentRole" class="selectpicker form-control" data-live-search="true">
+          @Each.Roles
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="roleAssignmentRoleFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

@@ -1,0 +1,115 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#document' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Type", result);
+  assignFieldValidation("Verifier", result);
+  assignFieldValidation("CreatedDate", result);
+  assignFieldValidation("File", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function readFile(callback){
+  var input = $('#documentFile')[0];
+  var file = input.files[0];
+  if (file){
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      callback(file.name, file.size, reader.result);
+    }
+    reader.readAsDataURL(file);
+  }else{
+    callback("", 0, null);
+  }
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Type = $("#documentType").val();
+  formData.Verifier = $("#documentVerifier").val();
+  formData.CreatedDate = $("#documentCreatedDate").val();
+  readFile(function(name, size, data){
+    formData.FileName = name;
+    formData.FileSize = size;
+    formData.FileData = data;
+    $.post("/document/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        $('#@Model.DialogId').modal('hide');
+        showDocuments();
+        $('.modal-backdrop').remove();
+      }
+    });
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d'
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="documentType">@Model.PhraseFieldType</label>
+        <select id="documentType" class="selectpicker form-control" data-live-search="true">
+          @Each.Types
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="documentTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="documentVerifier">@Model.PhraseFieldVerifier</label>
+        <select id="documentVerifier" class="selectpicker form-control" data-live-search="true">
+          @Each.Verifiers
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="documentVerifierFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="documentCreatedDate">@Model.PhraseFieldCreatedDate</label>
+        <input type="text" id="documentCreatedDate" class="form-control datepicker" value="@Model.CreatedDate"/>
+        <div id="documentCreatedDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="documentFile">@Model.PhraseFieldFile</label>
+        <input type="file" id="documentFile" class="form-control-file"/>
+        <div id="documentFileFeedback" class="valid-feedback"></div>
+        <a href="@Model.FilePath">@Model.FileName</a> @Model.FileSize
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

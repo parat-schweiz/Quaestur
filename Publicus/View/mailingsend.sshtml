@@ -1,0 +1,102 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function getFormData(){
+  var formData = new Object();
+  formData.Date = $("#mailingDate").val();
+  formData.Time = $("#mailingTime").val();
+  return formData;
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#mailing' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Date", result);
+  assignFieldValidation("Time", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#mailingSendButton").click(function(event) {
+    var formData = getFormData();
+    $.post("/mailing/send/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)){
+        window.location.href = "/mailing";
+      }
+    });
+    event.preventDefault();
+  });
+  $("#mailingCancelButton").click(function(event) {
+    window.location.href = "/mailing";
+    event.preventDefault();  
+  });
+  $('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-1d'
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-4 mb-3">
+        <label for="mailingTitle">@Model.PhraseFieldTitle</label>
+        <input type="text" class="form-control" id="mailingTitle" value="@Model.Title" disabled>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientFeed">@Model.PhraseFieldRecipientFeed</label>
+        <input type="text" class="form-control" id="mailingRecipientFeed" value="@Model.RecipientFeed" disabled>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientTag">@Model.PhraseFieldRecipientTag</label>
+        <input type="text" class="form-control" id="mailingRecipientTag" value="@Model.RecipientTag" disabled>
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="mailingRecipientNumber">@Model.PhraseFieldRecipientNumber</label>
+        <input type="text" class="form-control" id="mailingRecipientNumber" value="@Model.RecipientNumber" disabled>
+      </div>
+      <div class="col-md-8 mb-3">
+        <label for="mailingSubject">@Model.PhraseFieldSubject</label>
+        <input type="text" class="form-control" id="mailingSubject" value="@Model.Subject" disabled>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="mailingDate">@Model.PhraseFieldDate</label>
+        <input type="text" id="mailingDate" class="form-control datepicker" placeholder="31.12.2018"/>
+        <div id="mailingDateFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="mailingTime">@Model.PhraseFieldTime</label>
+        <input type="text" id="mailingTime" class="form-control timepicker" placeholder="23:59"/>
+        <div id="mailingTimeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="mailingSendButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonSend</button>
+    <button id="mailingCancelButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonCancel</button>
+  </form>
+</div>
+@EndSection

@@ -1,0 +1,54 @@
+﻿<script>
+$("#mailingElementRowAdd").click(function(){
+  window.location.href = "/mailingelement/add";
+});
+@Each.List
+$("#mailingElementRowEdit1@Current.Id").click(function(){
+  window.location.href = "/mailingelement/edit/@Current.Id";
+});
+$("#mailingElementRowEdit2@Current.Id").click(function(){
+  window.location.href = "/mailingelement/edit/@Current.Id";
+});
+$("#mailingElementRowEdit3@Current.Id").click(function(){
+  window.location.href = "/mailingelement/edit/@Current.Id";
+});
+$("#mailingElementRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/mailingelement/delete/@Current.Id", function(data, status){
+          updateMailingElementList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="30%">@Model.PhraseHeaderOwner</th>
+      <th width="35%">@Model.PhraseHeaderName</th>
+      <th width="20%">@Model.PhraseHeaderType</th>
+      <th width="5%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="30%" id="mailingElementRowEdit1@Current.Id" class="editable">@Current.Owner</td>
+      <td width="35%" id="mailingElementRowEdit2@Current.Id" class="editable">@Current.Name</td>
+      <td width="20%" id="mailingElementRowEdit3@Current.Id" class="editable">@Current.Type</td>
+      <td width="5%" id="mailingElementRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td colspan="3" width="95%" id="mailingElementRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="5%"></td>
+    </tr>
+  </tbody>
+</table>

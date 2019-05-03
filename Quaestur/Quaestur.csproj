@@ -248,7 +248,6 @@
     <Compile Include="Model\BallotPaper.cs" />
     <Compile Include="Infrastructure\BallotTask.cs" />
     <Compile Include="Documents\BallotPaperContentProvider.cs" />
-    <Compile Include="Infrastructure\MailCounter.cs" />
     <Compile Include="Documents\BallotPaperDocument.cs" />
     <Compile Include="Module\LoginLinkModule.cs" />
     <Compile Include="Model\LoginLink.cs" />
