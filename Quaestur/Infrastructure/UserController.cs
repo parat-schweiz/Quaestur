@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
+using SiteLibrary;
 
 namespace Quaestur
 {

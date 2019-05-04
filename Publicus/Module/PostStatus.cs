@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SiteLibrary;
 
 namespace Publicus
 {
@@ -143,7 +144,7 @@ namespace Publicus
             _messages.Add(new JProperty(fieldName + "Validation", message));
         }
 
-        public void AssingDataUrlString(string fieldName, FieldClass<byte[]> dataField, StringField contentTypeField, string stringValue, bool required)
+        public void AssingDataUrlString(string fieldName, ByteArrayField dataField, StringField contentTypeField, string stringValue, bool required)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {

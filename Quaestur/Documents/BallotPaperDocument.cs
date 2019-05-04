@@ -6,6 +6,7 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using QRCoder;
+using SiteLibrary;
 
 namespace Quaestur
 {

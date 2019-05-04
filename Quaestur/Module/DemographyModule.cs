@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Nancy;
-using Nancy.ModelBinding;
-using Nancy.Security;
 using Newtonsoft.Json;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -37,10 +35,10 @@ namespace Quaestur
             Birthdate = person.BirthDate.Value.ToString("dd.MM.yyyy");
             Language = ((int)person.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.English, person.Language.Value == Quaestur.Language.English));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.German, person.Language.Value == Quaestur.Language.German));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.French, person.Language.Value == Quaestur.Language.French));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.Italian, person.Language.Value == Quaestur.Language.Italian));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, person.Language.Value == SiteLibrary.Language.English));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, person.Language.Value == SiteLibrary.Language.German));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, person.Language.Value == SiteLibrary.Language.French));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, person.Language.Value == SiteLibrary.Language.Italian));
         }
     }
 

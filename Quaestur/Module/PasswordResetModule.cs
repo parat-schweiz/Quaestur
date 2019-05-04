@@ -16,6 +16,7 @@ using QRCoder;
 using MimeKit;
 using System.Security.Cryptography;
 using BaseLibrary;
+using SiteLibrary;
 
 namespace Quaestur
 {

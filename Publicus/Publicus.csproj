@@ -49,9 +49,6 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
-    <Reference Include="Npgsql">
-      <HintPath>..\packages\Npgsql.4.0.6\lib\net451\Npgsql.dll</HintPath>
-    </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
@@ -116,10 +113,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\PublicusConfig.cs" />
-    <Compile Include="Infrastructure\DatabaseObject.cs" />
     <Compile Include="Infrastructure\Global.cs" />
-    <Compile Include="Infrastructure\IDatabase.cs" />
-    <Compile Include="Infrastructure\PostgresDatabase.cs" />
     <Compile Include="Model\Contact.cs" />
     <Compile Include="Model\PostalAddress.cs" />
     <Compile Include="Model\Country.cs" />
@@ -136,8 +130,6 @@
     <Compile Include="Model\Mailing.cs" />
     <Compile Include="Model\Sending.cs" />
     <Compile Include="Module\LoginModule.cs" />
-    <Compile Include="Util\Sanatizer.cs" />
-    <Compile Include="Util\SqlExtensions.cs" />
     <Compile Include="Infrastructure\UserController.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Model\Seeder.cs">
@@ -147,19 +139,13 @@
     <Compile Include="Module\ContactDetailMasterModule.cs" />
     <Compile Include="Module\ContactDetailSubscriptionModule.cs" />
     <Compile Include="Module\PostalAddressEditModule.cs" />
-    <Compile Include="Infrastructure\Translation.cs" />
-    <Compile Include="Model\Phrase.cs" />
     <Compile Include="Module\MasterViewModel.cs" />
     <Compile Include="Module\PublicusModule.cs" />
-    <Compile Include="Infrastructure\Field.cs" />
-    <Compile Include="Infrastructure\SingleCascade.cs" />
-    <Compile Include="Infrastructure\MultiCascade.cs" />
     <Compile Include="Infrastructure\SessionManager.cs" />
     <Compile Include="Module\ServiceAddressEditModule.cs" />
     <Compile Include="Module\SubscriptionEditModule.cs" />
     <Compile Include="Module\CountryModule.cs" />
     <Compile Include="Module\StateModule.cs" />
-    <Compile Include="Model\PhraseTranslation.cs" />
     <Compile Include="Module\TagModule.cs" />
     <Compile Include="Module\PhraseModule.cs" />
     <Compile Include="Module\ContactDetailTagsModule.cs" />
@@ -172,7 +158,6 @@
     <Compile Include="Module\PermissionModule.cs" />
     <Compile Include="Module\RoleAssignmentModule.cs" />
     <Compile Include="Module\MailingModule.cs" />
-    <Compile Include="Util\HtmlText.cs" />
     <Compile Include="Model\MailingElement.cs" />
     <Compile Include="Module\MailingElementModule.cs" />
     <Compile Include="Infrastructure\TaskRunner.cs" />
@@ -195,14 +180,9 @@
     <Compile Include="Module\NamedStringViewModel.cs" />
     <Compile Include="Module\PostStatus.cs" />
     <Compile Include="Model\SystemWideSettings.cs" />
-    <Compile Include="Documents\LatexDocument.cs" />
-    <Compile Include="Documents\TemplateDocument.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
-    <Compile Include="Api\Pingen.cs" />
     <Compile Include="Model\Meta.cs" />
-    <Compile Include="Documents\Templator.cs" />
     <Compile Include="Documents\ContactContentProvider.cs" />
-    <Compile Include="Util\PdfUnite.cs" />
     <Compile Include="Util\ContactGpgExtensions.cs" />
     <Compile Include="Module\ContactDetailMasterDeleteModule.cs" />
     <Compile Include="Module\ContactDeleteModule.cs" />
@@ -745,7 +725,6 @@
     <Folder Include="Assets\bootstrap-editor\js\" />
     <Folder Include="Assets\jquery-confirm\" />
     <Folder Include="Documents\" />
-    <Folder Include="Api\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
@@ -755,6 +734,10 @@
     <ProjectReference Include="..\SecurityServiceClient\SecurityServiceClient.csproj">
       <Project>{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}</Project>
       <Name>SecurityServiceClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SiteLibrary\SiteLibrary.csproj">
+      <Project>{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}</Project>
+      <Name>SiteLibrary</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

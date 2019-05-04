@@ -5,6 +5,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
+using SiteLibrary;
 
 namespace Publicus
 {
@@ -37,10 +38,10 @@ namespace Publicus
             Birthdate = contact.BirthDate.Value.ToString("dd.MM.yyyy");
             Language = ((int)contact.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, Publicus.Language.English, contact.Language.Value == Publicus.Language.English));
-            Languages.Add(new NamedIntViewModel(translator, Publicus.Language.German, contact.Language.Value == Publicus.Language.German));
-            Languages.Add(new NamedIntViewModel(translator, Publicus.Language.French, contact.Language.Value == Publicus.Language.French));
-            Languages.Add(new NamedIntViewModel(translator, Publicus.Language.Italian, contact.Language.Value == Publicus.Language.Italian));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, contact.Language.Value == SiteLibrary.Language.English));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, contact.Language.Value == SiteLibrary.Language.German));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, contact.Language.Value == SiteLibrary.Language.French));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, contact.Language.Value == SiteLibrary.Language.Italian));
         }
     }
 

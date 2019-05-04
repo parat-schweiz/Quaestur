@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -92,7 +93,7 @@ namespace Quaestur
             LastName = new StringField(this, "lastname", 256);
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
             UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtensions.Translate);
-            Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);
             PostalAddresses = new List<PostalAddress>();

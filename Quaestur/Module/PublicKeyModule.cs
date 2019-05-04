@@ -9,6 +9,7 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using SecurityServiceClient;
 using BaseLibrary;
+using SiteLibrary;
 
 namespace Quaestur
 {

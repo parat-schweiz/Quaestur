@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BaseLibrary", "BaseLibrary\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publicus", "Publicus\Publicus.csproj", "{E0A50514-A2F3-4A8B-B55F-0B7C4AA79107}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteLibrary", "SiteLibrary\SiteLibrary.csproj", "{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -43,6 +45,10 @@ Global
 		{E0A50514-A2F3-4A8B-B55F-0B7C4AA79107}.Debug|x86.Build.0 = Debug|x86
 		{E0A50514-A2F3-4A8B-B55F-0B7C4AA79107}.Release|x86.ActiveCfg = Release|x86
 		{E0A50514-A2F3-4A8B-B55F-0B7C4AA79107}.Release|x86.Build.0 = Release|x86
+		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Debug|x86.Build.0 = Debug|Any CPU
+		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Release|x86.ActiveCfg = Release|Any CPU
+		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

@@ -7,6 +7,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Nancy.Responses;
 using Newtonsoft.Json;
+using SiteLibrary;
 
 namespace Quaestur
 {

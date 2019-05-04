@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
+using SiteLibrary;
 
 namespace Publicus
 {
@@ -19,7 +20,7 @@ namespace Publicus
         public User(Guid id) : base(id)
         {
             UserName = new StringField(this, "username", 32);
-            Language = new EnumField<Language>(this, "language", Publicus.Language.English, LanguageExtensions.Translate);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
         }
 
         public override string ToString()

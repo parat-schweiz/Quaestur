@@ -7,71 +7,10 @@ using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Nancy.Security;
+using SiteLibrary;
 
 namespace Publicus
 {
-    public class Translator
-    {
-        public Translation Translation { get; private set; }
-        public Language Language { get; private set; }
-
-        public Translator(Translation translation, Language language)
-        {
-            Translation = translation;
-            Language = language;
-        }
-
-        public string Get(string key, string hint, string technical, params object[] parameters)
-        {
-            return Translation.Get(Language, key, hint, technical, parameters); 
-        }
-
-        public string Get(string key, string hint, string technical, IEnumerable<object> parameters)
-        {
-            return Translation.Get(Language, key, hint, technical, parameters);
-        }
-
-        public List<MultiItemViewModel> CreateLanguagesMultiItem(string key, string hint, string technical, MultiLanguageString values)
-        {
-            var result = new List<MultiItemViewModel>();
-            result.Add(new MultiItemViewModel(
-                ((int)Language.English).ToString(),
-                Get(key, hint, technical, Language.English.Translate(this)),
-                values.GetValueOrEmpty(Language.English)));
-            result.Add(new MultiItemViewModel(
-                ((int)Language.German).ToString(),
-                Get(key, hint, technical, Language.German.Translate(this)),
-                values.GetValueOrEmpty(Language.German)));
-            result.Add(new MultiItemViewModel(
-                ((int)Language.French).ToString(),
-                Get(key, hint, technical, Language.French.Translate(this)),
-                values.GetValueOrEmpty(Language.French)));
-            result.Add(new MultiItemViewModel(
-                ((int)Language.Italian).ToString(),
-                Get(key, hint, technical, Language.Italian.Translate(this)),
-                values.GetValueOrEmpty(Language.Italian)));
-            return result;
-        }
-    }
-
-    public class MultiItemViewModel
-    {
-        public string Key;
-        public string Phrase;
-        public string Value;
-
-        public MultiItemViewModel()
-        { 
-        }
-
-        public MultiItemViewModel(string key, string phrase, string value)
-        {
-            Key = key.EscapeHtml();
-            Phrase = phrase.EscapeHtml();
-            Value = value.EscapeHtml();
-        }
-    }
-
     public class PublicusModule : NancyModule, IDisposable
     {
         protected IDatabase Database { get; private set; }

@@ -14,6 +14,7 @@ using System.Security.Cryptography;
 using System.Threading;
 using BaseLibrary;
 using QRCoder;
+using SiteLibrary;
 
 namespace Quaestur
 {

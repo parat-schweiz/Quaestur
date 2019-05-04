@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -19,7 +20,7 @@ namespace Quaestur
         public SendingTemplateLanguage(Guid id) : base(id)
         {
             Template = new ForeignKeyField<SendingTemplate, SendingTemplateLanguage>(this, "templateid", false, st => st.Languages);
-            Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             MailSubject = new StringField(this, "mailsubject", 256, AllowStringType.SimpleText);
             MailHtmlText = new StringField(this, "mailhtmltext", 262144, AllowStringType.SafeHtml);
             MailPlainText = new StringField(this, "mailplaintext", 262144, AllowStringType.SafeLatex);

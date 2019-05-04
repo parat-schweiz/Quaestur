@@ -11,6 +11,7 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using QRCoder;
 using BaseLibrary;
+using SiteLibrary;
 
 namespace Quaestur
 {

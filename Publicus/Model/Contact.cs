@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
+using SiteLibrary;
 
 namespace Publicus
 {
@@ -35,7 +36,7 @@ namespace Publicus
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
-            Language = new EnumField<Language>(this, "language", Publicus.Language.English, LanguageExtensions.Translate);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();

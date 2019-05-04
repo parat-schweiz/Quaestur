@@ -5,6 +5,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -77,10 +78,10 @@ namespace Quaestur
             LetterLatex = string.Empty;
             SendingMode = string.Empty;
             Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.English, false));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.German, false));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.French, false));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.Italian, false));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, false));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, false));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, false));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, false));
             MailSenders = new List<NamedIdViewModel>(membershipType.Organization.Value.Groups
                 .Select(g => new NamedIdViewModel(translator, g, false))
                 .OrderBy(g => g.Name));
@@ -107,10 +108,10 @@ namespace Quaestur
             LetterLatex = billSendingTemplate.LetterLatex.Value;
             SendingMode = string.Empty;
             Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.English, billSendingTemplate.Language.Value == Quaestur.Language.English));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.German, billSendingTemplate.Language.Value == Quaestur.Language.German));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.French, billSendingTemplate.Language.Value == Quaestur.Language.French));
-            Languages.Add(new NamedIntViewModel(translator, Quaestur.Language.Italian, billSendingTemplate.Language.Value == Quaestur.Language.Italian));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, billSendingTemplate.Language.Value == SiteLibrary.Language.English));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, billSendingTemplate.Language.Value == SiteLibrary.Language.German));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, billSendingTemplate.Language.Value == SiteLibrary.Language.French));
+            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, billSendingTemplate.Language.Value == SiteLibrary.Language.Italian));
             MailSenders = new List<NamedIdViewModel>(billSendingTemplate.MembershipType.Value.Organization.Value.Groups
                 .Select(g => new NamedIdViewModel(translator, g, billSendingTemplate.MailSender.Value == g))
                 .OrderBy(g => g.Name));

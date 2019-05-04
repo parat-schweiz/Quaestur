@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -52,7 +53,7 @@ namespace Quaestur
         public BillSendingTemplate(Guid id) : base(id)
         {
             MembershipType = new ForeignKeyField<MembershipType, BillSendingTemplate>(this, "membershiptypeid", false, null);
-            Language = new EnumField<Language>(this, "language", Quaestur.Language.English, LanguageExtensions.Translate);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             MinReminderLevel = new Field<int>(this, "minreminderlevel", 1);
             MaxReminderLevel = new Field<int>(this, "maxreminderlevel", 1);
             Name = new StringField(this, "name", 256);
