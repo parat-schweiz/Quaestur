@@ -25,7 +25,7 @@ namespace Publicus
             MailName = new MultiLanguageStringField(this, "mailname");
             MailAddress = new MultiLanguageStringField(this, "mailaddress");
             GpgKeyId = new StringField(this, "gpgkeyid", 256);
-            GpgKeyPassphrase = new StringField(this, "gpgkeypassphrase", 256);
+            GpgKeyPassphrase = new StringField(this, "gpgkeypassphrase", 4096);
             Roles = new List<Role>();
         }
 

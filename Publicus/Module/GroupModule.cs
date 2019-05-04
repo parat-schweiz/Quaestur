@@ -58,7 +58,7 @@ namespace Publicus
             if (CryptoAccess)
             {
                 GpgKeyId = group.GpgKeyId.Value;
-                GpgKeyPassphrase = group.GpgKeyPassphrase.Value;
+                GpgKeyPassphrase = PostStatus.UnchangedGpgPassphraseValue;
             }
             else
             {
@@ -199,7 +199,7 @@ namespace Publicus
                         if (HasAccess(group, PartAccess.Crypto, AccessRight.Write))
                         {
                             status.AssignStringFree("GpgKeyId", group.GpgKeyId, model.GpgKeyId);
-                            status.AssignStringFree("GpgKeyPassphrase", group.GpgKeyPassphrase, model.GpgKeyPassphrase);
+                            status.AssignGpgPassphrase("GpgKeyPassphrase", group.GpgKeyPassphrase, model.GpgKeyPassphrase);
                         }
 
                         if (status.IsSuccess)
@@ -247,7 +247,7 @@ namespace Publicus
                         if (HasAccess(group, PartAccess.Crypto, AccessRight.Write))
                         {
                             status.AssignStringFree("GpgKeyId", group.GpgKeyId, model.GpgKeyId);
-                            status.AssignStringFree("GpgKeyPassphrase", group.GpgKeyPassphrase, model.GpgKeyPassphrase);
+                            status.AssignGpgPassphrase("GpgKeyPassphrase", group.GpgKeyPassphrase, model.GpgKeyPassphrase);
                         }
 
                         group.Feed.Value = feed;

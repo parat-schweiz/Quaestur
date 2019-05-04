@@ -181,7 +181,6 @@
     <Compile Include="Model\Bill.cs" />
     <Compile Include="Module\PersonDetailBillingModule.cs" />
     <Compile Include="Module\BillModule.cs" />
-    <Compile Include="Module\PostStatus.cs" />
     <Compile Include="Model\MembershipType.cs" />
     <Compile Include="Model\PaymentParameter.cs" />
     <Compile Include="Model\PaymentModelFixed.cs" />
@@ -231,6 +230,7 @@
     <Compile Include="Module\LinkLoginModule.cs" />
     <Compile Include="Infrastructure\TaskRunner.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
+    <Compile Include="Module\PostStatus.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

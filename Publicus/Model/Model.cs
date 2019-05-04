@@ -6,7 +6,7 @@ namespace Publicus
 {
     public static class Model
     {
-        public static int CurrentVersion = 1;
+        public static int CurrentVersion = 2;
 
         public static void Install(IDatabase database)
         {
@@ -68,10 +68,25 @@ namespace Publicus
             switch (version)
             {
                 case 1:
-                    //database.AddColumn<Template>(bst => bst.SendingMode);
+                    break;
+                case 2:
+                    database.ModifyColumnType<Group>(g => g.GpgKeyPassphrase);
+                    break;
+                case 3:
+                    EncryptGpgPassphrases(database);
                     break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private static void EncryptGpgPassphrases(IDatabase database)
+        {
+            foreach (var group in database.Query<Group>())
+            {
+                var passphraseData = Global.Security.SecureGpgPassphrase(group.GpgKeyPassphrase.Value);
+                group.GpgKeyPassphrase.Value = Convert.ToBase64String(passphraseData);
+                database.Save(group);
             }
         }
     }
