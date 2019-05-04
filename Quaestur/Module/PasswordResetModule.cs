@@ -123,7 +123,7 @@ namespace Quaestur
                     {
                         var from = new MailboxAddress(
                             Global.Config.SiteName,
-                            Global.Config.SystemMailAddress);
+                            Global.Config.Mail.SystemMailAddress);
                         var to = new MailboxAddress(
                             address.Person.Value.ShortHand,
                             address.Address.Value);

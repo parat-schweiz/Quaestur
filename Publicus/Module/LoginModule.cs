@@ -142,13 +142,13 @@ namespace Publicus
             switch (url)
             {
                 case ApiUrl.UserAuid:
-                    return Global.Config.OAuth2ApiUrl + "user/auid/";
+                    return Global.Config.Oauth2.OAuth2ApiUrl + "user/auid/";
                 case ApiUrl.UserProfile:
-                    return Global.Config.OAuth2ApiUrl + "user/profile/";
+                    return Global.Config.Oauth2.OAuth2ApiUrl + "user/profile/";
                 case ApiUrl.UserRoles:
-                    return Global.Config.OAuth2ApiUrl + "user/roles/";
+                    return Global.Config.Oauth2.OAuth2ApiUrl + "user/roles/";
                 case ApiUrl.AllRoles:
-                    return Global.Config.OAuth2ApiUrl + "roles/";
+                    return Global.Config.Oauth2.OAuth2ApiUrl + "roles/";
                 default:
                     throw new NotSupportedException();
             }
@@ -255,8 +255,8 @@ namespace Publicus
                 var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
                 string oauthUrl = 
                     string.Format("{0}?response_type=code&client_id={1}&state={2}&redirect_uri={3}",
-                        Global.Config.OAuth2AuthorizationUrl,
-                        Global.Config.OAuth2ClientId,
+                        Global.Config.Oauth2.OAuth2AuthorizationUrl,
+                        Global.Config.Oauth2.OAuth2ClientId,
                         CreateState(returnUrl),
                         Nancy.Helpers.HttpUtility.UrlEncode(Global.Config.WebSiteAddress + "/login/redirect"));
                return Response.AsRedirect(oauthUrl);
@@ -281,13 +281,13 @@ namespace Publicus
                     new JProperty("grant_type", "authorization_code"),
                     new JProperty("code", code),
                     new JProperty("redirect_uri", Global.Config.WebSiteAddress + "/login/redirect"),
-                    new JProperty("client_id", Global.Config.OAuth2ClientId),
-                    new JProperty("client_secret", Global.Config.OAuth2ClientSecret),
+                    new JProperty("client_id", Global.Config.Oauth2.OAuth2ClientId),
+                    new JProperty("client_secret", Global.Config.Oauth2.OAuth2ClientSecret),
                     new JProperty("state", state));
 
                 try
                 {
-                    var authResponseText = HttpPost(Global.Config.OAuth2TokenUrl, requestObject.ToString());
+                    var authResponseText = HttpPost(Global.Config.Oauth2.OAuth2TokenUrl, requestObject.ToString());
                     var authResponseObject = JObject.Parse(authResponseText);
                     var accessToken = authResponseObject.Property("access_token").Value.Value<string>();
                     var tokenType = authResponseObject.Property("token_type").Value.Value<string>();

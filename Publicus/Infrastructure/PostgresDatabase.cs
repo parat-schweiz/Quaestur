@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Npgsql;
+using BaseLibrary;
 
 namespace Publicus
 {
@@ -52,7 +53,7 @@ namespace Publicus
         private NpgsqlConnection _connection;
         private PostgresTransaction _transaction;
 
-        public PostgresDatabase(Config config)
+        public PostgresDatabase(ConfigSectionDatabase config)
         {
             var connectionString = string.Format(
                 "Server={0};Port={1};Database={2};User Id={3};Password={4};",

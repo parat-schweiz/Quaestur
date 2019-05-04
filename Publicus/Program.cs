@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Linq;
+using System.IO;
 using Nancy.Hosting.Self;
 
 namespace Publicus
@@ -8,6 +8,14 @@ namespace Publicus
     {
         public static void Main(string[] args)
         {
+            if ((args.Length < 1) ||
+                (!File.Exists(args[0])))
+            {
+                throw new FileNotFoundException("Config file not found");
+            }
+
+            Global.Config.Load(args[0]);
+
             using (var db = Global.CreateDatabase())
             {
                 Model.Install(db);

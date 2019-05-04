@@ -8,7 +8,7 @@ namespace SecurityService
 {
     public static class Global
     {
-		private static Config _config;
+		private static SecurityServiceConfig _config;
 		private static Logger _logger;
 		private static Mailer _mailer;
         private static SecurityThrottle _throttle;
@@ -58,13 +58,13 @@ namespace SecurityService
             }
         }
 
-        public static Config Config
+        public static SecurityServiceConfig Config
 		{
 			get
 			{
 				if (_config == null)
 				{
-					_config = new Config();
+					_config = new SecurityServiceConfig();
 				}
 
 				return _config;
@@ -90,7 +90,7 @@ namespace SecurityService
             {
 				if (_mailer == null)
                 {
-					_mailer = new Mailer(Log, Config, Gpg);
+					_mailer = new Mailer(Log, Config.Mail, Gpg);
                 }
 
 				return _mailer;

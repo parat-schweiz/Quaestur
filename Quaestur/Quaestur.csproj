@@ -115,7 +115,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
-    <Compile Include="Infrastructure\Config.cs" />
+    <Compile Include="Infrastructure\QuaesturConfig.cs" />
     <Compile Include="Infrastructure\DatabaseObject.cs" />
     <Compile Include="Infrastructure\Global.cs" />
     <Compile Include="Infrastructure\IDatabase.cs" />

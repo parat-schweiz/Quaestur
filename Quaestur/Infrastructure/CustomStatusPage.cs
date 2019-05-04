@@ -41,7 +41,7 @@ namespace Quaestur
                 default:
                     return new InfoViewModel(translator,
                            translator.Get("CustomStatusPage.Error.Title", "Title on the custom status page on error", "Opps! Error {0}", (int)statusCode),
-                           translator.Get("CustomStatusPage.Error.Text", "Text on the custom status page on error", "Something went wrong. If this problem persists, please contact the administrator of this page at {0}.", Global.Config.AdminMailAddress),
+                           translator.Get("CustomStatusPage.Error.Text", "Text on the custom status page on error", "Something went wrong. If this problem persists, please contact the administrator of this page at {0}.", Global.Config.Mail.AdminMailAddress),
                            translator.Get("CustomStatusPage.Error.BackLink", "Back link text on the custom status page on error", "Back"),
                            "/");
             }

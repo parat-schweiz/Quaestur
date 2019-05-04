@@ -39,25 +39,15 @@ namespace BaseLibrary
         }
     }
 
-    public interface IMailConfig
-    { 
-        string AdminMailAddress { get; }
-        string MailServerHost { get; }
-        int MailServerPort { get; }
-        string MailAccountName { get; }
-        string MailAccountPassword { get; }
-        string SystemMailAddress { get; }
-    }
-
     public class Mailer
     {
         private const string ErrorSubject = "Error in O2A";
         private const string WarningSubject = "Warning in O2A";
         private Logger _log;
-        private IMailConfig _config;
+        private ConfigSectionMail _config;
         private Gpg _gpg;
 
-        public Mailer(Logger log, IMailConfig config, Gpg gpg)
+        public Mailer(Logger log, ConfigSectionMail config, Gpg gpg)
         {
             _log = log;
             _config = config;

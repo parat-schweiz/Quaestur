@@ -9,7 +9,7 @@ namespace Publicus
 {
     public static class Global
     {
-		private static Config _config;
+		private static PublicusConfig _config;
 		private static Logger _logger;
 		private static Mailer _mailer;
         private static SessionManager _login;
@@ -50,7 +50,7 @@ namespace Publicus
             {
                 if (_security == null)
                 {
-                    _security = new SecurityService(Config.SecurityServiceUrl, Config.SecurityServiceKey);
+                    _security = new SecurityService(Config.SecurityService);
                 }
 
                 return _security;
@@ -83,36 +83,13 @@ namespace Publicus
             } 
         }
 
-        private static IEnumerable<string> ConfigPaths
-        {
-            get
-            {
-                yield return "/Security/Test/publicus.xml";
-                yield return "config.xml";
-            }
-        }
-
-        private static string FirstFileExists(IEnumerable<string> paths)
-        {
-            foreach (var path in paths)
-            {
-                if (File.Exists(path))
-                {
-                    return path; 
-                }
-            }
-
-            return null;
-        }
-
-        public static Config Config
+        public static PublicusConfig Config
 		{
 			get
 			{
 				if (_config == null)
 				{
-					_config = new Config();
-					_config.Load(FirstFileExists(ConfigPaths));
+					_config = new PublicusConfig();
 				}
 
 				return _config;
@@ -121,7 +98,7 @@ namespace Publicus
 
         public static IDatabase CreateDatabase()
         {
-            return new PostgresDatabase(Config); 
+            return new PostgresDatabase(Config.Database); 
         }
 
 		public static Logger Log
@@ -143,7 +120,7 @@ namespace Publicus
             {
 				if (_mailer == null)
                 {
-					_mailer = new Mailer(Log, Config, Gpg);
+					_mailer = new Mailer(Log, Config.Mail, Gpg);
                 }
 
 				return _mailer;

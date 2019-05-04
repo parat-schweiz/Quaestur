@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using Newtonsoft.Json.Linq;
+using BaseLibrary;
 
 namespace SecurityServiceClient
 {
@@ -10,9 +11,9 @@ namespace SecurityServiceClient
         private SecurityServiceChannel _channel;
         private readonly object _lock = new object();
 
-        public SecurityService(string apiUrl, byte[] presharedKey)
+        public SecurityService(ConfigSectionSecurityServiceClient config)
         {
-            _channel = new SecurityServiceChannel(apiUrl, presharedKey);
+            _channel = new SecurityServiceChannel(config.SecurityServiceUrl, config.SecurityServiceKey);
             _channel.Agree();
         }
 
