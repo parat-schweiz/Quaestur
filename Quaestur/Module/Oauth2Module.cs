@@ -183,7 +183,7 @@ namespace Quaestur
                 if (client != null)
                 {
                     if (client.RequireTwoFactor &&
-                        CurrentSession.CompleteAuth)
+                        (!CurrentSession.CompleteAuth))
                     {
                         return null;
                     }
