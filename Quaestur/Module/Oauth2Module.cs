@@ -334,16 +334,24 @@ namespace Quaestur
                         int issueTime = (int)Math.Floor(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
                         int authTime = (int)Math.Floor(session.Moment.Value.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
-                        var idToken = new JWT.Builder.JwtBuilder()
+                        var builder = new JWT.Builder.JwtBuilder()
                             .WithAlgorithm(new JWT.Algorithms.HMACSHA256Algorithm())
                             .WithSecret(session.Client.Value.Secret.Value)
                             .AddClaim("iss", Global.Config.WebSiteAddress)
                             .AddClaim("sub", session.User.Value.Id.Value.ToString())
                             .AddClaim("aud", session.Client.Value.Id.Value.ToString())
+                            .AddClaim("name", session.User.Value.UserName)
                             .AddClaim("exp", expiry)
                             .AddClaim("iat", issueTime)
-                            .AddClaim("auth_time", authTime)
-                            .Build();
+                            .AddClaim("auth_time", authTime);
+
+                        if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Email))
+                        {
+                            builder = builder
+                                .AddClaim("email", session.User.Value.PrimaryMailAddress);
+                        }
+
+                        var idToken = builder.Build();
                         var response = new JObject(
                             new JProperty("access_token", session.Token.Value),
                             new JProperty("token_type", "Bearer"),
