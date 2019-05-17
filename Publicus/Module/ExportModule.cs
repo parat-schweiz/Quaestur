@@ -160,7 +160,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/export"] = parameters =>
+            Get("/export", parameters =>
             {
                 if (HasAnyFeedAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -168,8 +168,8 @@ namespace Publicus
                         new ExportViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/export/list"] = parameters =>
+            });
+            Get("/export/list", parameters =>
             {
                 if (HasAnyFeedAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -177,8 +177,8 @@ namespace Publicus
                         new ExportListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/export/edit/{id}"] = parameters =>
+            });
+            Get("/export/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -192,8 +192,8 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
-            Post["/export/edit/{id}"] = parameters =>
+            });
+            Post("/export/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<ExportEditViewModel>(ReadBody());
@@ -223,8 +223,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/add"] = parameters =>
+            });
+            Get("/export/add", parameters =>
             {
                 if (HasAnyFeedAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -232,8 +232,8 @@ namespace Publicus
                         new ExportEditViewModel(Translator, Database, CurrentSession)];
                 }
                 return null;
-            };
-            Post["/export/add/new"] = parameters =>
+            });
+            Post("/export/add/new", parameters =>
             {
                 string idString = parameters.id;
                 var body = ReadBody();
@@ -260,8 +260,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/delete/{id}"] = parameters =>
+            });
+            Get("/export/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -285,8 +285,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/download/{id}"] = parameters =>
+            });
+            Get("/export/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -315,7 +315,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
 
         private IEnumerable<Contact> Query(Export export)

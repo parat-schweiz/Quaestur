@@ -472,22 +472,22 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/mailing"] = parameters =>
+            Get("/mailing", parameters =>
             {
                 return View["View/mailing.sshtml",
                     new MailingViewModel(Translator, CurrentSession)];
-            };
-            Get["/mailing/list"] = parameters =>
+            });
+            Get("/mailing/list", parameters =>
             {
                 return View["View/mailinglist.sshtml",
                     new MailingListViewModel(Translator, Database, CurrentSession)];
-            };
-            Get["/mailing/add"] = parameters =>
+            });
+            Get("/mailing/add", parameters =>
             {
                 return View["View/mailingedit.sshtml",
                     new MailingEditViewModel(Translator, Database, CurrentSession)];
-            };
-            Post["/mailing/add/{id}"] = parameters =>
+            });
+            Post("/mailing/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MailingEditViewModel>(ReadBody());
@@ -525,8 +525,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/mailing/edit/{id}"] = parameters =>
+            });
+            Get("/mailing/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
@@ -546,8 +546,8 @@ namespace Quaestur
                 }
 
                 return Response.AsRedirect("/mailing");
-            };
-            Post["/mailing/edit/{id}"] = parameters =>
+            });
+            Post("/mailing/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MailingEditViewModel>(ReadBody());
@@ -588,8 +588,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/mailing/test"] = parameters =>
+            });
+            Post("/mailing/test", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<MailingEditViewModel>(ReadBody());
                 var worker = new HtmlWorker(model.HtmlText);
@@ -647,8 +647,8 @@ namespace Quaestur
                     return PostResult.Failed(
                         Translate("Mailing.Edit.Test.Failed", "Failed message on sending test mail in mailing edit page", "E-Mail could not be sent."));
                 }
-            };
-            Get["/mailing/send/{id}"] = parameters =>
+            });
+            Get("/mailing/send/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
@@ -664,8 +664,8 @@ namespace Quaestur
                 }
 
                 return AccessDenied();
-            };
-            Post["/mailing/send/{id}"] = parameters =>
+            });
+            Post("/mailing/send/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MailingSendViewModel>(ReadBody());
@@ -691,8 +691,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/mailing/delete/{id}"] = parameters =>
+            });
+            Get("/mailing/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
@@ -713,8 +713,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/mailing/cancel/{id}"] = parameters =>
+            });
+            Get("/mailing/cancel/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
@@ -744,8 +744,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            }; 
-            Get["/mailing/copy/{id}"] = parameters =>
+            }); 
+            Get("/mailing/copy/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var mailing = Database.Query<Mailing>(idString);
@@ -777,7 +777,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

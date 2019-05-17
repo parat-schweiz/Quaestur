@@ -102,8 +102,8 @@ namespace Publicus
         public string Id;
 
         public PermissionViewModel(Translator translator, Session session, Role role)
-            : base(translator, 
-            translator.Get("Permission.List.Title", "Title of the permission list page", "Permissions"), 
+            : base(translator,
+            translator.Get("Permission.List.Title", "Title of the permission list page", "Permissions"),
             session)
         {
             Id = role.Id.Value.ToString();
@@ -187,7 +187,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/permission/{id}"] = parameters =>
+            Get("/permission/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -202,8 +202,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/permission/list/{id}"] = parameters =>
+            });
+            Get("/permission/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -218,8 +218,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/permission/edit/{id}"] = parameters =>
+            });
+            Get("/permission/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var permission = Database.Query<Permission>(idString);
@@ -234,8 +234,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/permission/edit/{id}"] = parameters =>
+            });
+            Post("/permission/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PermissionEditViewModel>(ReadBody());
@@ -258,15 +258,15 @@ namespace Publicus
                             }
                             else
                             {
-                                status.SetErrorAccessDenied(); 
+                                status.SetErrorAccessDenied();
                             }
                         }
                     }
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/permission/add/{id}"] = parameters =>
+            });
+            Get("/permission/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -281,8 +281,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/permission/add/{id}"] = parameters =>
+            });
+            Post("/permission/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -307,15 +307,15 @@ namespace Publicus
                             }
                             else
                             {
-                                status.SetErrorAccessDenied(); 
+                                status.SetErrorAccessDenied();
                             }
                         }
                     }
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/permission/delete/{id}"] = parameters =>
+            });
+            Get("/permission/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var permission = Database.Query<Permission>(idString);
@@ -330,7 +330,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

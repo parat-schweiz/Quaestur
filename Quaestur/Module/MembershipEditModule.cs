@@ -90,7 +90,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/membership/edit/{mid}/types/{oid}"] = parameters =>
+            Get("/membership/edit/{mid}/types/{oid}", parameters =>
             {
                 var membership = Database.Query<Membership>((string)parameters.mid);
                 var organization = Database.Query<Organization>((string)parameters.oid);
@@ -105,8 +105,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/membership/edit/{id}"] = parameters =>
+            });
+            Get("/membership/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membership = Database.Query<Membership>(idString);
@@ -121,8 +121,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/membership/edit/{id}"] = parameters =>
+            });
+            Post("/membership/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MembershipEditViewModel>(ReadBody());
@@ -152,8 +152,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/membership/add/{id}"] = parameters =>
+            });
+            Get("/membership/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -168,8 +168,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/membership/add/{id}"] = parameters =>
+            });
+            Post("/membership/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MembershipEditViewModel>(ReadBody());
@@ -201,8 +201,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/membership/delete/{id}"] = parameters =>
+            });
+            Get("/membership/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membership = Database.Query<Membership>(idString);
@@ -222,7 +222,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

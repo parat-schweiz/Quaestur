@@ -48,7 +48,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/demography/edit/{id}"] = parameters =>
+            Get("/demography/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -63,8 +63,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/demography/edit/{id}"] = parameters =>
+            });
+            Post("/demography/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<DemographyEditViewModel>(ReadBody());
@@ -91,7 +91,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

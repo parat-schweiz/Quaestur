@@ -89,7 +89,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/state"] = parameters =>
+            Get("/state", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -97,8 +97,8 @@ namespace Quaestur
                         new StateViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/state/list"] = parameters =>
+            });
+            Get("/state/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -106,8 +106,8 @@ namespace Quaestur
                         new StateListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/state/edit/{id}"] = parameters =>
+            });
+            Get("/state/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -121,8 +121,8 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
-            Post["/state/edit/{id}"] = parameters =>
+            });
+            Post("/state/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -145,8 +145,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/state/add"] = parameters =>
+            });
+            Get("/state/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -154,8 +154,8 @@ namespace Quaestur
                         new StateEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/state/add/new"] = parameters =>
+            });
+            Post("/state/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -174,8 +174,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/state/delete/{id}"] = parameters =>
+            });
+            Get("/state/delete/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -196,7 +196,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

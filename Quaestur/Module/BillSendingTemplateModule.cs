@@ -198,7 +198,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/billsendingtemplate/{id}"] = parameters =>
+            Get("/billsendingtemplate/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -213,8 +213,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/billsendingtemplate/list/{id}"] = parameters =>
+            });
+            Get("/billsendingtemplate/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -229,8 +229,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/billsendingtemplate/edit/{id}"] = parameters =>
+            });
+            Get("/billsendingtemplate/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var billSendingTemplate = Database.Query<BillSendingTemplate>(idString);
@@ -245,8 +245,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/billsendingtemplate/copy/{id}"] = parameters =>
+            });
+            Get("/billsendingtemplate/copy/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var billSendingTemplate = Database.Query<BillSendingTemplate>(idString);
@@ -274,8 +274,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/billsendingtemplate/edit/{id}"] = parameters =>
+            });
+            Post("/billsendingtemplate/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<BillSendingTemplateEditViewModel>(ReadBody());
@@ -307,8 +307,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/billsendingtemplate/add/{id}"] = parameters =>
+            });
+            Get("/billsendingtemplate/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -323,8 +323,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/billsendingtemplate/add/{id}"] = parameters =>
+            });
+            Post("/billsendingtemplate/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -359,8 +359,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/billsendingtemplate/delete/{id}"] = parameters =>
+            });
+            Get("/billsendingtemplate/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var billSendingTemplate = Database.Query<BillSendingTemplate>(idString);
@@ -379,7 +379,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

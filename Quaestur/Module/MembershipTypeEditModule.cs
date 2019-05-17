@@ -192,7 +192,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/membershiptype/{id}"] = parameters =>
+            Get("/membershiptype/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -204,8 +204,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/membershiptype/list/{id}"] = parameters =>
+            });
+            Get("/membershiptype/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -217,8 +217,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/membershiptype/edit/{id}"] = parameters =>
+            });
+            Get("/membershiptype/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -230,8 +230,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/membershiptype/edit/{id}"] = parameters =>
+            });
+            Post("/membershiptype/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
@@ -262,8 +262,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/membershiptype/add/{id}"] = parameters =>
+            });
+            Get("/membershiptype/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -278,8 +278,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/membershiptype/add/{id}"] = parameters =>
+            });
+            Post("/membershiptype/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -312,8 +312,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/membershiptype/parameters/{id}"] = parameters =>
+            });
+            Get("/membershiptype/parameters/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -328,8 +328,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/membershiptype/parameters/{id}"] = parameters =>
+            });
+            Post("/membershiptype/parameters/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -373,8 +373,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/membershiptype/delete/{id}"] = parameters =>
+            });
+            Get("/membershiptype/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -394,8 +394,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/membershiptype/testcreatebill/{id}"] = parameters =>
+            });
+            Post("/membershiptype/testcreatebill/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
@@ -497,7 +497,7 @@ namespace Quaestur
                 }
 
                 return JsonConvert.SerializeObject(result);
-            };
+            });
         }
 
         private void AddPaymentModelParameters(MembershipType type)

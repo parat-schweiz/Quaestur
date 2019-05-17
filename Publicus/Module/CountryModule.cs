@@ -89,7 +89,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/country"] = parameters =>
+            Get("/country", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -97,8 +97,8 @@ namespace Publicus
                         new CountryViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/country/list"] = parameters =>
+            });
+            Get("/country/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -106,8 +106,8 @@ namespace Publicus
                         new CountryListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/country/edit/{id}"] = parameters =>
+            });
+            Get("/country/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -121,8 +121,8 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
-            Post["/country/edit/{id}"] = parameters =>
+            });
+            Post("/country/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -145,8 +145,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/country/add"] = parameters =>
+            });
+            Get("/country/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -154,8 +154,8 @@ namespace Publicus
                     new CountryEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/country/add/new"] = parameters =>
+            });
+            Post("/country/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -174,8 +174,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/country/delete/{id}"] = parameters =>
+            });
+            Get("/country/delete/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -193,7 +193,7 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
+            });
         }
     }
 }

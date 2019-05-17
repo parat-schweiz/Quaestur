@@ -23,7 +23,7 @@ namespace Publicus
         public bool CryptoAccess;
 
         public GroupEditViewModel()
-        { 
+        {
         }
 
         public GroupEditViewModel(Translator translator)
@@ -73,8 +73,8 @@ namespace Publicus
         public string Id;
 
         public GroupViewModel(Translator translator, Session session, Feed feed)
-            : base(translator, 
-            translator.Get("Group.List.Title", "Title of the group list page", "Groups"), 
+            : base(translator,
+            translator.Get("Group.List.Title", "Title of the group list page", "Groups"),
             session)
         {
             Id = feed.Id.Value.ToString();
@@ -133,7 +133,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/group/{id}"] = parameters =>
+            Get("/group/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -148,8 +148,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/group/list/{id}"] = parameters =>
+            });
+            Get("/group/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -164,8 +164,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/group/edit/{id}"] = parameters =>
+            });
+            Get("/group/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -180,8 +180,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/group/edit/{id}"] = parameters =>
+            });
+            Post("/group/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<GroupEditViewModel>(ReadBody());
@@ -211,8 +211,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/group/add/{id}"] = parameters =>
+            });
+            Get("/group/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -227,8 +227,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/group/add/{id}"] = parameters =>
+            });
+            Post("/group/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -261,8 +261,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/group/delete/{id}"] = parameters =>
+            });
+            Get("/group/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -281,7 +281,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

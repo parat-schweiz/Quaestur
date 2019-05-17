@@ -139,7 +139,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/mailingelement"] = parameters =>
+            Get("/mailingelement", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Mailings, AccessRight.Read))
                 {
@@ -147,8 +147,8 @@ namespace Quaestur
                         new MailingElementViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/mailingelement/list"] = parameters =>
+            });
+            Get("/mailingelement/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Mailings, AccessRight.Read))
                 {
@@ -156,8 +156,8 @@ namespace Quaestur
                         new MailingElementListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/mailingelement/edit/{id}"] = parameters =>
+            });
+            Get("/mailingelement/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Mailings, AccessRight.Write))
                 {
@@ -172,8 +172,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/mailingelement/edit/{id}"] = parameters =>
+            });
+            Post("/mailingelement/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
                     string idString = parameters.id;
@@ -200,8 +200,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/mailingelement/add"] = parameters =>
+            });
+            Get("/mailingelement/add", parameters =>
             {
                 if (HasAnyOrganizationAccess(PartAccess.Mailings, AccessRight.Write))
                 {
@@ -209,8 +209,8 @@ namespace Quaestur
                         new MailingElementEditViewModel(Translator, Database, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Post["/mailingelement/add/new"] = parameters =>
+            });
+            Post("/mailingelement/add/new", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<MailingElementEditViewModel>(ReadBody());
                 var status = CreateStatus();
@@ -232,8 +232,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/mailingelement/delete/{id}"] = parameters =>
+            });
+            Get("/mailingelement/delete/{id}", parameters =>
             {
                 var status = CreateStatus();
                 string idString = parameters.id;
@@ -248,7 +248,7 @@ namespace Quaestur
                     }
                 }
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

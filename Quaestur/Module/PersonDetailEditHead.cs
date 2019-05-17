@@ -58,7 +58,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/edit/head/{id}"] = parameters =>
+            Get("/person/edit/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -72,8 +72,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/person/edit/head/{id}"] = parameters =>
+            });
+            Post("/person/edit/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PersonEditHeadViewModel>(ReadBody());
@@ -107,7 +107,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

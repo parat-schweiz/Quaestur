@@ -16,7 +16,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/tags/{id}"] = parameters =>
+            Get("/contact/detail/tags/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -30,7 +30,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

@@ -19,7 +19,7 @@ namespace Publicus
         public string PhraseFieldParent;
 
         public FeedEditViewModel()
-        { 
+        {
         }
 
         public FeedEditViewModel(Translator translator)
@@ -69,10 +69,10 @@ namespace Publicus
     public class FeedViewModel : MasterViewModel
     {
         public FeedViewModel(Translator translator, Session session)
-            : base(translator, 
-            translator.Get("Feed.List.Title", "Title of the feed list page", "Feeds"), 
+            : base(translator,
+            translator.Get("Feed.List.Title", "Title of the feed list page", "Feeds"),
             session)
-        { 
+        {
         }
     }
 
@@ -148,17 +148,17 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/feed"] = parameters =>
+            Get("/feed", parameters =>
             {
                 return View["View/feed.sshtml",
                     new FeedViewModel(Translator, CurrentSession)];
-            };
-            Get["/feed/list"] = parameters =>
+            });
+            Get("/feed/list", parameters =>
             {
                 return View["View/feedlist.sshtml",
                     new FeedListViewModel(Translator, CurrentSession, Database)];
-            };
-            Get["/feed/edit/{id}"] = parameters =>
+            });
+            Get("/feed/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -173,8 +173,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/feed/edit/{id}"] = parameters =>
+            });
+            Post("/feed/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<FeedEditViewModel>(ReadBody());
@@ -197,8 +197,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/feed/add"] = parameters =>
+            });
+            Get("/feed/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Structure, AccessRight.Write))
                 {
@@ -206,8 +206,8 @@ namespace Publicus
                         new FeedEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/feed/add/new"] = parameters =>
+            });
+            Post("/feed/add/new", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<FeedEditViewModel>(ReadBody());
                 var status = CreateStatus();
@@ -227,8 +227,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/feed/delete/{id}"] = parameters =>
+            });
+            Get("/feed/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var feed = Database.Query<Feed>(idString);
@@ -248,7 +248,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

@@ -112,7 +112,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/postaladdress/edit/{id}"] = parameters =>
+            Get("/postaladdress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<PostalAddress>(idString);
@@ -127,8 +127,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/postaladdress/edit/{id}"] = parameters =>
+            });
+            Post("/postaladdress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PostalAddressEditViewModel>(ReadBody());
@@ -160,8 +160,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/postaladdress/add/{id}"] = parameters =>
+            });
+            Get("/postaladdress/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -176,8 +176,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/postaladdress/add/{id}"] = parameters =>
+            });
+            Post("/postaladdress/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PostalAddressEditViewModel>(ReadBody());
@@ -212,8 +212,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/postaladdress/delete/{id}"] = parameters =>
+            });
+            Get("/postaladdress/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<PostalAddress>(idString);
@@ -233,8 +233,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/postaladdress/switch"] = parameters =>
+            });
+            Post("/postaladdress/switch", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
                 var source = Database.Query<PostalAddress>(model.SourceId);
@@ -276,7 +276,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Security.Cryptography;
 using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
+using System.Security.Claims;
 
 namespace Publicus
 {
@@ -17,7 +18,7 @@ namespace Publicus
         Locked = 2,
     }
 
-    public class Session : IUserIdentity
+    public class Session : ClaimsPrincipal
     {
         private class RolePermission
         {
@@ -306,7 +307,7 @@ namespace Publicus
             }
         }
 
-        public IUserIdentity GetUserFromIdentifier(Guid identifier, NancyContext context)
+        public ClaimsPrincipal GetUserFromIdentifier(Guid identifier, NancyContext context)
         {
             lock (_sessions)
             {

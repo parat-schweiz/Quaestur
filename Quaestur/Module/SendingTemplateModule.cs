@@ -86,7 +86,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/sendingtemplatelanguage/edit/{id}"] = parameters =>
+            Get("/sendingtemplatelanguage/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var sendingTemplateLanguage = Database.Query<SendingTemplateLanguage>(idString);
@@ -101,8 +101,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/sendingtemplatelanguage/edit/{id}"] = parameters =>
+            });
+            Post("/sendingtemplatelanguage/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<SendingTemplateLanguageEditViewModel>(ReadBody());
@@ -132,8 +132,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/sendingtemplatelanguage/add/{id}/{lang}"] = parameters =>
+            });
+            Get("/sendingtemplatelanguage/add/{id}/{lang}", parameters =>
             {
                 string idString = parameters.id;
                 var sendingTemplate = Database.Query<SendingTemplate>(idString);
@@ -150,8 +150,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/sendingtemplatelanguage/add/{id}/{lang}"] = parameters =>
+            });
+            Post("/sendingtemplatelanguage/add/{id}/{lang}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<SendingTemplateLanguageEditViewModel>(ReadBody());
@@ -186,7 +186,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

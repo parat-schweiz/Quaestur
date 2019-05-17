@@ -59,7 +59,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/detail/billing/{id}"] = parameters =>
+            Get("/person/detail/billing/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -74,7 +74,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

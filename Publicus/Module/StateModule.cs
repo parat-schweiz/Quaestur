@@ -92,7 +92,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/state"] = parameters =>
+            Get("/state", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -100,8 +100,8 @@ namespace Publicus
                         new StateViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/state/list"] = parameters =>
+            });
+            Get("/state/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -109,8 +109,8 @@ namespace Publicus
                         new StateListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/state/edit/{id}"] = parameters =>
+            });
+            Get("/state/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -124,8 +124,8 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
-            Post["/state/edit/{id}"] = parameters =>
+            });
+            Post("/state/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -148,8 +148,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/state/add"] = parameters =>
+            });
+            Get("/state/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -157,8 +157,8 @@ namespace Publicus
                         new StateEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/state/add/new"] = parameters =>
+            });
+            Post("/state/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -177,8 +177,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/state/delete/{id}"] = parameters =>
+            });
+            Get("/state/delete/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -199,7 +199,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

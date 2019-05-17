@@ -93,7 +93,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/document/edit/{id}"] = parameters =>
+            Get("/document/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var document = Database.Query<Document>(idString);
@@ -108,8 +108,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/document/edit/{id}"] = parameters =>
+            });
+            Post("/document/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<DocumentEditViewModel>(ReadBody());
@@ -139,8 +139,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/document/add/{id}"] = parameters =>
+            });
+            Get("/document/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -155,8 +155,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/document/add/{id}"] = parameters =>
+            });
+            Post("/document/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<DocumentEditViewModel>(ReadBody());
@@ -188,8 +188,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/document/delete/{id}"] = parameters =>
+            });
+            Get("/document/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var document = Database.Query<Document>(idString);
@@ -209,8 +209,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/document/download/{id}"] = parameters =>
+            });
+            Get("/document/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var document = Database.Query<Document>(idString);
@@ -232,7 +232,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

@@ -121,7 +121,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/oauth2client"] = parameters =>
+            Get("/oauth2client", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Crypto, AccessRight.Write))
                 {
@@ -129,8 +129,8 @@ namespace Quaestur
                         new Oauth2ClientViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/oauth2client/list"] = parameters =>
+            });
+            Get("/oauth2client/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Crypto, AccessRight.Write))
                 {
@@ -138,8 +138,8 @@ namespace Quaestur
                         new Oauth2ClientListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/oauth2client/edit/{id}"] = parameters =>
+            });
+            Get("/oauth2client/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Crypto, AccessRight.Write))
                 {
@@ -153,8 +153,8 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
-            Post["/oauth2client/edit/{id}"] = parameters =>
+            });
+            Post("/oauth2client/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -181,8 +181,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/oauth2client/add"] = parameters =>
+            });
+            Get("/oauth2client/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -190,8 +190,8 @@ namespace Quaestur
                     new Oauth2ClientEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/oauth2client/add/new"] = parameters =>
+            });
+            Post("/oauth2client/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -214,8 +214,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/oauth2client/delete/{id}"] = parameters =>
+            });
+            Get("/oauth2client/delete/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Crypto, AccessRight.Write))
                 {
@@ -233,7 +233,7 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
+            });
         }
     }
 }

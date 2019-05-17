@@ -54,7 +54,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/password/set/{id}"] = parameters =>
+            Get("/password/set/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -70,8 +70,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/password/set/{id}"] = parameters =>
+            });
+            Post("/password/set/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PasswordEditViewModel>(ReadBody());
@@ -105,13 +105,13 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/password"] = parameters =>
+            });
+            Get("/password", parameters =>
             {
                 return View["View/password.sshtml",
                     new PasswordEditViewModel(Translator, CurrentSession.User, true)];
-            };
-            Get["/password/change/{id}"] = parameters =>
+            });
+            Get("/password/change/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -123,8 +123,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/password/change/{id}"] = parameters =>
+            });
+            Post("/password/change/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PasswordEditViewModel>(ReadBody());
@@ -163,7 +163,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

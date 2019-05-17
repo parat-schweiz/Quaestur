@@ -182,7 +182,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/phrase"] = parameters =>
+            Get("/phrase", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -190,8 +190,8 @@ namespace Quaestur
                         new PhraseViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/phrase/list"] = parameters =>
+            });
+            Get("/phrase/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -199,8 +199,8 @@ namespace Quaestur
                         new PhraseListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/phrase/edit/{id}"] = parameters =>
+            });
+            Get("/phrase/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -214,8 +214,8 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
-            Post["/phrase/edit/{id}"] = parameters =>
+            });
+            Post("/phrase/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -241,7 +241,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

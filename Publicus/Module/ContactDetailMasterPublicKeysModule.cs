@@ -55,7 +55,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/master/publickeys/{id}"] = parameters =>
+            Get("/contact/detail/master/publickeys/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -64,13 +64,13 @@ namespace Publicus
                 {
                     if (HasAccess(contact, PartAccess.Contact, AccessRight.Read))
                     {
-                        return View["View/contactdetail_master_publickeys.sshtml", 
+                        return View["View/contactdetail_master_publickeys.sshtml",
                             new ContactDetailPublicKeysViewModel(Translator, CurrentSession, contact)];
                     }
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

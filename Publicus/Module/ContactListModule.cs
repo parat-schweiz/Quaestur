@@ -54,13 +54,13 @@ namespace Publicus
             LastName = contactAccess ?
                 contact.LastName.Value.EscapeHtml() :
                 string.Empty;
-            FirstNames = contactAccess ? 
+            FirstNames = contactAccess ?
                 contact.ShortTitleAndNames.EscapeHtml() :
                 string.Empty;
-            MailAddress = contactAccess ? 
+            MailAddress = contactAccess ?
                 contact.PrimaryMailAddress.EscapeHtml() :
                 string.Empty;
-            PhoneNumber = contactAccess ? 
+            PhoneNumber = contactAccess ?
                 contact.PrimaryPhoneNumber.EscapeHtml() :
                 string.Empty;
             Place = contactAccess ?
@@ -211,8 +211,8 @@ namespace Publicus
         public List<NamedIntViewModel> Columns;
 
         public ContactListViewModel(IDatabase database, Translator translator, Session session)
-            : base(translator, 
-                   translator.Get("Contact.List.Title", "Title of the contact list page", "Liste"), 
+            : base(translator,
+                   translator.Get("Contact.List.Title", "Title of the contact list page", "Liste"),
                    session)
         {
             PhraseSearch = translator.Get("Contact.List.Search", "Hint in the search box of the contact list page", "Search").EscapeHtml();
@@ -308,11 +308,11 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/list"] = parameters =>
+            Get("/contact/list", parameters =>
             {
                 return View["View/contactlist.sshtml", new ContactListViewModel(Database, Translator, CurrentSession)];
-            };
-            Get["/contact/list/settings/list"] = parameters =>
+            });
+            Get("/contact/list/settings/list", parameters =>
             {
                 var settingsList = Database
                     .Query<SearchSettings>(DC.Equal("userid", CurrentSession.User.Id.Value))
@@ -337,8 +337,8 @@ namespace Publicus
                 }
 
                 return result.ToString();
-            };
-            Get["/contact/list/settings/get/{ssid}"] = parameters =>
+            });
+            Get("/contact/list/settings/get/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -351,8 +351,8 @@ namespace Publicus
 
                 var update = new SearchSettingsUpdate(settings);
                 return JsonConvert.SerializeObject(update).ToString();
-            };
-            Post["/contact/list/settings/set/{ssid}"] = parameters =>
+            });
+            Post("/contact/list/settings/set/{ssid}", parameters =>
             {
                 var update = JsonConvert.DeserializeObject<SearchSettingsUpdate>(ReadBody());
                 string searchSettingsId = parameters.ssid;
@@ -372,8 +372,8 @@ namespace Publicus
                 update.Apply(Database, settings);
                 Database.Save(settings);
                 return status.CreateJsonData();
-            };
-            Get["/contact/list/data/{ssid}"] = parameters =>
+            });
+            Get("/contact/list/data/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -387,8 +387,8 @@ namespace Publicus
                     .Skip(skip)
                     .Take(settings.ItemsPerPage);
                 return View["View/contactlist_data.sshtml", new ContactListDataViewModel(Database, Translator, page, settings, CurrentSession)];
-            };
-            Get["/contact/list/pages/{ssid}"] = parameters =>
+            });
+            Get("/contact/list/pages/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -405,7 +405,7 @@ namespace Publicus
                 }
 
                 return View["View/contactlist_pages.sshtml", new ContactPagesViewModel(Translator, pageCount, settings)];
-            };
+            });
         }
     }
 }

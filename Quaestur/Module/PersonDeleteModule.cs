@@ -13,7 +13,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/delete/mark/{id}"] = parameters =>
+            Get("/person/delete/mark/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -33,8 +33,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/person/delete/unmark/{id}"] = parameters =>
+            });
+            Get("/person/delete/unmark/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -54,8 +54,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/person/delete/hard/{id}"] = parameters =>
+            });
+            Get("/person/delete/hard/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -78,7 +78,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

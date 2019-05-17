@@ -13,7 +13,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/delete/mark/{id}"] = parameters =>
+            Get("/contact/delete/mark/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -33,8 +33,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/contact/delete/unmark/{id}"] = parameters =>
+            });
+            Get("/contact/delete/unmark/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -54,8 +54,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/contact/delete/hard/{id}"] = parameters =>
+            });
+            Get("/contact/delete/hard/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -78,7 +78,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

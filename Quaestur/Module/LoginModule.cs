@@ -57,12 +57,12 @@ namespace Quaestur
 
         public LoginModule()
         {
-            Get["/login"] = parameters =>
+            Get("/login", parameters =>
             {
                 var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
                 return View["View/login.sshtml", new LoginViewModel(Translator, returnUrl)];
-            };
-            Post["/login"] = parameters =>
+            });
+            Post("/login", parameters =>
             {
                 var login = this.Bind<LoginViewModel>();
                 Global.Throttle.Check(login.UserName, false);
@@ -112,8 +112,8 @@ namespace Quaestur
                 }
 
                 return View["View/login.sshtml", newLogin];
-            };
-            Get["/logout"] = parameters =>
+            });
+            Get("/logout", parameters =>
             {
                 if (CurrentSession != null)
                 {
@@ -127,7 +127,7 @@ namespace Quaestur
                 }
 
                 return Response.AsRedirect("/");
-            };
+            });
         }
     }
 }

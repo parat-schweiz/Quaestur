@@ -57,7 +57,7 @@ namespace Publicus
         public List<PostalAddressViewModel> List;
 
         public ContactMasterPostalViewModel(Translator translator, Session session, Contact contact)
-            : base(contact, 
+            : base(contact,
                    translator.Get("Contact.Detail.Master.PostalAddresses.Title", "Title of the section 'Postal addreses' on the master data tab in the contact detail page", "Postal addresses"))
         {
             List = new List<PostalAddressViewModel>(
@@ -108,7 +108,7 @@ namespace Publicus
                 case ServiceType.Phone:
                     return translator.Get("Contact.Detail.Master.Phone.Title", "Title of the section 'Phone numbers' on the master data tab in the contact detail page", "Phone numbers").EscapeHtml();
                 default:
-                    throw new NotSupportedException(); 
+                    throw new NotSupportedException();
             }
         }
 
@@ -150,7 +150,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/master/{id}"] = parameters =>
+            Get("/contact/detail/master/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -165,8 +165,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/contact/detail/master/postal/{id}"] = parameters =>
+            });
+            Get("/contact/detail/master/postal/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -181,8 +181,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/contact/detail/master/email/{id}"] = parameters =>
+            });
+            Get("/contact/detail/master/email/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -191,14 +191,14 @@ namespace Publicus
                 {
                     if (HasAccess(contact, PartAccess.Contact, AccessRight.Read))
                     {
-                        return View["View/contactdetail_master_email.sshtml", 
+                        return View["View/contactdetail_master_email.sshtml",
                             new ContactMasterServiceAddressViewModel(Translator, CurrentSession, contact, ServiceType.EMail)];
                     }
                 }
 
                 return null;
-            };
-            Get["/contact/detail/master/phone/{id}"] = parameters =>
+            });
+            Get("/contact/detail/master/phone/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -207,13 +207,13 @@ namespace Publicus
                 {
                     if (HasAccess(contact, PartAccess.Contact, AccessRight.Read))
                     {
-                        return View["View/contactdetail_master_phone.sshtml", 
+                        return View["View/contactdetail_master_phone.sshtml",
                             new ContactMasterServiceAddressViewModel(Translator, CurrentSession, contact, ServiceType.Phone)];
                     }
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

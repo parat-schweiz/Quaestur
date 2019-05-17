@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Nancy;
 using Nancy.Responses;
 using Nancy.ErrorHandling;
@@ -10,11 +9,11 @@ namespace Quaestur
 {
     public class CustomStatusPage : IStatusCodeHandler
     {
-        private readonly IViewRenderer _viewRenderer;
+        private readonly IViewFactory _factory;
 
-        public CustomStatusPage(IViewRenderer viewRenderer)
+        public CustomStatusPage(IViewFactory factory)
         {
-            _viewRenderer = viewRenderer;
+            _factory = factory;
         }
 
         public bool HandlesStatusCode(HttpStatusCode statusCode, NancyContext context)
@@ -39,6 +38,18 @@ namespace Quaestur
                            translator.Get("CustomStatusPage.NotFound.Text", "Text on the custom status page when status is 404", "This page does not exist."),
                            translator.Get("CustomStatusPage.NotFound.BackLink", "Back link text on the custom status page when status is 404", "Back"),
                            "/");
+                case HttpStatusCode.Unauthorized:
+                    return new InfoViewModel(translator,
+                           translator.Get("CustomStatusPage.Unauthorized.Title", "Title on the custom status page when status is 401", "Unauthorized"),
+                           translator.Get("CustomStatusPage.Unauthorized.Text", "Text on the custom status page when status is 401", "Access to this page is not authorized."),
+                           translator.Get("CustomStatusPage.Unauthorized.BackLink", "Back link text on the custom status page when status is 401", "Back"),
+                           "/");
+                case HttpStatusCode.Forbidden:
+                    return new InfoViewModel(translator,
+                           translator.Get("CustomStatusPage.Forbidden.Title", "Title on the custom status page when status is 403", "Forbidden"),
+                           translator.Get("CustomStatusPage.Forbidden.Text", "Text on the custom status page when status is 403", "Access to this page is forbidden."),
+                           translator.Get("CustomStatusPage.Forbidden.BackLink", "Back link text on the custom status page when status is 403", "Back"),
+                           "/");
                 default:
                     return new InfoViewModel(translator,
                            translator.Get("CustomStatusPage.Error.Title", "Title on the custom status page on error", "Opps! Error {0}", (int)statusCode),
@@ -58,9 +69,9 @@ namespace Quaestur
                 {
                     var translation = new Translation(database);
                     var translator = new Translator(translation, Language.English);
-                    var response = _viewRenderer.RenderView(context, "View/info.sshtml", GetInfo(statusCode, translator));
-                    response.StatusCode = statusCode;
-                    context.Response = response;
+                    var viewContext = new ViewLocationContext { Context = context };
+                    context.Response = _factory.RenderView("View/info.sshtml", GetInfo(statusCode, translator), viewContext);
+                    context.Response.StatusCode = statusCode;
                 }
             }
             catch (Exception exception)
@@ -68,40 +79,6 @@ namespace Quaestur
                 Global.Log.Error("Custom status page threw exception: {0}", exception.Message);
                 context.Response = new TextResponse("Error in error handling");
                 context.Response.StatusCode = statusCode;
-            }
-        }
-    }
-
-    public class ErrorHtmlPageResponse : HtmlResponse
-    {
-        public string Title { get; private set; }
-        public string Text { get; private set; }
-
-        public ErrorHtmlPageResponse(HttpStatusCode statusCode, string title, string text)
-        {
-            StatusCode = statusCode;
-            ContentType = "text/html; charset=utf-8";
-            Contents = Render;
-            Title = title;
-            Text = text;
-        }
-
-        void Render(Stream stream)
-        {
-            using (var writer = new StreamWriter(stream))
-            {
-                writer.WriteLine("<html>");
-                writer.WriteLine("<head>");
-                writer.WriteLine("<meta charset=\"UTF-8\"/>");
-                writer.WriteLine("<title>{0}</title>", Global.Config.SiteName);
-                writer.WriteLine("<link rel=\"stylesheet\" href=\"/assets/main.css\"/>");
-                writer.WriteLine("</head>");
-                writer.WriteLine("<body>");
-                writer.WriteLine("<h1>" + Title + "</h1>");
-                writer.WriteLine("<p>" + Text + "</p>");
-                writer.WriteLine("</body>");
-                writer.WriteLine("</html>");
-                writer.Flush();
             }
         }
     }

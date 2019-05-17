@@ -25,8 +25,8 @@ namespace Publicus
         public string PhraseTabJournal;
 
         public ContactDetailViewModel(Translator translator, Session session, Contact contact)
-            : base(translator, 
-            session.HasAccess(contact, PartAccess.Demography, AccessRight.Read) ? contact.ShortHand : contact.Organization, 
+            : base(translator,
+            session.HasAccess(contact, PartAccess.Demography, AccessRight.Read) ? contact.ShortHand : contact.Organization,
             session)
         {
             Id = contact.Id.ToString();
@@ -55,7 +55,7 @@ namespace Publicus
         public string PhraseButtonCancel;
 
         public DialogViewModel()
-        { 
+        {
         }
 
         public DialogViewModel(Translator translator, string title, string dialogId)
@@ -117,7 +117,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/new"] = parameters =>
+            Get("/contact/new", parameters =>
             {
                 var feed = CurrentSession.RoleAssignments
                     .Select(ra => ra.Role.Value.Group.Value.Feed.Value)
@@ -147,8 +147,8 @@ namespace Publicus
                     return Response.AsRedirect("/contact/detail/" + contact.Id.Value.ToString());
                 }
                 return AccessDenied();
-            };
-            Get["/contact/detail/{id}"] = parameters =>
+            });
+            Get("/contact/detail/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -167,8 +167,8 @@ namespace Publicus
                     Translate("Contact.Detail.NotFound.Message", "Text of the message when contact is not found", "No contact was found."),
                     Translate("Contact.Detail.NotFound.BackLink", "Link text of the message when contact is not found", "Back"),
                     "/")];
-            };
-            Get["/contact/detail/head/{id}"] = parameters =>
+            });
+            Get("/contact/detail/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -182,7 +182,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

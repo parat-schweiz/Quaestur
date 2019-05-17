@@ -158,7 +158,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/roleassignment/{id}"] = parameters =>
+            Get("/roleassignment/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -173,8 +173,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/roleassignment/list/{id}"] = parameters =>
+            });
+            Get("/roleassignment/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -189,8 +189,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Get["/roleassignment/add/{id}"] = parameters =>
+            });
+            Get("/roleassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -216,8 +216,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/roleassignment/add/{id}"] = parameters =>
+            });
+            Post("/roleassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -286,8 +286,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/roleassignment/delete/{id}"] = parameters =>
+            });
+            Get("/roleassignment/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var roleAssignment = Database.Query<RoleAssignment>(idString);
@@ -313,7 +313,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

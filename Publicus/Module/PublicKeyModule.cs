@@ -98,7 +98,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/publickey/edit/{id}"] = parameters =>
+            Get("/publickey/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var publicKey = Database.Query<PublicKey>(idString);
@@ -113,8 +113,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/publickey/edit/{id}"] = parameters =>
+            });
+            Post("/publickey/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PublicKeyEditViewModel>(ReadBody());
@@ -141,8 +141,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/publickey/add/{id}"] = parameters =>
+            });
+            Get("/publickey/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -157,8 +157,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/publickey/add/{id}"] = parameters =>
+            });
+            Post("/publickey/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PublicKeyEditViewModel>(ReadBody());
@@ -187,8 +187,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/publickey/delete/{id}"] = parameters =>
+            });
+            Get("/publickey/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var publicKey = Database.Query<PublicKey>(idString);
@@ -208,8 +208,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/publickey/download/{id}"] = parameters =>
+            });
+            Get("/publickey/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var publicKey = Database.Query<PublicKey>(idString);
@@ -230,7 +230,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
 
         private void AssignKeyFileData(PublicKeyEditViewModel model, PostStatus status, PublicKey publicKey, bool noDataSetError)

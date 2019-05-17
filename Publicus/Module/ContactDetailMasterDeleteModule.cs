@@ -18,8 +18,8 @@ namespace Publicus
         public string Path;
 
         public ContactDetailDeleteItemViewModel(
-            string rowId, 
-            string phrase, 
+            string rowId,
+            string phrase,
             string phraseConfirmationTitle,
             string phraseConfirmationQuestion,
             string path)
@@ -88,7 +88,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/master/delete/{id}"] = parameters =>
+            Get("/contact/detail/master/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -97,13 +97,13 @@ namespace Publicus
                 {
                     if (HasAccess(contact, PartAccess.Contact, AccessRight.Read))
                     {
-                        return View["View/contactdetail_master_delete.sshtml", 
+                        return View["View/contactdetail_master_delete.sshtml",
                             new ContactDetailDeleteViewModel(Translator, CurrentSession, contact)];
                     }
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

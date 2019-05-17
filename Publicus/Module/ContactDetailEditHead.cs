@@ -51,7 +51,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/edit/head/{id}"] = parameters =>
+            Get("/contact/edit/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -65,8 +65,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/contact/edit/head/{id}"] = parameters =>
+            });
+            Post("/contact/edit/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<ContactEditHeadViewModel>(ReadBody());
@@ -96,7 +96,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }
