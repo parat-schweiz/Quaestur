@@ -85,7 +85,7 @@ namespace Publicus
             }
             catch
             {
-                return null; 
+                return null;
             }
         }
 
@@ -116,7 +116,7 @@ namespace Publicus
             var request = new HttpRequestMessage();
             request.Method = HttpMethod.Get;
             request.RequestUri = new Uri(url);
-            request.Headers.Authorization = 
+            request.Headers.Authorization =
                 new AuthenticationHeaderValue("Bearer", token);
 
             var client = new HttpClient();
@@ -131,7 +131,7 @@ namespace Publicus
         }
 
         private enum ApiUrl
-        { 
+        {
             UserAuid = 1,
             UserProfile = 2,
             UserRoles = 3,
@@ -188,7 +188,7 @@ namespace Publicus
             {
                 if (!usedMasterRoles.Contains(masterRole))
                 {
-                    masterRole.Delete(Database); 
+                    masterRole.Delete(Database);
                 }
             }
         }
@@ -251,18 +251,18 @@ namespace Publicus
 
         public LoginModule()
         {
-            Get["/login"] = parameters =>
+            Get("/login", parameters =>
             {
                 var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
-                string oauthUrl = 
+                string oauthUrl =
                     string.Format("{0}?response_type=code&client_id={1}&state={2}&redirect_uri={3}",
                         Global.Config.Oauth2.OAuth2AuthorizationUrl,
                         Global.Config.Oauth2.OAuth2ClientId,
                         CreateState(returnUrl),
                         Nancy.Helpers.HttpUtility.UrlEncode(Global.Config.WebSiteAddress + "/login/redirect"));
-               return Response.AsRedirect(oauthUrl);
-            };
-            Get["/login/redirect"] = parameters =>
+                return Response.AsRedirect(oauthUrl);
+            });
+            Get("/login/redirect", parameters =>
             {
                 string state = Request.Query["state"] ?? string.Empty;
                 string code = Request.Query["code"] ?? string.Empty;
@@ -324,7 +324,7 @@ namespace Publicus
                     var user = Database.Query<User>(auid);
 
                     if (user == null)
-                    {   
+                    {
                         user = new User(Guid.NewGuid());
                         user.UserName.Value = username;
                         Database.Save(user);
@@ -342,8 +342,8 @@ namespace Publicus
                         Translate("Login.Redirect.Invalid.BackLink", "Link text of the message when login redirect is invalid", "Back"),
                         "/")];
                 }
-            };
-            Get["/logout"] = parameters =>
+            });
+            Get("/logout", parameters =>
             {
                 if (CurrentSession != null)
                 {
@@ -351,7 +351,7 @@ namespace Publicus
                 }
 
                 return Response.AsRedirect("/");
-            };
+            });
         }
     }
 }

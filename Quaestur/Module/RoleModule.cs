@@ -136,7 +136,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/role/{id}"] = parameters =>
+            Get("/role/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -151,8 +151,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/role/list/{id}"] = parameters =>
+            });
+            Get("/role/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -167,8 +167,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/role/edit/{id}"] = parameters =>
+            });
+            Get("/role/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -183,8 +183,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/role/edit/{id}"] = parameters =>
+            });
+            Post("/role/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<RoleEditViewModel>(ReadBody());
@@ -206,8 +206,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/role/add/{id}"] = parameters =>
+            });
+            Get("/role/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -222,8 +222,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/role/add/{id}"] = parameters =>
+            });
+            Post("/role/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var group = Database.Query<Group>(idString);
@@ -247,8 +247,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/role/delete/{id}"] = parameters =>
+            });
+            Get("/role/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -268,7 +268,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

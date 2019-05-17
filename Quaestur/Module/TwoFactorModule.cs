@@ -83,7 +83,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/twofactor/disable/{id}"] = parameters =>
+            Get("/twofactor/disable/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -97,8 +97,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/twofactor/disable/{id}"] = parameters =>
+            });
+            Post("/twofactor/disable/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -112,8 +112,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/twofactor/set/{id}"] = parameters =>
+            });
+            Get("/twofactor/set/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -144,8 +144,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/twofactor/set/{id}"] = parameters =>
+            });
+            Post("/twofactor/set/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<TwoFactorEditViewModel>(ReadBody());
@@ -202,8 +202,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/twofactor/verify/{id}"] = parameters =>
+            });
+            Post("/twofactor/verify/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<TwoFactorEditViewModel>(ReadBody());
@@ -230,8 +230,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/twofactor/qr/{key}"] = parameters =>
+            });
+            Get("/twofactor/qr/{key}", parameters =>
             {
                 string keyString = parameters.key;
 
@@ -251,7 +251,7 @@ namespace Quaestur
                 stream.Position = 0;
 
                 return new StreamResponse(() => stream, "image/png");
-            };
+            });
         }
     }
 
@@ -261,7 +261,7 @@ namespace Quaestur
         {
             this.RequiresAuthentication();
 
-            Get["/twofactor/auth"] = parameters =>
+            Get("/twofactor/auth", parameters =>
             {
                 if (CurrentSession.User.TwoFactorSecret.Value == null)
                 {
@@ -291,8 +291,8 @@ namespace Quaestur
                     return View["View/twofactorauth.sshtml",
                         new TwoFactorAuthViewModel(Translator, CurrentSession)];
                 }
-            };
-            Post["/twofactor/auth"] = parameters =>
+            });
+            Post("/twofactor/auth", parameters =>
             {
                 Global.Throttle.Check(CurrentSession.UserName, true);
                 var model = this.Bind<TwoFactorAuthViewModel>();
@@ -330,7 +330,7 @@ namespace Quaestur
 
                     return View["View/twofactorauth.sshtml", newModel];
                 }
-            };
+            });
         }
     }
 }

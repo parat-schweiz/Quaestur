@@ -15,14 +15,14 @@ namespace SecurityService
     {
         public InterfaceModule()
         {
-            Post["/agree"] = parameters =>
+            Post("/agree", parameters =>
             {
                 return Global.Service.Agree(ReadBody());
-            };
-            Post["/request"] = parameters =>
+            });
+            Post("/request", parameters =>
             {
                 return Global.Service.Request(ReadBody());
-            };
+            });
         }
 
         protected string ReadBody()

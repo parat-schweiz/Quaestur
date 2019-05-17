@@ -74,11 +74,11 @@ namespace Quaestur
         {
             this.RequiresAuthentication();
 
-            Get["/loginlink"] = parameters =>
+            Get("/loginlink", parameters =>
             {
                 return View["View/loginlink.sshtml", new LoginLinkViewModel(Database, Translator, CurrentSession)];
-            };
-            Get["/loginlink/current/{status}"] = parameters =>
+            });
+            Get("/loginlink/current/{status}", parameters =>
             {
                 string statusString = parameters.status;
                 string status = GetLinkStatus();
@@ -92,8 +92,8 @@ namespace Quaestur
                 }
 
                 return View["View/loginlinkcurrent.sshtml", new LoginLinkCurrentViewModel(Database, Translator, CurrentSession, GetCurrentLoginLink(), status)];
-            };
-            Get["/loginlink/qrcode/{id}"] = parameters =>
+            });
+            Get("/loginlink/qrcode/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var loginLink = Database.Query<LoginLink>(idString);
@@ -117,8 +117,8 @@ namespace Quaestur
                 {
                     return null;
                 }
-            };
-            Get["/loginlink/accept/{id}"] = parameters =>
+            });
+            Get("/loginlink/accept/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var loginLink = Database.Query<LoginLink>(idString);
@@ -132,8 +132,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/loginlink/reject/{id}"] = parameters =>
+            });
+            Get("/loginlink/reject/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var loginLink = Database.Query<LoginLink>(idString);
@@ -146,7 +146,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
 
         private string GetLinkStatus()

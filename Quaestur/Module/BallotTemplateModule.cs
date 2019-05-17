@@ -183,17 +183,17 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/ballottemplate"] = parameters =>
+            Get("/ballottemplate", parameters =>
             {
                 return View["View/ballottemplate.sshtml",
                     new BallotTemplateViewModel(Translator, CurrentSession)];
-            };
-            Get["/ballottemplate/list"] = parameters =>
+            });
+            Get("/ballottemplate/list", parameters =>
             {
                 return View["View/ballottemplatelist.sshtml",
                     new BallotTemplateListViewModel(Translator, Database, CurrentSession)];
-            };
-            Get["/ballottemplate/edit/{id}"] = parameters =>
+            });
+            Get("/ballottemplate/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballotTemplate = Database.Query<BallotTemplate>(idString);
@@ -208,8 +208,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/ballottemplate/copy/{id}"] = parameters =>
+            });
+            Get("/ballottemplate/copy/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballotTemplate = Database.Query<BallotTemplate>(idString);
@@ -245,8 +245,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/ballottemplate/edit/{id}"] = parameters =>
+            });
+            Post("/ballottemplate/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<BallotTemplateEditViewModel>(ReadBody());
@@ -276,13 +276,13 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/ballottemplate/add"] = parameters =>
+            });
+            Get("/ballottemplate/add", parameters =>
             {
                 return View["View/ballottemplateedit.sshtml",
                     new BallotTemplateEditViewModel(Translator, Database, CurrentSession)];
-            };
-            Post["/ballottemplate/add"] = parameters =>
+            });
+            Post("/ballottemplate/add", parameters =>
             {
                 var status = CreateStatus();
 
@@ -310,8 +310,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/ballottemplate/delete/{id}"] = parameters =>
+            });
+            Get("/ballottemplate/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballotTemplate = Database.Query<BallotTemplate>(idString);
@@ -330,8 +330,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/ballottemplate/test/{id}"] = parameters =>
+            });
+            Get("/ballottemplate/test/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballotTemplate = Database.Query<BallotTemplate>(idString);
@@ -439,7 +439,7 @@ namespace Quaestur
                 }
 
                 return JsonConvert.SerializeObject(result);
-            };
+            });
         }
 
         private void CopyTemplateLanguages(SendingTemplate source, SendingTemplate destination)

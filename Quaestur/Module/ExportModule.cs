@@ -160,7 +160,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/export"] = parameters =>
+            Get("/export", parameters =>
             {
                 if (HasAnyOrganizationAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -168,8 +168,8 @@ namespace Quaestur
                         new ExportViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/export/list"] = parameters =>
+            });
+            Get("/export/list", parameters =>
             {
                 if (HasAnyOrganizationAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -177,8 +177,8 @@ namespace Quaestur
                         new ExportListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/export/edit/{id}"] = parameters =>
+            });
+            Get("/export/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -192,8 +192,8 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
-            Post["/export/edit/{id}"] = parameters =>
+            });
+            Post("/export/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<ExportEditViewModel>(ReadBody());
@@ -223,8 +223,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/add"] = parameters =>
+            });
+            Get("/export/add", parameters =>
             {
                 if (HasAnyOrganizationAccess(PartAccess.Demography, AccessRight.Read))
                 {
@@ -232,8 +232,8 @@ namespace Quaestur
                         new ExportEditViewModel(Translator, Database, CurrentSession)];
                 }
                 return null;
-            };
-            Post["/export/add/new"] = parameters =>
+            });
+            Post("/export/add/new", parameters =>
             {
                 string idString = parameters.id;
                 var body = ReadBody();
@@ -260,8 +260,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/delete/{id}"] = parameters =>
+            });
+            Get("/export/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -285,8 +285,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/export/download/{id}"] = parameters =>
+            });
+            Get("/export/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var export = Database.Query<Export>(idString);
@@ -315,7 +315,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
 
         private IEnumerable<Person> Query(Export export)

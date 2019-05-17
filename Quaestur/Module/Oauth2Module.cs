@@ -85,7 +85,7 @@ namespace Quaestur
         {
             this.RequiresAuthentication();
 
-            Get["/oauth2/authorize/"] = parameters =>
+            Get("/oauth2/authorize/", parameters =>
             {
                 string responseType = Request.Query["response_type"];
                 if (responseType != "code")
@@ -174,8 +174,8 @@ namespace Quaestur
                                        "Bad client ID in OAuth2",
                                        "Bad client ID");
                 }
-            };
-            Post["/oauth2/callback/{id}"] = parameters =>
+            });
+            Post("/oauth2/callback/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var client = Database.Query<Oauth2Client>(idString);
@@ -232,7 +232,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
 
         private Oauth2Session CreateSession(Oauth2Client client)
@@ -313,7 +313,7 @@ namespace Quaestur
 
         public Oauth2TokenModule()
         {
-            Post["/oauth2/token"] = parameters =>
+            Post("/oauth2/token", parameters =>
             {
                 ExpireSessions();
                 var post = this.Bind<Oauth2TokenPost>();
@@ -366,8 +366,8 @@ namespace Quaestur
                 var error = new JObject(
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
-            };
-            Get["/api/v1/user/auid/"] = parameters =>
+            });
+            Get("/api/v1/user/auid/", parameters =>
             {
                 var session = FindSession();
 
@@ -381,8 +381,8 @@ namespace Quaestur
                 var error = new JObject(
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
-            };
-            Get["/api/v1/user/profile/"] = parameters =>
+            });
+            Get("/api/v1/user/profile/", parameters =>
             {
                 var session = FindSession();
 
@@ -409,8 +409,8 @@ namespace Quaestur
                 var error = new JObject(
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
-            };
-            Get["/api/v1/roles/"] = parameters =>
+            });
+            Get("/api/v1/roles/", parameters =>
             {
                 var session = FindSession();
 
@@ -436,8 +436,8 @@ namespace Quaestur
                 var error = new JObject(
                     new JProperty("error", "invalid_request"));
                 return Response.AsText(error.ToString(), "application/json");
-            };
-            Get["/api/v1/user/membership/"] = parameters =>
+            });
+            Get("/api/v1/user/membership/", parameters =>
             {
                 var session = FindSession();
 
@@ -453,8 +453,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/api/v1/user/roles/"] = parameters =>
+            });
+            Get("/api/v1/user/roles/", parameters =>
             {
                 var session = FindSession();
 
@@ -467,7 +467,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
 
         private JArray GetUserGroups(Person person)

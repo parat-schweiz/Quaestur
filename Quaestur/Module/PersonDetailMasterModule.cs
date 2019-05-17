@@ -150,7 +150,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/detail/master/{id}"] = parameters =>
+            Get("/person/detail/master/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -165,8 +165,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/person/detail/master/postal/{id}"] = parameters =>
+            });
+            Get("/person/detail/master/postal/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -181,8 +181,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/person/detail/master/email/{id}"] = parameters =>
+            });
+            Get("/person/detail/master/email/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -197,8 +197,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/person/detail/master/phone/{id}"] = parameters =>
+            });
+            Get("/person/detail/master/phone/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -213,7 +213,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

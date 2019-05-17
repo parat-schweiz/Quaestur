@@ -71,7 +71,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/subscriptions/{id}"] = parameters =>
+            Get("/contact/detail/subscriptions/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -80,13 +80,13 @@ namespace Publicus
                 {
                     if (HasAccess(contact, PartAccess.Subscription, AccessRight.Read))
                     {
-                        return View["View/contactdetail_subscriptions.sshtml", 
+                        return View["View/contactdetail_subscriptions.sshtml",
                             new ContactDetailSubscriptionViewModel(Database, Translator, CurrentSession, contact)];
                     }
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

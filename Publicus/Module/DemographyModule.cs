@@ -51,7 +51,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/demography/edit/{id}"] = parameters =>
+            Get("/demography/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -66,8 +66,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/demography/edit/{id}"] = parameters =>
+            });
+            Post("/demography/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<DemographyEditViewModel>(ReadBody());
@@ -94,7 +94,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

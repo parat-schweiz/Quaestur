@@ -42,7 +42,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/user/status/edit/{id}"] = parameters =>
+            Get("/user/status/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -58,8 +58,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/user/status/edit/{id}"] = parameters =>
+            });
+            Post("/user/status/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<UserStatusEditViewModel>(ReadBody());
@@ -85,7 +85,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

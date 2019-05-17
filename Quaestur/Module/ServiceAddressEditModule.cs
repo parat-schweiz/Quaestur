@@ -105,7 +105,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/serviceaddress/edit/{id}"] = parameters =>
+            Get("/serviceaddress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<ServiceAddress>(idString);
@@ -120,8 +120,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/serviceaddress/edit/{id}"] = parameters =>
+            });
+            Post("/serviceaddress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<ServiceAddressEditViewModel>(ReadBody());
@@ -162,8 +162,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/serviceaddress/add/phone/{id}"] = parameters =>
+            });
+            Get("/serviceaddress/add/phone/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -178,8 +178,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/serviceaddress/add/mail/{id}"] = parameters =>
+            });
+            Get("/serviceaddress/add/mail/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -194,8 +194,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/serviceaddress/add/{id}"] = parameters =>
+            });
+            Post("/serviceaddress/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<ServiceAddressEditViewModel>(ReadBody());
@@ -237,8 +237,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/serviceaddress/delete/{id}"] = parameters =>
+            });
+            Get("/serviceaddress/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<ServiceAddress>(idString);
@@ -272,8 +272,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/serviceaddress/switch"] = parameters =>
+            });
+            Post("/serviceaddress/switch", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
                 var source = Database.Query<ServiceAddress>(model.SourceId);
@@ -325,7 +325,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

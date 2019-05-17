@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
+using System.Security.Claims;
 
 namespace Quaestur
 {
@@ -18,7 +19,7 @@ namespace Quaestur
         Locked = 2,
     }
 
-    public class Session : IUserIdentity
+    public class Session : ClaimsPrincipal
     {
         public const string CompleteAuthClaim = "CompleteAuth";
         public const string TwoFactorAuthClaim = "TwoFactorAuth";
@@ -374,7 +375,7 @@ namespace Quaestur
             }
         }
 
-        public IUserIdentity GetUserFromIdentifier(Guid identifier, NancyContext context)
+        public ClaimsPrincipal GetUserFromIdentifier(Guid identifier, NancyContext context)
         {
             lock (_sessions)
             {

@@ -37,12 +37,12 @@ namespace Publicus
         public string PhraseFieldCountry;
 
         public PostalAddressEditViewModel()
-        { 
+        {
         }
 
         public PostalAddressEditViewModel(Translator translator)
-            : base(translator, 
-                   translator.Get("PostalAddress.Edit.Title", "Title of the postal address edit dialog", "Edit postal address"), 
+            : base(translator,
+                   translator.Get("PostalAddress.Edit.Title", "Title of the postal address edit dialog", "Edit postal address"),
                    "postalAddressEditDialog")
         {
             PhraseFieldCareOf = translator.Get("PostalAddress.Edit.Field.CareOf", "Field 'CareOf' in the postal address edit dialog", "c /o").EscapeHtml();
@@ -71,7 +71,7 @@ namespace Publicus
                 .Select(s => new NamedIdViewModel(translator, s, false))
                 .OrderBy(s => s.Name));
             States.Add(new NamedIdViewModel(
-                translator.Get("PostalAddress.Edit.Field.State.None", "No value in the field 'State' in the postal address edit dialog", "<None>"), 
+                translator.Get("PostalAddress.Edit.Field.State.None", "No value in the field 'State' in the postal address edit dialog", "<None>"),
                 false, true));
             Countries = new List<NamedIdViewModel>(
                 db.Query<Country>()
@@ -112,7 +112,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/postaladdress/edit/{id}"] = parameters =>
+            Get("/postaladdress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<PostalAddress>(idString);
@@ -127,8 +127,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/postaladdress/edit/{id}"] = parameters =>
+            });
+            Post("/postaladdress/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PostalAddressEditViewModel>(ReadBody());
@@ -160,8 +160,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/postaladdress/add/{id}"] = parameters =>
+            });
+            Get("/postaladdress/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -176,8 +176,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/postaladdress/add/{id}"] = parameters =>
+            });
+            Post("/postaladdress/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PostalAddressEditViewModel>(ReadBody());
@@ -212,8 +212,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/postaladdress/delete/{id}"] = parameters =>
+            });
+            Get("/postaladdress/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var address = Database.Query<PostalAddress>(idString);
@@ -233,8 +233,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/postaladdress/switch"] = parameters =>
+            });
+            Post("/postaladdress/switch", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
                 var source = Database.Query<PostalAddress>(model.SourceId);
@@ -276,7 +276,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

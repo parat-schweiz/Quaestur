@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * Bootstrap-select v1.13.2 (https://developer.snapappointments.com/bootstrap-select)
  *
  * Copyright 2012-2018 SnapAppointments, LLC
@@ -40,7 +40,7 @@
       } else {
         return _toggle.call(this, token);
       }
-    };
+    });
   }
 
   // shallow array comparison
@@ -48,7 +48,7 @@
     return array1.length === array2.length && array1.every(function(element, index) {
       return element === array2[index]; 
     });
-  };
+  });
 
   //<editor-fold desc="Shims">
   if (!String.prototype.startsWith) {
@@ -57,7 +57,7 @@
       var defineProperty = (function () {
         // IE 8 only supports `Object.defineProperty` on DOM elements
         try {
-          var object = {};
+          var object = {});
           var $defineProperty = Object.defineProperty;
           var result = $defineProperty(object, object, object) && $defineProperty;
         } catch (error) {
@@ -94,7 +94,7 @@
           }
         }
         return true;
-      };
+      });
       if (defineProperty) {
         defineProperty(String.prototype, 'startsWith', {
           'value': startsWith,
@@ -121,7 +121,7 @@
         r.hasOwnProperty.call(o, k) && r.push(k);
       // return result
       return r;
-    };
+    });
   }
 
   // much faster than $.val()
@@ -151,13 +151,13 @@
   var valHooks = {
     useDefault: false,
     _set: $.valHooks.select.set
-  };
+  });
 
   $.valHooks.select.set = function (elem, value) {
     if (value && !valHooks.useDefault) $(elem).data('selected', true);
 
     return valHooks._set.apply(this, arguments);
-  };
+  });
 
   var changed_arguments = null;
 
@@ -195,7 +195,7 @@
       // fall back to jQuery.trigger
       this.trigger(eventName);
     }
-  };
+  });
   //</editor-fold>
 
   function stringSearch(li, searchString, method, normalize) {
@@ -275,7 +275,7 @@
     '"': '&quot;',
     "'": '&#x27;',
     '`': '&#x60;'
-  };
+  });
   
   var unescapeMap = {
     '&amp;': '&',
@@ -284,13 +284,13 @@
     '&quot;': '"',
     '&#x27;': "'",
     '&#x60;': '`'
-  };
+  });
 
   // Functions for escaping and unescaping strings to/from HTML interpolation.
   var createEscaper = function (map) {
     var escaper = function (match) {
       return map[match];
-    };
+    });
     // Regexes for identifying a key that needs to be escaped.
     var source = '(?:' + Object.keys(map).join('|') + ')';
     var testRegexp = RegExp(source);
@@ -298,8 +298,8 @@
     return function (string) {
       string = string == null ? '' : '' + string;
       return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
-    };
-  };
+    });
+  });
 
   var htmlEscape = createEscaper(escapeMap);
   var htmlUnescape = createEscaper(unescapeMap);
@@ -359,7 +359,7 @@
     103: '7',
     104: '8',
     105: '9'
-  };
+  });
 
   var keyCodes = {
     ESCAPE: 27, // KeyboardEvent.which value for Escape (Esc) key
@@ -373,7 +373,7 @@
   var version = {
     success: false,
     major: '3'
-  };
+  });
 
   try {
     version.full = ($.fn.dropdown.Constructor.VERSION || '').split(' ')[0].split('.');
@@ -456,7 +456,7 @@
           }
         }
       }
-    };
+    });
     // If we have no title yet, try to pull it from the html title attribute (jQuery doesnt' pick it up as it's not a
     // data-attribute)
     if (this.options.title === null) {
@@ -482,7 +482,7 @@
     this.hide = Selectpicker.prototype.hide;
 
     this.init();
-  };
+  });
 
   Selectpicker.VERSION = '1.13.2';
 
@@ -537,7 +537,7 @@
     windowPadding: 0,
     virtualScroll: 600,
     display: false
-  };
+  });
 
   if (version.major === '4') {
     Selectpicker.DEFAULTS.style = 'btn-light';
@@ -974,7 +974,7 @@
         if (typeof optgroup !== 'undefined' && null !== optgroup) li.classList.add('optgroup-' + optgroup);
 
         return li;
-      };
+      });
 
       /**
        * @param text
@@ -998,7 +998,7 @@
         if (inline) a.setAttribute('style', inline);
 
         return a;
-      };
+      });
 
       var generateText = function (options) {
         var textElement = elementTemplates.text.cloneNode(false),
@@ -1030,7 +1030,7 @@
         fragment.appendChild(textElement);
 
         return fragment;
-      };
+      });
 
       var generateLabel = function (options) {
         var labelTextElement = elementTemplates.text.cloneNode(false),
@@ -1450,7 +1450,7 @@
     liHeight: function (refresh) {
       if (!refresh && (this.options.size === false || this.sizeInfo)) return;
 
-      if (!this.sizeInfo) this.sizeInfo = {};
+      if (!this.sizeInfo) this.sizeInfo = {});
 
       var newElement = document.createElement('div'),
           menu = document.createElement('div'),
@@ -1573,7 +1573,7 @@
         containerPos.top += parseInt($container.css('borderTopWidth'));
         containerPos.left += parseInt($container.css('borderLeftWidth'));
       } else {
-        containerPos = { top: 0, left: 0 };
+        containerPos = { top: 0, left: 0 });
       }
 
       var winPad = that.options.windowPadding;
@@ -1764,7 +1764,7 @@
               containerPos.top += parseInt($container.css('borderTopWidth')) - $container.scrollTop();
               containerPos.left += parseInt($container.css('borderLeftWidth')) - $container.scrollLeft();
             } else {
-              containerPos = { top: 0, left: 0 };
+              containerPos = { top: 0, left: 0 });
             }
 
             actualHeight = $element.hasClass(classNames.DROPUP) ? 0 : $element[0].offsetHeight;
@@ -1778,7 +1778,7 @@
             containerPosition['width'] = $element[0].offsetWidth;
 
             that.$bsContainer.css(containerPosition);
-          };
+          });
 
       this.$button.on('click.bs.dropdown.data-api', function () {
         if (that.isDisabled()) {
@@ -2222,8 +2222,8 @@
       this.$searchbox.on('input propertychange', function () {
         var searchValue = that.$searchbox.val();
         
-        that.selectpicker.search.map.newIndex = {};
-        that.selectpicker.search.map.originalIndex = {};
+        that.selectpicker.search.map.newIndex = {});
+        that.selectpicker.search.map.originalIndex = {});
         that.selectpicker.search.elements = [];
         that.selectpicker.search.data = [];
 
@@ -2592,8 +2592,8 @@
       var config = $.extend({}, this.options, this.$element.data());
       this.options = config;
 
-      this.selectpicker.main.map.newIndex = {};
-      this.selectpicker.main.map.originalIndex = {};
+      this.selectpicker.main.map.newIndex = {});
+      this.selectpicker.main.map.originalIndex = {});
       this.createLi();
       this.checkDisabled();
       this.render();
@@ -2632,7 +2632,7 @@
         .removeData('selectpicker')
         .removeClass('bs-select-hidden selectpicker');
     }
-  };
+  });
 
   // SELECTPICKER PLUGIN DEFINITION
   // ==============================
@@ -2714,7 +2714,7 @@
   $.fn.selectpicker.noConflict = function () {
     $.fn.selectpicker = old;
     return this;
-  };
+  });
 
   $(document)
       .off('keydown.bs.dropdown.data-api')

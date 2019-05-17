@@ -159,7 +159,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/roleassignment/{id}"] = parameters =>
+            Get("/roleassignment/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -174,8 +174,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/roleassignment/list/{id}"] = parameters =>
+            });
+            Get("/roleassignment/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -190,8 +190,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/roleassignment/add/{id}"] = parameters =>
+            });
+            Get("/roleassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -217,8 +217,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/roleassignment/add/{id}"] = parameters =>
+            });
+            Post("/roleassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -289,8 +289,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/roleassignment/delete/{id}"] = parameters =>
+            });
+            Get("/roleassignment/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var roleAssignment = Database.Query<RoleAssignment>(idString);
@@ -317,7 +317,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

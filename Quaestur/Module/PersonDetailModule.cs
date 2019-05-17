@@ -108,7 +108,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/new"] = parameters =>
+            Get("/person/new", parameters =>
             {
                 var organization = CurrentSession.User.RoleAssignments
                     .Select(ra => ra.Role.Value.Group.Value.Organization.Value)
@@ -153,8 +153,8 @@ namespace Quaestur
                     return Response.AsRedirect("/person/detail/" + person.Id.Value.ToString());
                 }
                 return AccessDenied();
-            };
-            Get["/person/detail/{id}"] = parameters =>
+            });
+            Get("/person/detail/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -173,8 +173,8 @@ namespace Quaestur
                     Translate("Person.Detail.NotFound.Message", "Text of the message when person is not found", "No person was found."),
                     Translate("Person.Detail.NotFound.BackLink", "Link text of the message when person is not found", "Back"),
                     "/")];
-            };
-            Get["/person/detail/head/{id}"] = parameters =>
+            });
+            Get("/person/detail/head/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -188,7 +188,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
 
         private static long Value(MembershipType type)

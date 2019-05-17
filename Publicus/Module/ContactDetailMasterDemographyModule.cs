@@ -51,7 +51,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/contact/detail/master/demography/{id}"] = parameters =>
+            Get("/contact/detail/master/demography/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -66,7 +66,7 @@ namespace Publicus
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

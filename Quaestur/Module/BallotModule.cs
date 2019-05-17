@@ -146,17 +146,17 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/ballot"] = parameters =>
+            Get("/ballot", parameters =>
             {
                 return View["View/ballot.sshtml",
                     new BallotViewModel(Translator, CurrentSession)];
-            };
-            Get["/ballot/list"] = parameters =>
+            });
+            Get("/ballot/list", parameters =>
             {
                 return View["View/ballotlist.sshtml",
                     new BallotListViewModel(Translator, Database, CurrentSession)];
-            };
-            Get["/ballot/edit/{id}"] = parameters =>
+            });
+            Get("/ballot/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballot = Database.Query<Ballot>(idString);
@@ -172,8 +172,8 @@ namespace Quaestur
                 }
 
                 return Response.AsRedirect("/ballot");
-            };
-            Get["/ballot/copy/{id}"] = parameters =>
+            });
+            Get("/ballot/copy/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballot = Database.Query<Ballot>(idString);
@@ -195,8 +195,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Post["/ballot/edit/{id}"] = parameters =>
+            });
+            Post("/ballot/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<BallotEditViewModel>(ReadBody());
@@ -236,13 +236,13 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/ballot/add"] = parameters =>
+            });
+            Get("/ballot/add", parameters =>
             {
                 return View["View/ballotedit.sshtml",
                     new BallotEditViewModel(Translator, Database, CurrentSession)];
-            };
-            Post["/ballot/add/new"] = parameters =>
+            });
+            Post("/ballot/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -269,8 +269,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/ballot/delete/{id}"] = parameters =>
+            });
+            Get("/ballot/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballot = Database.Query<Ballot>(idString);
@@ -289,8 +289,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/ballot/test/{id}"] = parameters =>
+            });
+            Get("/ballot/test/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballot = Database.Query<Ballot>(idString);
@@ -392,7 +392,7 @@ namespace Quaestur
                 }
 
                 return JsonConvert.SerializeObject(result);
-            };
+            });
         }
     }
 }

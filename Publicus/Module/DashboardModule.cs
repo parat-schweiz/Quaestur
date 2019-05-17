@@ -81,11 +81,11 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/"] = parameters =>
+            Get("/", parameters =>
             {
                 return View["View/dashboard.sshtml",
                     new DashboardViewModel(Translator, Database, CurrentSession)];
-            };
+            });
         }
     }
 }

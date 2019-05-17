@@ -343,11 +343,11 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/list"] = parameters =>
+            Get("/person/list", parameters =>
             {
                 return View["View/personlist.sshtml", new PersonListViewModel(Database, Translator, CurrentSession)];
-            };
-            Get["/person/list/settings/list"] = parameters =>
+            });
+            Get("/person/list/settings/list", parameters =>
             {
                 var settingsList = Database
                     .Query<SearchSettings>(DC.Equal("personid", CurrentSession.User.Id.Value))
@@ -372,8 +372,8 @@ namespace Quaestur
                 }
 
                 return result.ToString();
-            };
-            Get["/person/list/settings/get/{ssid}"] = parameters =>
+            });
+            Get("/person/list/settings/get/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -386,8 +386,8 @@ namespace Quaestur
 
                 var update = new SearchSettingsUpdate(settings);
                 return JsonConvert.SerializeObject(update).ToString();
-            };
-            Post["/person/list/settings/set/{ssid}"] = parameters =>
+            });
+            Post("/person/list/settings/set/{ssid}", parameters =>
             {
                 var update = JsonConvert.DeserializeObject<SearchSettingsUpdate>(ReadBody());
                 string searchSettingsId = parameters.ssid;
@@ -407,8 +407,8 @@ namespace Quaestur
                 update.Apply(Database, settings);
                 Database.Save(settings);
                 return status.CreateJsonData();
-            };
-            Get["/person/list/data/{ssid}"] = parameters =>
+            });
+            Get("/person/list/data/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -422,8 +422,8 @@ namespace Quaestur
                     .Skip(skip)
                     .Take(settings.ItemsPerPage);
                 return View["View/personlist_data.sshtml", new PersonListDataViewModel(Database, Translator, page, settings, CurrentSession)];
-            };
-            Get["/person/list/pages/{ssid}"] = parameters =>
+            });
+            Get("/person/list/pages/{ssid}", parameters =>
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
@@ -440,7 +440,7 @@ namespace Quaestur
                 }
 
                 return View["View/personlist_pages.sshtml", new PersonPagesViewModel(Translator, pageCount, settings)];
-            };
+            });
         }
     }
 }

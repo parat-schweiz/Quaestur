@@ -148,7 +148,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/tag"] = parameters =>
+            Get("/tag", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -156,8 +156,8 @@ namespace Quaestur
                         new TagViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/tag/list"] = parameters =>
+            });
+            Get("/tag/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -165,8 +165,8 @@ namespace Quaestur
                     new TagListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/tag/edit/{id}"] = parameters =>
+            });
+            Get("/tag/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -180,8 +180,8 @@ namespace Quaestur
                     }
                 }
                 return null;
-            };
-            Post["/tag/edit/{id}"] = parameters =>
+            });
+            Post("/tag/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -206,8 +206,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tag/add"] = parameters =>
+            });
+            Get("/tag/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -215,8 +215,8 @@ namespace Quaestur
                         new TagEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/tag/add/new"] = parameters =>
+            });
+            Post("/tag/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -237,8 +237,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tag/delete/{id}"] = parameters =>
+            });
+            Get("/tag/delete/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -259,7 +259,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

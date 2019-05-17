@@ -74,7 +74,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/subscription/edit/{id}"] = parameters =>
+            Get("/subscription/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var subscription = Database.Query<Subscription>(idString);
@@ -89,8 +89,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/subscription/edit/{id}"] = parameters =>
+            });
+            Post("/subscription/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<SubscriptionEditViewModel>(ReadBody());
@@ -118,8 +118,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/subscription/add/{id}"] = parameters =>
+            });
+            Get("/subscription/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -134,8 +134,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/subscription/add/{id}"] = parameters =>
+            });
+            Post("/subscription/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<SubscriptionEditViewModel>(ReadBody());
@@ -165,8 +165,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/subscription/delete/{id}"] = parameters =>
+            });
+            Get("/subscription/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var subscription = Database.Query<Subscription>(idString);
@@ -186,7 +186,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

@@ -4,17 +4,15 @@ using Nancy;
 using Nancy.Responses;
 using Nancy.ErrorHandling;
 using Nancy.ViewEngines;
+using Nancy.ViewEngines.SuperSimpleViewEngine;
 using SiteLibrary;
 
 namespace Quaestur
 {
     public class CustomStatusPage : IStatusCodeHandler
     {
-        private readonly IViewRenderer _viewRenderer;
-
-        public CustomStatusPage(IViewRenderer viewRenderer)
+        public CustomStatusPage()
         {
-            _viewRenderer = viewRenderer;
         }
 
         public bool HandlesStatusCode(HttpStatusCode statusCode, NancyContext context)
@@ -58,9 +56,8 @@ namespace Quaestur
                 {
                     var translation = new Translation(database);
                     var translator = new Translator(translation, Language.English);
-                    var response = _viewRenderer.RenderView(context, "View/info.sshtml", GetInfo(statusCode, translator));
-                    response.StatusCode = statusCode;
-                    context.Response = response;
+                    //var response = RenderView(context, "View/info.sshtml", GetInfo(statusCode, translator));
+                    context.Response.StatusCode = statusCode;
                 }
             }
             catch (Exception exception)
@@ -68,40 +65,6 @@ namespace Quaestur
                 Global.Log.Error("Custom status page threw exception: {0}", exception.Message);
                 context.Response = new TextResponse("Error in error handling");
                 context.Response.StatusCode = statusCode;
-            }
-        }
-    }
-
-    public class ErrorHtmlPageResponse : HtmlResponse
-    {
-        public string Title { get; private set; }
-        public string Text { get; private set; }
-
-        public ErrorHtmlPageResponse(HttpStatusCode statusCode, string title, string text)
-        {
-            StatusCode = statusCode;
-            ContentType = "text/html; charset=utf-8";
-            Contents = Render;
-            Title = title;
-            Text = text;
-        }
-
-        void Render(Stream stream)
-        {
-            using (var writer = new StreamWriter(stream))
-            {
-                writer.WriteLine("<html>");
-                writer.WriteLine("<head>");
-                writer.WriteLine("<meta charset=\"UTF-8\"/>");
-                writer.WriteLine("<title>{0}</title>", Global.Config.SiteName);
-                writer.WriteLine("<link rel=\"stylesheet\" href=\"/assets/main.css\"/>");
-                writer.WriteLine("</head>");
-                writer.WriteLine("<body>");
-                writer.WriteLine("<h1>" + Title + "</h1>");
-                writer.WriteLine("<p>" + Text + "</p>");
-                writer.WriteLine("</body>");
-                writer.WriteLine("</html>");
-                writer.Flush();
             }
         }
     }

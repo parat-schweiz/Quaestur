@@ -114,7 +114,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/bill/edit/{id}"] = parameters =>
+            Get("/bill/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var bill = Database.Query<Bill>(idString);
@@ -129,8 +129,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/bill/edit/{id}"] = parameters =>
+            });
+            Post("/bill/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<BillEditViewModel>(ReadBody());
@@ -165,8 +165,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/bill/add/{id}"] = parameters =>
+            });
+            Get("/bill/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -181,8 +181,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/bill/add/{id}"] = parameters =>
+            });
+            Post("/bill/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<BillEditViewModel>(ReadBody());
@@ -218,8 +218,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/bill/delete/{id}"] = parameters =>
+            });
+            Get("/bill/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var bill = Database.Query<Bill>(idString);
@@ -239,8 +239,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/bill/download/{id}"] = parameters =>
+            });
+            Get("/bill/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var bill = Database.Query<Bill>(idString);
@@ -261,7 +261,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

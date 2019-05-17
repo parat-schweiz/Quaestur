@@ -56,7 +56,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/person/detail/master/publickeys/{id}"] = parameters =>
+            Get("/person/detail/master/publickeys/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -71,7 +71,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

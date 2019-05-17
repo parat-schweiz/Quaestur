@@ -29,7 +29,7 @@ namespace Publicus
         public string PhraseFieldItalian;
 
         public PhraseEditViewModel()
-        { 
+        {
         }
 
         public PhraseEditViewModel(Translator translator)
@@ -88,9 +88,9 @@ namespace Publicus
     public class PhraseViewModel : MasterViewModel
     {
         public PhraseViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("Phrase.List.Title", "Title of the phrase list page", "Countries"), 
+            : base(translator, translator.Get("Phrase.List.Title", "Title of the phrase list page", "Countries"),
             session)
-        { 
+        {
         }
     }
 
@@ -160,7 +160,7 @@ namespace Publicus
                 if (translation != null)
                 {
                     translation.Delete(Database);
-                    phrase.Translations.Remove(translation); 
+                    phrase.Translations.Remove(translation);
                 }
             }
             else
@@ -185,7 +185,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/phrase"] = parameters =>
+            Get("/phrase", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -193,8 +193,8 @@ namespace Publicus
                         new PhraseViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/phrase/list"] = parameters =>
+            });
+            Get("/phrase/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -202,8 +202,8 @@ namespace Publicus
                         new PhraseListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/phrase/edit/{id}"] = parameters =>
+            });
+            Get("/phrase/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -217,8 +217,8 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
-            Post["/phrase/edit/{id}"] = parameters =>
+            });
+            Post("/phrase/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -244,7 +244,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

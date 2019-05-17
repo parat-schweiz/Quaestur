@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * http://suyati.github.io/line-control
  * LineControl 1.1.0
  * Copyright (C) 2014, Suyati Technologies
@@ -369,7 +369,7 @@ You should have received a copy of the GNU General Public License along with thi
 						  "Georgia"	 	 : "georgia,serif",
 						  "Tahoma" 		 : "tahoma,sans-serif",
 						  "Trebuchet MS" : "trebuchet ms,sans-serif",
-						  "Verdana" 	 : "verdana,sans-serif"};
+						  "Verdana" 	 : "verdana,sans-serif"});
 
 			var styles = {  "Heading 1":"<h1>",
 							"Heading 2":"<h2>",
@@ -377,13 +377,13 @@ You should have received a copy of the GNU General Public License along with thi
 							"Heading 4":"<h4>",
 							"Heading 5":"<h5>",
 							"Heading 6":"<h6>",
-							"Paragraph":"<p>" };
+							"Paragraph":"<p>" });
 
 			var fontsizes = {	"Small"	:"2",
 								"Normal":"3",
 								"Medium":"4",
 								"Large"	:"5",
-								"Huge"	:"6" };
+								"Huge"	:"6" });
 
 			var colors = [	{ name: 'Black', hex: '#000000' },
 							{ name: 'MediumBlack', hex: '#444444' },
@@ -960,7 +960,7 @@ You should have received a copy of the GNU General Public License along with thi
 											"commandname":null, 
 											"custom":function(button, params){ methods.getSource.apply(this, [button, params]) } },
 											"params": {"obj":null},
-										   };
+										   });
 
 			var menuGroups = {'texteffects' : ['bold', 'italics', 'underline', 'color'],
 							  'aligneffects': ['l_align','c_align', 'r_align', 'justify'],
@@ -971,7 +971,7 @@ You should have received a copy of the GNU General Public License along with thi
 							  'extraeffects' : ['strikeout', 'hr_line', 'splchars'],
 							  'advancedoptions' : ['print', 'rm_format', 'select_all', 'source'],
 							  'screeneffects' : ['togglescreen']
-							};
+							});
 
 			var settings = $.extend({				
 				'texteffects':true,
@@ -1168,7 +1168,7 @@ You should have received a copy of the GNU General Public License along with thi
 	       		}	       		
 				$("#imgAttribute").modal("hide");
 				editorObj.data("editor").focus();
-			};
+			});
 			methods.createModal.apply(this,[cModalId,cModalHeader, imgModalBody, onSave]);
 			var modalTrigger = $('<a/>',{	href:"#"+cModalId,
        										"text":"Image Attributes",
@@ -1246,7 +1246,7 @@ You should have received a copy of the GNU General Public License along with thi
 			    $(event.target).closest('table').attr('cellpadding',tblCellpaddingEdt);
 			    $("#" + modalId).modal("hide");
 				editorObj.data("editor").focus();
-       		};
+       		});
        		methods.createModal.apply(this,[modalId,modalHeader, tblModalBody, onSave]);
        		var modalTrigger = $('<a/>',{	href:"#"+modalId,
        										"text":"Table Properties",
@@ -1621,5 +1621,5 @@ You should have received a copy of the GNU General Public License along with thi
 		} else {
 			$.error( 'Method ' +  method + ' does not exist on jQuery.Editor' );
 		}    
-	}; 
+	}); 
 })( jQuery );

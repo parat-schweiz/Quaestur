@@ -41,7 +41,7 @@ namespace Quaestur
     {
         public LinkLoginModule()
         {
-            Get["/linklogin/{id}/{code}"] = parameters =>
+            Get("/linklogin/{id}/{code}", parameters =>
             {
                 string idString = parameters.id;
                 string codeString = parameters.code;
@@ -66,8 +66,8 @@ namespace Quaestur
                         Translate("LinkLogin.Error.BackLink", "Back link on link login error page", "Back"),
                         "/")];
                 }
-            };
-            Get["/linklogin/wait/{id}"] = parameters =>
+            });
+            Get("/linklogin/wait/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var loginLink = Database.Query<LoginLink>(idString);
@@ -100,7 +100,7 @@ namespace Quaestur
                 }
 
                 return null;
-            };
+            });
         }
     }
 }

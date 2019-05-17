@@ -48,7 +48,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/tagassignment/add/{id}"] = parameters =>
+            Get("/tagassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
@@ -63,8 +63,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/tagassignment/add/{id}"] = parameters =>
+            });
+            Post("/tagassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<TagAssignmentEditViewModel>(ReadBody());
@@ -92,8 +92,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tagassignment/delete/{id}"] = parameters =>
+            });
+            Get("/tagassignment/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var tagAssignment = Database.Query<TagAssignment>(idString);
@@ -113,7 +113,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

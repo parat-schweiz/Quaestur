@@ -99,12 +99,12 @@ namespace Quaestur
 
         public PasswordResetModule()
         {
-            Get["/password/reset/request"] = parameters =>
+            Get("/password/reset/request", parameters =>
             {
                 return View["View/passwordresetrequest.sshtml",
                     new PasswordResetRequestViewModel(Translator)];
-            };
-            Post["/password/reset/request"] = parameters =>
+            });
+            Post("/password/reset/request", parameters =>
             {
                 var model = this.Bind<PasswordResetRequestViewModel>();
 
@@ -189,8 +189,8 @@ namespace Quaestur
                     newModel.Valid = "is-invalid";
                     return View["View/passwordresetrequest.sshtml", newModel];
                 }
-            };
-            Get["/password/reset/change/{id}/{time}/{mac}"] = parameters =>
+            });
+            Get("/password/reset/change/{id}/{time}/{mac}", parameters =>
             {
                 string idString = parameters.id;
                 string timeString = parameters.time;
@@ -214,8 +214,8 @@ namespace Quaestur
                 }
 
                 return ChangeInvalid();
-            };
-            Post["/password/reset/change/{id}/{time}/{mac}"] = parameters =>
+            });
+            Post("/password/reset/change/{id}/{time}/{mac}", parameters =>
             {
                 string idString = parameters.id;
                 string timeString = parameters.time;
@@ -271,7 +271,7 @@ namespace Quaestur
                 }
 
                 return ChangeInvalid();
-            };
+            });
         }
 
         private Negotiator ChangeInvalid()

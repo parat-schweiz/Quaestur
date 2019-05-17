@@ -150,17 +150,17 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/organization"] = parameters =>
+            Get("/organization", parameters =>
             {
                 return View["View/organization.sshtml",
                     new OrganizationViewModel(Translator, CurrentSession)];
-            };
-            Get["/organization/list"] = parameters =>
+            });
+            Get("/organization/list", parameters =>
             {
                 return View["View/organizationlist.sshtml",
                     new OrganizationListViewModel(Translator, CurrentSession, Database)];
-            };
-            Get["/organization/edit/{id}"] = parameters =>
+            });
+            Get("/organization/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -175,8 +175,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/organization/edit/{id}"] = parameters =>
+            });
+            Post("/organization/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<OrganizationEditViewModel>(ReadBody());
@@ -199,8 +199,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/organization/add"] = parameters =>
+            });
+            Get("/organization/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.Structure, AccessRight.Write))
                 {
@@ -208,8 +208,8 @@ namespace Quaestur
                         new OrganizationEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/organization/add/new"] = parameters =>
+            });
+            Post("/organization/add/new", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<OrganizationEditViewModel>(ReadBody());
                 var status = CreateStatus();
@@ -229,8 +229,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/organization/delete/{id}"] = parameters =>
+            });
+            Get("/organization/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -250,7 +250,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

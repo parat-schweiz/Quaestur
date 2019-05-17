@@ -18,12 +18,12 @@ namespace Publicus
         public string PhraseFieldTag;
 
         public TagAssignmentEditViewModel()
-        { 
+        {
         }
 
         public TagAssignmentEditViewModel(Translator translator)
-            : base(translator, 
-                   translator.Get("TagAssignment.Edit.Title", "Title of the edit tagAssignment dialog", "Edit tag assignment"), 
+            : base(translator,
+                   translator.Get("TagAssignment.Edit.Title", "Title of the edit tagAssignment dialog", "Edit tag assignment"),
                    "tagAssignmentEditDialog")
         {
             PhraseFieldTag = translator.Get("TagAssignment.Edit.Field.Tag", "Field 'Tag' in the edit tagAssignment dialog", "Tag").EscapeHtml();
@@ -51,7 +51,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/tagassignment/add/{id}"] = parameters =>
+            Get("/tagassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var contact = Database.Query<Contact>(idString);
@@ -66,8 +66,8 @@ namespace Publicus
                 }
 
                 return null;
-            };
-            Post["/tagassignment/add/{id}"] = parameters =>
+            });
+            Post("/tagassignment/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<TagAssignmentEditViewModel>(ReadBody());
@@ -95,8 +95,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tagassignment/delete/{id}"] = parameters =>
+            });
+            Get("/tagassignment/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var tagAssignment = Database.Query<TagAssignment>(idString);
@@ -116,7 +116,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

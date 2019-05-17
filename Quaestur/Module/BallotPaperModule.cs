@@ -184,12 +184,12 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/ballotpaper"] = parameters =>
+            Get("/ballotpaper", parameters =>
             {
                 return View["View/ballotpaper.sshtml",
                     new BallotPaperViewModel(Translator, Database, CurrentSession)];
-            };
-            Get["/ballotpaper/download/{id}"] = parameters =>
+            });
+            Get("/ballotpaper/download/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var ballotPaper = Database.Query<BallotPaper>(idString);
@@ -251,8 +251,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/ballotpaper/verify/{id}/{code}"] = parameters =>
+            });
+            Get("/ballotpaper/verify/{id}/{code}", parameters =>
             {
                 string idString = parameters.id;
                 string codeString = parameters.code;
@@ -304,7 +304,7 @@ namespace Quaestur
                         Translate("BallotPaper.Verify.Error.BackLink", "Back link on ballot paper verfiy error", "Back"),
                         "/")];
                 }
-            };
+            });
         }
     }
 }

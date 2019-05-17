@@ -190,7 +190,7 @@ namespace Quaestur
         {
             RequireCompleteLogin();
 
-            Get["/permission/{id}"] = parameters =>
+            Get("/permission/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -205,8 +205,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/permission/list/{id}"] = parameters =>
+            });
+            Get("/permission/list/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -221,8 +221,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Get["/permission/edit/{id}"] = parameters =>
+            });
+            Get("/permission/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var permission = Database.Query<Permission>(idString);
@@ -237,8 +237,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/permission/edit/{id}"] = parameters =>
+            });
+            Post("/permission/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<PermissionEditViewModel>(ReadBody());
@@ -268,8 +268,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/permission/add/{id}"] = parameters =>
+            });
+            Get("/permission/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -284,8 +284,8 @@ namespace Quaestur
                 }
 
                 return null;
-            };
-            Post["/permission/add/{id}"] = parameters =>
+            });
+            Post("/permission/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var role = Database.Query<Role>(idString);
@@ -317,8 +317,8 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/permission/delete/{id}"] = parameters =>
+            });
+            Get("/permission/delete/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var permission = Database.Query<Permission>(idString);
@@ -333,7 +333,7 @@ namespace Quaestur
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }

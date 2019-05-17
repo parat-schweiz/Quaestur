@@ -1,4 +1,4 @@
-/*!
+﻿/*!
  * Bootstrap-select v1.13.2 (https://developer.snapappointments.com/bootstrap-select)
  *
  * Copyright 2012-2018 SnapAppointments, LLC
@@ -33,7 +33,7 @@
     multipleSeparator: ', ',
     selectAllText: 'Seleziona Tutto',
     deselectAllText: 'Deseleziona Tutto'
-  };
+  });
 })(jQuery);
 
 

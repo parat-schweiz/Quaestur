@@ -3,13 +3,14 @@ using Nancy;
 using Nancy.ErrorHandling;
 using Nancy.Responses;
 using Nancy.ViewEngines;
+using Nancy.ViewEngines.SuperSimpleViewEngine;
 using SiteLibrary;
 
 namespace Quaestur
 {
-    public class ForbiddenHandler : DefaultViewRenderer, IStatusCodeHandler
+    public class ForbiddenHandler : IStatusCodeHandler
     {
-        public ForbiddenHandler(IViewFactory factory) : base(factory)
+        public ForbiddenHandler()
         {
         }
 
@@ -46,13 +47,12 @@ namespace Quaestur
 
         private void Render(NancyContext context, Translator translator)
         {
-            var response = RenderView(context, "View/info", new InfoViewModel(translator,
+            var model = new InfoViewModel(translator,
                 translator.Get("Forbidden.Title", "Title of the message on the unauthorized page", "Forbidden"),
                 translator.Get("Forbidden.Message", "Text of the message on the unauthorized page", "You are forbidden from viewing this page."),
                 translator.Get("Forbidden.BackLink", "Link text of the message on the unauthorized page", "Back"),
-                "/"));
-            response.StatusCode = HttpStatusCode.Forbidden;
-            context.Response = response;
+                "/");
+            context.Response = HttpStatusCode.Forbidden;
         }
     }
 }

@@ -151,7 +151,7 @@ namespace Publicus
         {
             this.RequiresAuthentication();
 
-            Get["/tag"] = parameters =>
+            Get("/tag", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -159,8 +159,8 @@ namespace Publicus
                         new TagViewModel(Translator, CurrentSession)];
                 }
                 return AccessDenied();
-            };
-            Get["/tag/list"] = parameters =>
+            });
+            Get("/tag/list", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -168,8 +168,8 @@ namespace Publicus
                     new TagListViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Get["/tag/edit/{id}"] = parameters =>
+            });
+            Get("/tag/edit/{id}", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -183,8 +183,8 @@ namespace Publicus
                     }
                 }
                 return null;
-            };
-            Post["/tag/edit/{id}"] = parameters =>
+            });
+            Post("/tag/edit/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -209,8 +209,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tag/add"] = parameters =>
+            });
+            Get("/tag/add", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
@@ -218,8 +218,8 @@ namespace Publicus
                         new TagEditViewModel(Translator, Database)];
                 }
                 return null;
-            };
-            Post["/tag/add/new"] = parameters =>
+            });
+            Post("/tag/add/new", parameters =>
             {
                 var status = CreateStatus();
 
@@ -240,8 +240,8 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
-            Get["/tag/delete/{id}"] = parameters =>
+            });
+            Get("/tag/delete/{id}", parameters =>
             {
                 var status = CreateStatus();
 
@@ -262,7 +262,7 @@ namespace Publicus
                 }
 
                 return status.CreateJsonData();
-            };
+            });
         }
     }
 }
