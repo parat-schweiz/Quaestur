@@ -1,0 +1,39 @@
+﻿<script>
+$("#roleAssignmentRowAdd").click(function(){
+  $.get("/roleassignment/add/@Model.Id", function(data, status){
+    if (data){
+      $('#roleAssignmentEditDialog').replaceWith(data);
+      $('#roleAssignmentEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#roleAssignmentRowDelete@Current.Id").click(function(){
+  $.get("/roleassignment/delete/@Current.Id", function(data, status){
+    updateRoleAssignmentList();
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="100%" colspan="3"><a href="/role/@Model.ParentId">@Model.PhraseHeaderRoleGroupFeed</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="90%">@Current.MasterRole</td>
+      <td width="10%" id="roleAssignmentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    @If.AddAccess
+    <tr class='centering clickable-row'>
+      <td width="90%" id="roleAssignmentRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+    @EndIf
+  </tbody>
+</table>
+<div id="roleAssignmentEditDialog"/>

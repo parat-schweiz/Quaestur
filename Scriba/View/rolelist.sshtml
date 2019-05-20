@@ -1,0 +1,65 @@
+﻿<script>
+$("#roleRowAdd").click(function(){
+  $.get("/role/add/@Model.Id", function(data, status){
+    if (data){
+      $('#roleEditDialog').replaceWith(data);
+      $('#roleEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#roleRowEditRole@Current.Id").click(function(){
+  $.get("/role/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#roleEditDialog').replaceWith(data);
+      $('#roleEditDialog').modal('show');
+    }
+  });
+});
+$("#roleRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/role/delete/@Current.Id", function(data, status){
+          updateRoleList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="90%" colspan="3"><a href="/group/@Model.ParentId">@Model.PhraseHeaderFeedGroup</a></th>
+      <th width="10%"></th>
+    </tr>
+    <tr class='centering clickable-row'>
+      <th width="30%">@Model.PhraseHeaderName</th>
+      <th width="30%">@Model.PhraseHeaderAccess</th>
+      <th width="30%">@Model.PhraseHeaderOccupants</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="30%" id="roleRowEditRole@Current.Id" class="@Current.Editable">@Current.Name</td>
+      <td width="30%"><a href="/permission/@Current.Id">@Current.Access</a></td>
+      <td width="30%"><a href="/roleassignment/@Current.Id">@Current.Occupants</a></td>
+      <td width="10%" id="roleRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    @If.AddAccess
+    <tr class='centering clickable-row'>
+      <td width="90%" colspan="3" id="roleRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+    @EndIf
+  </tbody>
+</table>
+<div id="roleEditDialog"/>

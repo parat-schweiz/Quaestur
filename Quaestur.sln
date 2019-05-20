@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Publicus", "Publicus\Public
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteLibrary", "SiteLibrary\SiteLibrary.csproj", "{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scriba", "Scriba\Scriba.csproj", "{00A68616-73EC-40B4-B04F-8CEC78B4D7A1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -49,6 +51,10 @@ Global
 		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Debug|x86.Build.0 = Debug|Any CPU
 		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Release|x86.ActiveCfg = Release|Any CPU
 		{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}.Release|x86.Build.0 = Release|Any CPU
+		{00A68616-73EC-40B4-B04F-8CEC78B4D7A1}.Debug|x86.ActiveCfg = Debug|x86
+		{00A68616-73EC-40B4-B04F-8CEC78B4D7A1}.Debug|x86.Build.0 = Debug|x86
+		{00A68616-73EC-40B4-B04F-8CEC78B4D7A1}.Release|x86.ActiveCfg = Release|x86
+		{00A68616-73EC-40B4-B04F-8CEC78B4D7A1}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

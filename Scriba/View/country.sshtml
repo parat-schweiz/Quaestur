@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateCountryList(){
+      $.get("/country/list", function(data, status){
+          if (data){
+              $("#countryList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateCountryList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="countryList">
+</div>
+@EndSection

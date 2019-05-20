@@ -1,0 +1,22 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+alert("a");
+$("#padtext").keypress(function(e) {
+  alert("key " + e.which);
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-3 mb-3">
+        <textarea id="padtext" class="form-control"></textarea>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection
