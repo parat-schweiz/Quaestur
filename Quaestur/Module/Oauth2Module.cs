@@ -85,7 +85,7 @@ namespace Quaestur
         {
             this.RequiresAuthentication();
 
-            Get("/oauth2/authorize/", parameters =>
+            base.Get("/oauth2/authorize/", parameters =>
             {
                 string responseType = Request.Query["response_type"];
                 if (responseType != "code")
@@ -151,14 +151,7 @@ namespace Quaestur
                     {
                         Oauth2Session session = CreateSession(client);
 
-                        var uri = string.IsNullOrEmpty(state) ?
-                            string.Format("{0}?code={1}",
-                                client.RedirectUri.Value,
-                                session.AuthCode.Value) :
-                            string.Format("{0}?code={1}&state={2}",
-                                client.RedirectUri.Value,
-                                session.AuthCode.Value,
-                                state);
+                        string uri = CreateRedirectUrl(client, session, state);
 
                         return Response.AsRedirect(uri);
                     }
@@ -219,20 +212,38 @@ namespace Quaestur
 
                     Oauth2Session session = CreateSession(client);
 
-                    var uri = string.IsNullOrEmpty(state) ?
-                        string.Format("{0}?code={1}",
-                            client.RedirectUri.Value,
-                            session.AuthCode.Value) :
-                        string.Format("{0}?code={1}&state={2}",
-                            client.RedirectUri.Value,
-                            session.AuthCode.Value,
-                            state);
+                    string uri = CreateRedirectUrl(client, session, state);
 
                     return uri;
                 }
 
                 return null;
             });
+        }
+
+        private static string CreateRedirectUrl(Oauth2Client client, Oauth2Session session, string state)
+        {
+            var uri = new StringBuilder();
+            uri.Append(client.RedirectUri.Value);
+
+            if (client.RedirectUri.Value.Contains("?"))
+            {
+                uri.Append("&code=");
+            }
+            else
+            {
+                uri.Append("?code=");
+            }
+
+            uri.Append(session.AuthCode.Value);
+
+            if (!string.IsNullOrEmpty(state))
+            {
+                uri.Append("&state=");
+                uri.Append(state);
+            }
+
+            return uri.ToString();
         }
 
         private Oauth2Session CreateSession(Oauth2Client client)
