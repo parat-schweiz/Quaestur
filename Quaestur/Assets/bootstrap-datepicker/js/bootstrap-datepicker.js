@@ -1,4 +1,4 @@
-﻿/*!
+/*!
  * Datepicker for Bootstrap v1.8.0 (https://github.com/uxsolutions/bootstrap-datepicker)
  *
  * Licensed under the Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0)
@@ -34,7 +34,7 @@
 			}
 
 			return this[method].apply(this, arguments);
-		});
+		};
 	}
 	function isValidDate(d) {
 		return d && !isNaN(d.getTime());
@@ -74,14 +74,14 @@
 				a.replace(this);
 				return a;
 			}
-		});
+		};
 
 		return function(){
 			var a = [];
 			a.push.apply(a, arguments);
 			$.extend(a, extras);
 			return a;
-		});
+		};
 	})();
 
 
@@ -155,7 +155,7 @@
 		if (this.isInline){
 			this.show();
 		}
-	});
+	};
 
 	Datepicker.prototype = {
 		constructor: Datepicker,
@@ -271,7 +271,7 @@
 			plc = $.grep(plc, function(word){
 				return /^auto|left|right|top|bottom$/.test(word);
 			});
-			o.orientation = {x: 'auto', y: 'auto'});
+			o.orientation = {x: 'auto', y: 'auto'};
 			if (!_plc || _plc === 'auto')
 				; // no action
 			else if (plc.length === 1){
@@ -344,7 +344,7 @@
                 }, this),
                 keydown: $.proxy(this.keydown, this),
                 paste: $.proxy(this.paste, this)
-            });
+            };
 
             if (this.o.showOnFocus === true) {
                 events.focus = $.proxy(this.show, this);
@@ -928,11 +928,11 @@
 				if (beforeFn !== $.noop) {
 					before = beforeFn(new Date(currVal, 0, 1));
 					if (before === undefined) {
-						before = {});
+						before = {};
 					} else if (typeof before === 'boolean') {
-						before = {enabled: before});
+						before = {enabled: before};
 					} else if (typeof before === 'string') {
-						before = {classes: before});
+						before = {classes: before};
 					}
 					if (before.enabled === false) {
 						classes.push('disabled');
@@ -1018,11 +1018,11 @@
 				if (this.o.beforeShowDay !== $.noop){
 					before = this.o.beforeShowDay(this._utc_to_local(prevMonth));
 					if (before === undefined)
-						before = {});
+						before = {};
 					else if (typeof before === 'boolean')
-						before = {enabled: before});
+						before = {enabled: before};
 					else if (typeof before === 'string')
-						before = {classes: before});
+						before = {classes: before};
 					if (before.enabled === false)
 						clsName.push('disabled');
 					if (before.classes)
@@ -1078,11 +1078,11 @@
           var moDate = new Date(year, i, 1);
           var before = that.o.beforeShowMonth(moDate);
 					if (before === undefined)
-						before = {});
+						before = {};
 					else if (typeof before === 'boolean')
-						before = {enabled: before});
+						before = {enabled: before};
 					else if (typeof before === 'string')
-						before = {classes: before});
+						before = {classes: before};
 					if (before.enabled === false && !$(month).hasClass('disabled'))
 					    $(month).addClass('disabled');
 					if (before.classes)
@@ -1325,7 +1325,7 @@
 					// (eg, Jan 31 -> Feb 31 == Feb 28, not Mar 02)
 					: function(){
 						return new_date.getUTCMonth() !== new_month;
-					});
+					};
 				new_month = month + dir;
 				new_date.setUTCMonth(new_month);
 				// Dec -> Jan (12) or Jan -> Dec (-1) -- limit expected date to 0-11
@@ -1341,7 +1341,7 @@
 				new_date.setUTCDate(day);
 				test = function(){
 					return new_month !== new_date.getUTCMonth();
-				});
+				};
 			}
 			// Common date-resetting loop -- if date is beyond end of month, make it
 			// end of month
@@ -1496,7 +1496,7 @@
 			this.updateNavArrows();
       this._trigger('changeViewMode', new Date(this.viewDate));
 		}
-	});
+	};
 
 	var DateRangePicker = function(element, options){
 		$.data(element, 'datepicker', this);
@@ -1516,7 +1516,7 @@
 			return $.data(i, 'datepicker');
 		});
 		this.updateDates();
-	});
+	};
 	DateRangePicker.prototype = {
 		updateDates: function(){
 			this.dates = $.map(this.pickers, function(i){
@@ -1586,7 +1586,7 @@
 			delete this.element.data().datepicker;
 		},
 		remove: alias('destroy', 'Method `remove` is deprecated and will be removed in version 2.0. Use `destroy` instead')
-	});
+	};
 
 	function opts_from_el(el, prefix){
 		// Derive options from element data-attrs
@@ -1607,7 +1607,7 @@
 
 	function opts_from_locale(lang){
 		// Derive options from locale plugins
-		var out = {});
+		var out = {};
 		// Check if "de-DE" style date is available, if not language should
 		// fallback to 2 letter code eg "de"
 		if (!dates[lang]){
@@ -1666,7 +1666,7 @@
 			throw new Error('Using only allowed for the collection of a single element (' + option + ' function)');
 		else
 			return internal_return;
-	});
+	};
 	$.fn.datepicker = datepickerPlugin;
 
 	var defaults = $.fn.datepicker.defaults = {
@@ -1713,7 +1713,7 @@
 			rightArrow: '&#x00BB;'
 		},
     showWeekDays: true
-	});
+	};
 	var locale_opts = $.fn.datepicker.locale_opts = [
 		'format',
 		'rtl',
@@ -1731,7 +1731,7 @@
 			clear: "Clear",
 			titleFormat: "MM yyyy"
 		}
-	});
+	};
 
 	var DPGlobal = {
 		viewModes: [
@@ -1777,7 +1777,7 @@
 			if (!separators || !separators.length || !parts || parts.length === 0){
 				throw new Error("Invalid date format.");
 			}
-			return {separators: separators, parts: parts});
+			return {separators: separators, parts: parts};
 		},
 		parseDate: function(date, format, language, assumeNearby){
 			if (!date)
@@ -1920,7 +1920,7 @@
 				MM: dates[language].months[date.getUTCMonth()],
 				yy: date.getUTCFullYear().toString().substring(2),
 				yyyy: date.getUTCFullYear()
-			});
+			};
 			val.dd = (val.d < 10 ? '0' : '') + val.d;
 			val.mm = (val.m < 10 ? '0' : '') + val.m;
 			date = [];
@@ -1951,7 +1951,7 @@
 								'<th colspan="7" class="clear"></th>'+
 							'</tr>'+
 						'</tfoot>'
-	});
+	};
 	DPGlobal.template = '<div class="datepicker">'+
 							'<div class="datepicker-days">'+
 								'<table class="table-condensed">'+
@@ -1999,7 +1999,7 @@
 	$.fn.datepicker.noConflict = function(){
 		$.fn.datepicker = old;
 		return this;
-	});
+	};
 
 	/* DATEPICKER VERSION
 	 * =================== */
@@ -2010,7 +2010,7 @@
 		if (console && console.warn) {
 			console.warn('DEPRECATED: ' + msg);
 		}
-	});
+	};
 
 
 	/* DATEPICKER DATA-API

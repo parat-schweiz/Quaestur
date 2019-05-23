@@ -29,7 +29,7 @@ var waitingDialog = waitingDialog || (function ($) {
         show: function (message, options, callback) {
             // Assigning defaults
             if (typeof options === 'undefined') {
-                options = {});
+                options = {};
             }
             if (typeof message === 'undefined') {
                 message = 'Loading';
@@ -70,6 +70,6 @@ var waitingDialog = waitingDialog || (function ($) {
         hide: function () {
             $dialog.modal('hide');
         }
-    });
+    };
 
 })(jQuery);
