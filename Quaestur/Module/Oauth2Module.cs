@@ -362,6 +362,14 @@ namespace Quaestur
                                 .AddClaim("email", session.User.Value.PrimaryMailAddress);
                         }
 
+                        if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Fullname))
+                        {
+                            builder = builder
+                                .AddClaim("fullname", session.User.Value.FullName)
+                                .AddClaim("firstname", session.User.Value.FirstName.Value)
+                                .AddClaim("lastname", session.User.Value.LastName.Value);
+                        }
+
                         var idToken = builder.Build();
                         var response = new JObject(
                             new JProperty("access_token", session.Token.Value),
