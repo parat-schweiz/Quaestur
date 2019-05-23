@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
 using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Publicus
 {
@@ -20,6 +21,9 @@ namespace Publicus
 
     public class Session : ClaimsPrincipal
     {
+        public const string IdentityIdClaim = "IdentityId";
+        public const string AuthenticationType = "Login";
+
         private class RolePermission
         {
             public Role Role { get; private set; } 
@@ -257,12 +261,33 @@ namespace Publicus
             get { return User.UserName; }
         }
 
-        public IEnumerable<string> Claims
+        public override bool HasClaim(Predicate<Claim> match)
+        {
+            return Claims.Any(c => match(c));
+        }
+
+        public override IIdentity Identity
         {
             get
             {
-                yield return User.Id.ToString();
-            } 
+                return Identities.First();
+            }
+        }
+
+        public override IEnumerable<ClaimsIdentity> Identities
+        {
+            get
+            {
+                yield return new ClaimsIdentity(Claims, AuthenticationType);
+            }
+        }
+
+        public override IEnumerable<Claim> Claims
+        {
+            get
+            {
+                yield return new Claim(IdentityIdClaim, User.Id.ToString());
+            }
         }
     }
 

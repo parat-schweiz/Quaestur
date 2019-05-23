@@ -25,7 +25,7 @@ namespace Quaestur
         protected void RequireCompleteLogin()
         {
             this.RequiresAuthentication();
-            this.RequiresClaims(c => c.Value == Quaestur.Session.CompleteAuthClaim);
+            this.RequiresClaims(c => c.Type == Quaestur.Session.AuthenticationClaim && c.Value == Quaestur.Session.AuthenticationClaimComplete);
         }
 
         protected string ReadBody()

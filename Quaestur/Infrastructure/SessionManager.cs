@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
+using System.Security.Principal;
 using System.Security.Claims;
 
 namespace Quaestur
@@ -21,12 +22,15 @@ namespace Quaestur
 
     public class Session : ClaimsPrincipal
     {
-        public const string CompleteAuthClaim = "CompleteAuth";
-        public const string TwoFactorAuthClaim = "TwoFactorAuth";
+        public const string IdentityIdClaim = "IdentityId";
+        public const string AuthenticationType = "Login";
+        public const string AuthenticationClaim = "Authentication";
+        public const string AuthenticationClaimComplete = "CompleteAuth";
+        public const string AuthenticationClaimTwoFactor = "TwoFactorAuth";
 
         private class RolePermission
         {
-            public Role Role { get; private set; } 
+            public Role Role { get; private set; }
             public Permission Permission { get; private set; }
 
             public RolePermission(Role role, Permission permission)
@@ -38,7 +42,7 @@ namespace Quaestur
 
         private List<RolePermission> _access;
         public Guid Id { get; private set; }
-        public Person User { get; private set; } 
+        public Person User { get; private set; }
         public DateTime LastAccess { get; private set; }
         public bool CompleteAuth { get; set; }
         public bool TwoFactorAuth { get; set; }
@@ -134,7 +138,7 @@ namespace Quaestur
                     return HasAccess(rp.Role.Group.Value, rp.Permission.Part.Value, rp.Permission.Right.Value);
                 case SubjectAccess.Organization:
                     return HasAccess(rp.Role.Group.Value.Organization.Value, rp.Permission.Part.Value, rp.Permission.Right.Value);
-               case SubjectAccess.SubOrganization:
+                case SubjectAccess.SubOrganization:
                     return HasAccess(rp.Role.Group.Value.Organization.Value, rp.Permission.Part.Value, rp.Permission.Right.Value) &&
                         rp.Role.Group.Value.Organization.Value.Children.All(c =>
                             HasAccess(c, rp.Permission.Part.Value, rp.Permission.Right.Value));
@@ -146,7 +150,7 @@ namespace Quaestur
         public bool HasAccess(Person person, PartAccess partAccess, AccessRight right)
         {
             if ((partAccess != PartAccess.Deleted) &&
-                person.Deleted && 
+                person.Deleted &&
                 !HasAccess(person, PartAccess.Deleted, right))
             {
                 return false;
@@ -169,7 +173,7 @@ namespace Quaestur
                     case PartAccess.Journal:
                         if (right == AccessRight.Read)
                         {
-                            return true; 
+                            return true;
                         }
                         break;
                 }
@@ -177,22 +181,22 @@ namespace Quaestur
 
             if (!TwoFactorAuth)
             {
-                return false; 
+                return false;
             }
 
             foreach (var membership in person.ActiveMemberships)
             {
                 if (HasAccess(membership.Organization.Value, partAccess, right))
                 {
-                    return true; 
-                } 
+                    return true;
+                }
             }
 
             foreach (var roleAssignment in person.RoleAssignments)
             {
                 if (HasAccess(roleAssignment.Role.Value.Group.Value, partAccess, right))
                 {
-                    return true; 
+                    return true;
                 }
             }
 
@@ -217,7 +221,7 @@ namespace Quaestur
                     case SubjectAccess.Organization:
                         if (rolePermission.Role.Group.Value.Organization.Value == organization)
                         {
-                            return true; 
+                            return true;
                         }
                         break;
                     case SubjectAccess.SubOrganization:
@@ -228,7 +232,7 @@ namespace Quaestur
                         else if (rolePermission.Role.Group.Value.Organization.Value
                             .Subordinates.Contains(organization))
                         {
-                            return true; 
+                            return true;
                         }
                         break;
                     case SubjectAccess.Group:
@@ -276,7 +280,7 @@ namespace Quaestur
                     case SubjectAccess.Group:
                         if (rolePermission.Role.Group.Value == group)
                         {
-                            return true; 
+                            return true;
                         }
                         break;
                 }
@@ -307,7 +311,7 @@ namespace Quaestur
             get
             {
                 return DateTime.UtcNow > LastAccess + new TimeSpan(0, 1, 0, 0);
-            } 
+            }
         }
 
         public string UserName
@@ -315,22 +319,43 @@ namespace Quaestur
             get { return User.UserName; }
         }
 
-        public IEnumerable<string> Claims
+        public override bool HasClaim(Predicate<Claim> match)
+        {
+            return Claims.Any(c => match(c));
+        }
+
+        public override IIdentity Identity
         {
             get
             {
-                yield return User.Id.ToString();
+                return Identities.First();
+            }
+        }
+
+        public override IEnumerable<ClaimsIdentity> Identities
+        {
+            get
+            {
+                yield return new ClaimsIdentity(Claims, AuthenticationType);
+            }
+        }
+
+        public override IEnumerable<Claim> Claims
+        {
+            get
+            {
+                yield return new Claim(IdentityIdClaim, User.Id.ToString());
 
                 if (CompleteAuth)
                 {
-                    yield return CompleteAuthClaim;
+                    yield return new Claim(AuthenticationClaim, AuthenticationClaimComplete);
                 }
 
                 if (TwoFactorAuth)
                 {
-                    yield return TwoFactorAuthClaim;
+                    yield return new Claim(AuthenticationClaim, AuthenticationClaimTwoFactor);
                 }
-            } 
+            }
         }
     }
 
