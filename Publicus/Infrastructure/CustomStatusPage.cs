@@ -61,7 +61,9 @@ namespace Publicus
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
-            Global.Log.Error("Custom status page called with status code {0}", (int)statusCode);
+            Global.Log.Error(
+                "Custom status page called for request {0} {1} with status code {2}",
+                context.Request.Method, context.Request.Url, (int)statusCode);
 
             try
             {
