@@ -1,0 +1,66 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#tagAssignment' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Queueback").addClass('invalid-queueback');
+    $(fieldId + "Queueback").removeClass('valid-queueback');
+    $(fieldId + "Queueback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Queueback").removeClass('invalid-queueback');
+    $(fieldId + "Queueback").addClass('valid-queueback');
+    $(fieldId + "Queueback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Tag", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Tag = $("#tagAssignmentTag").val();
+  $.post("/tagassignment/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      showTagAssignments();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d'
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="tagAssignmentTag">@Model.PhraseFieldTag</label>
+        <select id="tagAssignmentTag" class="selectpicker form-control" data-live-search="true">
+          @Each.Tags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="tagAssignmentTagQueueback" class="valid-queueback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateQueueList(){
+      $.get("/queue/list", function(data, status){
+          if (data){
+              $("#queueList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateQueueList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="queueList">
+</div>
+@EndSection

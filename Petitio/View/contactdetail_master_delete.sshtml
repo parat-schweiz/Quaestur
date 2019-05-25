@@ -1,0 +1,35 @@
+﻿<script>
+@Each.List
+$("#@Current.RowId").click(function(){
+  $.confirm({
+    title: "@Current.PhraseConfirmationTitle",
+    content: "@Current.PhraseConfirmationQuestion",
+    buttons: {
+      confirm: function () {
+        $.get("@Current.Path", function(dummyData){
+          location.reload();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="contact-master-card">
+        @Each.List
+        <tr class="clickable-row editable">
+          <td width="100%" id="@Current.RowId">@Current.Phrase</td>
+        </tr>
+        @EndEach
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="demographyEditDialog"/>

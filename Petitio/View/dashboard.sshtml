@@ -1,0 +1,22 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+<table class="table table-hover table-fixed">
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="@Current.Indent"></td>
+      <th width="@Current.Width">@Current.Name</th>
+      <@Current.Tag width="60%">@Current.ValueOne</@Current.Tag>
+    </tr>
+    @EndEach
+  </tbody>
+</table>
+</div>
+@EndSection

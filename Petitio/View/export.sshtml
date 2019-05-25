@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateExportList(){
+      $.get("/export/list", function(data, status){
+          if (data){
+              $("#exportList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateExportList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="exportList">
+</div>
+@EndSection

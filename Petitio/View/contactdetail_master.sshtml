@@ -1,0 +1,70 @@
+﻿<script>
+  function updateMasterDataPostal(){
+      $.get("/contact/detail/master/postal/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataPostal").html(data);
+          }
+      });
+  }
+  function updateMasterDataEMail(){
+      $.get("/contact/detail/master/email/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataEMail").html(data);
+          }
+      });
+  }
+  function updateMasterDataPhone(){
+      $.get("/contact/detail/master/phone/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataPhone").html(data);
+          }
+      });
+  }
+  function updateMasterDataDemography(){
+      $.get("/contact/detail/master/demography/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataDemography").html(data);
+          }
+      });
+  }
+  function updateMasterDataPublicKeys(){
+      $.get("/contact/detail/master/publickeys/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataPublicKeys").html(data);
+          }
+      });
+  }
+  function updateMasterDataDelete(){
+      $.get("/contact/detail/master/delete/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataDelete").html(data);
+          }
+      });
+  }
+  updateMasterDataDemography();
+  updateMasterDataPostal();
+  updateMasterDataEMail();
+  updateMasterDataPhone();
+  updateMasterDataPublicKeys();
+  updateMasterDataDelete();
+</script>
+<div class="container">
+  <div class="row header">
+    @If.DemographyRead
+    <div class="col-lg-4" id="masterDataDemography">
+    </div>
+    @EndIf
+    @If.ContactRead
+    <div class="col-lg-4" id="masterDataPostal">
+    </div>
+    <div class="col-lg-4" id="masterDataEMail">
+    </div>
+    <div class="col-lg-4" id="masterDataPhone">
+    </div>
+    <div class="col-lg-4" id="masterDataPublicKeys">
+    </div>
+    <div class="col-lg-4" id="masterDataDelete">
+    </div>
+    @EndIf
+  </div>
+</div>

@@ -1,0 +1,32 @@
+﻿<script>
+$("#contactHeadRow").click(function(){
+  showContactEditHeadDialog();
+});
+function showContactEditHeadDialog(){
+  $.get("/contact/edit/head/@Model.Id", function(contactEditHeadDialog, status){
+    if (contactEditHeadDialog){
+      $('#contactEditHeadDialog').replaceWith(contactEditHeadDialog);
+      $('#contactEditHeadDialog').modal('show');
+    }
+  });
+}
+</script>
+<table class="table vertmargin table-hover table-borderless">
+  <thead>
+    <tr class="smallheadrow">
+      <th class="fit">@Model.PhraseHeadOrganization</th>
+      <th class="fit">@Model.PhraseHeadFullName</th>
+      <th class="fit">@Model.PhraseHeadVotingRight</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr id="contactHeadRow" class="@Model.Editable">
+      <td class="fit">@Model.Organization</td>
+      <td class="fit">@Model.FullName</td>
+      <td class="fit">@Model.VotingRight</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+<div id="contactEditHeadDialog"/>

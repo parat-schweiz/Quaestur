@@ -1,0 +1,50 @@
+﻿<script>
+function showEditPhraseDialog(id){
+  $.get("/phrase/edit/" + id, function(data, status){
+    if (data){
+      $('#phraseEditDialog').replaceWith(data);
+      $('#phraseEditDialog').modal('show');
+    }
+  });
+}
+@Each.List
+$("#phraseRowEdit1@Current.Id").click(function(){
+  showEditPhraseDialog("@Current.Id");
+});
+$("#phraseRowEdit2@Current.Id").click(function(){
+  showEditPhraseDialog("@Current.Id");
+});
+$("#phraseRowEdit3@Current.Id").click(function(){
+  showEditPhraseDialog("@Current.Id");
+});
+$("#phraseRowEdit4@Current.Id").click(function(){
+  showEditPhraseDialog("@Current.Id");
+});
+$("#phraseRowEdit5@Current.Id").click(function(){
+  showEditPhraseDialog("@Current.Id");
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="20%">@Model.PhraseHeaderKey</th>
+      <th width="20%">@Model.PhraseHeaderEnglish</th>
+      <th width="20%">@Model.PhraseHeaderGerman</th>
+      <th width="20%">@Model.PhraseHeaderFrench</th>
+      <th width="20%">@Model.PhraseHeaderItalian</th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="20%" id="phraseRowEdit1@Current.Id" class="editable">@Current.Key</td>
+      <td width="20%" id="phraseRowEdit2@Current.Id" class="editable">@Current.English</td>
+      <td width="20%" id="phraseRowEdit3@Current.Id" class="editable">@Current.German</td>
+      <td width="20%" id="phraseRowEdit4@Current.Id" class="editable">@Current.French</td>
+      <td width="20%" id="phraseRowEdit5@Current.Id" class="editable">@Current.Italian</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>
+<div id="phraseEditDialog"/>

@@ -1,0 +1,83 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#state' + field + key;
+  var queuebackId = '#state' + field + "Queueback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(queuebackId).addClass('invalid-queueback');
+    $(queuebackId).removeClass('valid-queueback');
+    $(queuebackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(queuebackId).removeClass('invalid-queueback');
+    $(queuebackId).addClass('valid-queueback');
+    $(queuebackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#state' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Queueback").addClass('invalid-queueback');
+    $(fieldId + "Queueback").removeClass('valid-queueback');
+    $(fieldId + "Queueback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Queueback").removeClass('invalid-queueback');
+    $(fieldId + "Queueback").addClass('valid-queueback');
+    $(fieldId + "Queueback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#stateName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  $.post("/state/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateStateList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="stateName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="stateName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="stateNameQueueback@Current.Key" class="valid-queueback"></div>
+      </div>
+      @EndEach
+    </div>
+  </form>
+</div>
+@EndSection

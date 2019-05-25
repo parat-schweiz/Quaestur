@@ -1,0 +1,30 @@
+﻿<table class="table table-fixed table-hover table-sm table-responsive vertmargin">
+  <thead>
+    <tr>
+      <th width="5%">#</th>
+      <th width="10%">Benutzer</th>
+      <th width="10%">Name</th>
+      <th width="10%">Vornamen</th>
+      <th width="15%">Strasse</th>
+      <th width="10%">PLZ/Ort</th>
+      <th width="10%">Kanton/Land</th>
+      <th width="15%">E-Mail</th>
+      <th width="15%">Telefon</th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr>
+      <td width="5%">@Current.Number</td>
+      <td width="10%">@Current.UserName</td>
+      <td width="10%">@Current.LastName</td>
+      <td width="10%">@Current.FirstNames</td>
+      <td width="15%">@Current.Street</td>
+      <td width="10%">@Current.Place</td>
+      <td width="10%">@Current.State</td>
+      <td width="15%">@Current.MailAddress</td>
+      <td width="15%">@Current.PhoneNumber</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>

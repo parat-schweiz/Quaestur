@@ -1,0 +1,44 @@
+﻿\documentclass[ppsletter,fontsize=11pt,foldmarks=false ]{scrlttr2}
+\usepackage{ppszs}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\usepackage{float}
+\usepackage{hyperref}
+
+\makeatletter
+\@setplength{toaddrvpos}{4.7cm}
+\@setplength{toaddrhpos}{12cm}
+\KOMAoptions{foldmarks=off}
+
+%\setkomavar{memberid}{}
+%\setkomavar{membernick}{}
+%\setkomavar{memberemail}{}
+
+\setkomavar{partei}{Stefan Thöni}
+\setkomavar{departement}{Präsident}
+\setkomavar{fromname}{}
+\setkomavar{fromstreet}{Piratenpartei Zentralschweiz}
+\setkomavar{fromcity}{6300 Zug}
+\setkomavar{fromemail}{finance@ppzs.ch}
+\setkomavar{fromurl}{www.ppzs.ch}
+\setkomavar{backaddress}{}
+
+\begin{document}
+
+\setkomavar{date}{\today}
+\setkomavar{subject}{Brief}
+
+\selectlanguage{ngerman}
+
+\begin{letter}{%
+    §§§Person.Address.FiveLines§§§
+}
+
+\enlargethispage{10cm}
+
+\opening{Hallo §§§Person.FirstName§§§}
+
+Test test test!
+
+\end{letter}%
+
+\end{document}
