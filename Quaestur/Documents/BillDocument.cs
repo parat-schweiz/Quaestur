@@ -74,7 +74,7 @@ namespace Quaestur
 
             var lastBill = _db
                 .Query<Bill>(DC.Equal("membershipid", _membership.Id.Value))
-                .OrderByDescending(b => b.UntilDate)
+                .OrderByDescending(b => b.UntilDate.Value)
                 .FirstOrDefault();
 
             if (lastBill == null)
