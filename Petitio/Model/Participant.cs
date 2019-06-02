@@ -60,11 +60,6 @@ namespace Petitio
 
         public override void Delete(IDatabase database)
         {
-            foreach (var address in database.Query<Attachement>(DC.Equal("articleid", Id.Value)))
-            {
-                address.Delete(database);
-            }
-
             database.Delete(this);
         }
 
