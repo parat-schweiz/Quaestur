@@ -110,6 +110,16 @@ namespace Quaestur
                     break;
                 case BallotStatus.Voting:
                     {
+                        if (DateTime.Now.Date > ballot.EndDate.Value.Date)
+                        {
+                            ballot.Status.Value = BallotStatus.Finished;
+                            database.Save(ballot);
+                        }
+                        UpdateBallot(database, ballot);
+                    }
+                    break;
+                case BallotStatus.Finished:
+                    {
                         UpdateBallot(database, ballot);
                     }
                     break;
