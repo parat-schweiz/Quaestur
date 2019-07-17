@@ -147,7 +147,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/group/list/{id}", parameters =>
             {
@@ -163,7 +163,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/group/edit/{id}", parameters =>
             {
@@ -179,7 +179,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/group/edit/{id}", parameters =>
             {
@@ -226,7 +226,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/group/add/{id}", parameters =>
             {
@@ -280,7 +280,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

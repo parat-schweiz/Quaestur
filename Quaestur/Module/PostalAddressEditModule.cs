@@ -126,7 +126,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/postaladdress/edit/{id}", parameters =>
             {
@@ -175,7 +175,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/postaladdress/add/{id}", parameters =>
             {

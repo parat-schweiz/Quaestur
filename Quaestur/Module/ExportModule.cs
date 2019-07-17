@@ -176,7 +176,7 @@ namespace Quaestur
                     return View["View/exportlist.sshtml",
                         new ExportListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/export/edit/{id}", parameters =>
             {
@@ -191,7 +191,7 @@ namespace Quaestur
                             new ExportEditViewModel(Translator, Database, CurrentSession, export)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/export/edit/{id}", parameters =>
             {
@@ -231,7 +231,7 @@ namespace Quaestur
                     return View["View/exportedit.sshtml",
                         new ExportEditViewModel(Translator, Database, CurrentSession)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/export/add/new", parameters =>
             {
@@ -314,7 +314,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
 

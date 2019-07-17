@@ -10,6 +10,18 @@ namespace System
 {
     public static class Bytes
     {
+        public static string PadInt(this int value, int length)
+        {
+            var stringValue = value.ToString();
+
+            while (stringValue.Length < length)
+            {
+                stringValue = "0" + stringValue;
+            }
+
+            return stringValue;
+        }
+
         public static byte[] HashSha256(this byte[] bytes)
         {
             using (var sha = new SHA256Managed())

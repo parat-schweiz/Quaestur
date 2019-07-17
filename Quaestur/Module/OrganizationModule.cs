@@ -174,7 +174,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/organization/edit/{id}", parameters =>
             {
@@ -207,7 +207,7 @@ namespace Quaestur
                     return View["View/organizationedit.sshtml",
                         new OrganizationEditViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/organization/add/new", parameters =>
             {

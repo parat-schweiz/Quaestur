@@ -4,11 +4,13 @@ using SiteLibrary;
 
 namespace Quaestur
 {
+    [Obsolete("Superceeded by mail template")]
     public enum SendingTemplateParentType
     { 
         BallotTemplate = 0,
     }
 
+    [Obsolete("Superceeded by mail template")]
     public static class SendingTemplateParentTypeExtensions
     {
         public static string Translate(this SendingTemplateParentType parentType, Translator translator)
@@ -23,6 +25,7 @@ namespace Quaestur
         }
     }
 
+    [Obsolete("Superceeded by mail template")]
     public class SendingTemplate : DatabaseObject
     {
         public EnumField<SendingTemplateParentType> ParentType { get; private set; }

@@ -164,7 +164,7 @@ namespace Quaestur
                     return View["View/taglist.sshtml",
                     new TagListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/tag/edit/{id}", parameters =>
             {
@@ -179,7 +179,7 @@ namespace Quaestur
                             new TagEditViewModel(Translator, Database, tag)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/tag/edit/{id}", parameters =>
             {
@@ -214,7 +214,7 @@ namespace Quaestur
                     return View["View/tagedit.sshtml",
                         new TagEditViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/tag/add/new", parameters =>
             {

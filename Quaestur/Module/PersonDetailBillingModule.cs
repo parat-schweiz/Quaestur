@@ -73,7 +73,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

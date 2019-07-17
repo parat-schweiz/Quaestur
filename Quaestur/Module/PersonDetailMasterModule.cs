@@ -164,7 +164,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/person/detail/master/postal/{id}", parameters =>
             {
@@ -180,7 +180,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/person/detail/master/email/{id}", parameters =>
             {
@@ -196,7 +196,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/person/detail/master/phone/{id}", parameters =>
             {
@@ -212,7 +212,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

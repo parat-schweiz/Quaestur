@@ -15,6 +15,7 @@ namespace Quaestur
         public bool RoleAssignmentReadable;
         public bool DocumentReadable;
         public bool BillingReadable;
+        public bool PointsReadable;
         public bool JournalReadable;
         public bool SecurityReadable;
         public string PhraseTabMaster;
@@ -23,6 +24,8 @@ namespace Quaestur
         public string PhraseTabRoles;
         public string PhraseTabDocuments;
         public string PhraseTabBilling;
+        public string PhraseTabPointsTally;
+        public string PhraseTabPoints;
         public string PhraseTabJournal;
         public string PhraseTabSecurity;
 
@@ -38,6 +41,8 @@ namespace Quaestur
             PhraseTabRoles = translator.Get("Person.Detail.Tab.Roles", "Tab 'Roles' in the person detail page", "Roles");
             PhraseTabDocuments = translator.Get("Person.Detail.Tab.Documents", "Tab 'Documents' in the person detail page", "Documents");
             PhraseTabBilling = translator.Get("Person.Detail.Tab.Billing", "Tab 'Billing' in the person detail page", "Billing");
+            PhraseTabPointsTally = translator.Get("Person.Detail.Tab.PointsTally", "Tab 'Points tally' in the person detail page", "Points tally");
+            PhraseTabPoints = translator.Get("Person.Detail.Tab.Points", "Tab 'Points' in the person detail page", "Points");
             PhraseTabJournal = translator.Get("Person.Detail.Tab.Journal", "Tab 'Journal' in the person detail page", "Journal");
             PhraseTabSecurity = translator.Get("Person.Detail.Tab.Security", "Tab 'Security' in the person detail page", "Security");
             MasterReadable = session.HasAccess(person, PartAccess.Demography, AccessRight.Read) ||
@@ -47,6 +52,7 @@ namespace Quaestur
             RoleAssignmentReadable = session.HasAccess(person, PartAccess.RoleAssignments, AccessRight.Read);
             DocumentReadable = session.HasAccess(person, PartAccess.Documents, AccessRight.Read);
             BillingReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Read);
+            PointsReadable = session.HasAccess(person, PartAccess.Points, AccessRight.Read);
             JournalReadable = session.HasAccess(person, PartAccess.Journal, AccessRight.Read);
             SecurityReadable = session.HasAccess(person, PartAccess.Security, AccessRight.Read);
         }
@@ -187,7 +193,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
 

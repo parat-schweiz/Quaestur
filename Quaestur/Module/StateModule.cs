@@ -105,7 +105,7 @@ namespace Quaestur
                     return View["View/statelist.sshtml",
                         new StateListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/state/edit/{id}", parameters =>
             {
@@ -120,7 +120,7 @@ namespace Quaestur
                             new StateEditViewModel(Translator, Database, state)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/state/edit/{id}", parameters =>
             {
@@ -153,7 +153,7 @@ namespace Quaestur
                     return View["View/stateedit.sshtml",
                         new StateEditViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/state/add/new", parameters =>
             {

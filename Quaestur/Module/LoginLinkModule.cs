@@ -115,7 +115,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return null;
+                    return string.Empty;
                 }
             });
             Get("/loginlink/accept/{id}", parameters =>
@@ -131,7 +131,7 @@ namespace Quaestur
                     return Translate("LoginLink.Accept", "Accept login link response", "Authentication accepted.");
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/loginlink/reject/{id}", parameters =>
             {
@@ -150,7 +150,7 @@ namespace Quaestur
                     return Translate("LoginLink.Reject", "Reject login link response", "Authentication rejected.");
                 }
 
-                return null;
+                return string.Empty;
             });
         }
 

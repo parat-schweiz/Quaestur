@@ -592,6 +592,18 @@ namespace SiteLibrary
                 var command = Command("ALTER TABLE {0} ALTER COLUMN {1} TYPE {2}", TableName<T>(), field.ColumnName, ColumnPreTypeDefinition(field));
                 command.ExecuteNonQuery();
 
+                if (field.Nullable)
+                {
+                    var notNull = Command("ALTER TABLE {0} ALTER COLUMN {1} DROP NOT NULL", TableName<T>(), field.ColumnName);
+                    notNull.ExecuteNonQuery();
+                }
+                else
+                {
+                    var notNull = Command("ALTER TABLE {0} ALTER COLUMN {1} SET NOT NULL", TableName<T>(), field.ColumnName);
+                    notNull.ExecuteNonQuery();
+                }
+
+
                 transaction.Commit();
             }
         }

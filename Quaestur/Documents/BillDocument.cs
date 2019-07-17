@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using BaseLibrary;
 using SiteLibrary;
 
 namespace Quaestur
@@ -9,7 +10,7 @@ namespace Quaestur
     public class BillDocument : TemplateDocument, IContentProvider
     {
         private readonly Translator _translator;
-        private readonly IDatabase _db;
+        private readonly IDatabase _database;
         private readonly Membership _membership;
         private readonly Person _person;
         private readonly Organization _organization;
@@ -19,52 +20,40 @@ namespace Quaestur
 
         public Bill Bill { get; private set; }
 
-        public BillDocument(Translator translator, IDatabase db, Membership membership)
+        public BillDocument(Translator translator, IDatabase database, Membership membership)
         {
             _translator = translator;
-            _db = db;
+            _database = database;
             _membership = membership;
             _person = _membership.Person.Value;
             _organization = _membership.Organization.Value;
-            _settings = _db.Query<SystemWideSettings>().Single();
-        }
-
-        private string PadInt(int value, int length)
-        {
-            var stringValue = value.ToString();
-
-            while (stringValue.Length < length)
-            {
-                stringValue = "0" + stringValue; 
-            }
-
-            return stringValue;
+            _settings = _database.Query<SystemWideSettings>().Single();
         }
 
         private string CreateNumber()
         {
-            return Bill.CreatedDate.Value.ToString("yyyyMMdd") + "M" + PadInt(_person.Number, 7);
+            return Bill.CreatedDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
         }
 
         public bool Create()
         {
-            Prepare();
-            var document = Compile();
+            if (Prepare())
+            {
+                var document = Compile();
 
-            if (document != null)
-            {
-                Bill.DocumentData.Value = document;
-                return true;
+                if (document != null)
+                {
+                    Bill.DocumentData.Value = document;
+                    return true;
+                }
             }
-            else
-            {
-                return false;
-            }
+
+            return false;
         }
 
         public override bool Prepare()
         {
-            _mainModel = _membership.Type.Value.CreatePaymentModel();
+            _mainModel = _membership.Type.Value.CreatePaymentModel(_database);
 
             Bill = new Bill(Guid.NewGuid());
             Bill.Membership.Value = _membership;
@@ -72,7 +61,7 @@ namespace Quaestur
             Bill.Status.Value = BillStatus.New;
             Bill.Number.Value = CreateNumber();
 
-            var lastBill = _db
+            var lastBill = _database
                 .Query<Bill>(DC.Equal("membershipid", _membership.Id.Value))
                 .OrderByDescending(b => b.UntilDate.Value)
                 .FirstOrDefault();
@@ -127,7 +116,7 @@ namespace Quaestur
                         IncludeChildren(childMembership);
                         break;
                     case CollectionModel.ByParent:
-                        var model = childMembership.Type.Value.CreatePaymentModel();
+                        var model = childMembership.Type.Value.CreatePaymentModel(_database);
                         if (model != null)
                         {
                             _allIncluded.Add(new Tuple<Membership, IPaymentModel>(childMembership, model));
@@ -154,7 +143,7 @@ namespace Quaestur
                         IncludeParent(parentMembership);
                         break;
                     case CollectionModel.BySub:
-                        var model = parentMembership.Type.Value.CreatePaymentModel();
+                        var model = parentMembership.Type.Value.CreatePaymentModel(_database);
                         if (model != null)
                         {
                             _allIncluded.Add(new Tuple<Membership, IPaymentModel>(parentMembership, model));
@@ -175,26 +164,7 @@ namespace Quaestur
 
         protected override string TexTemplate
         {
-            get { return _membership.Type.Value.BillTemplateLatex.Value[_translator.Language]; } 
-        }
-
-        private string CreateExplainations()
-        {
-            var text = new StringBuilder();
-
-            foreach (var included in _allIncluded)
-            {
-                var explaination = included.Item2.CreateExplainationLatex(_translator, _membership);
-
-                if (!string.IsNullOrEmpty(explaination))
-                {
-                    text.AppendLine(explaination);
-                    text.AppendLine();
-                    text.AppendLine();
-                }
-            }
-
-            return text.ToString();
+            get { return _membership.Type.Value.GetBillLDocument(_database, _translator.Language).Text.Value; } 
         }
 
         private string CreateFinalTableContent()
@@ -247,17 +217,7 @@ namespace Quaestur
                 text.Append(@"} & ~ & ~ \\");
                 text.AppendLine();
 
-                text.Append(@"~~~~~");
-                text.Append(_translator.Get(
-                    "Document.Bill.YearlyFee", 
-                    "Yearly fee in the bill document", 
-                    "Yearly fee"));
-                text.Append(@" & ");
-                text.Append(string.Format("{0:0.00}", Math.Round(yearlyAmount, 2)));
-                text.Append(@" & ");
-                text.Append(_settings.Currency);
-                text.Append(@" \\");
-                text.AppendLine();
+                text.AppendLine(included.Item2.CreateExplainationLatex(_translator, _membership));
 
                 text.Append(@"~~~~~");
                 text.Append(_translator.Get(
@@ -267,9 +227,9 @@ namespace Quaestur
                     Bill.FromDate.Value.ToString("dd.MM.yyyy"),
                     Bill.UntilDate.Value.ToString("dd.MM.yyyy")));
                 text.Append(@" & ");
-                text.Append(string.Format("{0:0.00}", Math.Round(periodAmount, 2)));
-                text.Append(@" & ");
                 text.Append(_settings.Currency);
+                text.Append(@" & ");
+                text.Append(Currency.Format(periodAmount));
                 text.Append(@" \\");
                 text.AppendLine();
 
@@ -283,9 +243,9 @@ namespace Quaestur
                 "Total amount of a bill", 
                 "Total"));
             text.Append(@"} & ");
-            text.Append(string.Format("{0:0.00}", Math.Round(totalAmount, 2)));
-            text.Append(@" & ");
             text.Append(_settings.Currency);
+            text.Append(@" & ");
+            text.Append(Currency.Format(totalAmount));
             text.Append(@" \\");
             text.AppendLine();
 
@@ -304,7 +264,7 @@ namespace Quaestur
             switch (variable)
             {
                 case "Bill.Explainations":
-                    return CreateExplainations();
+                    return string.Empty;
                 case "Bill.FinalTableContent":
                     return CreateFinalTableContent();
                 case "Bill.Organization":

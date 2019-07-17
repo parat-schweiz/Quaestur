@@ -1,0 +1,116 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#latexTemplate' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Label", result);
+  assignFieldValidation("Language", result);
+  assignFieldValidation("AssignmentType", result);
+  assignFieldValidation("Organization", result);
+  assignFieldValidation("Text", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#latexingCancelButton").click(function(event) {
+    window.location.href = "/latextemplate";
+    event.preventDefault();  
+  });
+  $("#latexingSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Label = $("#latexTemplateLabel").val();
+    formData.Language = $("#latexTemplateLanguage").val();
+    formData.AssignmentType = $("#latexTemplateAssignmentType").val();
+    formData.Organization = $("#latexTemplateOrganization").val();
+    formData.Text = $("#latexTemplateText").val();
+    $.post("/latextemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/latextemplate";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="latexTemplateLabel">@Model.PhraseFieldLabel</label>
+        <input type="text" id="latexTemplateLabel" class="form-control" value="@Model.Label"/>
+        <div id="latexTemplateLabelFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="latexTemplateOrganization">@Model.PhraseFieldOrganization</label>
+        <select id="latexTemplateOrganization" class="selectpicker form-control" data-live-search="true">
+          @Each.Organizations
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="latexTemplateOrganizationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="latexTemplateAssignmentType">@Model.PhraseFieldAssignmentType</label>
+        <select id="latexTemplateAssignmentType" class="selectpicker form-control" data-live-search="true">
+          @Each.AssignmentTypes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="latexTemplateAssignmentTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="latexTemplateLanguage">@Model.PhraseFieldLanguage</label>
+        <select id="latexTemplateLanguage" class="selectpicker form-control" data-live-search="true">
+          @Each.Languages
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="latexTemplateLanguageFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="latexTemplateText">@Model.PhraseFieldText</label>
+        <textarea id="latexTemplateText" class="form-control" rows="10">@Model.Text</textarea>
+        <div id="latexTemplateTextFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="latexingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="latexingSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

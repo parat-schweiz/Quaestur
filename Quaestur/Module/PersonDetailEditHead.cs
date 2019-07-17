@@ -71,7 +71,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/person/edit/head/{id}", parameters =>
             {

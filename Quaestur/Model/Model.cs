@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 12;
+        public static int CurrentVersion = 20;
 
         public static void Install(IDatabase database)
         {
@@ -55,6 +55,15 @@ namespace Quaestur
             database.CreateTable<Ballot>();
             database.CreateTable<BallotPaper>();
             database.CreateTable<LoginLink>();
+            database.CreateTable<PersonalPaymentParameter>();
+            database.CreateTable<BudgetPeriod>();
+            database.CreateTable<PointBudget>();
+            database.CreateTable<Points>();
+            database.CreateTable<PointsTally>();
+            database.CreateTable<MailTemplate>();
+            database.CreateTable<MailTemplateAssignment>();
+            database.CreateTable<LatexTemplate>();
+            database.CreateTable<LatexTemplateAssignment>();
         }
 
         private static void Migrate(IDatabase database)
@@ -68,11 +77,14 @@ namespace Quaestur
 
             while (meta.Version.Value < CurrentVersion)
             {
-                meta.Version.Value++;
-                Migrate(database, meta.Version.Value);
+                using (var transaction = database.BeginTransaction())
+                {
+                    meta.Version.Value++;
+                    Migrate(database, meta.Version.Value);
+                    database.Save(meta);
+                    transaction.Commit();
+                }
             }
-
-            database.Save(meta);
         }
 
         private static void Migrate(IDatabase database, int version)
@@ -112,8 +124,199 @@ namespace Quaestur
                 case 12:
                     EncryptGpgPassphrases(database);
                     break;
+                case 13:
+                    database.AddColumn<MembershipType>(m => m.MaximumPoints);
+                    database.AddColumn<MembershipType>(m => m.MaximumDiscount);
+                    break;
+                case 14:
+                    database.AddColumn<MembershipType>(m => m.Deprecated2);
+                    break;
+                case 15:
+                    database.AddColumn<MembershipType>(m => m.MaximumBalanceForward);
+                    break;
+                case 16:
+                    database.ModifyColumnType<BallotTemplate>(t => t.Deprecated1);
+                    database.ModifyColumnType<BallotTemplate>(t => t.Deprecated2);
+                    MigrateSendingTemplates(database);
+                    break;
+                case 17:
+                    MigrateBallotPapers(database);
+                    break;
+                case 18:
+                    database.AddColumn<MembershipType>(m => m.SenderGroup);
+                    break;
+                case 19:
+                    MigrateMembershipType(database);
+                    break;
+                case 20:
+                    database.AddColumn<MailTemplate>(t => t.Organization);
+                    database.AddColumn<MailTemplate>(t => t.AssignmentType);
+                    database.AddColumn<LatexTemplate>(t => t.Organization);
+                    database.AddColumn<LatexTemplate>(t => t.AssignmentType);
+                    MigrateTemplate(database);
+                    break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private static void MigrateTemplate(IDatabase database)
+        {
+            foreach (var templateAssignment in database.Query<MailTemplateAssignment>())
+            {
+                var template = templateAssignment.Template.Value;
+                template.Organization.Value =
+                    templateAssignment.GetOrganization(database);
+                template.AssignmentType.Value =
+                    templateAssignment.AssignedType.Value;
+                database.Save(template);
+            }
+
+            foreach (var templateAssignment in database.Query<LatexTemplateAssignment>())
+            {
+                var template = templateAssignment.Template.Value;
+                template.Organization.Value =
+                    templateAssignment.GetOrganization(database);
+                template.AssignmentType.Value =
+                    templateAssignment.AssignedType.Value;
+                database.Save(template);
+            }
+        }
+
+        private static void MigrateMembershipType(IDatabase database)
+        {
+            foreach (var membershipType in database.Query<MembershipType>())
+            {
+                foreach (var language in LanguageExtensions.Natural)
+                {
+                    var billDocumentValue = membershipType.Deprecated1.Value.GetValueOrEmpty(language);
+
+                    if (!string.IsNullOrEmpty(billDocumentValue))
+                    {
+                        var translator = new Translator(new Translation(database), language);
+
+                        var newTemplate = new LatexTemplate(Guid.NewGuid());
+                        newTemplate.Language.Value = language;
+                        newTemplate.Label.Value = membershipType.Name.Value[language] + " " + language.Translate(translator) + " bill document";
+                        newTemplate.Text.Value = billDocumentValue;
+                        database.Save(newTemplate);
+
+                        var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
+                        newAssignment.Template.Value = newTemplate;
+                        newAssignment.AssignedId.Value = membershipType.Id.Value;
+                        newAssignment.AssignedType.Value = TemplateAssignmentType.MembershipType;
+                        newAssignment.FieldName.Value = MembershipType.BillLDocumentFieldName;
+                        database.Save(newAssignment);
+                    }
+
+                    var pointsTallyDocumentValue = membershipType.Deprecated2.Value.GetValueOrEmpty(language);
+
+                    if (!string.IsNullOrEmpty(billDocumentValue))
+                    {
+                        var translator = new Translator(new Translation(database), language);
+
+                        var newTemplate = new LatexTemplate(Guid.NewGuid());
+                        newTemplate.Language.Value = language;
+                        newTemplate.Label.Value = membershipType.Name.Value[language] + " " + language.Translate(translator) + " points tally document";
+                        newTemplate.Text.Value = pointsTallyDocumentValue;
+                        database.Save(newTemplate);
+
+                        var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
+                        newAssignment.Template.Value = newTemplate;
+                        newAssignment.AssignedId.Value = membershipType.Id.Value;
+                        newAssignment.AssignedType.Value = TemplateAssignmentType.MembershipType;
+                        newAssignment.FieldName.Value = MembershipType.PointsTallyDocumentFieldName;
+                        database.Save(newAssignment);
+                    }
+                }
+            }
+        }
+
+        private static void MigrateBallotPapers(IDatabase database)
+        {
+            foreach (var ballotTemplate in database.Query<BallotTemplate>())
+            {
+                foreach (var language in LanguageExtensions.Natural)
+                {
+                    var value = ballotTemplate.Deprecated3.Value.GetValueOrEmpty(language);
+
+                    if (!string.IsNullOrEmpty(value))
+                    {
+                        var translator = new Translator(new Translation(database), language);
+
+                        var newTemplate = new LatexTemplate(Guid.NewGuid());
+                        newTemplate.Language.Value = language;
+                        newTemplate.Label.Value = ballotTemplate.Name.Value[language] + " " + language.Translate(translator) + " ballot paper";
+                        newTemplate.Text.Value = value;
+                        database.Save(newTemplate);
+
+                        var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
+                        newAssignment.Template.Value = newTemplate;
+                        newAssignment.AssignedId.Value = ballotTemplate.Id.Value;
+                        newAssignment.AssignedType.Value = TemplateAssignmentType.BallotTemplate;
+                        newAssignment.FieldName.Value = BallotTemplate.BallotPaperFieldName;
+                        database.Save(newAssignment);
+                    }
+                }
+            } 
+        }
+
+        private static TemplateAssignmentType ConvertAssingmentType(SendingTemplateParentType type)
+        {
+            switch (type)
+            {
+                case SendingTemplateParentType.BallotTemplate:
+                    return TemplateAssignmentType.BallotTemplate;
+                default:
+                    throw new NotSupportedException();
+            } 
+        }
+
+        private static string ConvertAssingmentFieldName(string fieldName)
+        {
+            switch (fieldName)
+            {
+                case "announcement":
+                    return BallotTemplate.AnnouncementMailFieldName;
+                case "invitation":
+                    return BallotTemplate.InvitationMailFieldName;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private static void MigrateSendingTemplates(IDatabase database)
+        {
+            foreach (var ballotTemplate in database.Query<BallotTemplate>())
+            {
+                ballotTemplate.Deprecated1.Value = null;
+                ballotTemplate.Deprecated2.Value = null;
+                database.Save(ballotTemplate);
+            }
+
+            foreach (var sendingTemplate in database.Query<SendingTemplate>())
+            {
+                foreach (var language in sendingTemplate.Languages)
+                {
+                    var template = new MailTemplate(Guid.NewGuid());
+                    template.Language.Value = language.Language.Value;
+                    template.Label.Value = language.MailSubject.Value;
+                    template.Subject.Value = language.MailSubject.Value;
+                    template.HtmlText.Value = language.MailHtmlText.Value;
+                    template.PlainText.Value = language.MailPlainText.Value;
+                    database.Save(template);
+
+                    var assignment = new MailTemplateAssignment(Guid.NewGuid());
+                    assignment.Template.Value = template;
+                    assignment.AssignedType.Value = ConvertAssingmentType(sendingTemplate.ParentType.Value);
+                    assignment.AssignedId.Value = sendingTemplate.ParentId.Value;
+                    assignment.FieldName.Value = ConvertAssingmentFieldName(sendingTemplate.FieldName.Value);
+                    database.Save(template);
+
+                    database.Delete(language);
+                }
+
+                database.Delete(sendingTemplate);
             }
         }
 
@@ -157,7 +360,7 @@ namespace Quaestur
         {
             foreach (var membershipType in database.Query<MembershipType>())
             {
-                var model = membershipType.CreatePaymentModel();
+                var model = membershipType.CreatePaymentModel(database);
 
                 if (model != null)
                 {

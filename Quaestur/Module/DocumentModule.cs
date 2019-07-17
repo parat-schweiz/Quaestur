@@ -107,7 +107,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/document/edit/{id}", parameters =>
             {
@@ -154,7 +154,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/document/add/{id}", parameters =>
             {

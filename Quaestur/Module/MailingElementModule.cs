@@ -155,7 +155,7 @@ namespace Quaestur
                     return View["View/mailingelementlist.sshtml",
                         new MailingElementListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/mailingelement/edit/{id}", parameters =>
             {
@@ -171,7 +171,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/mailingelement/edit/{id}", parameters =>
             {

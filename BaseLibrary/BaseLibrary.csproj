@@ -63,6 +63,9 @@
     <Compile Include="MailCounter.cs" />
     <Compile Include="JObjectExtensions.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Currency.cs" />
+    <Compile Include="Dates.cs" />
+    <Compile Include="StringBuilderExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

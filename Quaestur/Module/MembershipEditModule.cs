@@ -104,7 +104,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/membership/edit/{id}", parameters =>
             {
@@ -120,7 +120,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/membership/edit/{id}", parameters =>
             {
@@ -167,7 +167,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/membership/add/{id}", parameters =>
             {

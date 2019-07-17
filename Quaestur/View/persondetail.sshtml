@@ -14,6 +14,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -29,6 +31,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -44,6 +48,8 @@
               $("#menuBilling").addClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -59,6 +65,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -74,6 +82,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -89,6 +99,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -104,6 +116,8 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").addClass('active');
               $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
@@ -119,10 +133,45 @@
               $("#menuBilling").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").addClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
           }
       });
   }
-  function updatepersonhead(){
+  function showPoints(){
+      $.get("/person/detail/points/@Model.Id", function(data, status){
+          if (data){
+              $("#persondata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuMemberships").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuRoleAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuBilling").removeClass('active');
+              $("#menuJournal").removeClass('active');
+              $("#menuSecurity").removeClass('active');
+              $("#menuPoints").addClass('active');
+              $("#menuPointsTally").removeClass('active');
+          }
+      });
+  }
+  function showPointsTally(){
+      $.get("/person/detail/pointstally/@Model.Id", function(data, status){
+          if (data){
+              $("#persondata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuMemberships").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuRoleAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuBilling").removeClass('active');
+              $("#menuJournal").removeClass('active');
+              $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").addClass('active');
+          }
+      });
+  }  function updatepersonhead(){
       $.get("/person/detail/head/@Model.Id", function(personHeadData, status){
           if (personHeadData){
               $("#personhead").html(personHeadData);
@@ -173,6 +222,14 @@
       @If.BillingReadable
       <li class="nav-item">
         <a id="menuBilling" class="nav-link" onclick="showBilling()" href="javascript:void(0);">@Model.PhraseTabBilling</a>
+      </li>
+      <li class="nav-item">
+        <a id="menuPointsTally" class="nav-link" onclick="showPointsTally()" href="javascript:void(0);">@Model.PhraseTabPointsTally</a>
+      </li>
+      @EndIf
+      @If.PointsReadable
+      <li class="nav-item">
+        <a id="menuPoints" class="nav-link" onclick="showPoints()" href="javascript:void(0);">@Model.PhraseTabPoints</a>
       </li>
       @EndIf
       @If.JournalReadable

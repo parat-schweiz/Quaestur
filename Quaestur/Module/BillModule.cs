@@ -128,7 +128,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/bill/edit/{id}", parameters =>
             {
@@ -180,7 +180,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/bill/add/{id}", parameters =>
             {
@@ -266,7 +266,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

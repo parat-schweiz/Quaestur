@@ -182,7 +182,7 @@
     <Compile Include="Module\PersonDetailBillingModule.cs" />
     <Compile Include="Module\BillModule.cs" />
     <Compile Include="Model\MembershipType.cs" />
-    <Compile Include="Model\PaymentParameter.cs" />
+    <Compile Include="Model\PersonalPaymentParameter.cs" />
     <Compile Include="Model\PaymentModelFixed.cs" />
     <Compile Include="Model\IPaymentModel.cs" />
     <Compile Include="Model\SystemWideSettings.cs" />
@@ -217,8 +217,7 @@
     <Compile Include="Module\BallotTemplateModule.cs" />
     <Compile Include="Model\SendingTemplate.cs" />
     <Compile Include="Model\SendingTemplateLanguage.cs" />
-    <Compile Include="Module\SendingTemplateModule.cs" />
-    <Compile Include="Module\BallotModule.cs" />
+    <Compile Include="Module\IncomeModule.cs" />
     <Compile Include="Module\BallotPaperModule.cs" />
     <Compile Include="Model\BallotPaper.cs" />
     <Compile Include="Infrastructure\BallotTask.cs" />
@@ -230,7 +229,29 @@
     <Compile Include="Infrastructure\TaskRunner.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
     <Compile Include="Module\PostStatus.cs" />
+    <Compile Include="Model\Points.cs" />
+    <Compile Include="Model\PointBudget.cs" />
+    <Compile Include="Model\BudgetPeriod.cs" />
+    <Compile Include="Model\PaymentModelFederalTax.cs" />
+    <Compile Include="Model\PaymentParameter.cs" />
+    <Compile Include="Module\BallotModule.cs" />
+    <Compile Include="Module\PointBudgetModule.cs" />
+    <Compile Include="Infrastructure\PointsTask.cs" />
+    <Compile Include="Module\PersonDetailPointsModule.cs" />
+    <Compile Include="Module\PointsEditModule.cs" />
+    <Compile Include="Model\PointsTally.cs" />
+    <Compile Include="Module\PointsTallyEditModule.cs" />
+    <Compile Include="Module\PersonDetailPointsTallyModule.cs" />
+    <Compile Include="Documents\PointsTallyDocument.cs" />
     <Compile Include="Module\MatrixAuthModule.cs" />
+    <Compile Include="Infrastructure\PointsTallyTask.cs" />
+    <Compile Include="Model\MailTemplate.cs" />
+    <Compile Include="Model\MailTemplateAssignment.cs" />
+    <Compile Include="Module\MailTemplateModule.cs" />
+    <Compile Include="Model\lTemplateAssignment.cs" />
+    <Compile Include="Model\LatexTemplate.cs" />
+    <Compile Include="Model\LatexTemplateAssignment.cs" />
+    <Compile Include="Module\LatexTemplateModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -879,6 +900,52 @@
     <None Include="Assets\filesaver\FileSaver.min.js.map">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\income.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\income_membershipfee.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pointbudgetlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pointbudgetedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pointbudget.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\persondetail_points.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pointsedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pointstallyedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\persondetail_pointstally.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Documents\pointstally_de.tex" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />

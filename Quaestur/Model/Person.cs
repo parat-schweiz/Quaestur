@@ -76,6 +76,7 @@ namespace Quaestur
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
         public ByteArrayField TwoFactorSecret { get; private set; }
+        public List<PersonalPaymentParameter> PaymentParameters { get; private set; }
 
         public Person() : this(Guid.Empty)
         {
@@ -102,6 +103,7 @@ namespace Quaestur
             RoleAssignments = new List<RoleAssignment>();
             TagAssignments = new List<TagAssignment>();
             PublicKeys = new List<PublicKey>();
+            PaymentParameters = new List<PersonalPaymentParameter>();
         }
 
         public override IEnumerable<MultiCascade> Cascades
@@ -114,6 +116,7 @@ namespace Quaestur
                 yield return new MultiCascade<RoleAssignment>("personid", Id.Value, () => RoleAssignments);
                 yield return new MultiCascade<TagAssignment>("personid", Id.Value, () => TagAssignments);
                 yield return new MultiCascade<PublicKey>("personid", Id.Value, () => PublicKeys);
+                yield return new MultiCascade<PersonalPaymentParameter>("personid", Id.Value, () => PaymentParameters);
             }
         }
 

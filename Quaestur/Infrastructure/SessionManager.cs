@@ -171,6 +171,7 @@ namespace Quaestur
                     case PartAccess.RoleAssignments:
                     case PartAccess.TagAssignments:
                     case PartAccess.Journal:
+                    case PartAccess.Points:
                         if (right == AccessRight.Read)
                         {
                             return true;
