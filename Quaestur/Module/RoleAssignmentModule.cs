@@ -173,7 +173,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/roleassignment/list/{id}", parameters =>
             {
@@ -189,7 +189,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/roleassignment/add/{id}", parameters =>
             {
@@ -216,7 +216,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/roleassignment/add/{id}", parameters =>
             {

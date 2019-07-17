@@ -13,7 +13,7 @@ namespace Quaestur
     public class BallotPaperDocument : TemplateDocument, IContentProvider
     {
         private readonly Translator _translator;
-        private readonly IDatabase _db;
+        private readonly IDatabase _database;
         private readonly BallotPaper _ballotPaper;
         private readonly Membership _membership;
         private readonly Person _person;
@@ -25,7 +25,7 @@ namespace Quaestur
         public BallotPaperDocument(Translator translator, IDatabase db, BallotPaper ballotPaper)
         {
             _translator = translator;
-            _db = db;
+            _database = db;
             _ballotPaper = ballotPaper;
             _membership = _ballotPaper.Member.Value;
             _person = _membership.Person.Value;
@@ -40,7 +40,7 @@ namespace Quaestur
 
         protected override string TexTemplate
         {
-            get { return _template.BallotPaper.Value[_translator.Language]; } 
+            get { return _template.GetBallotPaper(_database, _translator.Language).Text.Value; }
         }
 
         protected override Templator GetTemplator()

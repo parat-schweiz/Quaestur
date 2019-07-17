@@ -57,7 +57,7 @@ namespace Quaestur
                             !m.Person.Value.Deleted.Value))
             {
                 var translator = new Translator(translation, membership.Person.Value.Language.Value);
-                var model = membership.Type.Value.CreatePaymentModel();
+                var model = membership.Type.Value.CreatePaymentModel(database);
                 var advancePeriod = model != null ? model.GetBillAdvancePeriod() : 30;
 
                 var bills = database.Query<Bill>(DC.Equal("membershipid", membership.Id.Value)).ToList();
@@ -93,18 +93,22 @@ namespace Quaestur
             var billDocument = new BillDocument(translator, database, membership);
             if (billDocument.Create())
             {
-                database.Save(billDocument.Bill);
-                membership.UpdateVotingRight(database);
-                database.Save(membership);
-                Journal(
-                    database,
-                    membership,
-                    "Document.Bill.Created",
-                    "Bill created message",
-                    "Created bill {0} for {1} in {2}",
-                    t => billDocument.Bill.Number.Value,
-                    t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
-                    t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+                using (var transaction = database.BeginTransaction())
+                {
+                    database.Save(billDocument.Bill);
+                    membership.UpdateVotingRight(database);
+                    database.Save(membership);
+                    Journal(
+                        database,
+                        membership,
+                        "Document.Bill.Created",
+                        "Bill created message",
+                        "Created bill {0} for {1} in {2}",
+                        t => billDocument.Bill.Number.Value,
+                        t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
+                        t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+                    transaction.Commit();
+                }
                 return true;
             }
             else

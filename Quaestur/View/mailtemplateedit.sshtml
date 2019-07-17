@@ -1,0 +1,133 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#mailTemplate' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Label", result);
+  assignFieldValidation("Language", result);
+  assignFieldValidation("AssignmentType", result);
+  assignFieldValidation("Organization", result);
+  assignFieldValidation("Subject", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#mailingCancelButton").click(function(event) {
+    window.location.href = "/mailtemplate";
+    event.preventDefault();  
+  });
+  $("#mailingSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Label = $("#mailTemplateLabel").val();
+    formData.Language = $("#mailTemplateLanguage").val();
+    formData.AssignmentType = $("#mailTemplateAssignmentType").val();
+    formData.Organization = $("#mailTemplateOrganization").val();
+    formData.Subject = $("#mailTemplateSubject").val();
+    formData.HtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
+    $.post("/mailtemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/mailtemplate";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+    tinymce.init({
+    selector: '#@Model.HtmlEditorId',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailTemplateLabel">@Model.PhraseFieldLabel</label>
+        <input type="text" id="mailTemplateLabel" class="form-control" value="@Model.Label"/>
+        <div id="mailTemplateLabelFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailTemplateOrganization">@Model.PhraseFieldOrganization</label>
+        <select id="mailTemplateOrganization" class="selectpicker form-control" data-live-search="true">
+          @Each.Organizations
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailTemplateOrganizationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailTemplateAssignmentType">@Model.PhraseFieldAssignmentType</label>
+        <select id="mailTemplateAssignmentType" class="selectpicker form-control" data-live-search="true">
+          @Each.AssignmentTypes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailTemplateAssignmentTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailTemplateLanguage">@Model.PhraseFieldLanguage</label>
+        <select id="mailTemplateLanguage" class="selectpicker form-control" data-live-search="true">
+          @Each.Languages
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailTemplateLanguageFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailTemplateSubject">@Model.PhraseFieldSubject</label>
+        <input type="text" id="mailTemplateSubject" class="form-control" value="@Model.Subject"/>
+        <div id="mailTemplateSubjectFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="@Model.HtmlEditorId">@Model.PhraseFieldHtmlText</label>
+        <textarea id="@Model.HtmlEditorId">@Model.HtmlText</textarea>
+      </div>
+    </div>
+    <button id="mailingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="mailingSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

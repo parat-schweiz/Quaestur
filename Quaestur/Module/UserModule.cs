@@ -57,7 +57,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/user/status/edit/{id}", parameters =>
             {

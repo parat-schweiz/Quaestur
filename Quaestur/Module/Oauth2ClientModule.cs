@@ -137,7 +137,7 @@ namespace Quaestur
                     return View["View/oauth2clientlist.sshtml",
                         new Oauth2ClientListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/oauth2client/edit/{id}", parameters =>
             {
@@ -152,7 +152,7 @@ namespace Quaestur
                             new Oauth2ClientEditViewModel(Translator, Database, client)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/oauth2client/edit/{id}", parameters =>
             {
@@ -189,7 +189,7 @@ namespace Quaestur
                     return View["View/oauth2clientedit.sshtml",
                     new Oauth2ClientEditViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/oauth2client/add/new", parameters =>
             {
@@ -232,7 +232,7 @@ namespace Quaestur
                         }
                     }
                 }
-                return null;
+                return string.Empty;
             });
         }
     }

@@ -1,22 +1,26 @@
 ﻿using System;
 using System.Linq;
+using System.Text;
 using System.Collections.Generic;
+using BaseLibrary;
 using SiteLibrary;
 
 namespace Quaestur
 {
     public class PaymentModelFixed : IPaymentModel
     {
-        private string AmountKey = "PaymentModel.Fixed.Parameter.Amount";
-        private string BillingPeriodKey = "PaymentModel.Fixed.Parameter.BillingPeriod";
-        private string ReminderPeriodKey = "PaymentModel.Fixed.Parameter.ReminderPeriod";
-        private string VotingRightGraceAfterBillKey = "PaymentModel.Fixed.Parameter.VotingRightGraceAfterBill";
+        private const string AmountKey = "PaymentModel.Fixed.Parameter.Amount";
+        private const string BillingPeriodKey = "PaymentModel.Fixed.Parameter.BillingPeriod";
+        private const string ReminderPeriodKey = "PaymentModel.Fixed.Parameter.ReminderPeriod";
+        private const string VotingRightGraceAfterBillKey = "PaymentModel.Fixed.Parameter.VotingRightGraceAfterBill";
 
         private MembershipType _membershipType;
+        private IDatabase _database;
 
-        public PaymentModelFixed(MembershipType membershipType)
+        public PaymentModelFixed(MembershipType membershipType, IDatabase database)
         {
             _membershipType = membershipType;
+            _database = database;
         }
 
         public PaymentModelFixed()
@@ -38,15 +42,58 @@ namespace Quaestur
             }
         }
 
+        public IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        {
+            get { return new PaymentParameterType[0]; } 
+        }
+
         public decimal ComputeYearlyAmount(Membership membership)
         {
             return _membershipType.PaymentParameters
                 .Single(p => p.Key == AmountKey).Value;
         }
 
+        public string CreateExplainationLatex(Translator translator, IEnumerable<PersonalPaymentParameter> parameters)
+        {
+            var fixedAmount = _membershipType.PaymentParameters
+                .Single(p => p.Key == AmountKey).Value;
+            var currency = _database.Query<SystemWideSettings>()
+                .Single().Currency.Value;
+            var fixedInfo = translator.Get(
+                "PaymentModel.Fixed.Explaination.LaTeX",
+                "Explaination text for the fixed payment model",
+                "Yearly fixed membership fee");
+
+            var text = new StringBuilder();
+
+            text.Append(@"~~~~~");
+            text.Append(fixedInfo);
+            text.Append(" & ");
+            text.Append(currency);
+            text.Append(" & ");
+            text.Append(Currency.Format(fixedAmount));
+            text.Append(@" \\");
+            text.AppendLine();
+
+            return text.ToString();
+        }
+
         public string CreateExplainationLatex(Translator translator, Membership membership)
         {
-            return string.Empty;
+            return CreateExplainationLatex(translator, membership.Person.Value.PaymentParameters);
+        }
+
+        public string CreateExplainationText(Translator translator, IEnumerable<PersonalPaymentParameter> parameters)
+        {
+            return translator.Get(
+                "PaymentModel.Fixed.Explaination.Text", 
+                "Explaination text for the fixed payment model", 
+                "Fixed membership fee amount");
+        }
+
+        public string CreateExplainationText(Translator translator, Membership membership)
+        {
+            return CreateExplainationText(translator, membership.Person.Value.PaymentParameters);
         }
 
         public int GetBillingPeriod()
@@ -101,6 +148,11 @@ namespace Quaestur
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
+        }
+
+        public decimal ComputeYearlyAmount(IEnumerable<PersonalPaymentParameter> parameters)
+        {
+            throw new NotImplementedException();
         }
     }
 }

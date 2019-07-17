@@ -62,7 +62,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/demography/edit/{id}", parameters =>
             {

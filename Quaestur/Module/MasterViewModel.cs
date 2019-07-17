@@ -46,6 +46,7 @@ namespace Quaestur
         public bool NavOrganization = false;
         public bool NavSettings = false;
         public bool NavBallotPaper = false;
+        public bool NavPoints = false;
         public string PhraseMenuPersons = string.Empty;
         public string PhraseMenuPersonsList = string.Empty;
         public string PhraseMenuPersonNew = string.Empty;
@@ -55,6 +56,8 @@ namespace Quaestur
         public string PhraseMenuCountries = string.Empty;
         public string PhraseMenuStates = string.Empty;
         public string PhraseMenuTags = string.Empty;
+        public string PhraseMenuMailTemplates = string.Empty;
+        public string PhraseMenuLatexTemplates = string.Empty;
         public string PhraseMenuPhrases = string.Empty;
         public string PhraseMenuMailings = string.Empty;
         public string PhraseMenuNewMailing = string.Empty;
@@ -69,10 +72,19 @@ namespace Quaestur
         public string PhraseMenuBallotList = string.Empty;
         public string PhraseMenuBallotTemplates = string.Empty;
         public string PhraseMenuBallotPaper = string.Empty;
+        public string PhraseMenuIncome = string.Empty;
         public string PhraseMenuLoginLink = string.Empty;
+        public string PhraseMenuPoints = string.Empty;
+        public string PhraseMenuPointsBudget = string.Empty;
 
         public MasterViewModel()
         {
+        }
+
+        public bool SomeCustomAccess(Session session)
+        {
+            return session.HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Read) ||
+                   session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
         }
 
         public MasterViewModel(Translator translator, string title, Session session)
@@ -81,13 +93,14 @@ namespace Quaestur
             UserId = session != null ? session.User.Id.Value.ToString() : string.Empty;
             UserName = session != null ? session.User.UserName.Value : string.Empty;
             NavBar = session != null;
-            NavCustom = session != null && session.HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write);
+            NavCustom = session != null && SomeCustomAccess(session);
             NavPersonNew = session != null && session.HasPersonNewAccess();
             NavExport = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Read);
             NavMailing = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Write);
             NavBallot = session != null && session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
             NavOrganization = session != null && session.HasAnyOrganizationAccess(PartAccess.Structure, AccessRight.Read);
             NavSettings = session != null && session.HasAnyOrganizationAccess(PartAccess.Crypto, AccessRight.Read);
+            NavPoints = session != null && session.HasAnyOrganizationAccess(PartAccess.PointBudget, AccessRight.Read);
             NavBallotPaper = session != null && session.CompleteAuth && session.User.Memberships.Any(m => m.HasVotingRight.Value ?? false);
             PhraseMenuPersons = translator.Get("Master.Menu.Persons", "Item 'Persons' in the main menu", "Persons").EscapeHtml();
             PhraseMenuPersonsList = translator.Get("Master.Menu.Persons.List", "Item 'List' under 'Persons' in the main menu", "List").EscapeHtml();
@@ -98,6 +111,8 @@ namespace Quaestur
             PhraseMenuCountries = translator.Get("Master.Menu.Custom.Countries", "Item 'Countries' under 'Custom' in the main menu", "Countries").EscapeHtml();
             PhraseMenuStates = translator.Get("Master.Menu.Custom.States", "Item 'States' under 'Custom' in the main menu", "States").EscapeHtml();
             PhraseMenuTags = translator.Get("Master.Menu.Custom.Tags", "Item 'Tags' under 'Custom' in the main menu", "Tags").EscapeHtml();
+            PhraseMenuMailTemplates = translator.Get("Master.Menu.Custom.MailTemplates", "Item 'Mail templates' under 'Custom' in the main menu", "Mail templates").EscapeHtml();
+            PhraseMenuLatexTemplates = translator.Get("Master.Menu.Custom.LatexTemplates", "Item 'Latex templates' under 'Custom' in the main menu", "Latex templates").EscapeHtml();
             PhraseMenuPhrases = translator.Get("Master.Menu.Custom.Translations", "Item 'Translations' under 'Custom' in the main menu", "Translations").EscapeHtml();
             PhraseMenuMailings = translator.Get("Master.Menu.Mailings", "Item 'Mailings' in the main menu", "Mailings").EscapeHtml();
             PhraseMenuNewMailing = translator.Get("Master.Menu.Mailings.New", "Item 'New mailing' under 'Mailings' in the main menu", "New mailing").EscapeHtml();
@@ -113,6 +128,9 @@ namespace Quaestur
             PhraseMenuBallot = translator.Get("Master.Menu.Ballots", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
             PhraseMenuBallotList = translator.Get("Master.Menu.Ballots.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
             PhraseMenuBallotTemplates = translator.Get("Master.Menu.Ballots.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();
+            PhraseMenuIncome = translator.Get("Master.Menu.User.Income", "Item 'Report income' under user in the main menu", "Report income").EscapeHtml();
+            PhraseMenuPoints = translator.Get("Master.Menu.Points", "Menu 'Points' in the main menu", "Points").EscapeHtml();
+            PhraseMenuPointsBudget = translator.Get("Master.Menu.Points.PointsBudget", "Item 'Points budget' under points in the main menu", "Points budget").EscapeHtml();
         }
     }
 

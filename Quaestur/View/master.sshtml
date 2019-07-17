@@ -61,6 +61,14 @@
                   </div>
                 </li>
                 @EndIf
+                @If.NavPoints
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuPoints</a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/points/budget">@Model.PhraseMenuPointsBudget</a>
+                  </div>
+                </li>
+                @EndIf
                 @If.NavBallot
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuBallot</a>
@@ -80,6 +88,8 @@
                     <a class="dropdown-item" href="/country">@Model.PhraseMenuCountries</a>
                     <a class="dropdown-item" href="/state">@Model.PhraseMenuStates</a>
                     <a class="dropdown-item" href="/tag">@Model.PhraseMenuTags</a>
+                    <a class="dropdown-item" href="/mailtemplate">@Model.PhraseMenuMailTemplates</a>
+                    <a class="dropdown-item" href="/latextemplate">@Model.PhraseMenuLatexTemplates</a>
                     <a class="dropdown-item" href="/phrase">@Model.PhraseMenuPhrases</a>
                     @EndIf
                     @If.NavOrganization
@@ -106,6 +116,7 @@
                     <a class="dropdown-item" href="/ballotpaper">@Model.PhraseMenuBallotPaper</a>
                     @EndIf
                     @If.NavBar
+                    <a class="dropdown-item" href="/income">@Model.PhraseMenuIncome</a>
                     <a class="dropdown-item" href="/password">@Model.PhraseMenuChangePassword</a>
                     <a class="dropdown-item" href="/loginlink">@Model.PhraseMenuLoginLink</a>
                     <a class="dropdown-item" href="/logout">@Model.PhraseMenuLogout</a>

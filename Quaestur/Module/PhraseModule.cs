@@ -198,7 +198,7 @@ namespace Quaestur
                     return View["View/phraselist.sshtml",
                         new PhraseListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/phrase/edit/{id}", parameters =>
             {
@@ -213,7 +213,7 @@ namespace Quaestur
                             new PhraseEditViewModel(Translator, Database, phrase)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/phrase/edit/{id}", parameters =>
             {

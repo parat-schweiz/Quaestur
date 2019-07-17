@@ -96,7 +96,7 @@ namespace Quaestur
                         new TwoFactorDisableViewModel(Translator, person)];
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/twofactor/disable/{id}", parameters =>
             {
@@ -111,7 +111,7 @@ namespace Quaestur
                     Database.Save(person);
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/twofactor/set/{id}", parameters =>
             {
@@ -143,7 +143,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/twofactor/set/{id}", parameters =>
             {
@@ -229,7 +229,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/twofactor/qr/{key}", parameters =>
             {

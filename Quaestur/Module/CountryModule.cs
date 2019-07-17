@@ -105,7 +105,7 @@ namespace Quaestur
                     return View["View/countrylist.sshtml",
                         new CountryListViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Get("/country/edit/{id}", parameters =>
             {
@@ -120,7 +120,7 @@ namespace Quaestur
                             new CountryEditViewModel(Translator, Database, country)];
                     }
                 }
-                return null;
+                return string.Empty;
             });
             Post("/country/edit/{id}", parameters =>
             {
@@ -151,9 +151,9 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/countryedit.sshtml",
-                    new CountryEditViewModel(Translator, Database)];
+                        new CountryEditViewModel(Translator, Database)];
                 }
-                return null;
+                return string.Empty;
             });
             Post("/country/add/new", parameters =>
             {
@@ -192,7 +192,7 @@ namespace Quaestur
                         }
                     }
                 }
-                return null;
+                return string.Empty;
             });
         }
     }

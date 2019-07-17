@@ -32,7 +32,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/person/delete/unmark/{id}", parameters =>
             {
@@ -53,7 +53,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/person/delete/hard/{id}", parameters =>
             {
@@ -77,7 +77,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

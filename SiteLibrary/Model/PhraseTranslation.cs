@@ -55,6 +55,46 @@ namespace SiteLibrary
                 yield return Language.Italian;
             }
         }
+
+        public static IEnumerable<Language> PreferenceList(Language preferred)
+        {
+            yield return preferred;
+
+            switch (preferred)
+            {
+                case Language.German:
+                    yield return Language.English;
+                    yield return Language.Technical;
+                    yield return Language.French;
+                    yield return Language.Italian;
+                    break;
+                case Language.French:
+                    yield return Language.Italian;
+                    yield return Language.English;
+                    yield return Language.Technical;
+                    yield return Language.German;
+                    break;
+                case Language.Italian:
+                    yield return Language.French;
+                    yield return Language.English;
+                    yield return Language.Technical;
+                    yield return Language.German;
+                    break;
+                case Language.English:
+                    yield return Language.Technical;
+                    yield return Language.German;
+                    yield return Language.French;
+                    yield return Language.Italian;
+                    break;
+                default:
+                    yield return Language.Technical;
+                    yield return Language.English;
+                    yield return Language.German;
+                    yield return Language.French;
+                    yield return Language.Italian;
+                    break;
+            } 
+        }
     }
 
     public class PhraseTranslation : DatabaseObject

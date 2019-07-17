@@ -178,7 +178,7 @@ namespace Quaestur
                     if (client.RequireTwoFactor &&
                         (!CurrentSession.CompleteAuth))
                     {
-                        return null;
+                        return string.Empty;
                     }
 
                     using (var transaction = Database.BeginTransaction())
@@ -217,7 +217,7 @@ namespace Quaestur
                     return uri;
                 }
 
-                return null;
+                return string.Empty;
             });
         }
 
@@ -305,7 +305,7 @@ namespace Quaestur
                 }
             }
 
-            return null; 
+            return null;
         }
 
         private Oauth2Session FindSession()
@@ -488,7 +488,7 @@ namespace Quaestur
                     return Response.AsText(response.ToString(), "application/json");
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/api/v1/user/roles/", parameters =>
             {
@@ -502,7 +502,7 @@ namespace Quaestur
                     return Response.AsText(response.ToString(), "application/json");
                 }
 
-                return null;
+                return string.Empty;
             });
         }
 

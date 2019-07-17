@@ -65,6 +65,34 @@ namespace Quaestur
             Selected = selected;
         }
 
+        public NamedIdViewModel(Translator translator, MailTemplate template, bool selected)
+        {
+            Id = template.Id.ToString();
+            Name = template.Label.Value.EscapeHtml();
+            Selected = selected;
+        }
+
+        public NamedIdViewModel(Translator translator, LatexTemplate template, bool selected)
+        {
+            Id = template.Id.ToString();
+            Name = template.Label.Value.EscapeHtml();
+            Selected = selected;
+        }
+
+        public NamedIdViewModel(Translator translator, BudgetPeriod period, bool selected)
+        {
+            Id = period.Id.ToString();
+            Name = period.GetText(translator).EscapeHtml();
+            Selected = selected;
+        }
+
+        public NamedIdViewModel(Translator translator, PointBudget budget, bool selected)
+        {
+            Id = budget.Id.ToString();
+            Name = budget.GetText(translator).EscapeHtml();
+            Selected = selected;
+        }
+
         public NamedIdViewModel(Translator translator, Tag tag, bool selected)
         {
             Id = tag.Id.ToString();

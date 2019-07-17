@@ -151,3 +151,15 @@ input[type=checkbox] {
 .striken {
     text-decoration: line-through
 }
+
+.row-lightgreen-background {
+    background-color: #81ff85;
+}
+
+.row-lightblue-background {
+    background-color: #81ceff;
+}
+
+.row-lightred-background {
+    background-color: #ff818e;
+}

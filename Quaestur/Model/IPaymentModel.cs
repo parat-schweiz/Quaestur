@@ -23,9 +23,19 @@ namespace Quaestur
     { 
         IEnumerable<PaymentParameterType> ParameterTypes { get; }
 
+        IEnumerable<PaymentParameterType> PersonalParameterTyoes { get; }
+
+        decimal ComputeYearlyAmount(IEnumerable<PersonalPaymentParameter> parameters);
+
         decimal ComputeYearlyAmount(Membership membership);
 
+        string CreateExplainationLatex(Translator translator, IEnumerable<PersonalPaymentParameter> parameters);
+
         string CreateExplainationLatex(Translator translator, Membership membership);
+
+        string CreateExplainationText(Translator translator, IEnumerable<PersonalPaymentParameter> parameters);
+
+        string CreateExplainationText(Translator translator, Membership membership);
 
         bool HasVotingRight(IDatabase database, Membership membership);
 

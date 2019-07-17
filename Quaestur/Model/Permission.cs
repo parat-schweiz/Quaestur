@@ -23,6 +23,8 @@ namespace Quaestur
         Security = 14,
         Deleted = 15,
         Ballot = 16,
+        PointBudget = 17,
+        Points = 18,
     }
 
     public static class PartAccessExtensions
@@ -65,6 +67,10 @@ namespace Quaestur
                     return translator.Get("Enum.PartAccess.Deleted", "Value 'Deleted' in PartAccess enum", "Deleted");
                 case PartAccess.Ballot:
                     return translator.Get("Enum.PartAccess.Ballot", "Value 'Ballot' in PartAccess enum", "Ballot");
+                case PartAccess.PointBudget:
+                    return translator.Get("Enum.PartAccess.PointBudget", "Value 'Point budget' in PartAccess enum", "Point budget");
+                case PartAccess.Points:
+                    return translator.Get("Enum.PartAccess.Points", "Value 'Points' in PartAccess enum", "Points");
                 default:
                     throw new NotSupportedException();
             }

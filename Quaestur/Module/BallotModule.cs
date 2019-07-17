@@ -288,7 +288,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/ballot/test/{id}", parameters =>
             {
@@ -319,18 +319,20 @@ namespace Quaestur
 
                     foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
                     {
-                        if (ballotTemplate.Announcement.Value.Languages.Any(stl => stl.Language.Value == language))
+                        var announcementTemplate = ballotTemplate.GetAnnouncementMail(Database, language);
+
+                        if (announcementTemplate != null)
                         {
-                            var sendingTemplateLanguage = ballotTemplate.Announcement.Value.Languages.Single(stl => stl.Language.Value == language);
-                            var message = BallotTask.CreateMail(Database, ballotPaper, sendingTemplateLanguage);
+                            var message = BallotTask.CreateMail(Database, ballotPaper, announcementTemplate);
                             Global.MailCounter.Used();
                             Global.Mail.Send(message);
                         }
 
-                        if (ballotTemplate.Invitation.Value.Languages.Any(stl => stl.Language.Value == language))
+                        var invitationTemplate = ballotTemplate.GetInvitationMail(Database, language);
+
+                        if (invitationTemplate != null)
                         {
-                            var sendingTemplateLanguage = ballotTemplate.Invitation.Value.Languages.Single(stl => stl.Language.Value == language);
-                            var message = BallotTask.CreateMail(Database, ballotPaper, sendingTemplateLanguage);
+                            var message = BallotTask.CreateMail(Database, ballotPaper, invitationTemplate);
                             Global.MailCounter.Used();
                             Global.Mail.Send(message);
                         }

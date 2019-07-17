@@ -1257,14 +1257,15 @@ namespace SiteLibrary
         {
             get 
             {
-                if (_values.ContainsKey(language))
+                foreach (var l in LanguageExtensions.PreferenceList(language))
                 {
-                    return _values[language];
+                    if (_values.ContainsKey(l))
+                    {
+                        return _values[l];
+                    }
                 }
-                else
-                {
-                    return AnyValue; 
-                }
+
+                return AnyValue; 
             }
             set
             {

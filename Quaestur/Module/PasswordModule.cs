@@ -69,7 +69,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/password/set/{id}", parameters =>
             {
@@ -123,7 +123,7 @@ namespace Quaestur
                         new PasswordEditViewModel(Translator, person, true)];
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/password/change/{id}", parameters =>
             {

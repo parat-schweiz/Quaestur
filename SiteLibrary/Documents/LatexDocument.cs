@@ -19,6 +19,11 @@ namespace SiteLibrary
 
         public virtual bool Prepare() { return true; }
 
+        public LatexDocument()
+        {
+            ErrorText = string.Empty; 
+        }
+
         public virtual IEnumerable<Tuple<string, byte[]>> Files
         {
             get { return new Tuple<string, byte[]>[0];  }

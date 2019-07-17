@@ -7,12 +7,12 @@ namespace Quaestur
 {
     public class Membership : DatabaseObject
     {
-        public ForeignKeyField<Person, Membership> Person { get; set; }
-        public ForeignKeyField<Organization, Membership> Organization { get; set; }
-        public ForeignKeyField<MembershipType, Membership> Type { get; set; }
-        public Field<DateTime> StartDate { get; set; }
-        public FieldNull<DateTime> EndDate { get; set; }
-        public FieldNull<bool> HasVotingRight { get; set; }
+        public ForeignKeyField<Person, Membership> Person { get; private set; }
+        public ForeignKeyField<Organization, Membership> Organization { get; private set; }
+        public ForeignKeyField<MembershipType, Membership> Type { get; private set; }
+        public Field<DateTime> StartDate { get; private set; }
+        public FieldNull<DateTime> EndDate { get; private set; }
+        public FieldNull<bool> HasVotingRight { get; private set; }
 
         public Membership() : this(Guid.Empty)
         {
@@ -75,7 +75,7 @@ namespace Quaestur
                 case CollectionModel.None:
                     return true;
                 case CollectionModel.Direct:
-                    var model = Type.Value.CreatePaymentModel();
+                    var model = Type.Value.CreatePaymentModel(database);
                     return model == null || model.HasVotingRight(database, this);
                 case CollectionModel.ByParent:
                     if (last == CollectionModel.BySub) return false;

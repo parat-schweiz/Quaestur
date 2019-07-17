@@ -385,7 +385,7 @@ namespace Quaestur
                 if (settings == null || 
                     settings.Person.Value != CurrentSession.User)
                 {
-                    return null;
+                    return string.Empty;
                 }
 
                 var update = new SearchSettingsUpdate(settings);
@@ -416,7 +416,7 @@ namespace Quaestur
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
-                if (settings == null) return null;
+                if (settings == null) return string.Empty;
                 var persons = Database.Query<Person>()
                     .Where(p => Filter(p, settings));
                 var skip = settings.ItemsPerPage * settings.CurrentPage;
@@ -431,7 +431,7 @@ namespace Quaestur
             {
                 string searchSettingsId = parameters.ssid;
                 var settings = Database.Query<SearchSettings>(searchSettingsId);
-                if (settings == null) return null;
+                if (settings == null) return string.Empty;
                 var personCount = Database.Query<Person>()
                     .Count(p => Filter(p, settings));
                 var itemsPerPage = Math.Max(1, settings.ItemsPerPage.Value);

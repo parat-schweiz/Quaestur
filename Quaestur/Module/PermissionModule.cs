@@ -55,6 +55,8 @@ namespace Quaestur
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Journal, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Mailings, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Membership, false));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.PointBudget, false));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Points, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Security, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, false));
@@ -87,6 +89,8 @@ namespace Quaestur
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Journal, permission.Part.Value == PartAccess.Journal));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Mailings, permission.Part.Value == PartAccess.Mailings));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Membership, permission.Part.Value == PartAccess.Membership));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.PointBudget, permission.Part.Value == PartAccess.PointBudget));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Points, permission.Part.Value == PartAccess.Points));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, permission.Part.Value == PartAccess.RoleAssignments));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Security, permission.Part.Value == PartAccess.Security));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, permission.Part.Value == PartAccess.Structure));
@@ -204,7 +208,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/permission/list/{id}", parameters =>
             {
@@ -220,7 +224,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/permission/edit/{id}", parameters =>
             {
@@ -236,7 +240,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/permission/edit/{id}", parameters =>
             {
@@ -283,7 +287,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/permission/add/{id}", parameters =>
             {

@@ -119,7 +119,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/serviceaddress/edit/{id}", parameters =>
             {
@@ -177,7 +177,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/serviceaddress/add/mail/{id}", parameters =>
             {
@@ -193,7 +193,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/serviceaddress/add/{id}", parameters =>
             {

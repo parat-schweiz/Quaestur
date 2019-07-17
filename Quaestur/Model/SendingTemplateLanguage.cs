@@ -4,6 +4,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
+    [Obsolete("Superceeded by mail template")]
     public class SendingTemplateLanguage : DatabaseObject
     {
         public ForeignKeyField<SendingTemplate, SendingTemplateLanguage> Template { get; private set; }

@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Collections.Generic;
 using MimeKit;
-using MailKit;
 using BaseLibrary;
 using SiteLibrary;
 
@@ -238,13 +237,11 @@ namespace Quaestur
             var ballot = ballotPaper.Ballot.Value;
             var template = ballot.Template.Value;
             var person = ballotPaper.Member.Value.Person.Value;
-            var sendingTemplate = announcement ? template.Announcement.Value : template.Invitation.Value;
+            var mailTemplate = announcement ? template.GetAnnouncementMail(database, person.Language.Value) : template.GetInvitationMail(database, person.Language.Value);
 
-            if (sendingTemplate.Languages.Any(stl => stl.Language.Value == person.Language.Value))
+            if (mailTemplate != null)
             {
-                var sendingTemplateLanguage = sendingTemplate.Languages.Single(stl => stl.Language.Value == person.Language.Value);
-
-                if (SendMail(database, ballotPaper, sendingTemplateLanguage, announcement))
+                if (SendMail(database, ballotPaper, mailTemplate, announcement))
                 {
                     return true;
                 }
@@ -275,7 +272,7 @@ namespace Quaestur
             }
         }
 
-        public static MimeMessage CreateMail(IDatabase database, BallotPaper ballotPaper, SendingTemplateLanguage sendingTemplateLanguage)
+        public static MimeMessage CreateMail(IDatabase database, BallotPaper ballotPaper, MailTemplate mailTemplate)
         {
             var ballot = ballotPaper.Ballot.Value;
             var template = ballot.Template.Value;
@@ -296,9 +293,9 @@ namespace Quaestur
             var templator = new Templator(
                 new PersonContentProvider(translator, person),
                 new BallotPaperContentProvider(translator, ballotPaper));
-            var subject = templator.Apply(sendingTemplateLanguage.MailSubject);
-            var htmlText = templator.Apply(sendingTemplateLanguage.MailHtmlText);
-            var plainText = templator.Apply(sendingTemplateLanguage.MailPlainText);
+            var subject = templator.Apply(mailTemplate.Subject);
+            var htmlText = templator.Apply(mailTemplate.HtmlText);
+            var plainText = templator.Apply(mailTemplate.PlainText);
             var alternative = new Multipart("alternative");
             var plainPart = new TextPart("plain") { Text = plainText };
             plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
@@ -310,7 +307,7 @@ namespace Quaestur
             return Global.Mail.Create(from, to, senderKey, null, subject, alternative);
         }
 
-        private bool SendMail(IDatabase database, BallotPaper ballotPaper, SendingTemplateLanguage sendingTemplateLanguage, bool announcement)
+        private bool SendMail(IDatabase database, BallotPaper ballotPaper, MailTemplate mailTemplate, bool announcement)
         {
             var ballot = ballotPaper.Ballot.Value;
             var template = ballot.Template.Value;
@@ -337,9 +334,9 @@ namespace Quaestur
                 return false;
             }
 
-            if (string.IsNullOrEmpty(sendingTemplateLanguage.MailSubject.Value) ||
-                string.IsNullOrEmpty(sendingTemplateLanguage.MailHtmlText.Value) ||
-                string.IsNullOrEmpty(sendingTemplateLanguage.MailPlainText.Value))
+            if (string.IsNullOrEmpty(mailTemplate.Subject.Value) ||
+                string.IsNullOrEmpty(mailTemplate.HtmlText.Value) ||
+                string.IsNullOrEmpty(mailTemplate.PlainText.Value))
             {
                 if (announcement)
                 {
@@ -348,7 +345,7 @@ namespace Quaestur
                         "When template to send announcement is incomplete",
                         "Template to send ballot announcement for {0} in {1} is incomplete",
                         t => ballotPaper.Ballot.Value.GetText(t),
-                        t => sendingTemplateLanguage.Language.Value.Translate(t));
+                        t => mailTemplate.Language.Value.Translate(t));
                 }
                 else
                 {
@@ -357,12 +354,12 @@ namespace Quaestur
                         "When template to send invitation is incomplete",
                         "Template to send ballot invitation for {0} in {1} is incomplete",
                         t => ballotPaper.Ballot.Value.GetText(t),
-                        t => sendingTemplateLanguage.Language.Value.Translate(t));
+                        t => mailTemplate.Language.Value.Translate(t));
                 }
                 return false;
             }
 
-            var message = CreateMail(database, ballotPaper, sendingTemplateLanguage);
+            var message = CreateMail(database, ballotPaper, mailTemplate);
 
             try
             {
@@ -376,7 +373,7 @@ namespace Quaestur
                         "Successfully sent announcement for ballot",
                         "Sent announcement for {0} in {1} by e-mail to {2}",
                         t => ballot.GetText(t),
-                        t => sendingTemplateLanguage.Language.Value.Translate(t),
+                        t => mailTemplate.Language.Value.Translate(t),
                         t => person.PrimaryMailAddress);
                 }
                 else
@@ -386,7 +383,7 @@ namespace Quaestur
                         "Successfully sent invitation for ballot",
                         "Sent invitation to {0} in {1} by e-mail to {2}",
                         t => ballot.GetText(t),
-                        t => sendingTemplateLanguage.Language.Value.Translate(t),
+                        t => mailTemplate.Language.Value.Translate(t),
                         t => person.PrimaryMailAddress);
                 }
 

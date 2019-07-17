@@ -212,7 +212,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/billsendingtemplate/list/{id}", parameters =>
             {
@@ -228,7 +228,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/billsendingtemplate/edit/{id}", parameters =>
             {
@@ -244,7 +244,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Get("/billsendingtemplate/copy/{id}", parameters =>
             {
@@ -322,7 +322,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
             Post("/billsendingtemplate/add/{id}", parameters =>
             {
@@ -378,7 +378,7 @@ namespace Quaestur
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }

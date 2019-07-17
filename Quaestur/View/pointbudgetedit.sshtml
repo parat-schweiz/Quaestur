@@ -1,0 +1,106 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#pointsBudget' + field + key;
+  var feedbackId = '#pointsBudget' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).removeClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#pointsBudget' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Owner", result);
+  @Each.Label
+  assignFieldMultiValidation("Label", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("Share", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Owner = $("#pointsBudgetOwner").val();
+  formData.Share = $("#pointsBudgetShare").val();
+  formData.Label = new Array();
+  @Each.Label
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#pointsBudgetLabel@Current.Key").val()
+  formData.Label.push(obj@Current.Key);
+  @EndEach
+  $.post("/points/budget/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateCurrentList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsBudgetOwner">@Model.PhraseFieldOwner</label>
+        <select id="pointsBudgetOwner" class="selectpicker form-control" data-live-search="true">
+          @Each.Owners
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="pointsBudgetOwnerFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.Label
+      <div class="col-12 mb-3">
+        <label for="pointsBudgetLabel@Current.Key">@Current.Phrase</label>
+        <input type="text" id="pointsBudgetLabel@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="pointsBudgetLabelFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsBudgetShare">@Model.PhraseFieldShare</label>
+        <input type="text" id="pointsBudgetShare" class="form-control" value="@Model.Share"/>
+        <div id="pointsBudgetShareFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection
