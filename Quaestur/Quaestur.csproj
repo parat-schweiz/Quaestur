@@ -230,6 +230,7 @@
     <Compile Include="Infrastructure\TaskRunner.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
     <Compile Include="Module\PostStatus.cs" />
+    <Compile Include="Module\MatrixAuthModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

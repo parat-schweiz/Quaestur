@@ -35,6 +35,7 @@ namespace Quaestur
         public string SiteName { get; private set; }
         public byte[] LinkKey { get; private set; }
         public string LogFilePrefix { get; private set; }
+        public string MatrixDomain { get; private set; }
 
         public override IEnumerable<ConfigItem> ConfigItems
         {
@@ -45,6 +46,7 @@ namespace Quaestur
                 yield return new ConfigItemString("SiteName", v => SiteName = v);
                 yield return new ConfigItemBytes("LinkKey", v => LinkKey = v);
                 yield return new ConfigItemString("LogFilePrefix", v => LogFilePrefix = v);
+                yield return new ConfigItemString("MatrixDomain", v => MatrixDomain = v);
             }
         }
     }
