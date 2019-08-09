@@ -95,6 +95,7 @@ namespace Quaestur
                         if (status.IsSuccess)
                         {
                             person.PasswordHash.Value = Global.Security.SecurePassword(model.NewPassword1);
+                            person.PasswordType.Value = PasswordType.SecurityService;
                             Database.Save(person);
                             Journal(person,
                                 "Password.Journal.Edit",
