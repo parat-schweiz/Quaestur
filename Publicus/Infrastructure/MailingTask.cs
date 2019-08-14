@@ -48,6 +48,7 @@ namespace Publicus
                 .Query<Subscription>(DC.Equal("feedid", mailing.RecipientFeed.Value.Id.Value))
                 .Where(m => m.IsActive)
                 .Select(m => m.Contact.Value)
+                .Where(p => !p.Deleted.Value)
                 .Where(p => (mailing.RecipientTag.Value == null) ||
                             (database.Query<TagAssignment>(DC.Equal("contactid", p.Id.Value).And(DC.Equal("tagid", mailing.RecipientTag.Value.Id.Value)))).Any())
                 .Select(a => a.PrimaryAddress(ServiceType.EMail))

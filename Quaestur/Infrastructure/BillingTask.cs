@@ -53,7 +53,8 @@ namespace Quaestur
             var memberships = database.Query<Membership>().ToList();
 
             foreach (var membership in memberships
-                .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct))
+                .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
+                            !m.Person.Value.Deleted.Value))
             {
                 var translator = new Translator(translation, membership.Person.Value.Language.Value);
                 var model = membership.Type.Value.CreatePaymentModel();

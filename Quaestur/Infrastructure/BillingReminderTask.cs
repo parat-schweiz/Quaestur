@@ -37,7 +37,7 @@ namespace Quaestur
 
                 foreach (var bill in database
                     .Query<Bill>()
-                    .Where(b => b.Status.Value == BillStatus.New)
+                    .Where(b => b.Status.Value == BillStatus.New && !b.Membership.Value.Person.Value.Deleted.Value)
                     .Where(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod())
                     .OrderByDescending(DaysSinceLastReminder))
                 {

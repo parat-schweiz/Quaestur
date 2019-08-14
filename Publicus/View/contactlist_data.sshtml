@@ -38,7 +38,7 @@
   </thead>
   <tbody>
     @Each.List
-    <tr class='clickable-row editable' data-href='/contact/detail/@Current.Id'>
+    <tr class='clickable-row editable @Current.Option' data-href='/contact/detail/@Current.Id'>
       @If.ShowOrganization
       <td>@Current.Organization</td>
       @EndIf

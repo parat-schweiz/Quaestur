@@ -147,3 +147,7 @@ input[type=checkbox] {
     margin-bottom: 0px !important;
     padding-bottom: 0.35em;
 }
+
+.striken {
+    text-decoration: line-through
+}

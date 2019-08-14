@@ -38,6 +38,7 @@ namespace Quaestur
         public string VotingRight;
         public string Roles;
         public string Tags;
+        public string Option;
 
         public PersonListItemViewModel(IDatabase database, Translator translator, Session session, Person person, SearchSettings settings)
         {
@@ -114,6 +115,9 @@ namespace Quaestur
                 person.TagAssignments
                 .Select(t => t.Tag.Value.GetText(translator))
                 .OrderBy(t => t)) :
+                string.Empty;
+            Option = person.Deleted.Value ?
+                "striken" :
                 string.Empty;
         }
     }

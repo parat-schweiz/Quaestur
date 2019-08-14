@@ -46,6 +46,7 @@ namespace Quaestur
                 .Query<Membership>(DC.Equal("organizationid", mailing.RecipientOrganization.Value.Id.Value))
                 .Where(m => m.IsActive)
                 .Select(m => m.Person.Value)
+                .Where(p => !p.Deleted.Value)
                 .Where(p => (mailing.RecipientTag.Value == null) ||
                             (database.Query<TagAssignment>(DC.Equal("personid", p.Id.Value).And(DC.Equal("tagid", mailing.RecipientTag.Value.Id.Value)))).Any())
                 .Select(a => a.PrimaryAddress(ServiceType.EMail))

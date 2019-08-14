@@ -142,3 +142,7 @@ input[type=checkbox] {
     white-space: nowrap;
     width: 1%;
 }
+
+.striken {
+    text-decoration: line-through
+}

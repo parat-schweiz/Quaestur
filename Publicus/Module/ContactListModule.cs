@@ -32,6 +32,7 @@ namespace Publicus
         public string State;
         public string Subscriptions;
         public string Tags;
+        public string Option;
 
         public ContactListItemViewModel(IDatabase database, Translator translator, Contact contact, Session session, SearchSettings settings)
         {
@@ -92,6 +93,9 @@ namespace Publicus
                 contact.TagAssignments
                 .Select(t => t.Tag.Value.GetText(translator))
                 .OrderBy(t => t)) :
+                string.Empty;
+            Option = contact.Deleted.Value ?
+                "striken" :
                 string.Empty;
         }
     }
