@@ -94,10 +94,15 @@ namespace Quaestur
                             "Journal entry when authentication with password succeeded",
                             "Login with password succeeded");
 
-                        foreach (var loginLink in Database
-                            .Query<LoginLink>(DC.Equal("personid", session.User.Id.Value)))
+                        using (var transaction = Database.BeginTransaction())
                         {
-                            loginLink.Delete(Database);
+                            foreach (var loginLink in Database
+                                .Query<LoginLink>(DC.Equal("personid", session.User.Id.Value)))
+                            {
+                                loginLink.Delete(Database);
+                            }
+
+                            transaction.Commit();
                         }
 
                         if (returnUrl.StartsWith("/oauth2/authorize", StringComparison.Ordinal))
@@ -117,10 +122,15 @@ namespace Quaestur
             {
                 if (CurrentSession != null)
                 {
-                    foreach (var loginLink in Database
-                        .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
+                    using (var transaction = Database.BeginTransaction())
                     {
-                        loginLink.Delete(Database);
+                        foreach (var loginLink in Database
+                            .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
+                        {
+                            loginLink.Delete(Database);
+                        }
+
+                        transaction.Commit();
                     }
 
                     Global.Sessions.Remove(CurrentSession);

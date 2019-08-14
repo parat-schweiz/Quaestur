@@ -106,12 +106,18 @@ namespace Publicus
                 {
                     if (status.HasAccess(tagAssignment.Contact.Value, PartAccess.TagAssignments, AccessRight.Write))
                     {
-                        Database.Delete(tagAssignment);
-                        Journal(tagAssignment.Contact.Value,
-                            "TagAssignment.Journal.Delete",
-                            "Journal entry removed tag",
-                            "Remvoed tag {0}",
-                            t => tagAssignment.Tag.Value.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            tagAssignment.Delete(Database);
+
+                            Journal(tagAssignment.Contact.Value,
+                                "TagAssignment.Journal.Delete",
+                                "Journal entry removed tag",
+                                "Remvoed tag {0}",
+                                t => tagAssignment.Tag.Value.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

@@ -141,7 +141,12 @@ namespace Quaestur
                 if (loginLink != null &&
                     loginLink.Person.Value == CurrentSession.User)
                 {
-                    loginLink.Delete(Database);
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        loginLink.Delete(Database);
+                        transaction.Commit();
+                    }
+
                     return Translate("LoginLink.Reject", "Reject login link response", "Authentication rejected.");
                 }
 
@@ -183,7 +188,12 @@ namespace Quaestur
             if (loginLink != null &&
                 DateTime.UtcNow > loginLink.Expires.Value)
             {
-                loginLink.Delete(Database);
+                using (var transaction = Database.BeginTransaction())
+                {
+                    loginLink.Delete(Database);
+                    transaction.Commit();
+                }
+
                 loginLink = null; 
             }
 

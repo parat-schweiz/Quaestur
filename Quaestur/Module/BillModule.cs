@@ -229,12 +229,18 @@ namespace Quaestur
                 {
                     if (status.HasAccess(bill.Membership.Value.Person.Value, PartAccess.Billing, AccessRight.Write))
                     {
-                        bill.Delete(Database);
-                        Journal(bill.Membership.Value.Person.Value,
-                            "Bill.Journal.Delete",
-                            "Journal entry deleted bill",
-                            "Deleted bill {0}",
-                            t => bill.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            bill.Delete(Database);
+
+                            Journal(bill.Membership.Value.Person.Value,
+                                "Bill.Journal.Delete",
+                                "Journal entry deleted bill",
+                                "Deleted bill {0}",
+                                t => bill.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

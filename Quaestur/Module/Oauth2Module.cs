@@ -285,7 +285,7 @@ namespace Quaestur
                 .Query<Oauth2Session>()
                 .Where(s => DateTime.UtcNow > s.Expiry.Value))
             {
-                Database.Delete(session);
+                session.Delete(Database);
             }
         }
 

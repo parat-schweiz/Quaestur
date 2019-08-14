@@ -328,7 +328,11 @@ namespace Quaestur
                 {
                     if (status.HasAccess(permission.Role.Value.Group.Value, PartAccess.Structure, AccessRight.Write))
                     {
-                        permission.Delete(Database);
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            permission.Delete(Database);
+                            transaction.Commit();
+                        }
                     }
                 }
 

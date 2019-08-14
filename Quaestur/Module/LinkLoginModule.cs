@@ -84,7 +84,6 @@ namespace Quaestur
                 if (loginLink != null &&
                     loginLink.Confirmed.Value)
                 {
-                    var session = Global.Sessions.Add(loginLink.Person.Value);
                     Journal(Translate(
                         "Password.Journal.Auth.Process",
                         "Journal entry subject on authentication",
@@ -93,10 +92,19 @@ namespace Quaestur
                         "Password.Journal.Auth.Success",
                         "Journal entry when authentication with login link",
                         "Login with password succeeded");
-                    session.CompleteAuth = loginLink.CompleteAuth.Value;
-                    session.TwoFactorAuth = loginLink.TwoFactorAuth.Value;
-                    loginLink.Delete(Database);
-                    return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), "/");
+
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        loginLink.Delete(Database);
+
+                        var session = Global.Sessions.Add(loginLink.Person.Value);
+                        session.CompleteAuth = loginLink.CompleteAuth.Value;
+                        session.TwoFactorAuth = loginLink.TwoFactorAuth.Value;
+
+                        transaction.Commit();
+
+                        return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), "/");
+                    }
                 }
 
                 return null;

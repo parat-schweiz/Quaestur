@@ -176,12 +176,18 @@ namespace Publicus
                 {
                     if (status.HasAccess(subscription.Contact.Value, PartAccess.Subscription, AccessRight.Write))
                     {
-                        subscription.Delete(Database);
-                        Journal(subscription.Contact.Value,
-                            "Subscription.Journal.Delete",
-                            "Journal entry removed subscription",
-                            "Removed subscription {0}",
-                            t => subscription.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            subscription.Delete(Database);
+
+                            Journal(subscription.Contact.Value,
+                                "Subscription.Journal.Delete",
+                                "Journal entry removed subscription",
+                                "Removed subscription {0}",
+                                t => subscription.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

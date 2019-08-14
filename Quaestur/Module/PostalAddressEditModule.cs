@@ -223,12 +223,18 @@ namespace Quaestur
                 {
                     if (status.HasAccess(address.Person.Value, PartAccess.Contact, AccessRight.Write))
                     {
-                        address.Delete(Database);
-                        Journal(address.Person,
-                            "PostalAddress.Journal.Delete",
-                            "Journal entry deleting postal addresses",
-                            "Deleted postal address {0}",
-                            t => address.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            address.Delete(Database);
+
+                            Journal(address.Person,
+                                "PostalAddress.Journal.Delete",
+                                "Journal entry deleting postal addresses",
+                                "Deleted postal address {0}",
+                                t => address.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

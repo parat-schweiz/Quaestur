@@ -199,12 +199,18 @@ namespace Publicus
                 {
                     if (status.HasAccess(document.Contact.Value, PartAccess.Documents, AccessRight.Write))
                     {
-                        document.Delete(Database);
-                        Journal(document.Contact,
-                            "Document.Journal.Delete",
-                            "Journal entry deleted document",
-                            "Deleted document {0}",
-                            t => document.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            document.Delete(Database);
+
+                            Journal(document.Contact,
+                                "Document.Journal.Delete",
+                                "Journal entry deleted document",
+                                "Deleted document {0}",
+                                t => document.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

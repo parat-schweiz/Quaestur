@@ -212,12 +212,18 @@ namespace Quaestur
                 {
                     if (status.HasAccess(membership.Person.Value, PartAccess.Membership, AccessRight.Write))
                     {
-                        membership.Delete(Database);
-                        Journal(membership.Person.Value,
-                            "Membership.Journal.Delete",
-                            "Journal entry removed membership",
-                            "Removed membership {0}",
-                            t => membership.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            membership.Delete(Database);
+
+                            Journal(membership.Person.Value,
+                                "Membership.Journal.Delete",
+                                "Journal entry removed membership",
+                                "Removed membership {0}",
+                                t => membership.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

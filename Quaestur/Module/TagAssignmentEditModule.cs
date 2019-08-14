@@ -103,12 +103,18 @@ namespace Quaestur
                 {
                     if (status.HasAccess(tagAssignment.Person.Value, PartAccess.TagAssignments, AccessRight.Write))
                     {
-                        Database.Delete(tagAssignment);
-                        Journal(tagAssignment.Person.Value,
-                            "TagAssignment.Journal.Delete",
-                            "Journal entry removed tag",
-                            "Remvoed tag {0}",
-                            t => tagAssignment.Tag.Value.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            tagAssignment.Delete(Database);
+
+                            Journal(tagAssignment.Person.Value,
+                                "TagAssignment.Journal.Delete",
+                                "Journal entry removed tag",
+                                "Remvoed tag {0}",
+                                t => tagAssignment.Tag.Value.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

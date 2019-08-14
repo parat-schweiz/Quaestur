@@ -243,7 +243,12 @@ namespace Publicus
                 {
                     if (status.HasAccess(mailingElement.Owner.Value, PartAccess.Mailings, AccessRight.Write))
                     {
-                        mailingElement.Delete(Database);
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            mailingElement.Delete(Database);
+                            transaction.Commit();
+                        }
+
                         Notice("{0} deleted mailing element {1}", CurrentSession.User.UserName.Value, mailingElement);
                     }
                 }

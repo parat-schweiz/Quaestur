@@ -31,7 +31,7 @@ namespace Publicus
         {
             foreach (var roleAssignment in database.Query<RoleAssignment>(DC.Equal("masterroleid", Id.Value)))
             {
-                database.Delete(roleAssignment);
+                roleAssignment.Delete(database);
             }
 
             database.Delete(this);

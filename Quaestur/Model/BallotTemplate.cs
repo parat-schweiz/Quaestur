@@ -56,9 +56,10 @@ namespace Quaestur
                 ballot.Delete(database); 
             }
 
-            database.Delete(this);
             Announcement.Value.Delete(database);
             Invitation.Value.Delete(database);
+
+            database.Delete(this);
         }
 
         public override string GetText(Translator translator)

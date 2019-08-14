@@ -299,11 +299,17 @@ namespace Publicus
                     {
                         if (IsAssingmentPermitted(roleAssignment.Role.Value))
                         {
-                            Database.Delete(roleAssignment);
-                            Global.Log.Notice("{0} removed role assingment from {1} to {2}",
-                                CurrentSession.User.UserName.Value,
-                                roleAssignment.Role.Value.Name.Value[Translator.Language],
-                                roleAssignment.MasterRole.Value.Name.Value[Translator.Language]);
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                roleAssignment.Delete(Database);
+
+                                Global.Log.Notice("{0} removed role assingment from {1} to {2}",
+                                    CurrentSession.User.UserName.Value,
+                                    roleAssignment.Role.Value.Name.Value[Translator.Language],
+                                    roleAssignment.MasterRole.Value.Name.Value[Translator.Language]);
+
+                                transaction.Commit();
+                            }
                         }
                         else
                         {

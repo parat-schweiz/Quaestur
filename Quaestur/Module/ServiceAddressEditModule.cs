@@ -248,25 +248,31 @@ namespace Quaestur
                 {
                     if (status.HasAccess(address.Person.Value, PartAccess.Contact, AccessRight.Write))
                     {
-                        Database.Delete(address);
-                        switch (address.Service.Value)
+                        using (var transaction = Database.BeginTransaction())
                         {
-                            case ServiceType.EMail:
-                                Journal(address.Person, 
-                                    "ServiceAddress.EMail.Journal.Delete",
-                                    "Journal entry deleted mail address",
-                                    "Deleted mail address {0}",
-                                    t => address.GetText(Translator));
-                                break;
-                            case ServiceType.Phone:
-                                Journal(address.Person, 
-                                    "ServiceAddress.Phone.Journal.Delete",
-                                    "Journal entry deleted phone number",
-                                    "Deleted phone number {0}",
-                                    t => address.GetText(Translator));
-                                break;
-                            default:
-                                throw new NotSupportedException();
+                            address.Delete(Database);
+
+                            switch (address.Service.Value)
+                            {
+                                case ServiceType.EMail:
+                                    Journal(address.Person,
+                                        "ServiceAddress.EMail.Journal.Delete",
+                                        "Journal entry deleted mail address",
+                                        "Deleted mail address {0}",
+                                        t => address.GetText(Translator));
+                                    break;
+                                case ServiceType.Phone:
+                                    Journal(address.Person,
+                                        "ServiceAddress.Phone.Journal.Delete",
+                                        "Journal entry deleted phone number",
+                                        "Deleted phone number {0}",
+                                        t => address.GetText(Translator));
+                                    break;
+                                default:
+                                    throw new NotSupportedException();
+                            }
+
+                            transaction.Commit();
                         }
                     }
                 }

@@ -271,10 +271,15 @@ namespace Quaestur
                         "Journal entry login without 2FA",
                         "Logged in without two-factor authentication");
 
-                    foreach (var loginLink in Database
-                        .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
+                    using (var transaction = Database.BeginTransaction())
                     {
-                        loginLink.Delete(Database);
+                        foreach (var loginLink in Database
+                            .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
+                        {
+                            loginLink.Delete(Database);
+                        }
+
+                        transaction.Commit();
                     }
 
                     if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))

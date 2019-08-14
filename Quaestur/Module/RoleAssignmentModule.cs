@@ -302,12 +302,18 @@ namespace Quaestur
                     {
                         if (IsAssingmentPermitted(roleAssignment.Role.Value))
                         {
-                            Database.Delete(roleAssignment);
-                            Journal(roleAssignment.Person.Value,
-                                "RoleAssignment.Journal.Delete",
-                                "Journal entry removed role",
-                                "Removed role {0}",
-                                t => roleAssignment.Role.Value.GetText(t));
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                roleAssignment.Delete(Database);
+
+                                Journal(roleAssignment.Person.Value,
+                                    "RoleAssignment.Journal.Delete",
+                                    "Journal entry removed role",
+                                    "Removed role {0}",
+                                    t => roleAssignment.Role.Value.GetText(t));
+
+                                transaction.Commit();
+                            }
                         }
                         else
                         {

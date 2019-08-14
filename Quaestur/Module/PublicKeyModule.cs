@@ -204,12 +204,18 @@ namespace Quaestur
                     if (status.HasAccess(publicKey.Person.Value, PartAccess.Security, AccessRight.Write) &&
                         status.HasAllAccessOf(publicKey.Person.Value))
                     {
-                        Database.Delete(publicKey);
-                        Journal(publicKey.Person,
-                            "PublicKey.Journal.Delete",
-                            "Journal entry deleted public key",
-                            "Deleted public key {0}",
-                            t => publicKey.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            publicKey.Delete(Database);
+
+                            Journal(publicKey.Person,
+                                "PublicKey.Journal.Delete",
+                                "Journal entry deleted public key",
+                                "Deleted public key {0}",
+                                t => publicKey.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

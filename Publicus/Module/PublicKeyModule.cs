@@ -198,12 +198,18 @@ namespace Publicus
                 {
                     if (status.HasAccess(publicKey.Contact.Value, PartAccess.Contact, AccessRight.Write))
                     {
-                        Database.Delete(publicKey);
-                        Journal(publicKey.Contact,
-                            "PublicKey.Journal.Delete",
-                            "Journal entry deleted public key",
-                            "Deleted public key {0}",
-                            t => publicKey.GetText(t));
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            publicKey.Delete(Database);
+
+                            Journal(publicKey.Contact,
+                                "PublicKey.Journal.Delete",
+                                "Journal entry deleted public key",
+                                "Deleted public key {0}",
+                                t => publicKey.GetText(t));
+
+                            transaction.Commit();
+                        }
                     }
                 }
 

@@ -29,19 +29,19 @@ namespace Publicus
             }
         }
 
-        public override void Delete(IDatabase db)
+        public override void Delete(IDatabase database)
         {
-            foreach (var roleAssignment in db.Query<RoleAssignment>(DC.Equal("roleid", Id.Value)))
+            foreach (var roleAssignment in database.Query<RoleAssignment>(DC.Equal("roleid", Id.Value)))
             {
-                db.Delete(roleAssignment);
+                roleAssignment.Delete(database);
             }
 
-            foreach (var permission in db.Query<Permission>(DC.Equal("roleid", Id.Value)))
+            foreach (var permission in database.Query<Permission>(DC.Equal("roleid", Id.Value)))
             {
-                db.Delete(permission); 
+                permission.Delete(database); 
             }
 
-            db.Delete(this);
+            database.Delete(this);
         }
 
         public override string ToString()
