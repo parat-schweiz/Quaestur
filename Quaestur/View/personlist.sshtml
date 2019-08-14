@@ -92,7 +92,13 @@
   }
   $(document).ready(function(){
     $('.selectpicker').selectpicker();
-    $("#filtertext").on('input', set);
+    $('#filtertext').keypress(function (e) {
+      if (e.which == 13) {
+        set();
+        return false;
+      }
+    });
+    $("#filtertext").on('focusout', set);
     $("#filterMembership").change(set);
     $("#columns").change(set);
     $("#filterTag").change(set);
