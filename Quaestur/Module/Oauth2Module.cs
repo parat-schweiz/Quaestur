@@ -351,7 +351,7 @@ namespace Quaestur
                             .AddClaim("iss", Global.Config.WebSiteAddress)
                             .AddClaim("sub", session.User.Value.Id.Value.ToString())
                             .AddClaim("aud", session.Client.Value.Id.Value.ToString())
-                            .AddClaim("name", session.User.Value.UserName)
+                            .AddClaim("name", session.User.Value.UserName.Value)
                             .AddClaim("exp", expiry)
                             .AddClaim("iat", issueTime)
                             .AddClaim("auth_time", authTime);
@@ -408,11 +408,18 @@ namespace Quaestur
                 if (session != null)
                 {
                     var response = new JObject(
-                        new JProperty("username", session.User.Value.UserName.Value));
+                        new JProperty("username", session.User.Value.UserName.Value),
+                        new JProperty("iss", Global.Config.WebSiteAddress),
+                        new JProperty("sub", session.User.Value.Id.Value.ToString()),
+                        new JProperty("aud", session.Client.Value.Id.Value.ToString()),
+                        new JProperty("name", session.User.Value.UserName.Value),
+                        new JProperty("nickname", session.User.Value.UserName.Value),
+                        new JProperty("preferred_username", session.User.Value.UserName.Value));
 
                     if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Email))
                     {
                         response.Add(new JProperty("mail", session.User.Value.PrimaryMailAddress));
+                        response.Add(new JProperty("email", session.User.Value.PrimaryMailAddress));
                     }
 
                     if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Fullname))
@@ -420,6 +427,16 @@ namespace Quaestur
                         response.Add(new JProperty("fullname", session.User.Value.FullName));
                         response.Add(new JProperty("firstname", session.User.Value.FirstName.Value));
                         response.Add(new JProperty("lastname", session.User.Value.LastName.Value));
+                        response.Add(new JProperty("given_name", session.User.Value.FirstName.Value));
+                        response.Add(new JProperty("family_name", session.User.Value.LastName.Value));
+                    }
+                    else
+                    {
+                        response.Add(new JProperty("fullname", session.User.Value.UserName.Value));
+                        response.Add(new JProperty("firstname", session.User.Value.UserName.Value));
+                        response.Add(new JProperty("lastname", session.User.Value.UserName.Value));
+                        response.Add(new JProperty("given_name", session.User.Value.UserName.Value));
+                        response.Add(new JProperty("family_name", session.User.Value.UserName.Value));
                     }
 
                     return Response.AsText(response.ToString(), "application/json");
