@@ -211,6 +211,13 @@
             <param name="value">Claim value</param>
             <returns>Current builder instance</returns>
         </member>
+        <member name="M:JWT.Builder.JwtBuilder.AddClaims(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Add several claims to the JWT
+            </summary>
+            <param name="claims">IDictionary of claims to be added</param>
+            <returns>Current builder instance</returns>
+        </member>
         <member name="M:JWT.Builder.JwtBuilder.AddClaim(JWT.Builder.ClaimName,System.String)">
             <summary>
             Adds well-known claim to the JWT.

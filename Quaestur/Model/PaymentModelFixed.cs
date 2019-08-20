@@ -65,10 +65,10 @@ namespace Quaestur
         {
             var days = (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
-            var lastBill = database
+            var bills = database
                 .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
-                .OrderByDescending(m => m.UntilDate.Value)
-                .FirstOrDefault();
+                .OrderByDescending(m => m.UntilDate.Value);
+            var lastBill = bills.FirstOrDefault();
 
             if (lastBill == null)
             {
@@ -80,7 +80,20 @@ namespace Quaestur
             }
             else
             {
-                return DateTime.UtcNow.Date.Subtract(lastBill.CreatedDate.Value.Date).TotalDays <= days;
+                var secondLastBill = bills.Skip(1).FirstOrDefault();
+
+                if (secondLastBill == null)
+                {
+                    return false;
+                }
+                else if (secondLastBill.Status.Value != BillStatus.Payed)
+                {
+                    return false;
+                }
+                else
+                {
+                    return DateTime.UtcNow.Date.Subtract(lastBill.CreatedDate.Value.Date).TotalDays <= days;
+                }
             }
         }
 

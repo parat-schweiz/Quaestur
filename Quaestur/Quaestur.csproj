@@ -83,7 +83,7 @@
       <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
-      <HintPath>..\packages\JWT.5.2.2\lib\net46\JWT.dll</HintPath>
+      <HintPath>..\packages\JWT.5.2.3\lib\net46\JWT.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.2.2.0\lib\net45\MimeKit.dll</HintPath>
