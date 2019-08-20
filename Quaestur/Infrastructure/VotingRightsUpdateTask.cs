@@ -34,11 +34,17 @@ namespace Quaestur
 
                 {
                     var id = _updateQueue.Dequeue();
-                    var membership = database.Query<Membership>(id);
 
-                    if (membership != null)
+                    using (var transaction = database.BeginTransaction())
                     {
-                        membership.UpdateVotingRight(database);
+                        var membership = database.Query<Membership>(id);
+
+                        if (membership != null)
+                        {
+                            membership.UpdateVotingRight(database);
+                            database.Save(membership);
+                            transaction.Commit();
+                        }
                     }
                 }
 
