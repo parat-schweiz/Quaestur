@@ -6,7 +6,7 @@
     <div class="form-row">
       <div class="col-6 mb-3">
         <label for="twoFactorCode">@Model.PhraseFieldCode</label>
-        <input type="input" class="form-control @Model.Valid" id="twoFactorCode" name="Code"/>
+        <input type="input" class="form-control @Model.Valid" id="twoFactorCode" name="Code" autofocus/>
         <div id="twoFactorCodeFeedback" class="invalid-feedback">@Model.Problems</div>
       </div>
     </div>
