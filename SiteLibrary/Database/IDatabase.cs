@@ -46,7 +46,12 @@ namespace SiteLibrary
 
         public static DataCondition Equal(string columnName, object value)
         {
-            return new DataValueCondition(columnName, DataOperator.Equal, value); 
+            return new DataValueCondition(columnName, DataOperator.Equal, value, null); 
+        }
+
+        public static DataCondition EqualLower(string columnName, string value)
+        {
+            return new DataValueCondition(columnName, DataOperator.Equal, value, "LOWER");
         }
     }
 
@@ -119,6 +124,7 @@ namespace SiteLibrary
         public string VariableName { get { return "@" + ColumnName; } }
         public object Value { get; private set; }
         public DataOperator Operator { get; private set; }
+        public string Function { get; private set; }
 
         private string OperatorText
         {
@@ -148,7 +154,14 @@ namespace SiteLibrary
         {
             get
             {
-                return string.Format("({0} {1} {2})", ColumnName, OperatorText, VariableName);
+                if (string.IsNullOrEmpty(Function))
+                {
+                    return string.Format("({0} {1} {2})", ColumnName, OperatorText, VariableName);
+                }
+                else
+                {
+                    return string.Format("({3}({0}) {1} {3}({2}))", ColumnName, OperatorText, VariableName, Function);
+                }
             }
         }
 
@@ -160,11 +173,12 @@ namespace SiteLibrary
             } 
         }
 
-        public DataValueCondition(string columnName, DataOperator op, object value)
+        public DataValueCondition(string columnName, DataOperator op, object value, string function)
         {
             ColumnName = columnName;
             Operator = op;
             Value = value;
+            Function = function;
         }
     }
 }

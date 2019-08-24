@@ -26,7 +26,7 @@ namespace Quaestur
         public static Tuple<Person, LoginResult> Login(IDatabase db, string userName, string password)
         {
             Global.Sessions.CleanUp();
-            var user = db.Query<Person>(DC.Equal("username", userName)).FirstOrDefault();
+            var user = db.Query<Person>(DC.EqualLower("username", userName)).FirstOrDefault();
 
             if (user == null)
             {
