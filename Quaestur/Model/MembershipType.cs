@@ -107,9 +107,6 @@ namespace Quaestur
         public ForeignKeyField<Group, MembershipType> SenderGroup { get; private set; }
         public List<PaymentParameter> PaymentParameters { get; private set; }
 
-        [Obsolete("Superceeded by latex template")]
-        public MultiLanguageStringField Deprecated1 { get; private set; }
-
         public MembershipType() : this(Guid.Empty)
         {
         }
@@ -122,7 +119,6 @@ namespace Quaestur
             Rights = new EnumField<MembershipRight>(this, "membershiprights", MembershipRight.None, MembershipRightExtensions.Translate);
             Payment = new EnumField<PaymentModel>(this, "paymentmode", PaymentModel.None, PaymentModelExtensions.Translate);
             Collection = new EnumField<CollectionModel>(this, "collectionmodel", CollectionModel.None, CollectionModelExtensions.Translate);
-            Deprecated1 = new MultiLanguageStringField(this, "billtemplatelatex", AllowStringType.SafeLatex);
             MaximumPoints = new Field<long>(this, "maximumpoints", 0);
             MaximumBalanceForward = new Field<long>(this, "maximumbalanceforward", 0);
             MaximumDiscount = new DecimalField(this, "maximumdiscount", 16, 4);

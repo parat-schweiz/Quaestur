@@ -19,6 +19,8 @@ namespace SiteLibrary
         ITransaction BeginTransaction();
         void AddColumn<T>(Func<T, Field> getField) where T : DatabaseObject, new();
         void ModifyColumnType<T>(Func<T, Field> getField) where T : DatabaseObject, new();
+        void DropColumn<T>(string columnName) where T : DatabaseObject, new();
+        void DropTable(string tableName);
     }
 
     public interface ITransaction : IDisposable

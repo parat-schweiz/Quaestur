@@ -13,15 +13,6 @@ namespace Quaestur
         public Field<int> PreparationDays { get; private set; }
         public Field<int> VotingDays { get; private set; }
 
-        [Obsolete("Superceeded by mail template")]
-        public FieldNull<Guid> Deprecated1 { get; private set; }
-
-        [Obsolete("Superceeded by mail template")]
-        public FieldNull<Guid> Deprecated2 { get; private set; }
-
-        [Obsolete("Superceeded by latex template")]
-        public MultiLanguageStringField Deprecated3 { get; private set; }
-
         public BallotTemplate() : this(Guid.Empty)
         {
         }
@@ -33,9 +24,6 @@ namespace Quaestur
             ParticipantTag = new ForeignKeyField<Tag, BallotTemplate>(this, "participanttagid", false, null);
             PreparationDays = new Field<int>(this, "preparationdays", 3);
             VotingDays = new Field<int>(this, "votingdays", 1);
-            Deprecated1 = new FieldNull<Guid>(this, "announcement");
-            Deprecated2 = new FieldNull<Guid>(this, "invitation");
-            Deprecated3 = new MultiLanguageStringField(this, "ballotpaper", AllowStringType.SafeLatex);
         }
 
         public const string AnnouncementMailFieldName = "AnnouncementMails";

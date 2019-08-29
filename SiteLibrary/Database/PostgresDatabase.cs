@@ -607,6 +607,30 @@ namespace SiteLibrary
                 transaction.Commit();
             }
         }
+
+        public void DropColumn<T>(string columnName) where T : DatabaseObject, new()
+        {
+            var prototype = new T();
+
+            using (var transaction = EnsureTransaction())
+            {
+                var command = Command("ALTER TABLE {0} DROP COLUMN {1} CASCADE", TableName<T>(), columnName);
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
+            }
+        }
+
+        public void DropTable(string tableName)
+        {
+            using (var transaction = EnsureTransaction())
+            {
+                var command = Command("DROP TABLE {0} CASCADE", tableName);
+                command.ExecuteNonQuery();
+
+                transaction.Commit();
+            }
+        }
     }
 
     public static class Extensions

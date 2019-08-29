@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 22;
+        public static int CurrentVersion = 23;
 
         public static void Install(IDatabase database)
         {
@@ -51,8 +51,6 @@ namespace Quaestur
             database.CreateTable<Oauth2Session>();
             database.CreateTable<Oauth2Authorization>();
             database.CreateTable<SearchSettings>();
-            database.CreateTable<SendingTemplate>();
-            database.CreateTable<SendingTemplateLanguage>();
             database.CreateTable<BallotTemplate>();
             database.CreateTable<Ballot>();
             database.CreateTable<BallotPaper>();
@@ -103,227 +101,16 @@ namespace Quaestur
         {
             switch (version)
             {
-                case 2:
-                    database.AddColumn<BillSendingTemplate>(bst => bst.SendingMode);
-                    break;
-                case 3:
-                    database.AddColumn<Person>(p => p.Deleted);
-                    break;
-                case 4:
-                    database.AddColumn<Person>(p => p.TwoFactorSecret);
-                    break;
-                case 5:
-                    database.AddColumn<Membership>(m => m.HasVotingRight);
-                    break;
-                case 6:
-                    database.AddColumn<Oauth2Client>(c => c.RequireTwoFactor);
-                    break;
-                case 7:
-                    database.AddColumn<Oauth2Client>(c => c.Access);
-                    break;
-                case 8:
-                    database.AddColumn<Person>(p => p.PasswordType);
-                    break;
-                case 9:
-                    UpdatePasswordTypes(database);
-                    break;
-                case 10:
-                    SecureTotpSecrets(database);
-                    break;
-                case 11:
-                    database.ModifyColumnType<Group>(g => g.GpgKeyPassphrase);
-                    break;
-                case 12:
-                    EncryptGpgPassphrases(database);
-                    break;
-                case 13:
-                    database.AddColumn<MembershipType>(m => m.MaximumPoints);
-                    database.AddColumn<MembershipType>(m => m.MaximumDiscount);
-                    break;
-                case 14:
-                    break;
-                case 15:
-                    database.AddColumn<MembershipType>(m => m.MaximumBalanceForward);
-                    break;
-                case 16:
-                    database.AddColumn<MembershipType>(m => m.SenderGroup);
-                    database.ModifyColumnType<BallotTemplate>(t => t.Deprecated1);
-                    database.ModifyColumnType<BallotTemplate>(t => t.Deprecated2);
-                    MigrateSendingTemplates(database);
-                    MigrateBallotPapers(database);
-                    MigrateMembershipType(database);
-                    break;
-                case 17:
-                    break;
-                case 18:
-                    break;
-                case 19:
-                    break;
-                case 20:
-                    break;
-                case 21:
-                    break;
-                case 22:
-                    database.ModifyColumnType<LatexTemplate>(t => t.Organization);
-                    database.ModifyColumnType<LatexTemplate>(t => t.AssignmentType);
+                case 23:
+                    database.DropColumn<BallotTemplate>("announcement");
+                    database.DropColumn<BallotTemplate>("invitation");
+                    database.DropColumn<BallotTemplate>("ballotpaper");
+                    database.DropColumn<MembershipType>("billtemplatelatex");
+                    database.DropTable("sendingtemplate");
+                    database.DropTable("sendingtemplatelanguage");
                     break;
                 default:
                     throw new NotSupportedException();
-            }
-        }
-
-        private static void MigrateMembershipType(IDatabase database)
-        {
-            foreach (var membershipType in database.Query<MembershipType>())
-            {
-                foreach (var language in LanguageExtensions.Natural)
-                {
-                    var billDocumentValue = membershipType.Deprecated1.Value.GetValueOrEmpty(language);
-
-                    if (!string.IsNullOrEmpty(billDocumentValue))
-                    {
-                        var translator = new Translator(new Translation(database), language);
-
-                        var newTemplate = new LatexTemplate(Guid.NewGuid());
-                        newTemplate.Language.Value = language;
-                        newTemplate.Label.Value = membershipType.Name.Value[language] + " " + language.Translate(translator) + " bill document";
-                        newTemplate.Text.Value = billDocumentValue;
-                        database.Save(newTemplate);
-
-                        var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
-                        newAssignment.Template.Value = newTemplate;
-                        newAssignment.AssignedId.Value = membershipType.Id.Value;
-                        newAssignment.AssignedType.Value = TemplateAssignmentType.MembershipType;
-                        newAssignment.FieldName.Value = MembershipType.BillDocumentFieldName;
-                        database.Save(newAssignment);
-                    }
-                }
-            }
-        }
-
-        private static void MigrateBallotPapers(IDatabase database)
-        {
-            foreach (var ballotTemplate in database.Query<BallotTemplate>())
-            {
-                foreach (var language in LanguageExtensions.Natural)
-                {
-                    var value = ballotTemplate.Deprecated3.Value.GetValueOrEmpty(language);
-
-                    if (!string.IsNullOrEmpty(value))
-                    {
-                        var translator = new Translator(new Translation(database), language);
-
-                        var newTemplate = new LatexTemplate(Guid.NewGuid());
-                        newTemplate.Language.Value = language;
-                        newTemplate.Label.Value = ballotTemplate.Name.Value[language] + " " + language.Translate(translator) + " ballot paper";
-                        newTemplate.Text.Value = value;
-                        database.Save(newTemplate);
-
-                        var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
-                        newAssignment.Template.Value = newTemplate;
-                        newAssignment.AssignedId.Value = ballotTemplate.Id.Value;
-                        newAssignment.AssignedType.Value = TemplateAssignmentType.BallotTemplate;
-                        newAssignment.FieldName.Value = BallotTemplate.BallotPaperFieldName;
-                        database.Save(newAssignment);
-                    }
-                }
-            } 
-        }
-
-        private static TemplateAssignmentType ConvertAssingmentType(SendingTemplateParentType type)
-        {
-            switch (type)
-            {
-                case SendingTemplateParentType.BallotTemplate:
-                    return TemplateAssignmentType.BallotTemplate;
-                default:
-                    throw new NotSupportedException();
-            } 
-        }
-
-        private static string ConvertAssingmentFieldName(string fieldName)
-        {
-            switch (fieldName)
-            {
-                case "announcement":
-                    return BallotTemplate.AnnouncementMailFieldName;
-                case "invitation":
-                    return BallotTemplate.InvitationMailFieldName;
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-
-        private static void MigrateSendingTemplates(IDatabase database)
-        {
-            foreach (var ballotTemplate in database.Query<BallotTemplate>())
-            {
-                ballotTemplate.Deprecated1.Value = null;
-                ballotTemplate.Deprecated2.Value = null;
-                database.Save(ballotTemplate);
-            }
-
-            foreach (var sendingTemplate in database.Query<SendingTemplate>())
-            {
-                foreach (var language in sendingTemplate.Languages)
-                {
-                    var template = new MailTemplate(Guid.NewGuid());
-                    template.Organization.Value = ((BallotTemplate)sendingTemplate.Parent(database)).Organizer.Value.Organization.Value;
-                    template.AssignmentType.Value = TemplateAssignmentType.BallotTemplate;
-                    template.Language.Value = language.Language.Value;
-                    template.Label.Value = language.MailSubject.Value;
-                    template.Subject.Value = language.MailSubject.Value;
-                    template.HtmlText.Value = language.MailHtmlText.Value;
-                    template.PlainText.Value = language.MailPlainText.Value;
-                    database.Save(template);
-
-                    var assignment = new MailTemplateAssignment(Guid.NewGuid());
-                    assignment.Template.Value = template;
-                    assignment.AssignedType.Value = ConvertAssingmentType(sendingTemplate.ParentType.Value);
-                    assignment.AssignedId.Value = sendingTemplate.ParentId.Value;
-                    assignment.FieldName.Value = ConvertAssingmentFieldName(sendingTemplate.FieldName.Value);
-                    database.Save(template);
-
-                    database.Delete(language);
-                }
-
-                database.Delete(sendingTemplate);
-            }
-        }
-
-        private static void EncryptGpgPassphrases(IDatabase database)
-        {
-            foreach (var group in database.Query<Group>())
-            {
-                var passphraseData = Global.Security.SecureGpgPassphrase(group.GpgKeyPassphrase.Value);
-                group.GpgKeyPassphrase.Value = Convert.ToBase64String(passphraseData);
-                database.Save(group);
-            }
-        }
-
-        private static void SecureTotpSecrets(IDatabase database)
-        {
-            foreach (var person in database.Query<Person>())
-            {
-                if (person.TwoFactorSecret.Value != null)
-                {
-                    var totpData = Global.Security.SecureTotp(person.TwoFactorSecret.Value);
-                    person.TwoFactorSecret.Value = totpData;
-                    database.Save(person);
-                }
-            }
-        }
-
-        private static void UpdatePasswordTypes(IDatabase database)
-        { 
-            foreach (var person in database.Query<Person>())
-            {
-                if (person.PasswordType.Value == PasswordType.None &&
-                    person.PasswordHash.Value != null)
-                {
-                    person.PasswordType.Value = PasswordType.Local;
-                    database.Save(person);
-                }
             }
         }
 
