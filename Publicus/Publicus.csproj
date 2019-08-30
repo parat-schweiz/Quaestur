@@ -60,10 +60,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.2.0\lib\net45\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.2.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.3.0\lib\net45\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data.DataSetExtensions" />
