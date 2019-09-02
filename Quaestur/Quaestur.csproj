@@ -230,7 +230,7 @@
     <Compile Include="Model\Points.cs" />
     <Compile Include="Model\PointBudget.cs" />
     <Compile Include="Model\BudgetPeriod.cs" />
-    <Compile Include="Model\PaymentModelFederalTax.cs" />
+    <Compile Include="Model\PaymentModelProRataTemporis.cs" />
     <Compile Include="Model\PaymentParameter.cs" />
     <Compile Include="Module\BallotModule.cs" />
     <Compile Include="Module\PointBudgetModule.cs" />
@@ -250,6 +250,8 @@
     <Compile Include="Model\LatexTemplate.cs" />
     <Compile Include="Model\LatexTemplateAssignment.cs" />
     <Compile Include="Module\LatexTemplateModule.cs" />
+    <Compile Include="Model\PaymentModelFederalTax.cs" />
+    <Compile Include="Model\PaymentModelFlat.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

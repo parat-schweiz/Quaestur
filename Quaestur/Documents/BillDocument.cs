@@ -174,42 +174,8 @@ namespace Quaestur
 
             foreach (var included in _allIncluded)
             {
-                var periodDays = Math.Round((decimal)Bill.UntilDate.Value.Date.Subtract(Bill.FromDate.Value.Date).TotalDays, 0) + 1m;
-                var yearDayCount = 365m + (DateTime.IsLeapYear(DateTime.Now.Year) ? 1m : 0m);
-                var yearlyAmount = included.Item2.ComputeYearlyAmount(_membership);
-                var periodAmount = yearlyAmount / yearDayCount * periodDays;
-                periodAmount = Math.Round(periodAmount * 20m, 0) / 20m;
-
-                switch (periodDays)
-                {
-                    case 366m:
-                    case 365m:
-                    case 364m:
-                    case 363m:
-                    case 362m:
-                    case 361m:
-                    case 360m:
-                        periodAmount = yearlyAmount;
-                        break;
-                    case 182m:
-                    case 181m:
-                    case 180m:
-                        periodAmount = yearlyAmount / 2m;
-                        break;
-                    case 120m:
-                        periodAmount = yearlyAmount / 3m;
-                        break;
-                    case 90m:
-                        periodAmount = yearlyAmount / 4m;
-                        break;
-                    case 60m:
-                        periodAmount = yearlyAmount / 6m;
-                        break;
-                    case 30m:
-                        periodAmount = yearlyAmount / 12m;
-                        break;
-                }
-
+                var paymentModel = included.Item2;
+                var periodAmount = paymentModel.ComputeAmount(_membership, Bill.FromDate.Value, Bill.UntilDate.Value);
                 totalAmount += periodAmount;
 
                 text.Append(@"\textbf{");
@@ -250,6 +216,11 @@ namespace Quaestur
             text.AppendLine();
 
             Bill.Amount.Value = totalAmount;
+
+            if (Bill.Amount.Value == 0m)
+            {
+                Bill.Status.Value = BillStatus.Payed; 
+            }
 
             return text.ToString();
         }

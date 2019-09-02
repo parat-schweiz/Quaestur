@@ -32,31 +32,24 @@ namespace Quaestur
     {
         public List<OrganizationMembershipFeeViewModel> List;
 
-        public MembershipFeeViewModel(IDatabase database, Translator translator, Person person, Session session, decimal value)
+        public MembershipFeeViewModel(IDatabase database, Translator translator, Session session, decimal value)
         {
-            List = new List<OrganizationMembershipFeeViewModel>();
-            var parameters = new List<PersonalPaymentParameter>();
-
-            foreach (var p in person.PaymentParameters)
-            {
-                if (p.Key != PaymentModelFederalTax.FullTaxKey)
-                {
-                    parameters.Add(p);
-                }
-            }
-
-            var currency = database.Query<SystemWideSettings>().Single().Currency.Value;
+            var person = database.Query<Person>(session.User.Id.Value);
+            person.PaymentParameters.RemoveAll(p => p.Key != PaymentModelFederalTax.FullTaxKey);
             var fullTaxParameter = new PersonalPaymentParameter(Guid.Empty);
             fullTaxParameter.Key.Value = PaymentModelFederalTax.FullTaxKey;
             fullTaxParameter.Value.Value = value;
-            parameters.Add(fullTaxParameter);
+            person.PaymentParameters.Add(fullTaxParameter);
+
+            List = new List<OrganizationMembershipFeeViewModel>();
+            var currency = database.Query<SystemWideSettings>().Single().Currency.Value;
             var totalMembershipFee = 0m;
 
             foreach (var membership in person.Memberships)
             {
                 var paymentModel = membership.Type.Value.CreatePaymentModel(database);
-                var yearlyMembershipFee = paymentModel.ComputeYearlyAmount(parameters);
-                var membershipFeeInfo = paymentModel.CreateExplainationText(translator, parameters);
+                var yearlyMembershipFee = paymentModel.ComputeAmount(membership, new DateTime(1, 1, DateTime.Now.Year), new DateTime(31, 12, DateTime.Now.Year));
+                var membershipFeeInfo = paymentModel.CreateExplainationText(translator, membership);
                 List.Add(
                     new OrganizationMembershipFeeViewModel(
                         membership.Id.ToString(),
@@ -157,9 +150,8 @@ namespace Quaestur
                 var inputString = ReadBody();
                 if (decimal.TryParse(inputString, out decimal input))
                 {
-                    var person = Database.Query<Person>(CurrentSession.User.Id.Value);
                     return View["View/income_membershipfee.sshtml",
-                        new MembershipFeeViewModel(Database, Translator, person, CurrentSession, input)];
+                        new MembershipFeeViewModel(Database, Translator, CurrentSession, input)];
                 }
                 else
                 {

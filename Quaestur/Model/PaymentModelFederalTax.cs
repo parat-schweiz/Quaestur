@@ -7,7 +7,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class PaymentModelFederalTax : IPaymentModel
+    public class PaymentModelFederalTax : PaymentModelProRataTemporis
     {
         private const string PercentageKey = "PaymentModel.FederalTax.Parameter.Percentage";
         private const string MinAmountKey = "PaymentModel.FederalTax.Parameter.MinAmount";
@@ -29,7 +29,7 @@ namespace Quaestur
         {
         }
 
-        public IEnumerable<PaymentParameterType> ParameterTypes
+        public override IEnumerable<PaymentParameterType> ParameterTypes
         {
             get
             {
@@ -46,7 +46,7 @@ namespace Quaestur
             }
         }
 
-        public IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public override IEnumerable<PaymentParameterType> PersonalParameterTyoes
         {
             get
             {
@@ -110,20 +110,15 @@ namespace Quaestur
             return 0m;
         }
 
-        public decimal ComputeYearlyAmount(IEnumerable<PersonalPaymentParameter> parameters)
+        protected override decimal ComputeYearlyAmount(Membership membership)
         {
             var percentage = _membershipType.PaymentParameters
                 .Single(p => p.Key == PercentageKey).Value.Value;
             var minAmount = _membershipType.PaymentParameters
                 .Single(p => p.Key == MinAmountKey).Value.Value;
-            var fullTax = GetFullTax(parameters) ?? 0m;
+            var fullTax = GetFullTax(membership.Person.Value.PaymentParameters) ?? 0m;
 
             return Math.Max(minAmount, fullTax / 100m * percentage);
-        }
-
-        public decimal ComputeYearlyAmount(Membership membership)
-        {
-            return ComputeYearlyAmount(membership.Person.Value.PaymentParameters);
         }
 
         private static IEnumerable<TarifClass> TarifClasses
@@ -157,7 +152,7 @@ namespace Quaestur
             } 
         }
 
-        public string CreateExplainationLatex(Translator translator, IEnumerable<PersonalPaymentParameter> parameters)
+        public override string CreateExplainationLatex(Translator translator, Membership membership)
         {
             var percentage = _membershipType.PaymentParameters
                 .Single(p => p.Key == PercentageKey).Value.Value;
@@ -165,7 +160,7 @@ namespace Quaestur
                 .Single(p => p.Key == MinAmountKey).Value.Value;
             var currency = _database.Query<SystemWideSettings>()
                 .Single().Currency.Value;
-            var fullTax = GetFullTax(parameters) ?? 0m;
+            var fullTax = GetFullTax(membership.Person.Value.PaymentParameters) ?? 0m;
             var thereofAmount = fullTax / 100m * percentage;
             var yearlyFee = Math.Max(minAmount, thereofAmount);
 
@@ -228,12 +223,7 @@ namespace Quaestur
             return text.ToString();
         }
 
-        public string CreateExplainationLatex(Translator translator, Membership membership)
-        {
-            return CreateExplainationLatex(translator, membership.Person.Value.PaymentParameters);
-        }
-
-        public string CreateExplainationText(Translator translator, IEnumerable<PersonalPaymentParameter> parameters)
+        public override string CreateExplainationText(Translator translator, Membership membership)
         {
             var percentage = _membershipType.PaymentParameters
                 .Single(p => p.Key == PercentageKey).Value.Value;
@@ -250,24 +240,19 @@ namespace Quaestur
                 Currency.Format(minAmount));
         }
 
-        public string CreateExplainationText(Translator translator, Membership membership)
-        {
-            return CreateExplainationText(translator, membership.Person.Value.PaymentParameters);
-        }
-
-        public int GetBillingPeriod()
+        public override int GetBillingPeriod()
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == BillingPeriodKey).Value;
         }
 
-        public int GetReminderPeriod()
+        public override int GetReminderPeriod()
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == ReminderPeriodKey).Value;
         }
 
-        public bool HasVotingRight(IDatabase database, Membership membership)
+        public override bool HasVotingRight(IDatabase database, Membership membership)
         {
             var days = (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
@@ -290,7 +275,7 @@ namespace Quaestur
             }
         }
 
-        public int GetBillAdvancePeriod()
+        public override int GetBillAdvancePeriod()
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;

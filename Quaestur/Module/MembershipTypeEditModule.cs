@@ -121,6 +121,7 @@ namespace Quaestur
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.None, false));
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.Fixed, false));
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.FederalTax, false));
+            Payments.Add(new NamedIntViewModel(translator, PaymentModel.Flat, false));
             Collections = new List<NamedIntViewModel>();
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.None, false));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.Direct, false));
@@ -166,6 +167,7 @@ namespace Quaestur
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.None, membershipType.Payment.Value == PaymentModel.None));
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.Fixed, membershipType.Payment.Value == PaymentModel.Fixed));
             Payments.Add(new NamedIntViewModel(translator, PaymentModel.FederalTax, membershipType.Payment.Value == PaymentModel.FederalTax));
+            Payments.Add(new NamedIntViewModel(translator, PaymentModel.Flat, membershipType.Payment.Value == PaymentModel.Flat));
             Collections = new List<NamedIntViewModel>();
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.None, membershipType.Collection.Value == CollectionModel.None));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.Direct, membershipType.Collection.Value == CollectionModel.Direct));

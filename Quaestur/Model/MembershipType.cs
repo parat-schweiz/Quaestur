@@ -31,6 +31,7 @@ namespace Quaestur
         None = 0,
         Fixed = 1,
         FederalTax = 2,
+        Flat = 3,
     }
 
     public static class PaymentModelExtensions
@@ -45,6 +46,8 @@ namespace Quaestur
                     return translator.Get("Enum.PaymentModel.Fixed", "Fixed value in the payment model enum", "Fixed");
                 case PaymentModel.FederalTax:
                     return translator.Get("Enum.PaymentModel.FederalTax", "Federal tax value in the payment model enum", "Federal tax");
+                case PaymentModel.Flat:
+                    return translator.Get("Enum.PaymentModel.Flat", "Flat value in the payment model enum", "Flat");
                 default:
                     throw new NotSupportedException();
             }
@@ -60,6 +63,8 @@ namespace Quaestur
                     return new PaymentModelFixed(membershipType, database);
                 case PaymentModel.FederalTax:
                     return new PaymentModelFederalTax(membershipType, database);
+                case PaymentModel.Flat:
+                    return new PaymentModelFlat(membershipType, database);
                 default:
                     throw new NotSupportedException();
             }
