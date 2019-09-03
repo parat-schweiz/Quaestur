@@ -64,6 +64,7 @@ namespace Quaestur
             database.CreateTable<MailTemplateAssignment>();
             database.CreateTable<LatexTemplate>();
             database.CreateTable<LatexTemplateAssignment>();
+            database.CreateTable<PointTransfer>();
 
             Global.Log.Notice("Tables ok.");
         }

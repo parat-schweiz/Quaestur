@@ -21,6 +21,7 @@ namespace Quaestur
         public string Percentage;
         public string TotalPoints;
         public string CurrentPoints;
+        public string Type;
         public string Editable;
         public string Deletable;
         public string PhraseDeleteConfirmationQuestion;
@@ -35,6 +36,7 @@ namespace Quaestur
             Percentage = string.Format("{0:0.00}", Math.Round(totalShare, 2)) + "%";
             TotalPoints = ((long)Math.Floor(totalPoints * totalShare / 100m)).ToString();
             CurrentPoints = budgets.Sum(b => b.CurrentPoints.Value).ToString();
+            Type = string.Empty;
             Editable = string.Empty;
             Deletable = string.Empty;
             PhraseDeleteConfirmationQuestion = string.Empty;
@@ -49,9 +51,25 @@ namespace Quaestur
             Percentage = string.Format("{0:0.00}", Math.Round(budget.Share.Value, 2)) + "%";
             TotalPoints = ((long)Math.Floor(totalPoints * budget.Share.Value / 100m)).ToString();
             CurrentPoints = budget.CurrentPoints.Value.ToString();
+            Type = "budget";
             Editable = session.HasAccess(budget.Owner.Value, PartAccess.PointBudget, AccessRight.Write) ? "editable" : string.Empty;
             Deletable = session.HasAccess(budget.Owner.Value, PartAccess.PointBudget, AccessRight.Write) ? "fas fa-trash-alt" : string.Empty;
             PhraseDeleteConfirmationQuestion = translator.Get("PointBudget.List.Delete.Confirm.Question", "Delete points budget confirmation question", "Do you really wish to delete point budget {0}?", budget.GetText(translator)).EscapeHtml();
+        }
+
+        public PointBudgetItemViewModel(Translator translator, Session session, long totalPoints, PointTransfer transfer)
+        {
+            Id = transfer.Id.ToString();
+            Indent = "0%";
+            Width = "50%";
+            Label = transfer.Sink.Value.Organization.Value.Name.Value[translator.Language];
+            Percentage = string.Format("{0:0.00}", Math.Round(transfer.Share.Value, 2)) + "%";
+            TotalPoints = ((long)Math.Floor(totalPoints * transfer.Share.Value / 100m)).ToString();
+            CurrentPoints = string.Empty;
+            Type = "transfer";
+            Editable = session.HasAccess(transfer.Source.Value.Organization.Value, PartAccess.PointBudget, AccessRight.Write) ? "editable" : string.Empty;
+            Deletable = session.HasAccess(transfer.Source.Value.Organization.Value, PartAccess.PointBudget, AccessRight.Write) ? "fas fa-trash-alt" : string.Empty;
+            PhraseDeleteConfirmationQuestion = translator.Get("PointTransfer.List.Delete.Confirm.Question", "Delete points transfer confirmation question", "Do you really wish to delete point transfer {0}?", transfer.GetText(translator)).EscapeHtml();
         }
     }
 
@@ -77,7 +95,8 @@ namespace Quaestur
             Editable = session.HasAccess(period.Organization.Value, PartAccess.PointBudget, AccessRight.Write) ? "editable" : string.Empty;
             List = new List<PointBudgetItemViewModel>();
 
-            foreach (var group in period.Organization.Value.Groups)
+            foreach (var group in period.Organization.Value.Groups
+                .OrderBy(g => g.Name.Value[translator.Language]))
             {
                 var budgets = database.Query<PointBudget>(DC.Equal("periodid", period.Id.Value).And(DC.Equal("ownerid", group.Id.Value)));
 
@@ -90,6 +109,14 @@ namespace Quaestur
                         List.Add(new PointBudgetItemViewModel(translator, session, period.TotalPoints.Value, budget));
                     }
                 }
+            }
+
+            var transfers = database.Query<PointTransfer>(DC.Equal("sourceid", period.Id.Value));
+
+            foreach (var transfer in transfers
+                .OrderBy(t => t.Sink.Value.Organization.Value.Name.Value[translator.Language]))
+            {
+                List.Add(new PointBudgetItemViewModel(translator, session, period.TotalPoints.Value, transfer));
             }
 
             PhraseHeaderPercentage = translator.Get("PointBudget.List.Header.Percentage", "Percentage header in the point budget list", "Share");
@@ -105,16 +132,18 @@ namespace Quaestur
         public string DefaultId;
         public List<NamedIdViewModel> BudgetPeriods;
 
-        public PointBudgetViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod period)
+        public PointBudgetViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod defaultPeriod)
             : base(translator,
             translator.Get("PointBudget.List.Title", "Title of the point budget list page", "Points budget"),
             session)
         {
-            DefaultId = period.Id.ToString();
+            DefaultId = defaultPeriod.Id.ToString();
             BudgetPeriods = new List<NamedIdViewModel>(
-                database.Query<BudgetPeriod>(DC.Equal("organizationid", period.Organization.Value.Id.Value))
-                .Where(p => session.HasAccess(p.Organization, PartAccess.PointBudget, AccessRight.Read))
-                .Select(p => new NamedIdViewModel(translator, p, period == p)));
+                database.Query<BudgetPeriod>()
+                .Where(p => session.HasAccess(p.Organization.Value, PartAccess.PointBudget, AccessRight.Read))
+                .OrderByDescending(p => p.Organization.Value.Subordinates.Count())
+                .ThenBy(p => p.GetText(translator))
+                .Select(p => new NamedIdViewModel(translator, p, defaultPeriod == p)));
         }
     }
 
@@ -130,13 +159,18 @@ namespace Quaestur
         public string PhraseFieldShare;
 
         public PointBudgetEditDialogViewModel()
-        { 
+        {
+        }
+
+        public PointBudgetEditDialogViewModel(Translator translator)
+            : base(translator,
+            translator.Get("PointBudget.Edit.Title", "Title of the point budget edit dialog", "Edit points budget"),
+            "editDialog")
+        {
         }
 
         public PointBudgetEditDialogViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod period)
-            : base(translator,
-            translator.Get("PointBudget.Edit.Title", "Title of the point budget edit dialog", "Edit points budget"),
-            "pointsBudgetEditDialog")
+            : this(translator)
         {
             Method = "add";
             Id = period.Id.ToString();
@@ -150,9 +184,7 @@ namespace Quaestur
         }
 
         public PointBudgetEditDialogViewModel(IDatabase database, Translator translator, Session session, PointBudget budget)
-            : base(translator,
-            translator.Get("PointBudget.v.Title", "Title of the point budget edit dialog", "Edit points budget"),
-            "pointsBudgetEditDialog")
+            : this(translator)
         {
             Method = "edit";
             Id = budget.Id.ToString();
@@ -163,6 +195,61 @@ namespace Quaestur
             Share = budget.Share.Value.ToString();
             PhraseFieldOwner = translator.Get("PointBudget.Edit.Field.Owner", "Owner field in the point budget edit", "Owner");
             PhraseFieldShare = translator.Get("PointBudget.Edit.Field.Share", "Share field in the point budget edit", "Share");
+        }
+    }
+
+    public class PointTransferEditDialogViewModel : DialogViewModel
+    {
+        public List<NamedIdViewModel> Sinks;
+        public string Method;
+        public string Id;
+        public string Share;
+        public string Sink;
+        public string PhraseFieldSink;
+        public string PhraseFieldShare;
+
+        public PointTransferEditDialogViewModel()
+        { 
+        }
+
+        public PointTransferEditDialogViewModel(Translator translator)
+            : base(translator,
+            translator.Get("PointTransfer.Edit.Title", "Title of the point transfer edit dialog", "Edit points transfer"),
+            "editDialog")
+        {
+            PhraseFieldSink = translator.Get("PointTransfer.Edit.Field.Sink", "Sink field in the point transfer edit", "Target");
+            PhraseFieldShare = translator.Get("PointTransfer.Edit.Field.Share", "Share field in the point transfer edit", "Share");
+        }
+
+        public PointTransferEditDialogViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod source)
+            : this(translator)
+        {
+            Method = "add";
+            Id = source.Id.ToString();
+            Sinks = new List<NamedIdViewModel>(database
+                .Query<BudgetPeriod>()
+                .Where(p => p.Organization.Value != source.Organization.Value &&
+                            Dates.ComputeOverlap(p.StartDate.Value, p.EndDate.Value, source.StartDate.Value, source.EndDate.Value).TotalDays >= 1d)
+                .OrderByDescending(p => p.Organization.Value.Subordinates.Count())
+                .ThenBy(p => p.GetText(translator))
+                .Select(p => new NamedIdViewModel(translator, p, false)));
+            Share = string.Empty;
+        }
+
+        public PointTransferEditDialogViewModel(IDatabase database, Translator translator, Session session, PointTransfer transfer)
+            : this(translator)
+        {
+            Method = "edit";
+            Id = transfer.Id.ToString();
+            var source = transfer.Source.Value;
+            Sinks = new List<NamedIdViewModel>(database
+                .Query<BudgetPeriod>()
+                .Where(p => p.Organization.Value != source.Organization.Value &&
+                            Dates.ComputeOverlap(p.StartDate.Value, p.EndDate.Value, source.StartDate.Value, source.EndDate.Value).TotalDays >= 1d)
+                .OrderByDescending(p => p.Organization.Value.Subordinates.Count())
+                .ThenBy(p => p.GetText(translator))
+                .Select(p => new NamedIdViewModel(translator, p, transfer.Sink.Value == p)));
+            Share = transfer.Share.Value.ToString();
         }
     }
 
@@ -193,7 +280,7 @@ namespace Quaestur
                     }
                     else
                     {
-                        return AccessDenied(); 
+                        return AccessDenied();
                     }
                 }
                 else
@@ -305,8 +392,8 @@ namespace Quaestur
             {
                 var status = CreateStatus();
 
-            string idString = parameters.id;
-            var budget = Database.Query<PointBudget>(idString);
+                string idString = parameters.id;
+                var budget = Database.Query<PointBudget>(idString);
 
                 if (status.ObjectNotNull(budget))
                 {
@@ -317,6 +404,124 @@ namespace Quaestur
                             budget.Delete(Database);
                             transaction.Commit();
                             Notice("{0} deleted budget {1} in {2}", CurrentSession.User.ShortHand, budget.GetText(Translator), budget.GetText(Translator));
+                        }
+                    }
+                }
+
+                return status.CreateJsonData();
+            });
+            Get("/points/transfer/add/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var period = Database.Query<BudgetPeriod>(idString);
+
+                if (period != null)
+                {
+                    if (CurrentSession.HasAccess(period.Organization.Value, PartAccess.PointBudget, AccessRight.Write))
+                    {
+                        return View["View/pointtransferedit.sshtml",
+                            new PointTransferEditDialogViewModel(Database, Translator, CurrentSession, period)];
+                    }
+                }
+
+                return string.Empty;
+            });
+            Post("/points/transfer/add/{id}", parameters =>
+            {
+                var status = CreateStatus();
+                string idString = parameters.id;
+                var period = Database.Query<BudgetPeriod>(idString);
+
+                if (status.ObjectNotNull(period))
+                {
+                    if (status.HasAccess(period.Organization.Value, PartAccess.PointBudget, AccessRight.Write))
+                    {
+                        var model = JsonConvert.DeserializeObject<PointTransferEditDialogViewModel>(ReadBody());
+                        var transfer = new PointTransfer(Guid.NewGuid());
+                        transfer.Source.Value = period;
+                        status.AssignObjectIdString("Sink", transfer.Sink, model.Sink);
+                        status.AssignDecimalString("Share", transfer.Share, model.Share);
+
+                        if (status.IsSuccess)
+                        {
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                Database.Save(transfer);
+                                transfer.Sink.Value.UpdateTotalPoints(Database);
+                                Database.Save(transfer.Sink.Value);
+                                transaction.Commit();
+                            }
+                            Notice("{0} added budget {1} to {2}", CurrentSession.User.ShortHand, transfer.GetText(Translator), period.GetText(Translator));
+                        }
+                    }
+                }
+
+                return status.CreateJsonData();
+            });
+            Get("/points/transfer/edit/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var transfer = Database.Query<PointTransfer>(idString);
+
+                if (transfer != null)
+                {
+                    if (CurrentSession.HasAccess(transfer.Source.Value.Organization.Value, PartAccess.PointBudget, AccessRight.Write))
+                    {
+                        return View["View/pointtransferedit.sshtml",
+                            new PointTransferEditDialogViewModel(Database, Translator, CurrentSession, transfer)];
+                    }
+                }
+
+                return string.Empty;
+            });
+            Post("/points/transfer/edit/{id}", parameters =>
+            {
+                var status = CreateStatus();
+                string idString = parameters.id;
+                var transfer = Database.Query<PointTransfer>(idString);
+
+                if (status.ObjectNotNull(transfer))
+                {
+                    if (status.HasAccess(transfer.Source.Value.Organization.Value, PartAccess.PointBudget, AccessRight.Write))
+                    {
+                        var model = JsonConvert.DeserializeObject<PointTransferEditDialogViewModel>(ReadBody());
+                        status.AssignObjectIdString("Sink", transfer.Sink, model.Sink);
+                        status.AssignDecimalString("Share", transfer.Share, model.Share);
+
+                        if (status.IsSuccess)
+                        {
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                Database.Save(transfer);
+                                transfer.Sink.Value.UpdateTotalPoints(Database);
+                                Database.Save(transfer.Sink.Value);
+                                transaction.Commit();
+                            }
+                            Notice("{0} updated budget {1} in {2}", CurrentSession.User.ShortHand, transfer.GetText(Translator), transfer.GetText(Translator));
+                        }
+                    }
+                }
+
+                return status.CreateJsonData();
+            });
+            Get("/points/transfer/delete/{id}", parameters =>
+            {
+                var status = CreateStatus();
+
+                string idString = parameters.id;
+                var transfer = Database.Query<PointTransfer>(idString);
+
+                if (status.ObjectNotNull(transfer))
+                {
+                    if (status.HasAccess(transfer.Source.Value.Organization.Value, PartAccess.PointBudget, AccessRight.Write))
+                    {
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            transfer.Delete(Database);
+                            transfer.Sink.Value.UpdateTotalPoints(Database);
+                            Database.Save(transfer.Sink.Value);
+                            transaction.Commit();
+                            Notice("{0} deleted budget {1} in {2}", CurrentSession.User.ShortHand, transfer.GetText(Translator), transfer.GetText(Translator));
                         }
                     }
                 }

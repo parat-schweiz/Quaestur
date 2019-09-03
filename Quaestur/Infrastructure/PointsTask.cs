@@ -56,20 +56,19 @@ namespace Quaestur
                     periods.Add(newPeriod);
                 }
 
-                foreach (var period in periods)
+                foreach (var period in periods
+                    .Where(p => p.EndDate.Value.Date >= DateTime.UtcNow.Date)
+                    .OrderByDescending(p => p.Organization.Value.Subordinates.Count()))
                 {
-                    if (period.EndDate.Value.Date >= DateTime.UtcNow.Date)
-                    {
-                        period.UpdateTotalPoints(database);
-                        database.Save(period);
+                    period.UpdateTotalPoints(database);
+                    database.Save(period);
 
-                        foreach (var budget in database.Query<PointBudget>(DC.Equal("periodid", period.Id.Value)))
-                        {
-                            budget.UpdateCurrentPoints(database);
-                            database.Save(budget);
-                        }
+                    foreach (var budget in database.Query<PointBudget>(DC.Equal("periodid", period.Id.Value)))
+                    {
+                        budget.UpdateCurrentPoints(database);
+                        database.Save(budget);
                     }
-                }   
+                }
             }
         }
     }

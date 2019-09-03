@@ -1,9 +1,17 @@
 ﻿<script>
-$("#rowAdd").click(function(){
+$("#rowAddBudget").click(function(){
   $.get("/points/budget/add/@Model.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
+    }
+  });
+});
+$("#rowAddTransfer").click(function(){
+  $.get("/points/transfer/add/@Model.Id", function(data, status){
+    if (data){
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
@@ -14,7 +22,7 @@ $("#rowDelete@Current.Id").click(function(){
     content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
     buttons: {
       confirm: function () {
-        $.get("/points/budget/delete/@Current.Id", function(data, status){
+        $.get("/points/@Current.Type/delete/@Current.Id", function(data, status){
           updateCurrentList();
         });
       },
@@ -23,42 +31,42 @@ $("#rowDelete@Current.Id").click(function(){
   });
 });
 $("#rowEdit1@Current.Id").click(function(){
-  $.get("/points/budget/edit/@Current.Id", function(data, status){
+  $.get("/points/@Current.Type/edit/@Current.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
 $("#rowEdit2@Current.Id").click(function(){
-  $.get("/points/budget/edit/@Current.Id", function(data, status){
+  $.get("/points/@Current.Type/edit/@Current.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
 $("#rowEdit3@Current.Id").click(function(){
-  $.get("/points/budget/edit/@Current.Id", function(data, status){
+  $.get("/points/@Current.Type/edit/@Current.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
 $("#rowEdit4@Current.Id").click(function(){
-  $.get("/points/budget/edit/@Current.Id", function(data, status){
+  $.get("/points/@Current.Type/edit/@Current.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
 $("#rowEdit5@Current.Id").click(function(){
-  $.get("/points/budget/edit/@Current.Id", function(data, status){
+  $.get("/points/@Current.Type/edit/@Current.Id", function(data, status){
     if (data){
-      $('#pointsBudgetEditDialog').replaceWith(data);
-      $('#pointsBudgetEditDialog').modal('show');
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
     }
   });
 });
@@ -89,9 +97,9 @@ $("#rowEdit5@Current.Id").click(function(){
     </tr>
     @EndEach
     <tr class='centering clickable-row'>
-      <td colspan="5" width="90%" id="rowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
-      <td width="5%"></td>
+      <td colspan="2" width="50%" id="rowAddBudget" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+      <td colspan="4" width="50%" id="rowAddTransfer" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
     </tr>
   </tbody>
 </table>
-<div id="pointsBudgetEditDialog"/>
+<div id="editDialog"/>

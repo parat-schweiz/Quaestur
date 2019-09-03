@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using BaseLibrary;
 using SiteLibrary;
 
@@ -43,8 +44,15 @@ namespace Quaestur
             {
                 var length = EndDate.Value.Date.Subtract(StartDate.Value.Date);
                 var overlap = Dates.ComputeOverlap(m.StartDate.Value.Date, (m.EndDate.Value ?? DateTime.MaxValue).Date, StartDate.Value.Date, EndDate.Value.Date);
-                var fraction = overlap.TotalDays / length.TotalDays;
-                totalPoints += (long)Math.Floor((double)m.Type.Value.MaximumPoints.Value * fraction);
+                decimal fraction = (decimal)overlap.TotalDays / (decimal)length.TotalDays;
+                totalPoints += (long)Math.Floor((decimal)m.Type.Value.MaximumPoints.Value * fraction);
+            }
+
+            var transfers = database.Query<PointTransfer>(DC.Equal("sinkid", Id.Value));
+
+            foreach (var transfer in transfers)
+            {
+                totalPoints += (long)Math.Floor((decimal)transfer.Source.Value.TotalPoints.Value * transfer.Share.Value / 100m);
             }
 
             TotalPoints.Value = totalPoints;

@@ -252,6 +252,7 @@
     <Compile Include="Module\LatexTemplateModule.cs" />
     <Compile Include="Model\PaymentModelFederalTax.cs" />
     <Compile Include="Model\PaymentModelFlat.cs" />
+    <Compile Include="Model\PointTransfer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -946,6 +947,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Documents\pointstally_de.tex" />
+    <None Include="View\pointtransferedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
