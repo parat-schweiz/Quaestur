@@ -69,6 +69,10 @@ namespace Quaestur
         public string[] BillDocumentTemplates;
         public List<NamedIdViewModel> PointsTallyDocuments;
         public string[] PointsTallyDocumentTemplates;
+        public List<NamedIdViewModel> PaymentParameterUpdateRequiredMails;
+        public string[] PaymentParameterUpdateRequiredMailTemplates;
+        public List<NamedIdViewModel> PaymentParameterUpdateInvitationMails;
+        public string[] PaymentParameterUpdateInvitationMailTemplates;
         public string PhraseFieldRight;
         public string PhraseFieldPayment;
         public string PhraseFieldCollection;
@@ -78,9 +82,12 @@ namespace Quaestur
         public string PhraseFieldPointsTallyMailTemplates;
         public string PhraseFieldBillDocumentTemplates;
         public string PhraseFieldPointsTallyDocumentTemplates;
+        public string PhraseFieldPaymentParameterUpdateRequiredMailTemplates;
+        public string PhraseFieldPaymentParameterUpdateInvitationMailTemplates;
         public string PhraseFieldSenderGroup;
         public string PhraseTestBillCreate;
         public string PhraseTestPointsTallyCreate;
+        public string PhraseTestPaymentParameterUpdateCreate;
 
         public MembershipTypeEditViewModel()
         { 
@@ -98,9 +105,12 @@ namespace Quaestur
             PhraseFieldPointsTallyMailTemplates = translator.Get("MembershipType.Edit.Field.PointsTallyMailTemplates", "Points tally mail templates field in the membership type edit dialog", "Points tally mail templates").EscapeHtml();
             PhraseFieldBillDocumentTemplates = translator.Get("MembershipType.Edit.Field.BillDocumentTemplates", "Bill document templates field in the membership type edit dialog", "Bill document templates").EscapeHtml();
             PhraseFieldPointsTallyDocumentTemplates = translator.Get("MembershipType.Edit.Field.PointsTallyDocumentTemplates", "Points tally document templates field in the membership type edit dialog", "Points tally document templates").EscapeHtml();
+            PhraseFieldPaymentParameterUpdateRequiredMailTemplates = translator.Get("MembershipType.Edit.Field.PaymentParameterUpdateRequiredMailTemplates", "Payment parameter update required templates field in the membership type edit dialog", "Payment parameter update required templates").EscapeHtml();
+            PhraseFieldPaymentParameterUpdateInvitationMailTemplates = translator.Get("MembershipType.Edit.Field.PaymentParameterUpdateInvitationMailTemplates", "Payment parameter update invitation templates field in the membership type edit dialog", "Payment parameter update invitation templates").EscapeHtml();
             PhraseFieldSenderGroup = translator.Get("MembershipType.Edit.Field.SenderGroup", "Sender group field in the membership type edit dialog", "Sender group").EscapeHtml();
             PhraseTestBillCreate = translator.Get("MembershipType.Edit.Button.TestBillCreate", "Button to test creating bill", "Test creating bill").EscapeHtml();
             PhraseTestPointsTallyCreate = translator.Get("MembershipType.Edit.Button.TestPointsTallyCreate", "Button to test creating points tally", "Test creating points tally").EscapeHtml();
+            PhraseTestPaymentParameterUpdateCreate = translator.Get("MembershipType.Edit.Button.TestPaymentParameterUpdateCreate", "Button to test creating payment parameter update mails", "Test creating payment parameter update mails").EscapeHtml();
         }
 
         public MembershipTypeEditViewModel(Translator translator, IDatabase database, Session session, Organization organization)
@@ -144,6 +154,16 @@ namespace Quaestur
                 .OrderBy(t => t.Name));
             PointsTallyDocuments = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
+                .Where(t => t.Organization.Value == organization && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
+            PaymentParameterUpdateRequiredMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
+                .Where(t => t.Organization.Value == organization && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
+            PaymentParameterUpdateInvitationMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == organization && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
                 .Select(t => new NamedIdViewModel(translator, t, false))
                 .OrderBy(t => t.Name));
@@ -192,6 +212,16 @@ namespace Quaestur
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
                 .Select(t => new NamedIdViewModel(translator, t, membershipType.PointsTallyDocuments(database).Any(x => x.Template.Value == t)))
+                .OrderBy(t => t.Name));
+            PaymentParameterUpdateRequiredMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
+                .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateRequiredMails(database).Any(x => x.Template.Value == t)))
+                .OrderBy(t => t.Name));
+            PaymentParameterUpdateInvitationMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
+                .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateInvitationMails(database).Any(x => x.Template.Value == t)))
                 .OrderBy(t => t.Name));
         }
     }
@@ -305,7 +335,7 @@ namespace Quaestur
 
                 return string.Empty;
             });
-            Post("/membershiptype/edit/{id}", parameters =>
+            base.Post("/membershiptype/edit/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
@@ -316,24 +346,14 @@ namespace Quaestur
                 {
                     if (status.HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Write))
                     {
-                        status.AssignMultiLanguageRequired("Name", membershipType.Name, model.Name);
-                        status.AssignFlagIntsString("Right", membershipType.Rights, model.Right);
-                        status.AssignEnumIntString("Payment", membershipType.Payment, model.Payment);
-                        status.AssignEnumIntString("Collection", membershipType.Collection, model.Collection);
-                        status.AssignInt64String("MaximumPoints", membershipType.MaximumPoints, model.MaximumPoints);
-                        status.AssignInt64String("MaximumBalanceForward", membershipType.MaximumBalanceForward, model.MaximumBalanceForward);
-                        status.AssignDecimalString("MaximumDiscount", membershipType.MaximumDiscount, model.MaximumDiscount);
-                        status.AssignObjectIdString("SenderGroup", membershipType.SenderGroup, model.SenderGroup);
+                        Updatefields(status, model, membershipType);
 
                         if (status.IsSuccess)
                         {
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(membershipType);
-                                status.UpdateMailTemplates(Database, membershipType.PointsTallyMail, model.PointsTallyMailTemplates);
-                                status.UpdateLatexTemplates(Database, membershipType.BillDocument, model.BillDocumentTemplates);
-                                status.UpdateLatexTemplates(Database, membershipType.PointsTallyDocument, model.PointsTallyDocumentTemplates);
-                                AddPaymentModelParameters(membershipType);
+                                UpdateTemplatesAndParameters(model, membershipType, status);
 
                                 foreach (var period in Database
                                     .Query<BudgetPeriod>(DC.Equal("organizationid", membershipType.Organization.Value.Id.Value))
@@ -350,7 +370,7 @@ namespace Quaestur
                                 }
                                 else
                                 {
-                                    transaction.Rollback(); 
+                                    transaction.Rollback();
                                 }
                             }
                         }
@@ -375,7 +395,7 @@ namespace Quaestur
 
                 return string.Empty;
             });
-            Post("/membershiptype/add/{id}", parameters =>
+            base.Post("/membershiptype/add/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var organization = Database.Query<Organization>(idString);
@@ -387,14 +407,7 @@ namespace Quaestur
                     {
                         var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
                         var membershipType = new MembershipType(Guid.NewGuid());
-                        status.AssignMultiLanguageRequired("Name", membershipType.Name, model.Name);
-                        status.AssignFlagIntsString("Right", membershipType.Rights, model.Right);
-                        status.AssignEnumIntString("Payment", membershipType.Payment, model.Payment);
-                        status.AssignEnumIntString("Collection", membershipType.Collection, model.Collection);
-                        status.AssignInt64String("MaximumPoints", membershipType.MaximumPoints, model.MaximumPoints);
-                        status.AssignInt64String("MaximumBalanceForward", membershipType.MaximumBalanceForward, model.MaximumBalanceForward);
-                        status.AssignDecimalString("MaximumDiscount", membershipType.MaximumDiscount, model.MaximumDiscount);
-                        status.AssignObjectIdString("SenderGroup", membershipType.SenderGroup, model.SenderGroup);
+                        Updatefields(status, model, membershipType);
                         membershipType.Organization.Value = organization;
 
                         if (status.IsSuccess)
@@ -402,10 +415,7 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(membershipType);
-                                status.UpdateMailTemplates(Database, membershipType.PointsTallyMail, model.PointsTallyMailTemplates);
-                                status.UpdateLatexTemplates(Database, membershipType.BillDocument, model.BillDocumentTemplates);
-                                status.UpdateLatexTemplates(Database, membershipType.PointsTallyDocument, model.PointsTallyDocumentTemplates);
-                                AddPaymentModelParameters(membershipType);
+                                UpdateTemplatesAndParameters(model, membershipType, status);
 
                                 foreach (var period in Database
                                     .Query<BudgetPeriod>(DC.Equal("organizationid", membershipType.Organization.Value.Id.Value))
@@ -517,43 +527,42 @@ namespace Quaestur
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
-                var result = new PostResult();
+                var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
+                var status = CreateStatus();
 
-                if (membershipType != null &&
-                    HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
+                if (status.ObjectNotNull(membershipType) &&
+                    status.HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
                 {
                     if (membershipType.Payment.Value != PaymentModel.None &&
                         membershipType.Collection.Value == CollectionModel.Direct)
                     {
                         using (var transaction = Database.BeginTransaction())
                         {
-                            var input = JObject.Parse(ReadBody());
-                            var userLanguage = CurrentSession.User.Language.Value;
+                            Updatefields(status, model, membershipType);
+                            UpdateTemplatesAndParameters(model, membershipType, status);
 
-                            var membership = new Membership(Guid.NewGuid());
-                            membership.Organization.Value = membershipType.Organization.Value;
-                            membership.Type.Value = membershipType;
-                            membership.Person.Value = CurrentSession.User;
-                            membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
-
-                            var content = new Multipart("mixed");
-                            var bodyText = Translate("MembershipType.TestCreateBill.Text", "Subject of the test create bill mail", "See attachements");
-                            var bodyPart = new TextPart("plain") { Text = bodyText };
-                            bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
-                            content.Add(bodyPart);
-
-                            foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
+                            if (status.IsSuccess)
                             {
-                                var propertyName = "L" + ((int)language).ToString();
-                                if (input.Properties().Any(p => p.Name == propertyName))
+                                var userLanguage = CurrentSession.User.Language.Value;
+
+                                var membership = new Membership(Guid.NewGuid());
+                                membership.Organization.Value = membershipType.Organization.Value;
+                                membership.Type.Value = membershipType;
+                                membership.Person.Value = CurrentSession.User;
+                                membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
+
+                                var content = new Multipart("mixed");
+                                var bodyText = Translate("MembershipType.TestCreateBill.Text", "Subject of the test create bill mail", "See attachements");
+                                var bodyPart = new TextPart("plain") { Text = bodyText };
+                                bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                                content.Add(bodyPart);
+
+                                foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
                                 {
-                                    var template = (string)input.Property(propertyName);
-                                    if (!string.IsNullOrEmpty(template) &&
-                                        template.Length > 64)
+                                    var documentTemplate = membership.Type.Value.GetBillDocument(Database, Translator.Language);
+
+                                    if (documentTemplate != null)
                                     {
-                                        var documentTemplate = membership.Type.Value.GetBillDocument(Database, Translator.Language);
-                                        documentTemplate.Text.Value = template;
-                                        Database.Save(documentTemplate);
                                         CurrentSession.User.Language.Value = language;
                                         var billDocument = new BillDocument(Translator, Database, membership);
 
@@ -584,91 +593,77 @@ namespace Quaestur
                                         content.Add(errorPart);
                                     }
                                 }
-                            }
 
-                            if (content.Count > 1)
-                            {
-                                var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
-                                var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
-                                Global.MailCounter.Used();
-                                Global.Mail.Send(to, subject, content);
-
-                                result.MessageType = "succss";
-                                result.MessageText = Translate("MembershipType.TestCreateBill.Success", "Success during test create bill", "Compilation finished. You will recieve the output via mail.");
-                                result.IsSuccess = true;
+                                if (content.Count > 1)
+                                {
+                                    var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                    var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
+                                    Global.MailCounter.Used();
+                                    Global.Mail.Send(to, subject, content);
+                                    status.SetSuccess("MembershipType.TestCreateBill.Success", "Success during test create bill", "Compilation finished. You will recieve the output via mail.");
+                                }
+                                else
+                                {
+                                    status.SetError("MembershipType.TestCreateBill.Failed.Failed", "LaTeX failed during test create bill", "Compilation failed. No PDF/LaTeX output was generated.");
+                                }
+                                transaction.Rollback();
                             }
-                            else
-                            {
-                                result.MessageType = "warning";
-                                result.MessageText = Translate("MembershipType.TestCreateBill.Failed.Failed", "LaTeX failed during test create bill", "Compilation failed. No output was generated.");
-                                result.IsSuccess = false;
-                            }
-                            transaction.Rollback();
                         }
                     }
                     else
                     {
-                        result.MessageType = "warning";
-                        result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NoPayment", "LaTeX failed during test create bill", "No payment or billing was selected. No output was generated.");
-                        result.IsSuccess = false;
+                        status.SetError("MembershipType.TestCreateBill.Failed.NoPayment", "LaTeX failed during test create bill", "No payment or billing was selected. No output was generated.");
                     }
                 }
-                else
-                {
-                    result.MessageType = "warning";
-                    result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NotFound", "Object not found during test create bill", "Object not found");
-                    result.IsSuccess = false;
-                }
 
-                return JsonConvert.SerializeObject(result);
+                return status.CreateJsonData();
             });
             Post("/membershiptype/testcreatepointstally/{id}", parameters =>
             {
                 string idString = parameters.id;
                 var membershipType = Database.Query<MembershipType>(idString);
-                var result = new PostResult();
+                var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
+                var status = CreateStatus();
 
-                if (membershipType != null &&
-                    HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
+                if (status.ObjectNotNull(membershipType) &&
+                    status.HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
                 {
                     using (var transaction = Database.BeginTransaction())
                     {
-                        var input = JObject.Parse(ReadBody());
-                        var userLanguage = CurrentSession.User.Language.Value;
+                        Updatefields(status, model, membershipType);
+                        UpdateTemplatesAndParameters(model, membershipType, status);
 
-                        var membership = new Membership(Guid.NewGuid());
-                        membership.Organization.Value = membershipType.Organization.Value;
-                        membership.Type.Value = membershipType;
-                        membership.Person.Value = CurrentSession.User;
-                        membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
-
-                        var content = new Multipart("mixed");
-                        var bodyText = Translate("MembershipType.TestCreatePointsTally.Text", "Subject of the test create bill mail", "See attachements");
-                        var bodyPart = new TextPart("plain") { Text = bodyText };
-                        bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
-                        content.Add(bodyPart);
-
-                        foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
+                        if (status.IsSuccess)
                         {
-                            var pointsTallyMailTemplate = membershipType.GetPointsTallyMail(Database, language);
+                            var userLanguage = CurrentSession.User.Language.Value;
 
-                            if (pointsTallyMailTemplate != null)
-                            {
-                                var message = PointsTallyTask.CreateMail(Database, membership, pointsTallyMailTemplate, null);
-                                Global.MailCounter.Used();
-                                Global.Mail.Send(message);
-                            }
+                            var membership = new Membership(Guid.NewGuid());
+                            membership.Organization.Value = membershipType.Organization.Value;
+                            membership.Type.Value = membershipType;
+                            membership.Person.Value = CurrentSession.User;
+                            membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
-                            var propertyName = "L" + ((int)language).ToString();
-                            if (input.Properties().Any(p => p.Name == propertyName))
+                            var content = new Multipart("mixed");
+                            var bodyText = Translate("MembershipType.TestCreatePointsTally.Text", "Subject of the test create bill mail", "See attachements");
+                            var bodyPart = new TextPart("plain") { Text = bodyText };
+                            bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                            content.Add(bodyPart);
+
+                            foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
                             {
-                                var template = (string)input.Property(propertyName);
-                                if (!string.IsNullOrEmpty(template) &&
-                                    template.Length > 64)
+                                var pointsTallyMailTemplate = membershipType.GetPointsTallyMail(Database, language);
+
+                                if (pointsTallyMailTemplate != null)
                                 {
-                                    var documentTemplate = membership.Type.Value.GetPointsTallyDocument(Database, Translator.Language);
-                                    documentTemplate.Text.Value = template;
-                                    Database.Save(documentTemplate);
+                                    var message = PointsTallyTask.CreateMail(Database, membership, pointsTallyMailTemplate, null);
+                                    Global.MailCounter.Used();
+                                    Global.Mail.Send(message);
+                                }
+
+                                var documentTemplate = membership.Type.Value.GetPointsTallyDocument(Database, Translator.Language);
+
+                                if (documentTemplate != null)
+                                {
                                     CurrentSession.User.Language.Value = language;
                                     var tallyDocument = new PointsTallyDocument(Translator, Database, membership, CreateTestPoints(membership.Person.Value));
 
@@ -696,40 +691,105 @@ namespace Quaestur
                                     errorPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
                                     errorPart.ContentDisposition.FileName = language.ToString() + ".output.txt";
                                     errorPart.ContentTransferEncoding = ContentEncoding.Base64;
-                                    content.Add(errorPart);
+                                       content.Add(errorPart);
                                 }
                             }
-                        }
 
-                        if (content.Count > 1)
-                        {
-                            var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
-                            var subject = Translate("MembershipType.TestCreatePointsTally.Subject", "Subject of the test create bill mail", "Test create points tally");
-                            Global.MailCounter.Used();
-                            Global.Mail.Send(to, subject, content);
-
-                            result.MessageType = "succss";
-                            result.MessageText = Translate("MembershipType.TestCreatePointsTally.Success", "Success during test create points tally", "Compilation finished. You will recieve the output via mail.");
-                            result.IsSuccess = true;
+                            if (content.Count > 1)
+                            {
+                                var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                var subject = Translate("MembershipType.TestCreatePointsTally.Subject", "Subject of the test create bill mail", "Test create points tally");
+                                Global.MailCounter.Used();
+                                Global.Mail.Send(to, subject, content);
+                                status.SetSuccess("MembershipType.TestCreatePointsTally.Success", "Success during test create points tally", "Compilation finished. You will recieve the output via mail.");
+                            }
+                            else
+                            {
+                                status.SetError("MembershipType.TestCreatePointsTally.Failed.Failed", "LaTeX failed during test create points tally", "Compilation failed. No PDF/LaTeX output was generated.");
+                            }
+                            transaction.Rollback();
                         }
-                        else
-                        {
-                            result.MessageType = "warning";
-                            result.MessageText = Translate("MembershipType.TestCreatePointsTally.Failed.Failed", "LaTeX failed during test create points tally", "Compilation failed. No output was generated.");
-                            result.IsSuccess = false;
-                        }
-                        transaction.Rollback();
                     }
                 }
-                else
+
+                return status.CreateJsonData();
+            });
+            Post("/membershiptype/testcreatepaymentparameterupdate/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var membershipType = Database.Query<MembershipType>(idString);
+                var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
+                var status = CreateStatus();
+
+                if (status.ObjectNotNull(membershipType) &&
+                    status.HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
                 {
-                    result.MessageType = "warning";
-                    result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NotFound", "Object not found during test create bill", "Object not found");
-                    result.IsSuccess = false;
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        Updatefields(status, model, membershipType);
+                        UpdateTemplatesAndParameters(model, membershipType, status);
+
+                        if (status.IsSuccess)
+                        {
+                            var userLanguage = CurrentSession.User.Language.Value;
+
+                            var membership = new Membership(Guid.NewGuid());
+                            membership.Organization.Value = membershipType.Organization.Value;
+                            membership.Type.Value = membershipType;
+                            membership.Person.Value = CurrentSession.User;
+                            membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
+
+                            foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
+                            {
+                                var paymentParameterUpdateRequiredMail = membershipType.GetPaymentParameterUpdateRequiredMail(Database, language);
+
+                                if (paymentParameterUpdateRequiredMail != null)
+                                {
+                                    var message = PointsTallyTask.CreateMail(Database, membership, paymentParameterUpdateRequiredMail, null);
+                                    Global.MailCounter.Used();
+                                    Global.Mail.Send(message);
+                                }
+
+                                var paymentParameterUpdateInvitationMail = membershipType.GetPaymentParameterUpdateInvitationMail(Database, language);
+
+                                if (paymentParameterUpdateInvitationMail != null)
+                                {
+                                    var message = PointsTallyTask.CreateMail(Database, membership, paymentParameterUpdateInvitationMail, null);
+                                    Global.MailCounter.Used();
+                                    Global.Mail.Send(message);
+                                }
+
+                                status.SetSuccess("MembershipType.TestPaymentParameterUpdate.Success", "Success during test create payment parameter update", "Sending test mails finished.");
+                            }
+                            transaction.Rollback();
+                        }
+                    }
                 }
 
-                return JsonConvert.SerializeObject(result);
+                return status.CreateJsonData();
             });
+        }
+
+        private void UpdateTemplatesAndParameters(MembershipTypeEditViewModel model, MembershipType membershipType, PostStatus status)
+        {
+            status.UpdateMailTemplates(Database, membershipType.PointsTallyMail, model.PointsTallyMailTemplates);
+            status.UpdateLatexTemplates(Database, membershipType.BillDocument, model.BillDocumentTemplates);
+            status.UpdateLatexTemplates(Database, membershipType.PointsTallyDocument, model.PointsTallyDocumentTemplates);
+            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateRequiredMail, model.PaymentParameterUpdateRequiredMailTemplates);
+            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateInvitationMail, model.PaymentParameterUpdateInvitationMailTemplates);
+            AddPaymentModelParameters(membershipType);
+        }
+
+        private static void Updatefields(PostStatus status, MembershipTypeEditViewModel model, MembershipType membershipType)
+        {
+            status.AssignMultiLanguageRequired("Name", membershipType.Name, model.Name);
+            status.AssignFlagIntsString("Right", membershipType.Rights, model.Right);
+            status.AssignEnumIntString("Payment", membershipType.Payment, model.Payment);
+            status.AssignEnumIntString("Collection", membershipType.Collection, model.Collection);
+            status.AssignInt64String("MaximumPoints", membershipType.MaximumPoints, model.MaximumPoints);
+            status.AssignInt64String("MaximumBalanceForward", membershipType.MaximumBalanceForward, model.MaximumBalanceForward);
+            status.AssignDecimalString("MaximumDiscount", membershipType.MaximumDiscount, model.MaximumDiscount);
+            status.AssignObjectIdString("SenderGroup", membershipType.SenderGroup, model.SenderGroup);
         }
 
         private IEnumerable<Points> CreateTestPoints(Person person)

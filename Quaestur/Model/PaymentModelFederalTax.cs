@@ -46,7 +46,7 @@ namespace Quaestur
             }
         }
 
-        public override IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public override IEnumerable<PaymentParameterType> PersonalParameterTypes
         {
             get
             {
@@ -252,11 +252,11 @@ namespace Quaestur
                 .Single(p => p.Key == ReminderPeriodKey).Value;
         }
 
-        public override bool HasVotingRight(IDatabase database, Membership membership)
+        public override bool HasVotingRight(Membership membership)
         {
             var days = (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
-            var lastBill = database
+            var lastBill = _database
                 .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
                 .OrderByDescending(m => m.UntilDate.Value)
                 .FirstOrDefault();
@@ -279,6 +279,41 @@ namespace Quaestur
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
+        }
+
+        private bool ShouldWriteBillSoon(Membership membership)
+        {
+            var lastBill = _database
+                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
+                .OrderByDescending(m => m.UntilDate.Value)
+                .FirstOrDefault();
+
+            return (lastBill == null) ||
+                DateTime.UtcNow.Date >= lastBill.UntilDate.Value.Date.AddDays(-2 * GetBillAdvancePeriod());
+        }
+
+        public override bool RequireParameterUpdate(Membership membership)
+        {
+            var incomeParameter = membership.Person.Value.PaymentParameters
+                .SingleOrDefault(p => p.Key == FullTaxKey);
+            return incomeParameter == null &&
+                ShouldWriteBillSoon(membership);
+        }
+
+        public override bool InviteForParameterUpdate(Membership membership)
+        {
+            var incomeParameter = membership.Person.Value.PaymentParameters
+                .SingleOrDefault(p => p.Key == FullTaxKey);
+
+            if (incomeParameter != null)
+            {
+                return DateTime.UtcNow.Subtract(incomeParameter.LastUpdate.Value).TotalDays >= 365
+                    && ShouldWriteBillSoon(membership);
+            }
+            else
+            {
+                return ShouldWriteBillSoon(membership);
+            }
         }
     }
 }

@@ -43,13 +43,13 @@ namespace Quaestur
 
         public void SetError(string key, string hint, string text, params object[] arguments)
         {
-            ErrorText = _translator.Get(key, hint, text, arguments).EscapeHtml();
+            ErrorText = _translator.Get(key, hint, text, arguments);
             IsSuccess = false;
         }
 
         public void SetSuccess(string key, string hint, string text, params object[] arguments)
         {
-            SuccessText = _translator.Get(key, hint, text, arguments).EscapeHtml();
+            SuccessText = _translator.Get(key, hint, text, arguments);
             IsSuccess = true;
         }
 
@@ -317,6 +317,16 @@ namespace Quaestur
 
         public void AssignFlagIntsString<T>(string fieldName, EnumField<T> field, string[] stringValues) where T : struct, IConvertible
         {
+            if (stringValues == null)
+            {
+                IsSuccess = false;
+                Add(fieldName,
+                    "Validation.Flag.Invalid",
+                    "Validation message on enum invalid",
+                    "Invalid value");
+                return;
+            }
+
             T newValue = (T)(object)(0);
 
             foreach (var stringValue in stringValues)
@@ -541,7 +551,8 @@ namespace Quaestur
 
         public void UpdateLatexTemplates(IDatabase database, TemplateField field, string[] stringValues)
         {
-            if (!stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
+            if (stringValues == null ||
+                !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
             {
                 Add(field.FieldName,
                     "Validation.LatexTemplates.Invalid",
@@ -611,7 +622,8 @@ namespace Quaestur
 
         public void UpdateMailTemplates(IDatabase database, TemplateField field, string[] stringValues)
         {
-            if (!stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
+            if (stringValues == null ||
+                !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
             {
                 Add(field.FieldName,
                     "Validation.MailTemplates.Invalid",

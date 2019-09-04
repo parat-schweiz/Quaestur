@@ -76,7 +76,7 @@ namespace Quaestur
                     return true;
                 case CollectionModel.Direct:
                     var model = Type.Value.CreatePaymentModel(database);
-                    return model == null || model.HasVotingRight(database, this);
+                    return model == null || model.HasVotingRight(this);
                 case CollectionModel.ByParent:
                     if (last == CollectionModel.BySub) return false;
                     return Person.Value.Memberships

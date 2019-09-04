@@ -133,6 +133,8 @@ namespace Quaestur
         public const string PointsTallyMailFieldName = "PointsTallyMails";
         public const string BillDocumentFieldName = "BillDocuments";
         public const string PointsTallyDocumentFieldName = "PointsTallyDocuments";
+        public const string PaymentParameterUpdateRequiredMailFieldName = "PaymentParameterUpdateRequiredMails";
+        public const string PaymentParameterUpdateInvitationMailFieldName = "PaymentParameterUpdateInvitationMails";
 
         public TemplateField PointsTallyMail
         {
@@ -149,6 +151,16 @@ namespace Quaestur
             get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyDocumentFieldName); }
         }
 
+        public TemplateField PaymentParameterUpdateRequiredMail
+        {
+            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateRequiredMailFieldName); }
+        }
+
+        public TemplateField PaymentParameterUpdateInvitationMail
+        {
+            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateInvitationMailFieldName); }
+        }
+
         public IEnumerable<MailTemplateAssignment> PointsTallyMails(IDatabase database)
         {
             return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PointsTallyMailFieldName)));
@@ -162,6 +174,16 @@ namespace Quaestur
         public IEnumerable<LatexTemplateAssignment> PointsTallyDocuments(IDatabase database)
         {
             return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PointsTallyDocumentFieldName)));
+        }
+
+        public IEnumerable<MailTemplateAssignment> PaymentParameterUpdateRequiredMails(IDatabase database)
+        {
+            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PaymentParameterUpdateRequiredMailFieldName)));
+        }
+
+        public IEnumerable<MailTemplateAssignment> PaymentParameterUpdateInvitationMails(IDatabase database)
+        {
+            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PaymentParameterUpdateInvitationMailFieldName)));
         }
 
         public MailTemplate GetPointsTallyMail(IDatabase database, Language language)
@@ -195,6 +217,34 @@ namespace Quaestur
         public LatexTemplate GetPointsTallyDocument(IDatabase database, Language language)
         {
             var list = PointsTallyDocuments(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
+        }
+
+        public MailTemplate GetPaymentParameterUpdateRequiredMail(IDatabase database, Language language)
+        {
+            var list = PaymentParameterUpdateRequiredMails(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
+        }
+
+        public MailTemplate GetPaymentParameterUpdateInvitationMail(IDatabase database, Language language)
+        {
+            var list = PaymentParameterUpdateInvitationMails(database);
 
             foreach (var l in LanguageExtensions.PreferenceList(language))
             {
@@ -265,6 +315,11 @@ namespace Quaestur
             }
 
             foreach (var template in database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value)))
+            {
+                template.Delete(database);
+            }
+
+            foreach (var template in database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value)))
             {
                 template.Delete(database);
             }

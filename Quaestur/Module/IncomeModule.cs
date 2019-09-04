@@ -35,7 +35,7 @@ namespace Quaestur
         public MembershipFeeViewModel(IDatabase database, Translator translator, Session session, decimal value)
         {
             var person = database.Query<Person>(session.User.Id.Value);
-            person.PaymentParameters.RemoveAll(p => p.Key != PaymentModelFederalTax.FullTaxKey);
+            person.PaymentParameters.RemoveAll(p => p.Key.Value == PaymentModelFederalTax.FullTaxKey);
             var fullTaxParameter = new PersonalPaymentParameter(Guid.Empty);
             fullTaxParameter.Key.Value = PaymentModelFederalTax.FullTaxKey;
             fullTaxParameter.Value.Value = value;
@@ -45,10 +45,11 @@ namespace Quaestur
             var currency = database.Query<SystemWideSettings>().Single().Currency.Value;
             var totalMembershipFee = 0m;
 
-            foreach (var membership in person.Memberships)
+            foreach (var membership in person.Memberships
+                .OrderByDescending(m => m.Organization.Value.Subordinates.Count()))
             {
                 var paymentModel = membership.Type.Value.CreatePaymentModel(database);
-                var yearlyMembershipFee = paymentModel.ComputeAmount(membership, new DateTime(1, 1, DateTime.Now.Year), new DateTime(31, 12, DateTime.Now.Year));
+                var yearlyMembershipFee = paymentModel.ComputeAmount(membership, new DateTime(DateTime.Now.Year, 1, 1), new DateTime(DateTime.Now.Year, 12, 31));
                 var membershipFeeInfo = paymentModel.CreateExplainationText(translator, membership);
                 List.Add(
                     new OrganizationMembershipFeeViewModel(
@@ -59,7 +60,7 @@ namespace Quaestur
                 totalMembershipFee += yearlyMembershipFee;
             }
 
-            if (person.Memberships.Count > 0)
+            if (person.Memberships.Count > 1)
             {
                 List.Add(
                     new OrganizationMembershipFeeViewModel(
@@ -163,8 +164,19 @@ namespace Quaestur
                 var inputString = ReadBody();
                 if (decimal.TryParse(inputString, out decimal input))
                 {
-                    var person = Database.Query<Person>(CurrentSession.User.Id.Value);
-                    PaymentModelFederalTax.SetFullTax(Database, person, input);
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                        PaymentModelFederalTax.SetFullTax(Database, person, input);
+                        person.PaymentParameterUpdateReminderDate.Value = null;
+                        person.PaymentParameterUpdateReminderLevel.Value = null;
+                        Database.Save(person);
+                        Journal(person,
+                            "Income.Journal.Report",
+                            "Journal entry when person reports income",
+                            "Income reported.");
+                        transaction.Commit();
+                    }
                     return "OK";
                 }
                 else

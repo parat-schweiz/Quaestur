@@ -23,7 +23,7 @@ namespace Quaestur
     { 
         IEnumerable<PaymentParameterType> ParameterTypes { get; }
 
-        IEnumerable<PaymentParameterType> PersonalParameterTyoes { get; }
+        IEnumerable<PaymentParameterType> PersonalParameterTypes { get; }
 
         decimal ComputeAmount(Membership membership, DateTime fromDate, DateTime untilDate);
 
@@ -31,12 +31,16 @@ namespace Quaestur
 
         string CreateExplainationText(Translator translator, Membership membership);
 
-        bool HasVotingRight(IDatabase database, Membership membership);
+        bool HasVotingRight(Membership membership);
 
         int GetBillingPeriod();
 
         int GetReminderPeriod();
 
         int GetBillAdvancePeriod();
+
+        bool RequireParameterUpdate(Membership membership);
+
+        bool InviteForParameterUpdate(Membership membership);
     }
 }

@@ -39,7 +39,7 @@ namespace Quaestur
             }
         }
 
-        public IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public IEnumerable<PaymentParameterType> PersonalParameterTypes
         {
             get { return new PaymentParameterType[0]; } 
         }
@@ -89,9 +89,9 @@ namespace Quaestur
                 .Single(p => p.Key == ReminderPeriodKey).Value;
         }
 
-        public bool HasVotingRight(IDatabase database, Membership membership)
+        public bool HasVotingRight(Membership membership)
         {
-            var bills = database
+            var bills = _database
                 .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
                 .OrderBy(m => m.FromDate.Value);
             var firstBill = bills.FirstOrDefault();
@@ -126,6 +126,16 @@ namespace Quaestur
             {
                 return 0m; 
             }
+        }
+
+        public bool RequireParameterUpdate(Membership membership)
+        {
+            return false;
+        }
+
+        public bool InviteForParameterUpdate(Membership membership)
+        {
+            return false;
         }
     }
 }

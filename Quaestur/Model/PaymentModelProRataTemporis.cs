@@ -11,7 +11,7 @@ namespace Quaestur
     {
         public abstract IEnumerable<PaymentParameterType> ParameterTypes { get; }
 
-        public abstract IEnumerable<PaymentParameterType> PersonalParameterTyoes { get; }
+        public abstract IEnumerable<PaymentParameterType> PersonalParameterTypes { get; }
 
         public decimal ComputeAmount(Membership membership, DateTime fromDate, DateTime untilDate)
         {
@@ -64,8 +64,12 @@ namespace Quaestur
 
         public abstract int GetReminderPeriod();
 
-        public abstract bool HasVotingRight(IDatabase database, Membership membership);
+        public abstract bool HasVotingRight(Membership membership);
 
         protected abstract decimal ComputeYearlyAmount(Membership membership);
+
+        public abstract bool RequireParameterUpdate(Membership membership);
+
+        public abstract bool InviteForParameterUpdate(Membership membership);
     }
 }
