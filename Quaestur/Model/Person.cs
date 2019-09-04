@@ -76,6 +76,8 @@ namespace Quaestur
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
         public ByteArrayField TwoFactorSecret { get; private set; }
+        public FieldNull<DateTime> PaymentParameterUpdateReminderDate { get; private set; }
+        public FieldNull<int> PaymentParameterUpdateReminderLevel { get; private set; }
         public List<PersonalPaymentParameter> PaymentParameters { get; private set; }
 
         public Person() : this(Guid.Empty)
@@ -97,6 +99,8 @@ namespace Quaestur
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);
+            PaymentParameterUpdateReminderDate = new FieldNull<DateTime>(this, "paymentparameterupdatereminderdate");
+            PaymentParameterUpdateReminderLevel = new FieldNull<int>(this, "paymentparameterupdatereminderlevel");
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();
             Memberships = new List<Membership>();

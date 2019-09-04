@@ -55,11 +55,13 @@ function assignValidation(resultData){
   assignFieldValidation("PointsTallyMails", result);
   assignFieldValidation("PointsTallyDocuments", result);
   assignFieldValidation("BillDocuments", result);
+  assignFieldValidation("PaymentParameterUpdateRequiredMails", result);
+  assignFieldValidation("PaymentParameterUpdateInvitationMails", result);
   assignFieldValidation("SenderGroup", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
-$("#@Model.ButtonId").click(function() {
+function getFormData(){
   var formData = new Object();
   formData.Name = new Array();
   @Each.Name
@@ -76,10 +78,14 @@ $("#@Model.ButtonId").click(function() {
   formData.MaximumDiscount = $("#membershipTypeMaximumDiscount").val();
   formData.PointsTallyMailTemplates = $("#membershipTypePointsTallyMails").val();
   formData.PointsTallyDocumentTemplates = $("#membershipTypePointsTallyDocuments").val();
+  formData.PaymentParameterUpdateRequiredMailTemplates = $("#membershipTypePaymentParameterUpdateRequiredMails").val();
+  formData.PaymentParameterUpdateInvitationMailTemplates = $("#membershipTypePaymentParameterUpdateInvitationMails").val();
   formData.BillDocumentTemplates = $("#membershipTypeBillDocuments").val();
   formData.SenderGroup = $("#membershipTypeSenderGroup").val();
-  
-  $.post("/membershiptype/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+  return formData;
+}
+$("#@Model.ButtonId").click(function() {
+  $.post("/membershiptype/@Model.Method/@Model.Id", JSON.stringify(getFormData()), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
       updateMembershipTypeList();
@@ -88,12 +94,11 @@ $("#@Model.ButtonId").click(function() {
   });
 });
 $("#membershipTypeTestBillCreate").click(function(event) {
-  inputData = new Object();
   $("#membershipTypeTestBillCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestBillCreate...");
   $("#membershipTypeTestBillCreateFeedback").html('');
-  $.post("/membershiptype/testcreatebill/@Model.Id", JSON.stringify(inputData), function(statusData, status){
+  $.post("/membershiptype/testcreatebill/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
     var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "succss"){
+    if (statusObject.MessageType == "success"){
       $("#membershipTypeTestBillCreateFeedback").removeClass('markred');
       $("#membershipTypeTestBillCreateFeedback").addClass('markgreen');
     }else{
@@ -106,13 +111,12 @@ $("#membershipTypeTestBillCreate").click(function(event) {
   event.preventDefault();
 });
 $("#membershipTypeTestPointsTallyCreate").click(function(event) {
-  inputData = new Object();
   $("#membershipTypeTestPointsTallyCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestPointsTallyCreate...");
   $("#membershipTypeTestPointsTallyCreateFeedback").html('');
-  $.post("/membershiptype/testcreatepointstally/@Model.Id", JSON.stringify(inputData), function(statusData, status){
+  $.post("/membershiptype/testcreatepointstally/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
     var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "succss"){
-      $("#membershipTypeTestPointsTallyCreateFeedback").removeClass('markred');
+    if (statusObject.MessageType == "success"){
+      $("#membershipTypeTestPointsTallyCreateFeedback").removeClass(    'markred');
       $("#membershipTypeTestPointsTallyCreateFeedback").addClass('markgreen');
     }else{
       $("#membershipTypeTestPointsTallyCreateFeedback").addClass('markred');
@@ -120,6 +124,24 @@ $("#membershipTypeTestPointsTallyCreate").click(function(event) {
     }
     $("#membershipTypeTestPointsTallyCreateFeedback").html(statusObject.MessageText);
     $("#membershipTypeTestPointsTallyCreate").html("@Model.PhraseTestPointsTallyCreate");
+  });
+  event.preventDefault();
+});
+$("#membershipTypeTestPaymentParameterUpdateCreate").click(function(event) {
+  inputData = new Object();
+  $("#membershipTypeTestPaymentParameterUpdateCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestPointsTallyCreate...");
+  $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").html('');
+  $.post("/membershiptype/testcreatepaymentparameterupdate/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
+    var statusObject = JSON.parse(statusData);
+    if (statusObject.MessageType == "success"){
+      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").removeClass('markred');
+      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").addClass('markgreen');
+    }else{
+      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").addClass('markred');
+      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").removeClass('markgreen');
+    }
+    $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").html(statusObject.MessageText);
+    $("#membershipTypeTestPaymentParameterUpdateCreate").html("@Model.PhraseTestPointsTallyCreate");
   });
   event.preventDefault();
 });
@@ -213,6 +235,17 @@ $('.selectpicker').selectpicker();
     </div>
     <div class="form-row">
       <div class="col-md-12 mb-3">
+        <label for="membershipTypeSenderGroup">@Model.PhraseFieldSenderGroup</label>
+        <select id="membershipTypeSenderGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.Groups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSenderGroupFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
         <label for="membershipTypePointsTallyDocuments">@Model.PhraseFieldPointsTallyDocumentTemplates</label>
         <select id="membershipTypePointsTallyDocuments" class="selectpicker form-control" data-live-search="true" multiple>
           @Each.PointsTallyDocuments
@@ -234,17 +267,6 @@ $('.selectpicker').selectpicker();
       </div>
     </div>
     <div class="form-row">
-      <div class="col-md-12 mb-3">
-        <label for="membershipTypeSenderGroup">@Model.PhraseFieldSenderGroup</label>
-        <select id="membershipTypeSenderGroup" class="selectpicker form-control" data-live-search="true">
-          @Each.Groups
-          <option value="@Current.Id" @Current.Options>@Current.Name</option>
-          @EndEach
-        </select>
-        <div id="membershipTypeSenderGroupFeedback" class="valid-feedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
       <div class="col-12 mb-3">
         <button id ="membershipTypeTestPointsTallyCreate" type="button" class="btn btn-default">@Model.PhraseTestPointsTallyCreate</button>
       </div>
@@ -252,6 +274,38 @@ $('.selectpicker').selectpicker();
     <div class="form-row">
       <div class="col-12 mb-3">
         <div id="membershipTypeTestPointsTallyCreateFeedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePaymentParameterUpdateRequiredMails">@Model.PhraseFieldPaymentParameterUpdateRequiredMailTemplates</label>
+        <select id="membershipTypePaymentParameterUpdateRequiredMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PaymentParameterUpdateRequiredMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePaymentParameterUpdateRequiredMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePaymentParameterUpdateInvitationMails">@Model.PhraseFieldPaymentParameterUpdateInvitationMailTemplates</label>
+        <select id="membershipTypePaymentParameterUpdateInvitationMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PaymentParameterUpdateInvitationMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePaymentParameterUpdateInvitationMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <button id ="membershipTypeTestPaymentParameterUpdateCreate" type="button" class="btn btn-default">@Model.PhraseTestPaymentParameterUpdateCreate</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div id="membershipTypeTestPaymentParameterUpdateCreateFeedback"></div>
       </div>
     </div>
   </form>

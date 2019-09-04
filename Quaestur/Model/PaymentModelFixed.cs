@@ -42,7 +42,7 @@ namespace Quaestur
             }
         }
 
-        public override IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public override IEnumerable<PaymentParameterType> PersonalParameterTypes
         {
             get { return new PaymentParameterType[0]; } 
         }
@@ -138,6 +138,16 @@ namespace Quaestur
         {
             return _membershipType.PaymentParameters
                 .Single(p => p.Key == AmountKey).Value;
+        }
+
+        public override bool RequireParameterUpdate(Membership membership)
+        {
+            return false;
+        }
+
+        public override bool InviteForParameterUpdate(Membership membership)
+        {
+            return false;
         }
     }
 }

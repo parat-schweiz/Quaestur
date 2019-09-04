@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 23;
+        public static int CurrentVersion = 24;
 
         public static void Install(IDatabase database)
         {
@@ -109,6 +109,10 @@ namespace Quaestur
                     database.DropColumn<MembershipType>("billtemplatelatex");
                     database.DropTable("sendingtemplate");
                     database.DropTable("sendingtemplatelanguage");
+                    break;
+                case 24:
+                    database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderDate);
+                    database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderLevel);
                     break;
                 default:
                     throw new NotSupportedException();

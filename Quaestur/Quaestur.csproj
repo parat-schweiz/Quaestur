@@ -253,6 +253,7 @@
     <Compile Include="Model\PaymentModelFederalTax.cs" />
     <Compile Include="Model\PaymentModelFlat.cs" />
     <Compile Include="Model\PointTransfer.cs" />
+    <Compile Include="Infrastructure\PaymentParameterUpdateReminderTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

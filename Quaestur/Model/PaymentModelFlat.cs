@@ -39,7 +39,7 @@ namespace Quaestur
             }
         }
 
-        public IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public IEnumerable<PaymentParameterType> PersonalParameterTypes
         {
             get { return new PaymentParameterType[0]; } 
         }
@@ -126,6 +126,16 @@ namespace Quaestur
             {
                 return 0m; 
             }
+        }
+
+        public bool RequireParameterUpdate(Membership membership)
+        {
+            return false;
+        }
+
+        public bool InviteForParameterUpdate(Membership membership)
+        {
+            return false;
         }
     }
 }

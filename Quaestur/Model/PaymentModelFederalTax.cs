@@ -46,7 +46,7 @@ namespace Quaestur
             }
         }
 
-        public override IEnumerable<PaymentParameterType> PersonalParameterTyoes
+        public override IEnumerable<PaymentParameterType> PersonalParameterTypes
         {
             get
             {
@@ -279,6 +279,29 @@ namespace Quaestur
         {
             return (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
+        }
+
+        public override bool RequireParameterUpdate(Membership membership)
+        {
+            var incomeParameter = membership.Person.Value.PaymentParameters
+                .SingleOrDefault(p => p.Key == FullTaxKey);
+            return incomeParameter == null;
+        }
+
+        public override bool InviteForParameterUpdate(Membership membership)
+        {
+            var incomeParameter = membership.Person.Value.PaymentParameters
+                .SingleOrDefault(p => p.Key == FullTaxKey);
+
+            if (incomeParameter != null)
+            {
+                return DateTime.UtcNow.Subtract(incomeParameter.LastUpdate.Value).TotalDays >= 365;
+            }
+            else
+            {
+                return true;
+            }
+
         }
     }
 }
