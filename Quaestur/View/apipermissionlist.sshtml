@@ -1,0 +1,70 @@
+﻿<script>
+$("#apiPermissionRowAdd").click(function(){
+  $.get("/apipermission/add/@Model.Id", function(data, status){
+    if (data){
+      $('#apiPermissionEditDialog').replaceWith(data);
+      $('#apiPermissionEditDialog').modal('show');
+    }
+  });
+});
+function showEditApiPermissionDialog(id){
+  $.get("/apipermission/edit/" + id, function(data, status){
+    if (data){
+      $('#apiPermissionEditDialog').replaceWith(data);
+      $('#apiPermissionEditDialog').modal('show');
+    }
+  });
+}
+@Each.List
+$("#apiPermissionRowEdit1@Current.Id").click(function(){
+  showEditApiPermissionDialog("@Current.Id");
+});
+$("#apiPermissionRowEdit2@Current.Id").click(function(){
+  showEditApiPermissionDialog("@Current.Id");
+});
+$("#apiPermissionRowEdit3@Current.Id").click(function(){
+  showEditApiPermissionDialog("@Current.Id");
+});
+$("#apiPermissionRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/apipermission/delete/@Current.Id", function(data, status){
+          updateApiPermissionList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="100%" colspan="4"><a href="/apiclient">@Model.PhraseHeaderApiClient</a></th>
+    </tr>
+    <tr class='centering clickable-row'>
+      <td width="30%">@Model.PhraseHeaderPart</td>
+      <td width="30%">@Model.PhraseHeaderSubject</td>
+      <td width="30%">@Model.PhraseHeaderRight</td>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="30%" id="apiPermissionRowEdit1@Current.Id" class="editable">@Current.Part</td>
+      <td width="30%" id="apiPermissionRowEdit2@Current.Id" class="editable">@Current.Subject</td>
+      <td width="30%" id="apiPermissionRowEdit3@Current.Id" class="editable">@Current.Right</td>
+      <td width="10%" id="apiPermissionRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" id="apiPermissionRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="apiPermissionEditDialog"/>

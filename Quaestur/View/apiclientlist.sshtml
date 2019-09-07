@@ -1,0 +1,57 @@
+﻿<script>
+$("#apiClientRowAdd").click(function(){
+  $.get("/apiclient/add", function(data, status){
+    if (data){
+      $('#apiClientEditDialog').replaceWith(data);
+      $('#apiClientEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#apiClientRowEditApiClient@Current.Id").click(function(){
+  $.get("/apiclient/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#apiClientEditDialog').replaceWith(data);
+      $('#apiClientEditDialog').modal('show');
+    }
+  });
+});
+$("#apiClientRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/apiclient/delete/@Current.Id", function(data, status){
+          updateApiClientList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="45%">@Model.PhraseHeaderName</th>
+      <th width="45%">@Model.PhraseHeaderAccess</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="45%" id="apiClientRowEditApiClient@Current.Id" class="editable">@Current.Name</td>
+      <td width="45%"><a href="/apipermission/@Current.Id">@Current.Access</a></td>
+      <td width="10%" id="apiClientRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" colspan="3" id="apiClientRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="apiClientEditDialog"/>

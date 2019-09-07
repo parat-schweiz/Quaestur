@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateApiPermissionList(){
+      $.get("/apipermission/list/@Model.Id", function(data, status){
+          if (data){
+              $("#apiPermissionList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateApiPermissionList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="apiPermissionList">
+</div>
+@EndSection
