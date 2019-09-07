@@ -65,6 +65,8 @@ namespace Quaestur
             database.CreateTable<LatexTemplate>();
             database.CreateTable<LatexTemplateAssignment>();
             database.CreateTable<PointTransfer>();
+            database.CreateTable<ApiClient>();
+            database.CreateTable<ApiPermission>();
 
             Global.Log.Notice("Tables ok.");
         }

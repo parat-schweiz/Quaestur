@@ -254,6 +254,11 @@
     <Compile Include="Model\PaymentModelFlat.cs" />
     <Compile Include="Model\PointTransfer.cs" />
     <Compile Include="Infrastructure\PaymentParameterUpdateReminderTask.cs" />
+    <Compile Include="Module\ApiModule.cs" />
+    <Compile Include="Model\ApiClient.cs" />
+    <Compile Include="Model\ApiPermission.cs" />
+    <Compile Include="Module\ApiClientModule.cs" />
+    <Compile Include="Module\ApiPermissionModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -949,6 +954,24 @@
     </None>
     <None Include="Documents\pointstally_de.tex" />
     <None Include="View\pointtransferedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apiclient.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apiclientedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apiclientlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apipermission.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apipermissionedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\apipermissionlist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

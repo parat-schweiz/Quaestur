@@ -68,6 +68,7 @@ namespace Quaestur
         public string PhraseMenuLogout = string.Empty;
         public string PhraseMenuSettings = string.Empty;
         public string PhraseMenuOAuth2Clients = string.Empty;
+        public string PhraseMenuApiClients = string.Empty;
         public string PhraseMenuBallot = string.Empty;
         public string PhraseMenuBallotList = string.Empty;
         public string PhraseMenuBallotTemplates = string.Empty;
@@ -125,6 +126,7 @@ namespace Quaestur
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
+            PhraseMenuApiClients = translator.Get("Master.Menu.Settings.ApiClients", "Item 'API Clients' under settings in the main menu", "API Clients").EscapeHtml();
             PhraseMenuBallot = translator.Get("Master.Menu.Ballots", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
             PhraseMenuBallotList = translator.Get("Master.Menu.Ballots.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
             PhraseMenuBallotTemplates = translator.Get("Master.Menu.Ballots.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();

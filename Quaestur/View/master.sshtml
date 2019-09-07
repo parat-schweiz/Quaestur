@@ -101,6 +101,7 @@
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuSettings</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/oauth2client">@Model.PhraseMenuOAuth2Clients</a>
+                    <a class="dropdown-item" href="/apiclient">@Model.PhraseMenuApiClients</a>
                   </div>
                 </li>
                 @EndIf
