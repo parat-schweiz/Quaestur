@@ -44,6 +44,11 @@ namespace Quaestur
                 bill.Delete(database);
             }
 
+            foreach (var ballotpaper in database.Query<BallotPaper>(DC.Equal("memberid", Id.Value)))
+            {
+                ballotpaper.Delete(database);
+            }
+
             database.Delete(this);
         }
 

@@ -19,8 +19,17 @@ $("#membershipRowEdit@Current.Id").click(function(){
   showMembershipEditDialog("edit", "@Current.Id");
 });
 $("#membershipRowDelete@Current.Id").click(function(){
-  $.get("/membership/delete/@Current.Id", function(data, status){
-    showMemberships();
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/membership/delete/@Current.Id", function(data, status){
+          showMemberships();
+        });
+      },
+      cancel: function () {},
+    }
   });
 });
 @EndEach
