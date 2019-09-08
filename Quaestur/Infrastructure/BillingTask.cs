@@ -89,8 +89,17 @@ namespace Quaestur
 
         private bool CreateBill(IDatabase database, Translation translation, Membership membership)
         {
+            var template = membership.Type.Value.GetBillDocument(database, membership.Person.Value.Language.Value);
+
+            if (template == null)
+            {
+                Global.Log.Error("Missing bill template for {0}, {1} of {2}", membership.Person.Value.FullName, membership.Type.Value.ToString(), membership.Organization.Value.ToString());
+                return false;
+            }
+
             Translator translator = new Translator(translation, membership.Person.Value.Language.Value);
             var billDocument = new BillDocument(translator, database, membership);
+
             if (billDocument.Create())
             {
                 using (var transaction = database.BeginTransaction())
