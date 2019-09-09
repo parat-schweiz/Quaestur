@@ -1,0 +1,87 @@
+﻿<script>
+$("#variableRowAdd").click(function(){
+  $.get("/variable/add/@Model.Id", function(data, status){
+    if (data){
+      $('#variableEditDialog').replaceWith(data);
+      $('#variableEditDialog').modal('show');
+    }
+  });
+});
+@Each.List
+$("#variableRowEdit1@Current.Id").click(function(){
+  $.get("/variable/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#variableEditDialog').replaceWith(data);
+      $('#variableEditDialog').modal('show');
+    }
+  });
+});
+$("#variableRowEdit2@Current.Id").click(function(){
+  $.get("/variable/edit/@Current.Id", function(data, status){
+    if (data){
+      $('#variableEditDialog').replaceWith(data);
+      $('#variableEditDialog').modal('show');
+    }
+  });
+});
+$("#variableRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/variable/delete/@Current.Id", function(data, status){
+          updateVariableList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+$("#variableRowMove@Current.Id").on('dragstart', function(evt){
+  evt.originalEvent.dataTransfer.setData("variableDrag", "@Current.Id");
+});
+$("#variableRowMove@Current.Id").on('dragover', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("variableDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = "move"
+  }
+});
+$("#variableRowMove@Current.Id").on('drop', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("variableDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    var formData = new Object();
+    formData.SourceId = sourceId;
+    formData.TargetId = '@Current.Id';
+    $.post("/variable/switch", JSON.stringify(formData), function(dummyData, status){
+      updateVariableList();
+    });
+  }
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="100%" colspan="3"><a href="/questionaire">@Model.PhraseHeaderQuestionaire @Model.Name</a></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="60%" id="variableRowEdit1@Current.Id" class="@Model.Editable">@Current.Name</td>
+      <td width="35%" id="variableRowEdit2@Current.Id" class="@Model.Editable">@Current.Type</td>
+      <td width="5%" id="variableRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    @If.AddAccess
+    <tr class='centering clickable-row'>
+      <td width="95%" colspan="2" id="variableRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="5%"></td>
+    </tr>
+    @EndIf
+  </tbody>
+</table>
+<div id="variableEditDialog"/>

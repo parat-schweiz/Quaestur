@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>DiscourseEngagement</RootNamespace>
+    <AssemblyName>DiscourseEngagement</AssemblyName>
+    <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Runtime.CompilerServices.Unsafe">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.6.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="EngagementConfig.cs" />
+    <Compile Include="EngagementMaster.cs" />
+    <Compile Include="Model\Person.cs" />
+    <Compile Include="Model\Model.cs" />
+    <Compile Include="Model\Meta.cs" />
+    <Compile Include="Model\Topic.cs" />
+    <Compile Include="Model\Post.cs" />
+    <Compile Include="Cache.cs" />
+    <Compile Include="Model\Like.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
+      <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
+      <Name>BaseLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SiteLibrary\SiteLibrary.csproj">
+      <Project>{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}</Project>
+      <Name>SiteLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\QuaesturApi\QuaesturApi.csproj">
+      <Project>{AD639BDE-0987-4B05-B995-800EE5589815}</Project>
+      <Name>QuaesturApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscourseApi\DiscourseApi.csproj">
+      <Project>{7F497285-D30E-446C-AF52-BC91C5612739}</Project>
+      <Name>DiscourseApi</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>

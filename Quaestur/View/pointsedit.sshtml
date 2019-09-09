@@ -28,18 +28,22 @@ function assignFieldValidation(field, result){
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
   assignFieldValidation("Budget", result);
-  assignFieldValidation("Moment", result);
+  assignFieldValidation("MomentDate", result);
+  assignFieldValidation("MomentTime", result);
   assignFieldValidation("Amount", result);
   assignFieldValidation("Reason", result);
+  assignFieldValidation("Url", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();
   formData.Budget = $("#pointsBudget").val();
-  formData.Moment = $("#pointsMoment").val();
+  formData.MomentDate = $("#pointsMomentDate").val();
+  formData.MomentTime = $("#pointsMomentTime").val();
   formData.Amount = $("#pointsAmount").val();
   formData.Reason = $("#pointsReason").val();
+  formData.Url = $("#pointsUrl").val();
   $.post("/points/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -72,9 +76,16 @@ $('#pointsOrganization').on('change', function() {
     </div>
     <div class="form-row">
       <div class="col-12 mb-3">
-        <label for="pointsMoment">@Model.PhraseFieldMoment</label>
-        <input type="text" id="pointsMoment" class="form-control datepicker" value="@Model.Moment"/>
-        <div id="pointsMomentFeedback" class="valid-feedback"></div>
+        <label for="pointsMomentDate">@Model.PhraseFieldMomentDate</label>
+        <input type="text" id="pointsMomentDate" class="form-control datepicker" value="@Model.MomentDate"/>
+        <div id="pointsMomentDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsMomentTime">@Model.PhraseFieldMomentTime</label>
+        <input type="text" id="pointsMomentTime" class="form-control" value="@Model.MomentTime"/>
+        <div id="pointsMomentTimeFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">
@@ -89,6 +100,13 @@ $('#pointsOrganization').on('change', function() {
         <label for="pointsReason">@Model.PhraseFieldReason</label>
         <input type="text" id="pointsReason" class="form-control" value="@Model.Reason"/>
         <div id="pointsReasonFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsUrl">@Model.PhraseFieldUrl</label>
+        <input type="text" id="pointsUrl" class="form-control" value="@Model.Url"/>
+        <div id="pointsUrlFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

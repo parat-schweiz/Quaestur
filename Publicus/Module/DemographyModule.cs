@@ -6,6 +6,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Publicus
 {
@@ -35,7 +36,7 @@ namespace Publicus
             : this(translator)
         {
             Id = contact.Id.ToString();
-            Birthdate = contact.BirthDate.Value.ToString("dd.MM.yyyy");
+            Birthdate = contact.BirthDate.Value.FormatSwissDay();
             Language = ((int)contact.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, contact.Language.Value == SiteLibrary.Language.English));

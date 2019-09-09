@@ -19,5 +19,7 @@ namespace DiscourseApi
                 yield return new ConfigItemString("DiscourseApiKey", v => ApiKey = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }

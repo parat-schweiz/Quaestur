@@ -7,7 +7,9 @@ namespace Quaestur
 {
     public enum PointsReferenceType
     {
-        None = 0 
+        None = 0,
+        DiscoursePost = 1,
+        RedmineIssue = 2
     }
 
     public static class PointsReferenceTypeExtensions
@@ -18,6 +20,8 @@ namespace Quaestur
             {
                 case PointsReferenceType.None:
                     return translator.Get("Enum.PointsReferenceType.None", "Value 'None' in PointsReferenceType enum", "None");
+                case PointsReferenceType.DiscoursePost:
+                    return translator.Get("Enum.PointsReferenceType.DiscoursePost", "Value 'DiscoursePost' in PointsReferenceType enum", "Discourse Post");
                 default:
                     throw new NotSupportedException();
             }
@@ -31,6 +35,7 @@ namespace Quaestur
         public Field<DateTime> Moment { get; private set; }
         public Field<int> Amount { get; private set; }
         public StringField Reason { get; private set; }
+        public StringField Url { get; private set; }
         public EnumField<PointsReferenceType> ReferenceType { get; private set; }
         public Field<Guid> ReferenceId { get; private set; }
 
@@ -45,6 +50,7 @@ namespace Quaestur
             Moment = new Field<DateTime>(this, "moment", DateTime.UtcNow);
             Amount = new Field<int>(this, "amount", 0);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
+            Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);
             ReferenceType = new EnumField<PointsReferenceType>(this, "referencetype", PointsReferenceType.None, PointsReferenceTypeExtensions.Translate);
             ReferenceId = new Field<Guid>(this, "referenceid", Guid.Empty);
         }

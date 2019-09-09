@@ -13,7 +13,7 @@ namespace Quaestur
 {
     public static class UserController
     {
-        public static bool VerifyHash(byte[] passwordHash, string password)
+        private static bool VerifyHash(byte[] passwordHash, string password)
         {
             var salt = passwordHash.Part(0, 16);
             var hash = passwordHash.Part(16);
@@ -33,24 +33,9 @@ namespace Quaestur
                 return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
             }
 
-            switch (user.PasswordType.Value)
+            if (!Verify(user, password))
             {
-                case PasswordType.None:
-                    return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
-                case PasswordType.Local:
-                    if (!VerifyHash(user.PasswordHash, password))
-                    {
-                        return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
-                    }
-                    break;
-                case PasswordType.SecurityService:
-                    if (!Global.Security.VerifyPassword(user.PasswordHash, password))
-                    {
-                        return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
-                    }
-                    break;
-                default:
-                    throw new NotSupportedException();
+                return new Tuple<Person, LoginResult>(null, LoginResult.WrongLogin);
             }
 
             if (user.Deleted.Value)
@@ -67,6 +52,21 @@ namespace Quaestur
                     return new Tuple<Person, LoginResult>(user, LoginResult.Locked);
                 default:
                     return new Tuple<Person, LoginResult>(user, LoginResult.WrongLogin);
+            }
+        }
+
+        public static bool Verify(Person user, string password)
+        {
+            switch (user.PasswordType.Value)
+            {
+                case PasswordType.None:
+                    return false;
+                case PasswordType.Local:
+                    return VerifyHash(user.PasswordHash, password);
+                case PasswordType.SecurityService:
+                    return Global.Security.VerifyPassword(user.PasswordHash, password);
+                default:
+                    throw new NotSupportedException();
             }
         }
 

@@ -416,6 +416,7 @@ namespace SiteLibrary
                 case "role":
                 case "group":
                 case "user":
+                case "like":
                     name += "s";
                     break;
             }

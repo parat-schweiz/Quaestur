@@ -133,6 +133,10 @@ input[type=checkbox] {
   color: green;
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .table th.fit {
     white-space: nowrap;
     width: 1%;
@@ -162,4 +166,8 @@ input[type=checkbox] {
 
 .row-lightred-background {
     background-color: #ff818e;
+}
+
+.invisible {
+  visibility: hidden;
 }

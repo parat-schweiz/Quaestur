@@ -351,14 +351,21 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateString(string fieldName, Field<DateTime> field, string stringValue)
+        public void AssignDateTimeString(string fieldName, Field<DateTime> field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
                 if (DateTime.TryParseExact(stringValue,
-                    new string[] { "yyyy-MM-dd", "dd.MM.yyyy", "MM/dd/yyyy" },
+                    new string[] { 
+                        "yyyy-MM-dd HH:mm:ss", 
+                        "yyyy-MM-dd HH:mm", 
+                        "dd.MM.yyyy HH:mm:ss",
+                        "dd.MM.yyyy HH:mm",
+                        "MM/dd/yyyy HH:mm:ss",
+                        "MM/dd/yyyy HH:mm"
+                    },
                     CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal,
+                    DateTimeStyles.AssumeLocal,
                     out DateTime value))
                 {
                     field.Value = value;
@@ -382,6 +389,73 @@ namespace Quaestur
             }
         }
 
+
+        public void AssignDateString(string fieldName, Field<DateTime> field, string stringValue)
+        {
+            if (!string.IsNullOrEmpty(stringValue))
+            {
+                if (DateTime.TryParseExact(stringValue,
+                    new string[] { "yyyy-MM-dd", "dd.MM.yyyy", "MM/dd/yyyy" },
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out DateTime value))
+                {
+                    field.Value = value;
+                }
+                else
+                {
+                    Add(fieldName,
+                        "Validation.Date.Invalid",
+                        "Validation message on date invalid",
+                        "Date invalid");
+                    IsSuccess = false;
+                }
+            }
+            else
+            {
+                Add(fieldName,
+                    "Validation.Date.Required",
+                    "Validation message on date required",
+                    "Date required");
+                IsSuccess = false;
+            }
+        }
+
+        public void AddAssignTimeString(string fieldName, Field<DateTime> field, string stringValue)
+        {
+            if (!string.IsNullOrEmpty(stringValue))
+            {
+                if (TimeSpan.TryParseExact(stringValue,
+                    new string[] {
+                        @"hh\:mm\:ss",
+                        @"h\:mm\:ss",
+                        @"hh\:mm",
+                        @"h\:mm",
+                    },
+                    CultureInfo.InvariantCulture,
+                    out TimeSpan value))
+                {
+                    field.Value = field.Value.Add(value);
+                }
+                else
+                {
+                    Add(fieldName,
+                        "Validation.Time.Invalid",
+                        "Validation message on time invalid",
+                        "Time invalid");
+                    IsSuccess = false;
+                }
+            }
+            else
+            {
+                Add(fieldName,
+                    "Validation.Time.Required",
+                    "Validation message on time required",
+                    "Time required");
+                IsSuccess = false;
+            }
+        }
+
         public void AddAssignTimeString(string fieldName, FieldNull<DateTime> field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
@@ -389,6 +463,8 @@ namespace Quaestur
                 if (field.Value.HasValue &&
                     TimeSpan.TryParseExact(stringValue,
                     new string[] {
+                        @"hh\:mm\:ss",
+                        @"h\:mm\:ss",
                         @"hh\:mm",
                         @"h\:mm",
                     },

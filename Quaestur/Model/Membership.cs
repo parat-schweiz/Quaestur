@@ -28,13 +28,18 @@ namespace Quaestur
             HasVotingRight = new FieldNull<bool>(this, "hasvotingright");
         }
 
+        public override string ToString()
+        {
+            return "Membership in " + Organization.Value.Name.Value.AnyValue;
+        }
+
         public override string GetText(Translator translator)
         {
             return translator.Get(
                 "Membership.Text",
                 "Textual representation of of membership (respective to person)",
                 "in {0}",
-                Organization.GetText(translator));
+                Organization.Value.GetText(translator));
         }
 
         public override void Delete(IDatabase database)

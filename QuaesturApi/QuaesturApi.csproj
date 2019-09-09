@@ -29,7 +29,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net" />
@@ -38,6 +38,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Quaestur.cs" />
     <Compile Include="Person.cs" />
+    <Compile Include="QuaesturApiConfig.cs" />
+    <Compile Include="PointBudget.cs" />
+    <Compile Include="MultiLanguageString.cs" />
+    <Compile Include="Language.cs" />
+    <Compile Include="PointsReferenceType.cs" />
+    <Compile Include="Points.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

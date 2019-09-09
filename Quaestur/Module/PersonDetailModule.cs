@@ -127,36 +127,43 @@ namespace Quaestur
 
                 if (organization != null)
                 {
-                    var person = new Person(Guid.NewGuid());
-                    person.Number.Value = Database.Query<Person>().Max(p => p.Number.Value) + 1;
-                    person.UserName.Value = "user" + person.Number.Value.ToString();
-
-                    var membership = new Membership(Guid.NewGuid());
-                    membership.Organization.Value = organization;
-                    membership.Type.Value = organization.MembershipTypes
-                        .OrderBy(Value)
-                        .FirstOrDefault();
-                    membership.Person.Value = person;
-
-                    foreach (var tag in Database.Query<Tag>())
+                    using (var transaction = Database.BeginTransaction())
                     {
-                        if (tag.Mode.Value.HasFlag(TagMode.Default))
+                        var person = new Person(Guid.NewGuid());
+                        var sequence = Database.Query<Sequence>().Single();
+                        person.Number.Value = sequence.NextPersonNumber.Value;
+                        sequence.NextPersonNumber.Value++;
+                        Database.Save(sequence);
+                        person.UserName.Value = "user" + person.Number.Value.ToString();
+
+                        var membership = new Membership(Guid.NewGuid());
+                        membership.Organization.Value = organization;
+                        membership.Type.Value = organization.MembershipTypes
+                            .OrderBy(Value)
+                            .FirstOrDefault();
+                        membership.Person.Value = person;
+
+                        foreach (var tag in Database.Query<Tag>())
                         {
-                            var tagAssignment = new TagAssignment(Guid.NewGuid());
-                            tagAssignment.Tag.Value = tag;
-                            tagAssignment.Person.Value = person;
+                            if (tag.Mode.Value.HasFlag(TagMode.Default))
+                            {
+                                var tagAssignment = new TagAssignment(Guid.NewGuid());
+                                tagAssignment.Tag.Value = tag;
+                                tagAssignment.Person.Value = person;
+                            }
                         }
+
+                        Database.Save(person);
+                        Journal(person,
+                            "Person.Journal.Add",
+                            "Journal entry added person",
+                            "Added person {0} with membership {1}",
+                            t => person.GetText(t),
+                            t => membership.GetText(t));
+
+                        transaction.Commit();
+                        return Response.AsRedirect("/person/detail/" + person.Id.Value.ToString());
                     }
-
-                    Database.Save(person);
-                    Journal(person,
-                        "Person.Journal.Add",
-                        "Journal entry added person",
-                        "Added person {0} with membership {1}",
-                        t => person.GetText(t),
-                        t => membership.GetText(t));
-
-                    return Response.AsRedirect("/person/detail/" + person.Id.Value.ToString());
                 }
                 return AccessDenied();
             });

@@ -32,6 +32,7 @@ namespace Quaestur
                     }
                 }
 
+                if (_updateQueue.Count > 0)
                 {
                     var id = _updateQueue.Dequeue();
 

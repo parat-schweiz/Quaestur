@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 24;
+        public static int CurrentVersion = 26;
 
         public static void Install(IDatabase database)
         {
@@ -67,6 +67,8 @@ namespace Quaestur
             database.CreateTable<PointTransfer>();
             database.CreateTable<ApiClient>();
             database.CreateTable<ApiPermission>();
+            database.CreateTable<Sequence>();
+            database.CreateTable<ReservedUserName>();
 
             Global.Log.Notice("Tables ok.");
         }
@@ -80,6 +82,7 @@ namespace Quaestur
             if (meta == null)
             {
                 meta = new Meta(Guid.NewGuid());
+                database.Save(meta);
             }
 
             while (meta.Version.Value < CurrentVersion)
@@ -116,8 +119,27 @@ namespace Quaestur
                     database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderDate);
                     database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderLevel);
                     break;
+                case 25:
+                    database.AddColumn<Points>(p => p.Url);
+                    break;
+                case 26:
+                    SetNextPersonNumber(database);
+                    break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private static void SetNextPersonNumber(IDatabase database)
+        {
+            var sequence = database.Query<Sequence>().SingleOrDefault();
+
+            if (sequence == null)
+            {
+                sequence = new Sequence(Guid.NewGuid());
+                sequence.NextPersonNumber.Value =
+                    database.Query<Person>().Max(p => p.Number.Value) + 1;
+                database.Save(sequence);
             }
         }
 

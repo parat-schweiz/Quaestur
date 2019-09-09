@@ -1,0 +1,118 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#section' + field + key;
+  var feedbackId = '#section' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#section' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("ConditionType", result);
+  assignFieldValidation("ConditionVariable", result);
+  assignFieldValidation("ConditionValue", result);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.ConditionType = $("#sectionConditionType").val();
+  formData.ConditionVariable = $("#sectionConditionVariable").val();
+  formData.ConditionValue = $("#sectionConditionValue").val();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#sectionName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  $.post("/section/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateSectionList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="sectionName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="sectionName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="sectionNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionType">@Model.PhraseFieldConditionType</label>
+        <select id="sectionConditionType" class="selectpicker form-control" data-live-search="true">
+          @Each.ConditionTypes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="sectionConditionTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionVariable">@Model.PhraseFieldConditionVariable</label>
+        <select id="sectionConditionVariable" class="selectpicker form-control" data-live-search="true">
+          @Each.ConditionVariables
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="sectionConditionVariableFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionValue">@Model.PhraseFieldConditionValue</label>
+        <input type="text" id="sectionConditionValue" class="form-control" value="@Model.ConditionValue"/>
+        <div id="sectionConditionValueFeedback" class="valid-feedback"></div>
+      </div>
+    </div>  </form>
+</div>
+@EndSection

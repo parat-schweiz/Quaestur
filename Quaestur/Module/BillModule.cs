@@ -91,11 +91,11 @@ namespace Quaestur
             Number = bill.Number.Value.EscapeHtml();
             Membership = bill.Membership.Value.Id.Value.ToString();
             Status = ((int)bill.Status.Value).ToString();
-            FromDate = bill.FromDate.Value.ToString("dd.MM.yyyy");
-            UntilDate = bill.UntilDate.Value.ToString("dd.MM.yyyy");
+            FromDate = bill.FromDate.Value.FormatSwissDay();
+            UntilDate = bill.UntilDate.Value.FormatSwissDay();
             Amount = bill.Amount.Value.ToString();
-            CreatedDate = bill.CreatedDate.Value.ToString("dd.MM.yyyy");
-            PayedDate = bill.PayedDate.Value.HasValue ? bill.PayedDate.Value.Value.ToString("dd.MM.yyyy") : string.Empty;
+            CreatedDate = bill.CreatedDate.Value.FormatSwissDay();
+            PayedDate = bill.PayedDate.Value.HasValue ? bill.PayedDate.Value.Value.FormatSwissDay() : string.Empty;
             FileName = bill.Number.Value.EscapeHtml() + ".pdf";
             FileSize = "(" + bill.DocumentData.Value.Length.SizeFormat() + ")";
             Statuses = new List<NamedIntViewModel>();

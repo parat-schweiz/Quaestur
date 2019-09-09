@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -14,14 +16,18 @@ namespace Quaestur
         public string Method;
         public string Id;
         public string Budget;
-        public string Moment;
+        public string MomentDate;
+        public string MomentTime;
         public string Amount;
         public string Reason;
+        public string Url;
         public List<NamedIdViewModel> Budgets;
         public string PhraseFieldBudget;
-        public string PhraseFieldMoment;
+        public string PhraseFieldMomentDate;
+        public string PhraseFieldMomentTime;
         public string PhraseFieldAmount;
         public string PhraseFieldReason;
+        public string PhraseFieldUrl;
 
         public PointsEditViewModel()
         { 
@@ -33,9 +39,11 @@ namespace Quaestur
                    "pointsEditDialog")
         {
             PhraseFieldBudget = translator.Get("Points.Edit.Field.Budget", "Field 'Budget' in the edit points dialog", "Budget").EscapeHtml();
-            PhraseFieldMoment = translator.Get("Points.Edit.Field.Moment", "Field 'Moment' in the edit points dialog", "Moment").EscapeHtml();
+            PhraseFieldMomentDate = translator.Get("Points.Edit.Field.Moment.Date", "Field 'Moment Date' in the edit points dialog", "Date").EscapeHtml();
+            PhraseFieldMomentTime = translator.Get("Points.Edit.Field.Moment.Time", "Field 'Moment Time' in the edit points dialog", "Time").EscapeHtml();
             PhraseFieldAmount = translator.Get("Points.Edit.Field.Amount", "Field 'Amount' in the edit points dialog", "Amount").EscapeHtml();
             PhraseFieldReason = translator.Get("Points.Edit.Field.Reason", "Field 'Reason' in the edit points dialog", "Reason").EscapeHtml();
+            PhraseFieldUrl = translator.Get("Points.Edit.Field.Url", "Field 'Url' in the edit points dialog", "Url").EscapeHtml();
             Budgets = new List<NamedIdViewModel>();
         }
 
@@ -45,9 +53,11 @@ namespace Quaestur
             Method = "add";
             Id = person.Id.ToString();
             Budget = string.Empty;
-            Moment = string.Empty;
+            MomentDate = string.Empty;
+            MomentTime = string.Empty;
             Amount = string.Empty;
             Reason = string.Empty;
+            Url = string.Empty;
             Budgets.AddRange(
                 db.Query<PointBudget>()
                 .Where(b => DateTime.UtcNow.Date >= b.Period.Value.StartDate.Value.Date &&
@@ -63,9 +73,11 @@ namespace Quaestur
             Method = "edit";
             Id = points.Id.ToString();
             Budget = string.Empty;
-            Moment = points.Moment.Value.ToString("dd.MM.yyyy");
+            MomentDate = points.Moment.Value.ToLocalTime().FormatSwissDay();
+            MomentTime = points.Moment.Value.ToLocalTime().ToString("HH:mm:ss");
             Amount = points.Amount.Value.ToString();
             Reason = points.Reason.Value;
+            Url = points.Url.Value;
             Budgets.AddRange(
                 db.Query<PointBudget>()
                 .Where(b => DateTime.UtcNow.Date >= b.Period.Value.StartDate.Value.Date &&
@@ -110,12 +122,22 @@ namespace Quaestur
                     if (status.HasAccess(points.Owner.Value, PartAccess.Points, AccessRight.Write))
                     {
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("Moment", points.Moment, model.Moment);
+                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
+                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
+                        status.AssignStringFree("Url", points.Url, model.Url);
+
+                        if (!string.IsNullOrEmpty(points.Url.Value) &&
+                            !Regex.IsMatch(points.Url.Value, "^https(s)?://([a-zA-Z0-9\\-\\_]{2,256}\\.)+[a-zA-Z0-9\\-\\_]{2,256}(/[a-zA-Z0-9\\-\\_\\.\\?\\&\\=\\+\\*\\(\\)\\[\\]/,;'#@$]*)?$"))
+                        {
+                            status.SetValidationError("Url", "Points.Edit.Url.Invalid", "When the Url in the points edit dialog is not valid", "Invalid Url");
+                        }
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
+                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
+
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);
@@ -160,13 +182,17 @@ namespace Quaestur
                     {
                         var points = new Points(Guid.NewGuid());
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("Moment", points.Moment, model.Moment);
+                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
+                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
+                        status.AssignStringFree("Url", points.Url, model.Url);
                         points.Owner.Value = person;
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
+                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
+
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);

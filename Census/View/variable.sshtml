@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateVariableList(){
+      $.get("/variable/list/@Model.Id", function(data, status){
+          if (data){
+              $("#variableList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateVariableList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="variableList">
+</div>
+@EndSection

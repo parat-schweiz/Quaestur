@@ -29,13 +29,13 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.2.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.4.1\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -48,12 +48,15 @@
     <Compile Include="Discourse.cs" />
     <Compile Include="Topic.cs" />
     <Compile Include="DiscourseApiConfig.cs" />
+    <Compile Include="Post.cs" />
+    <Compile Include="User.cs" />
+    <Compile Include="Category.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Quaestur\BaseLibrary\BaseLibrary.csproj">
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>

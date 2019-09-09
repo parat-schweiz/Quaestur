@@ -185,6 +185,11 @@ namespace Quaestur
                 return false;
             }
 
+            if (HasSystemWideAccess(partAccess, right))
+            {
+                return true; 
+            }
+
             foreach (var membership in person.ActiveMemberships)
             {
                 if (HasAccess(membership.Organization.Value, partAccess, right))

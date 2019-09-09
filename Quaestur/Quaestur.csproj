@@ -50,10 +50,10 @@
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.6.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -77,19 +77,19 @@
       <HintPath>..\packages\QRCoder.1.3.6\lib\net40\QRCoder.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing.Common">
-      <HintPath>..\packages\System.Drawing.Common.4.5.1\lib\net461\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\packages\System.Drawing.Common.4.6.0\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp">
       <HintPath>..\packages\AngleSharp.0.9.11\lib\net45\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
-      <HintPath>..\packages\JWT.5.2.3\lib\net46\JWT.dll</HintPath>
+      <HintPath>..\packages\JWT.5.3.1\lib\net46\JWT.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.3.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.4.1\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.3.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.4.1\lib\net47\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Memory">
@@ -259,6 +259,9 @@
     <Compile Include="Model\ApiPermission.cs" />
     <Compile Include="Module\ApiClientModule.cs" />
     <Compile Include="Module\ApiPermissionModule.cs" />
+    <Compile Include="Module\RequireCompleteAuthenticationModule.cs" />
+    <Compile Include="Model\Sequence.cs" />
+    <Compile Include="Model\ReservedUserName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

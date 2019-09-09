@@ -1,0 +1,105 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#phrase' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("English", result);
+  assignFieldValidation("German", result);
+  assignFieldValidation("French", result);
+  assignFieldValidation("Italian", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.English = $("#phraseEnglish").val();
+  formData.German = $("#phraseGerman").val();
+  formData.French = $("#phraseFrench").val();
+  formData.Italian = $("#phraseItalian").val();
+  $.post("/phrase/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updatePhraseList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseKey">@Model.PhraseFieldKey</label>
+        <input type="text" id="phraseKey" class="form-control" value="@Model.Key" disabled/>
+        <div id="phraseKeyFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseHint">@Model.PhraseFieldHint</label>
+        <input type="text" id="phraseHint" class="form-control" value="@Model.Hint" disabled/>
+        <div id="phraseHintFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseTechnical">@Model.PhraseFieldTechnical</label>
+        <input type="text" id="phraseTechnical" class="form-control" value="@Model.Technical" disabled/>
+        <div id="phraseTechnicalFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseEnglish">@Model.PhraseFieldEnglish</label>
+        <input type="text" id="phraseEnglish" class="form-control" value="@Model.English"/>
+        <div id="phraseEnglishFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseGerman">@Model.PhraseFieldGerman</label>
+        <input type="text" id="phraseGerman" class="form-control" value="@Model.German"/>
+        <div id="phraseGermanFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseFrench">@Model.PhraseFieldFrench</label>
+        <input type="text" id="phraseFrench" class="form-control" value="@Model.French"/>
+        <div id="phraseFrenchFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="phraseItalian">@Model.PhraseFieldItalian</label>
+        <input type="text" id="phraseItalian" class="form-control" value="@Model.Italian"/>
+        <div id="phraseItalianFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

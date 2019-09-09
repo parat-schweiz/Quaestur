@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -19,7 +20,7 @@ namespace Quaestur
             Id = bill.Id.Value.ToString();
             Number = bill.Number.Value.EscapeHtml();
             Status = bill.Status.Value.Translate(translator).EscapeHtml();
-            CreatedDate = bill.CreatedDate.Value.ToString("dd.MM.yyyy");
+            CreatedDate = bill.CreatedDate.Value.FormatSwissDay();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Bills.Delete.Confirm.Question", "Delete bill confirmation question", "Do you really wish to delete bill {0}?", bill.GetText(translator)).EscapeHtml();
         }
     }

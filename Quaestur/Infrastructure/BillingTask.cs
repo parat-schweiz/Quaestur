@@ -120,6 +120,32 @@ namespace Quaestur
                 }
                 return true;
             }
+            else if (billDocument.RequiresPersonalPaymentUpdate)
+            {
+                Journal(
+                    database,
+                    membership,
+                    "Document.Bill.RequiresPersonalPaymentUpdate",
+                    "Cannot create bill because personal payment parameter update required",
+                    "Cannot create bill {0} for {1} in {2} because an update of the personal payment parameter is required",
+                    t => billDocument.Bill.Number.Value,
+                    t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
+                    t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+                return false;
+            }
+            else if (billDocument.RequiresNewPointsTally)
+            {
+                Journal(
+                    database,
+                    membership,
+                    "Document.Bill.RequiresNewPointsTally",
+                    "Cannot create bill because new points tally required",
+                    "Cannot create bill {0} for {1} in {2} because a new points tally is required",
+                    t => billDocument.Bill.Number.Value,
+                    t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
+                    t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+                return false;
+            }
             else
             {
                 Journal(

@@ -17,7 +17,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SiteLibrary", "SiteLibrary\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuaesturApi", "QuaesturApi\QuaesturApi.csproj", "{AD639BDE-0987-4B05-B995-800EE5589815}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscourseApi", "..\Code\DiscourseApi\DiscourseApiLib\DiscourseApi.csproj", "{7F497285-D30E-446C-AF52-BC91C5612739}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscourseEngagement", "DiscourseEngagement\DiscourseEngagement.csproj", "{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscourseApi", "DiscourseApi\DiscourseApi.csproj", "{7F497285-D30E-446C-AF52-BC91C5612739}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineApi", "RedmineApi\RedmineApi.csproj", "{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineEngagement", "RedmineEngagement\RedmineEngagement.csproj", "{35C37C10-5855-4920-9801-623AE5EA1257}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Census", "Census\Census.csproj", "{EE3636B8-B523-42A3-9842-C43B3D963A85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +65,26 @@ Global
 		{AD639BDE-0987-4B05-B995-800EE5589815}.Debug|x86.Build.0 = Debug|Any CPU
 		{AD639BDE-0987-4B05-B995-800EE5589815}.Release|x86.ActiveCfg = Release|Any CPU
 		{AD639BDE-0987-4B05-B995-800EE5589815}.Release|x86.Build.0 = Release|Any CPU
+		{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}.Debug|x86.ActiveCfg = Debug|x86
+		{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}.Debug|x86.Build.0 = Debug|x86
+		{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}.Release|x86.ActiveCfg = Release|x86
+		{F37D7A92-2497-4AD6-8B57-6FE29B3776A3}.Release|x86.Build.0 = Release|x86
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Debug|x86.Build.0 = Debug|Any CPU
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Release|x86.ActiveCfg = Release|Any CPU
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Release|x86.Build.0 = Release|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Debug|x86.Build.0 = Debug|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Release|x86.Build.0 = Release|Any CPU
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Debug|x86.ActiveCfg = Debug|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Debug|x86.Build.0 = Debug|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.ActiveCfg = Release|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.Build.0 = Release|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Debug|x86.ActiveCfg = Debug|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Debug|x86.Build.0 = Debug|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.ActiveCfg = Release|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

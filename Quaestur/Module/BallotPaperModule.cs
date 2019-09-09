@@ -8,6 +8,7 @@ using Nancy.Security;
 using Nancy.Responses;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -25,9 +26,9 @@ namespace Quaestur
         {
             Id = ballot.Id.Value.ToString();
             Organization = ballot.Template.Value.Organizer.Value.Organization.Value.GetText(translator);
-            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).ToString("dd.MM.yyyy");
-            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).ToString("dd.MM.yyyy");
-            EndDate = ballot.EndDate.Value.ToString("dd.MM.yyyy");
+            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).FormatSwissDay();
+            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).FormatSwissDay();
+            EndDate = ballot.EndDate.Value.FormatSwissDay();
             Status = ballot.Status.Value.Translate(translator);
 
             if (ballot.Status.Value == BallotStatus.Voting)

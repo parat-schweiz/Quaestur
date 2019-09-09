@@ -71,6 +71,11 @@ namespace Quaestur
                         .FirstOrDefault();
                     var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
                     var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
+                    Global.Log.Notice(
+                        "Checking tally for {0} (last tally {1}, until date {2})",
+                        person.ShortHand,
+                        lastTallyUntilDate,
+                        untilDate);
 
                     if (DateTime.UtcNow.Date > untilDate.Date &&
                         untilDate.Date > lastTallyUntilDate.Date)
@@ -90,7 +95,7 @@ namespace Quaestur
         private void SendTally(IDatabase database, Membership membership, PointsTally tally)
         {
             var pointsTallyMailTemplate = membership.Type.Value.GetPointsTallyMail(database, membership.Person.Value.Language.Value);
-            var message = PointsTallyTask.CreateMail(database, membership, pointsTallyMailTemplate, null);
+            var message = CreateMail(database, membership, pointsTallyMailTemplate, tally);
             Global.MailCounter.Used();
             Global.Mail.Send(message);
         }
@@ -99,6 +104,7 @@ namespace Quaestur
         {
             Translator translator = new Translator(translation, membership.Person.Value.Language.Value);
             var pointsTallyDocument = new PointsTallyDocument(translator, database, membership);
+
             if (pointsTallyDocument.Create())
             {
                 using (var transaction = database.BeginTransaction())
@@ -175,6 +181,7 @@ namespace Quaestur
                 documentPart.ContentDisposition.FileName = pdfFileName;
                 documentPart.ContentTransferEncoding = ContentEncoding.Base64;
                 content.Add(documentPart);
+
                 return Global.Mail.Create(from, to, senderKey, null, subject, content);
             }
             else

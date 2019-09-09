@@ -56,11 +56,23 @@ namespace Quaestur
         {
             if (period <= 7)
             {
-                return 3; 
+                return 2; 
+            }
+            else if (period <= 10)
+            {
+                return 3;
             }
             else if (period <= 16)
             {
-                return 5; 
+                return 4;
+            }
+            else if (period <= 21)
+            {
+                return 5;
+            }
+            else if (period <= 31)
+            {
+                return 7;
             }
             else if (period <= 66)
             {
@@ -98,8 +110,8 @@ namespace Quaestur
             {
                 var mainModel = membership.Type.Value.CreatePaymentModel(database);
                 var period = mainModel.GetBillingPeriod();
-                var lastBill = GetLastBill(database, membership);
                 var before = GetBefore(period);
+                var lastBill = GetLastBill(database, membership);
 
                 if (lastBill == null)
                 {
@@ -107,7 +119,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return lastBill.UntilDate.Value.AddDays(1 + period - before).Date;
+                    return lastBill.UntilDate.Value.AddDays(-before).Date;
                 }
             }
         }
@@ -147,12 +159,18 @@ namespace Quaestur
 
             var list = _pointsOverride ?? _database
                 .Query<Points>(DC.Equal("ownerid", _person.Id.Value))
-                .Where(p => p.Moment.Value.Date >= PointsTally.FromDate.Value &&
-                            p.Moment.Value.Date <= PointsTally.UntilDate.Value)
+                .Where(p => p.Moment.Value.ToLocalTime().Date >= PointsTally.FromDate.Value &&
+                            p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
             var sum = list.Sum(p => p.Amount);
-            PointsTally.Considered.Value = Math.Min(sum, _membership.Type.Value.MaximumPoints.Value);
-            PointsTally.ForwardBalance.Value = Math.Min(sum - PointsTally.Considered.Value, _membership.Type.Value.MaximumBalanceForward);
+            var maxConsideredPoints = _membership.Person.Value.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .Sum(m => m.Type.Value.MaximumPoints.Value);
+            var maxForwardPoints = _membership.Person.Value.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .Sum(m => m.Type.Value.MaximumBalanceForward.Value);
+            PointsTally.Considered.Value = Math.Min(sum, maxConsideredPoints);
+            PointsTally.ForwardBalance.Value = Math.Min(sum - PointsTally.Considered.Value, maxForwardPoints);
 
             var text = new StringBuilder();
 
@@ -196,15 +214,15 @@ namespace Quaestur
             text.Append(@"\hline\hline ");
             text.Append(tableRowConsidered);
             text.Append(@" & & & \multicolumn{1}{r}{");
-            text.Append(PointsTally.Considered.Value);
+            text.Append(PointsTally.Considered.Value.FormatThousands());
             text.Append(@"} \\ ");
             text.Append(tableRowCarryOver);
             text.Append(@" & & & \multicolumn{1}{r}{");
-            text.Append(PointsTally.ForwardBalance.Value);
+            text.Append(PointsTally.ForwardBalance.Value.FormatThousands());
             text.Append(@"} \\ }");
             text.AppendLine();
 
-            text.Append(@"\begin{supertabular}{p{10cm} p{2cm} p{1.2cm} p{1.2cm}}");
+            text.Append(@"\begin{supertabular}{p{7.2cm} p{2cm} p{1.2cm} p{1.2cm}}");
             text.AppendLine();
             long runUp = 0;
 
@@ -214,11 +232,11 @@ namespace Quaestur
 
                 text.Append(tableRowBalanceForward);
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(PointsTally.FromDate.Value);
+                text.Append(PointsTally.FromDate.Value.FormatSwissMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(_lastTally.ForwardBalance.Value);
+                text.Append(_lastTally.ForwardBalance.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(runUp);
+                text.Append(runUp.FormatThousands());
                 text.Append(@"} \\");
                 text.AppendLine();
             }
@@ -227,13 +245,13 @@ namespace Quaestur
             {
                 runUp += p.Amount.Value;
 
-                text.Append(p.Reason.Value);
+                text.Append(p.Reason.Value.EscapeLatex());
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(p.Moment.Value.Date.ToString("dd.MM.yyyy"));
+                text.Append(p.Moment.Value.ToLocalTime().FormatSwissMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(p.Amount.Value);
+                text.Append(p.Amount.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(runUp);
+                text.Append(runUp.FormatThousands());
                 text.Append(@"} \\");
                 text.AppendLine();
             }
@@ -256,11 +274,11 @@ namespace Quaestur
                 case "PointsTally.TableContent":
                     return CreateTableContent();
                 case "PointsTally.FromDate":
-                    return PointsTally.FromDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.FromDate.Value.FormatSwissDay();
                 case "PointsTally.UntilDate":
-                    return PointsTally.UntilDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.UntilDate.Value.FormatSwissDay();
                 case "PointsTally.CreatedDate":
-                    return PointsTally.CreatedDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.CreatedDate.Value.FormatSwissDay();
                 default:
                     throw new NotSupportedException(); 
             }

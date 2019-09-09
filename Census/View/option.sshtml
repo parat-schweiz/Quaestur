@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateOptionList(){
+      $.get("/option/list/@Model.Id", function(data, status){
+          if (data){
+              $("#optionList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateOptionList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="optionList">
+</div>
+@EndSection

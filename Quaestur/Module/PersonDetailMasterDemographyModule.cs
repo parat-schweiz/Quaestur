@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -31,7 +32,7 @@ namespace Quaestur
             List = new List<PersonDetailDemographyItemViewModel>();
             List.Add(new PersonDetailDemographyItemViewModel(
                 translator.Get("Person.Detail.Demography.Birthdate", "Birthdate item in demography part of the person detail page", "Birthdate"), 
-                person.BirthDate.Value.ToString("dd.MM.yyyy")));
+                person.BirthDate.Value.FormatSwissDay()));
             List.Add(new PersonDetailDemographyItemViewModel(
                 translator.Get("Person.Detail.Demography.Language", "Language item in demography part of the person detail page", "Language"),
                 person.Language.Value.Translate(translator)));

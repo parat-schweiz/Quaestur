@@ -17,8 +17,14 @@ namespace Quaestur
         private readonly SystemWideSettings _settings;
         private IPaymentModel _mainModel;
         private List<Tuple<Membership, IPaymentModel>> _allIncluded;
+        private PointsTally _lastTally;
+        private long _maxPoints;
+        private long _consideredPoints;
+        private decimal _portionOfDiscount;
 
         public Bill Bill { get; private set; }
+        public bool RequiresPersonalPaymentUpdate { get; private set; }
+        public bool RequiresNewPointsTally { get; private set; }
 
         public BillDocument(Translator translator, IDatabase database, Membership membership)
         {
@@ -97,7 +103,49 @@ namespace Quaestur
             IncludeParent(_membership);
             IncludeChildren(_membership);
 
-            return true;
+            _lastTally = _database
+                .Query<PointsTally>(DC.Equal("personid", _person.Id.Value))
+                .Where(t => t.UntilDate.Value < Bill.FromDate.Value)
+                .OrderByDescending(t => t.UntilDate.Value)
+                .FirstOrDefault();
+
+            if (lastBill != null &&
+                _lastTally != null &&
+                lastBill.FromDate.Value > _lastTally.UntilDate.Value)
+            {
+                var shouldHaveTally = _person.Memberships
+                    .Any(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
+                         m.Type.Value.Payment.Value != PaymentModel.None &&
+                         m.Type.Value.MaximumPoints.Value > 0);
+
+                // The last tally was already considered in last bill
+                if (shouldHaveTally)
+                {
+                    // there should be a newer tally which is missing
+                    RequiresNewPointsTally = true;
+                    return false;
+                }
+                else
+                {
+                    // no need for a tally
+                    RequiresNewPointsTally = false;
+                }
+            }
+            else
+            {
+                RequiresNewPointsTally = false;
+            }
+
+            _maxPoints = _person.Memberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .Sum(m => MaxPoints(m));
+            _consideredPoints = _lastTally != null ? _lastTally.Considered.Value : 0;
+            _portionOfDiscount = (_maxPoints > 0) ? 
+                Math.Min(1m, (decimal)_consideredPoints / (decimal)_maxPoints) : 0m;
+
+            RequiresPersonalPaymentUpdate = _allIncluded
+                .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
+            return !RequiresPersonalPaymentUpdate;
         }
 
         private void IncludeChildren(Membership membership)
@@ -167,6 +215,63 @@ namespace Quaestur
             get { return _membership.Type.Value.GetBillDocument(_database, _translator.Language).Text.Value; } 
         }
 
+        private long MaxPoints(Membership membership)
+        {
+            var endDate = membership.EndDate.Value ?? DateTime.Now.AddYears(10);
+            double billDays = Bill.UntilDate.Value.Date.Subtract(Bill.FromDate.Value.Date).TotalDays;
+            double overlapDays = Dates.ComputeOverlap(Bill.FromDate.Value.Date, Bill.UntilDate.Value.Date, membership.StartDate.Value, endDate).TotalDays;
+            return (long)Math.Floor(membership.Type.Value.MaximumPoints.Value / billDays * overlapDays);
+        }
+
+        private string CreateExplainations()
+        {
+            if (_lastTally != null)
+            {
+                var text = new StringBuilder();
+
+                text.Append(@"\textbf{");
+                text.Append(_translator.Get(
+                    "Document.Bill.PointsDiscount",
+                    "Discournt engagement points heading in bill creation",
+                    "Discount engagement points"));
+                text.Append(@"} & ~ \\");
+                text.AppendLine();
+
+                text.Append(_translator.Get(
+                    "Document.Bill.MaximumPoints",
+                    "Maximum points over all memberships in bill creation",
+                    "Maximum points over all memberships"));
+                text.Append(@" & ");
+                text.Append(_maxPoints.FormatThousands());
+                text.Append(@" \\");
+                text.AppendLine();
+
+                text.Append(_translator.Get(
+                    "Document.Bill.ConsideredPoints",
+                    "Points considered in bill creation",
+                    "Points considered in this bill"));
+                text.Append(@" & ");
+                text.Append(_consideredPoints.FormatThousands());
+                text.Append(@" \\");
+                text.AppendLine();
+
+                text.Append(_translator.Get(
+                    "Document.Bill.PortionOfDiscount",
+                    "Portion of total available discount in bill creation",
+                    "Portion of total available discount"));
+                text.Append(@" & ");
+                text.Append(string.Format("{0:0.0}", _portionOfDiscount * 100m));
+                text.Append(@"\% \\");
+                text.AppendLine();
+
+                return text.ToString();
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
         private string CreateFinalTableContent()
         {
             var text = new StringBuilder();
@@ -175,8 +280,7 @@ namespace Quaestur
             foreach (var included in _allIncluded)
             {
                 var paymentModel = included.Item2;
-                var periodAmount = paymentModel.ComputeAmount(_membership, Bill.FromDate.Value, Bill.UntilDate.Value);
-                totalAmount += periodAmount;
+                var periodAmount = paymentModel.ComputeAmount(included.Item1, Bill.FromDate.Value, Bill.UntilDate.Value);
 
                 text.Append(@"\textbf{");
                 text.Append(included.Item1.Organization.Value);
@@ -185,13 +289,17 @@ namespace Quaestur
 
                 text.AppendLine(included.Item2.CreateExplainationLatex(_translator, _membership));
 
+                var maxDiscount = included.Item1.Type.Value.MaximumDiscount.Value / 100m;
+                var actualDiscount = maxDiscount * _portionOfDiscount;
+                var discountAmount = Math.Round(actualDiscount * periodAmount, 2);
+
                 text.Append(@"~~~~~");
                 text.Append(_translator.Get(
                     "Document.Bill.PeriodFee",
-                    "Yearly fee in the bill document",
+                    "Period fee in the bill document",
                     "Fee from {0} until {1}",
-                    Bill.FromDate.Value.ToString("dd.MM.yyyy"),
-                    Bill.UntilDate.Value.ToString("dd.MM.yyyy")));
+                    Bill.FromDate.Value.FormatSwissDay(),
+                    Bill.UntilDate.Value.FormatSwissDay()));
                 text.Append(@" & ");
                 text.Append(_settings.Currency);
                 text.Append(@" & ");
@@ -199,8 +307,28 @@ namespace Quaestur
                 text.Append(@" \\");
                 text.AppendLine();
 
+                if (_portionOfDiscount > 0m)
+                {
+                    text.Append(@"~~~~~");
+                    text.Append(_translator.Get(
+                        "Document.Bill.FeeDiscount",
+                        "Period fee in the bill document",
+                        "{0:0.0}% of max {1:0.0}% discount",
+                        actualDiscount * 100m,
+                        maxDiscount * 100m)
+                        .EscapeLatex());
+                    text.Append(@" & ");
+                    text.Append(_settings.Currency);
+                    text.Append(@" & ");
+                    text.Append(discountAmount);
+                    text.Append(@" \\");
+                    text.AppendLine();
+                }
+
                 text.Append(@"~ & ~ & ~ \\");
                 text.AppendLine();
+
+                totalAmount += (periodAmount - discountAmount);
             }
 
             text.Append(@"\textbf{");
@@ -235,17 +363,17 @@ namespace Quaestur
             switch (variable)
             {
                 case "Bill.Explainations":
-                    return string.Empty;
+                    return CreateExplainations();
                 case "Bill.FinalTableContent":
                     return CreateFinalTableContent();
                 case "Bill.Organization":
                     return _organization.Name.Value[_translator.Language];
                 case "Bill.FromDate":
-                    return Bill.FromDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.FromDate.Value.FormatSwissDay();
                 case "Bill.UntilDate":
-                    return Bill.UntilDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.UntilDate.Value.FormatSwissDay();
                 case "Bill.CreatedDate":
-                    return Bill.CreatedDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.CreatedDate.Value.FormatSwissDay();
                 case "Bill.Number":
                     return Bill.Number.Value;
                 case "Bill.Amount":
