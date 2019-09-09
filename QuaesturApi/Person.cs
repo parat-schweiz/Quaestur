@@ -12,7 +12,7 @@ namespace QuaesturApi
 
         public Person(JObject obj)
         {
-            Id = obj.Value<Guid>("id");
+            Id = Guid.Parse(obj.Value<string>("id"));
             Username = obj.Value<string>("username");
         }
     }

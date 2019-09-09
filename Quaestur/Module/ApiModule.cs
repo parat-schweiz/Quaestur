@@ -340,7 +340,7 @@ namespace Quaestur
                 authorization.StartsWith("QAPI2 ", StringComparison.Ordinal))
             {
                 var parts = authorization.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length != 3)
+                if (parts.Length == 3)
                 {
                     var client = Database.Query<ApiClient>(parts[1]);
                     if (client != null)

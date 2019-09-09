@@ -103,10 +103,22 @@ namespace Quaestur
         private bool SendMail(IDatabase database, Membership membership, bool requireUpdate)
         {
             var person = membership.Person.Value;
-            var senderGroup = membership.Type.Value.SenderGroup;
+            var senderGroup = membership.Type.Value.SenderGroup.Value;
             var template = requireUpdate ?
                 membership.Type.Value.GetPaymentParameterUpdateRequiredMail(database, person.Language.Value) :
                 membership.Type.Value.GetPaymentParameterUpdateInvitationMail(database, person.Language.Value);
+
+            if (senderGroup == null)
+            {
+                Global.Log.Notice("Missing sender group at payment parameter update for {0} membership {1}.", person.FullName, membership.Organization.Value.ToString());
+                return false;
+            }
+
+            if (template == null)
+            {
+                Global.Log.Notice("Missing template at payment parameter update for {0} membership {1}.", person.FullName, membership.Organization.Value.ToString());
+                return false;
+            }
 
             if (string.IsNullOrEmpty(person.PrimaryMailAddress))
             {
@@ -118,15 +130,15 @@ namespace Quaestur
             }
 
             var from = new MailboxAddress(
-                senderGroup.Value.MailName.Value[person.Language.Value],
-                senderGroup.Value.MailAddress.Value[person.Language.Value]);
+                senderGroup.MailName.Value[person.Language.Value],
+                senderGroup.MailAddress.Value[person.Language.Value]);
             var to = new MailboxAddress(
                 person.ShortHand,
                 person.PrimaryMailAddress);
-            var senderKey = string.IsNullOrEmpty(senderGroup.Value.GpgKeyId.Value) ? null :
+            var senderKey = string.IsNullOrEmpty(senderGroup.GpgKeyId.Value) ? null :
                 new GpgPrivateKeyInfo(
-                senderGroup.Value.GpgKeyId.Value,
-                senderGroup.Value.GpgKeyPassphrase.Value);
+                senderGroup.GpgKeyId.Value,
+                senderGroup.GpgKeyPassphrase.Value);
             var recipientKey = person.GetPublicKey();
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);

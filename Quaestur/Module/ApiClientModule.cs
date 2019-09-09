@@ -20,6 +20,7 @@ namespace Quaestur
         public string Group;
         public string Secret;
         public string PhraseFieldGroup;
+        public string PhraseFieldId;
         public string PhraseFieldSecret;
 
         public ApiClientEditViewModel()
@@ -30,6 +31,7 @@ namespace Quaestur
             : base(translator, translator.Get("ApiClient.Edit.Title", "Title of the API client edit dialog", "Edit API Client"), "apiClientEditDialog")
         {
             PhraseFieldGroup = translator.Get("ApiClient.Edit.Field.Group", "Group field in the API client edit dialog", "Group");
+            PhraseFieldId = translator.Get("ApiClient.Edit.Field.Id", "Id field in the API client edit dialog", "ID");
             PhraseFieldSecret = translator.Get("ApiClient.Edit.Field.Secret", "Secret field in the API client edit dialog", "Secret");
         }
 

@@ -31,26 +31,22 @@ namespace QuaesturApi
 
     public class Quaestur
     {
-        private readonly string _apiUrl;
-        private readonly string _apiSecret;
-        private readonly string _apiClientId;
+        private readonly QuaesturApiConfig _config;
 
-        public Quaestur(string apiUrl, string clientId, string apiSecret)
+        public Quaestur(QuaesturApiConfig config)
         {
-            _apiUrl = apiUrl;
-            _apiClientId = clientId;
-            _apiSecret = apiSecret;
+            _config = config;
         }
 
         public IEnumerable<Person> GetPersonList()
         {
             var result = Request("api/v2/person/list", HttpMethod.Get, null);
-            return result.Values<JObject>().Select(x => new Person(x));
+            return result.Value<JArray>("result").Values<JObject>().Select(x => new Person(x));
         }
 
         private JObject Request(string endpoint, HttpMethod method, JObject data, params UrlParameter[] parameters)
         {
-            var url = string.Join("/", _apiUrl, endpoint);
+            var url = string.Join("/", _config.ApiUrl, endpoint);
             var paramString = string.Join("&", parameters.Select(p => string.Format("{0}={1}", p.Key, p.Value)));
 
             if (paramString.Length > 0)
@@ -61,7 +57,7 @@ namespace QuaesturApi
             var request = new HttpRequestMessage();
             request.Method = method;
             request.RequestUri = new Uri(url);
-            request.Headers.Authorization = new AuthenticationHeaderValue("QAPI2", _apiClientId + " " + _apiSecret);
+            request.Headers.Authorization = new AuthenticationHeaderValue("QAPI2", _config.ApiClientId + " " + _config.ApiSecret);
 
             if (method == HttpMethod.Post ||
                 method == HttpMethod.Put)
