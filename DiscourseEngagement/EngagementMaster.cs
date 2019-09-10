@@ -38,6 +38,21 @@ namespace DiscourseEngagement
             foreach (var topic in _discourse.GetTopics())
             {
                 Console.WriteLine(topic.Id + " " + topic.Title);
+                if (topic.LikeCount > 0)
+                {
+                    var topic2 = _discourse.GetTopic(topic.Id);
+                    foreach (var post in topic2.Posts)
+                    {
+                        if (post.LikeCount > 0)
+                        {
+                            var likes = _discourse.GetLikes(post.Id);
+                            foreach (var like in likes)
+                            {
+                                Console.WriteLine(topic2.Id.ToString() + " " + post.Id.ToString() + " " + like);
+                            }
+                        }
+                    }
+                }
             }
 
             foreach (var person in _quaestur.GetPersonList())

@@ -62,6 +62,23 @@ namespace DiscourseApi
             var response = Request("posts.json", HttpMethod.Post, request);
         }
 
+        public IEnumerable<string> GetLikes(int postId)
+        {
+            var endpoint = string.Format("/post_action_users.json?id={0}&post_action_type_id=2", postId);
+            var response = Request(endpoint, HttpMethod.Get, null);
+            return new List<string>(response
+                .Value<JArray>("post_action_users")
+                .Values<JObject>()
+                .Select(o => o.Value<string>("username")));
+        }
+
+        public Topic GetTopic(int topicId)
+        {
+            var endpoint = string.Format("t/{0}.json", topicId);
+            var response = Request(endpoint, HttpMethod.Get, null);
+            return new Topic(response);
+        }
+
         public IEnumerable<Topic> GetTopics()
         {
             bool done = false;

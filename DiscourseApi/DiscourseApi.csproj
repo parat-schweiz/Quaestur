@@ -48,6 +48,7 @@
     <Compile Include="Discourse.cs" />
     <Compile Include="Topic.cs" />
     <Compile Include="DiscourseApiConfig.cs" />
+    <Compile Include="Post.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
