@@ -42,10 +42,6 @@
       <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Code\DiscourseApi\DiscourseApiLib\DiscourseApi.csproj">
-      <Project>{7F497285-D30E-446C-AF52-BC91C5612739}</Project>
-      <Name>DiscourseApi</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SiteLibrary\SiteLibrary.csproj">
       <Project>{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}</Project>
       <Name>SiteLibrary</Name>
@@ -53,6 +49,10 @@
     <ProjectReference Include="..\QuaesturApi\QuaesturApi.csproj">
       <Project>{AD639BDE-0987-4B05-B995-800EE5589815}</Project>
       <Name>QuaesturApi</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DiscourseApi\DiscourseApi.csproj">
+      <Project>{7F497285-D30E-446C-AF52-BC91C5612739}</Project>
+      <Name>DiscourseApi</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

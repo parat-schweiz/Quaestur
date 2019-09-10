@@ -53,7 +53,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Quaestur\BaseLibrary\BaseLibrary.csproj">
+    <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
