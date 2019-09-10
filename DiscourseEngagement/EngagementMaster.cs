@@ -3,6 +3,7 @@ using System.IO;
 using BaseLibrary;
 using SiteLibrary;
 using QuaesturApi;
+using DiscourseApi;
 
 namespace DiscourseEngagement
 {
@@ -11,6 +12,7 @@ namespace DiscourseEngagement
         private readonly EngagementConfig _config;
         private readonly Logger _logger;
         private readonly Quaestur _quaestur;
+        private readonly Discourse _discourse;
 
         public EngagementMaster(string filename)
         {
@@ -26,11 +28,17 @@ namespace DiscourseEngagement
             _logger.Notice("Discourse Engagement started");
 
             _quaestur = new Quaestur(_config.QuaesturApi);
+            _discourse = new Discourse(_config.DiscourseApi);
         }
 
         public void Run()
         {
-            System.Threading.Thread.Sleep(3000);
+            System.Threading.Thread.Sleep(2000);
+
+            foreach (var topic in _discourse.GetTopics())
+            {
+                Console.WriteLine(topic.Id + " " + topic.Title);
+            }
 
             foreach (var person in _quaestur.GetPersonList())
             {
