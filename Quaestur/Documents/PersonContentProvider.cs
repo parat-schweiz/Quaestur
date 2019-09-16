@@ -72,6 +72,8 @@ namespace Quaestur
                     return _person.BirthDate.Value.ToString("dd.MM.yyyy");
                 case "Person.Address.FiveLines":
                     return CreatePostalAddressFiveLines();
+                case "Person.Parameter.Income.Url":
+                    return string.Format("{0}/income", Global.Config.WebSiteAddress);
                 default:
                     throw new NotSupportedException();
             }
