@@ -35,6 +35,8 @@ namespace DiscourseEngagement
         {
             System.Threading.Thread.Sleep(2000);
 
+            _discourse.GetUsers();
+
             foreach (var topic in _discourse.GetTopics())
             {
                 Console.WriteLine(topic.Id + " " + topic.Title);
