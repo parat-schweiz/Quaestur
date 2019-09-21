@@ -60,7 +60,7 @@
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.3.0\lib\net45\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.3.1\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -105,7 +105,7 @@
       <HintPath>..\packages\System.Memory.4.5.3\lib\netstandard2.0\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.2.0\lib\net45\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.3.1.6\lib\net47\MailKit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
