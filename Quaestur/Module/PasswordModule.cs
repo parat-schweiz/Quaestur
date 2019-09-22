@@ -134,7 +134,7 @@ namespace Quaestur
 
                 if (person == CurrentSession.User)
                 {
-                    if (!UserController.VerifyHash(person.PasswordHash, model.CurrentPassword))
+                    if (!UserController.Verify(person, model.CurrentPassword))
                     {
                         status.SetValidationError("CurrentPassword", "Password.Edit.Validation.CurrentWrong", "Message when current password is wrong at password change", "Current password is wrong");
                     }
