@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using BaseLibrary;
 using SiteLibrary;
 using QuaesturApi;
@@ -13,6 +14,7 @@ namespace DiscourseEngagement
         private readonly Logger _logger;
         private readonly Quaestur _quaestur;
         private readonly Discourse _discourse;
+        private readonly IDatabase _database;
 
         public EngagementMaster(string filename)
         {
@@ -27,6 +29,9 @@ namespace DiscourseEngagement
             _logger = new Logger(_config.LogFilePrefix);
             _logger.Notice("Discourse Engagement started");
 
+            _database = new PostgresDatabase(_config.Database);
+            Model.Install(_database, _logger);
+
             _quaestur = new Quaestur(_config.QuaesturApi);
             _discourse = new Discourse(_config.DiscourseApi);
         }
@@ -35,8 +40,69 @@ namespace DiscourseEngagement
         {
             System.Threading.Thread.Sleep(2000);
 
-            _discourse.GetUsers();
+            while (true)
+            {
+                Sync();
+                System.Threading.Thread.Sleep(60 * 1000);
+            }
+        }
 
+        private void Sync()
+        {
+            SyncUsers();
+        }
+
+        private void SyncUsers()
+        {
+            var databasePersons = _database.Query<Person>();
+            var quaesturPersons = _quaestur.GetPersonList().ToList();
+
+            foreach (var user in _discourse.GetUsers().ToList())
+            { 
+                if (user.Auid.HasValue)
+                {
+                    if (quaesturPersons.Any(p => p.Id.Equals(user.Auid.Value)))
+                    {
+                        var person = databasePersons.SingleOrDefault(p => p.Id.Equals(user.Auid.Value));
+
+                        if (person == null)
+                        {
+                            person = new Person(user.Auid.Value);
+                            person.DiscourseUserId.Value = user.Id;
+                            _database.Save(person);
+                            _logger.Notice("Added user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
+                        }
+                        else if (person.DiscourseUserId.Value != user.Id)
+                        {
+                            person.DiscourseUserId.Value = user.Id;
+                            _database.Save(person);
+                            _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
+                        }
+                    }
+                    else
+                    {
+                        var person = databasePersons.SingleOrDefault(p => p.Id.Equals(user.Auid.Value));
+
+                        if (person != null)
+                        {
+                            person.Delete(_database);
+                            _logger.Notice("Dropping user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
+                        }
+                        else
+                        {
+                            _logger.Notice("Not adding user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
+                        }
+                    }
+                }
+                else
+                {
+                    _logger.Notice("Not adding user {0}, id {1} because no AUID", user.Username, user.Id);
+                }
+            }
+        }
+
+        private void SyncTopics()
+        {
             foreach (var topic in _discourse.GetTopics())
             {
                 Console.WriteLine(topic.Id + " " + topic.Title);

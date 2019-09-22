@@ -10,12 +10,14 @@ namespace DiscourseEngagement
     {
         public QuaesturApiConfig QuaesturApi { get; private set; }
         public DiscourseApiConfig DiscourseApi { get; private set; }
+        public ConfigSectionDatabase Database { get; private set; }
         public string LogFilePrefix { get; private set; }
 
         public EngagementConfig()
         {
             QuaesturApi = new QuaesturApiConfig();
             DiscourseApi = new DiscourseApiConfig();
+            Database = new ConfigSectionDatabase();
         }
 
         public override IEnumerable<ConfigSection> ConfigSections
@@ -24,6 +26,7 @@ namespace DiscourseEngagement
             {
                 yield return QuaesturApi;
                 yield return DiscourseApi;
+                yield return Database;
             }
         }
 

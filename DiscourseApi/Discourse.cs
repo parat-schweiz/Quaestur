@@ -62,16 +62,15 @@ namespace DiscourseApi
             var response = Request<JObject>("posts.json", HttpMethod.Post, request);
         }
 
-        public IEnumerable<string> GetUsers()
+        public IEnumerable<User> GetUsers()
         {
-            var endpoint = string.Format("/users/by-external/lumi.json");
-            var response = Request<JObject>(endpoint, HttpMethod.Get, null);
+            var endpoint = string.Format("/admin/users.json");
+            var response = Request<JArray>(endpoint, HttpMethod.Get, null);
 
-            //var endpoint = string.Format("/admin/users.json");
-            //var response = Request<JArray>(endpoint, HttpMethod.Get, null);
-            //var endpoint = string.Format("/admin/users/{0}.json", 3);
-            //var response = Request<JObject>(endpoint, HttpMethod.Get, null);
-            return null;
+            foreach (JObject user in response)
+            {
+                yield return new User(user); 
+            }
         }
 
         public IEnumerable<string> GetLikes(int postId)
