@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using System.Text;
+using System.Globalization;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Responses;
@@ -157,10 +158,14 @@ namespace Quaestur
 
     public class ApiResponse
     {
+        private readonly IDatabase _database;
         private readonly JObject _response;
 
-        public ApiResponse()
+        public ApiContext Context { get; private set; }
+
+        public ApiResponse(IDatabase database)
         {
+            _database = database;
             _response = new JObject(); 
         }
 
@@ -250,6 +255,203 @@ namespace Quaestur
             _response.Add(new JProperty("error", "Access denied"));
         }
 
+        public bool HasAccess(Person person, PartAccess part, AccessRight right)
+        { 
+            if (Context.HasApiAccess(person, part, right))
+            {
+                return true; 
+            }
+            else
+            {
+                SetErrorAccessDenied();
+                return false; 
+            }
+        }
+
+        public bool HasAccess(Group group, PartAccess part, AccessRight right)
+        {
+            if (Context.HasApiAccess(group, part, right))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorAccessDenied();
+                return false;
+            }
+        }
+
+        public bool HasAccess(Organization organization, PartAccess part, AccessRight right)
+        {
+            if (Context.HasApiAccess(organization, part, right))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorAccessDenied();
+                return false;
+            }
+        }
+
+        public bool CheckLogin(Request request)
+        {
+            Context = FindLogin(request);
+
+            if (Context == null)
+            {
+                SetErrorAuthenticationFailed();
+                return false; 
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        private ApiContext FindLogin(Request request)
+        {
+            string authorization = request.Headers.Authorization;
+
+            if (!string.IsNullOrEmpty(authorization) &&
+                authorization.StartsWith("QAPI2 ", StringComparison.Ordinal))
+            {
+                var parts = authorization.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                if (parts.Length == 3)
+                {
+                    var client = _database.Query<ApiClient>(parts[1]);
+                    if (client != null)
+                    {
+                        if (Global.Security.VerifyPassword(client.SecureSecret.Value, parts[2]))
+                        {
+                            Notice("Successful API authentication for {0}", client.Name.Value[Language.English]);
+                            return new ApiContext(_database, client);
+                        }
+                        else
+                        {
+                            Notice("Failed API authentication for {0}", client.Name.Value[Language.English]);
+                        }
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public void Notice(string text, params object[] parameters)
+        {
+            Global.Log.Notice(text, parameters);
+        }
+
+        public void Info(string text, params object[] parameters)
+        {
+            Global.Log.Info(text, parameters);
+        }
+
+        public void Warning(string text, params object[] parameters)
+        {
+            Global.Log.Warning(text, parameters);
+        }
+
+        public bool TryParseJson(string text, out JObject obj)
+        {
+            try
+            {
+                obj = JObject.Parse(text);
+                return true;
+            }
+            catch
+            {
+                SetErrorMalformedJson();
+                obj = null;
+                return false;
+            }
+        }
+
+        public bool TryValueString(JObject request, string key, out string value)
+        {
+            if (request.TryValueString(key, out value))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorMissingOrMalformed(key);
+                return false; 
+            }
+        }
+
+        public bool TryValueInt32(JObject request, string key, out int value)
+        {
+            if (request.TryValueInt32(key, out value))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
+        public bool TryValueDateTime(JObject request, string key, out DateTime value)
+        { 
+            if (request.TryValueString(key, out string stringValue) &&
+                DateTime.TryParseExact(stringValue, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
+            {
+                return true;
+            }
+            else
+            {
+                value = new DateTime(1850, 1, 1);
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
+        public bool TryReadObjectField<T>(JObject request, string key, out T obj)
+            where T : DatabaseObject, new()
+        {
+            if (request.TryValueGuid(key, out Guid id))
+            {
+                obj = _database.Query<T>(id);
+
+                if (obj == null)
+                {
+                    SetErrorNotFound(typeof(T).Name, id);
+                    return false; 
+                }
+                else
+                {
+                    return true; 
+                }
+            }
+            else
+            {
+                obj = null;
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
+        public void SetErrorNotFound(string type, Guid id)
+        {
+            _response.Add(new JProperty("status", "failure"));
+            _response.Add(new JProperty("error", string.Format("Object {1} of type {0} not found", type, id)));
+        }
+
+        public void SetErrorMissingOrMalformed(string key)
+        {
+            _response.Add(new JProperty("status", "failure"));
+            _response.Add(new JProperty("error", string.Format("Field {0} missing or malformatted", key)));
+        }
+
+        public void SetErrorMalformedJson()
+        {
+            _response.Add(new JProperty("status", "failure"));
+            _response.Add(new JProperty("error", "Malformed JSON object"));
+        }
+
         public void SetSuccess()
         {
             _response.Add(new JProperty("status", "success"));
@@ -269,9 +471,9 @@ namespace Quaestur
         {
             Get("/api/v2/organization/list", parameters =>
             {
-                var response = new ApiResponse();
+                var response = CreateResponse();
 
-                if (CheckLogin())
+                if (response.CheckLogin(Request))
                 {
                     var organization = Database
                         .Query<Organization>()
@@ -279,18 +481,14 @@ namespace Quaestur
                         .OrderBy(o => o.GetText(Translator));
                     response.SetList(organization, _context);
                 }
-                else
-                {
-                    response.SetErrorAuthenticationFailed();
-                }
 
                 return Response.AsText(response.ToJson(), "application/json");
             });
             Get("/api/v2/group/list", parameters =>
             {
-                var response = new ApiResponse();
+                var response = CreateResponse();
 
-                if (CheckLogin())
+                if (response.CheckLogin(Request))
                 {
                     var organization = Database
                         .Query<Group>()
@@ -298,18 +496,14 @@ namespace Quaestur
                         .OrderBy(g => g.Name.GetText(Translator));
                     response.SetList(organization, _context);
                 }
-                else
-                {
-                    response.SetErrorAuthenticationFailed();
-                }
 
                 return Response.AsText(response.ToJson(), "application/json");
             });
             Get("/api/v2/person/list", parameters =>
             {
-                var response = new ApiResponse();
+                var response = CreateResponse();
 
-                if (CheckLogin())
+                if (response.CheckLogin(Request))
                 {
                     var persons = Database
                         .Query<Person>()
@@ -317,48 +511,45 @@ namespace Quaestur
                         .OrderBy(p => p.UserName.Value);
                     response.SetList(persons, _context);
                 }
-                else
+
+                return Response.AsText(response.ToJson(), "application/json");
+            });
+            Post("/api/v2/points/add", parameters =>
+            {
+                var response = CreateResponse();
+
+                if (response.CheckLogin(Request) &&
+                    response.TryParseJson(ReadBody(), out JObject request) &&
+                    response.TryReadObjectField(request, "personid", out Person person) &&
+                    response.TryReadObjectField(request, "budgetid", out PointBudget budget) &&
+                    response.TryValueInt32(request, "amount", out int amount) &&
+                    response.TryValueString(request, "reason", out string reason) &&
+                    response.TryValueDateTime(request, "moment", out DateTime moment) &&
+                    response.HasAccess(person, PartAccess.Points, AccessRight.Write) &&
+                    response.HasAccess(budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
                 {
-                    response.SetErrorAuthenticationFailed();
+                    var points = new Points(Guid.NewGuid());
+                    points.Owner.Value = person;
+                    points.Budget.Value = budget;
+                    points.Amount.Value = amount;
+                    points.Moment.Value = moment;
+                    points.Reason.Value = reason;
+                    Database.Save(points);
+                    Journal("API",
+                            person,
+                            "Journal.API.Points.Add",
+                            "Added points through the API",
+                            "Added points {0}.",
+                            t => points.GetText(t));
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");
             });
         }
 
-        private bool CheckLogin()
+        private ApiResponse CreateResponse()
         {
-            _context = FindLogin();
-            return _context != null;
+            return new ApiResponse(Database);
         }
-
-        private ApiContext FindLogin()
-        {
-            string authorization = Request.Headers.Authorization;
-
-            if (!string.IsNullOrEmpty(authorization) &&
-                authorization.StartsWith("QAPI2 ", StringComparison.Ordinal))
-            {
-                var parts = authorization.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                if (parts.Length == 3)
-                {
-                    var client = Database.Query<ApiClient>(parts[1]);
-                    if (client != null)
-                    {
-                        if (Global.Security.VerifyPassword(client.SecureSecret.Value, parts[2]))
-                        {
-                            Notice("Successful API authentication for {0}", client.Name.Value[Language.English]);
-                            return new ApiContext(Database, client);
-                        }
-                        else
-                        {
-                            Notice("Failed API authentication for {0}", client.Name.Value[Language.English]); 
-                        }
-                    }
-                }
             }
-
-            return null;
-        }
-    }
 }

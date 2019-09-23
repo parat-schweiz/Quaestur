@@ -21,6 +21,8 @@ namespace DiscourseEngagement
 
             database.CreateTable<Meta>();
             database.CreateTable<Person>();
+            database.CreateTable<Topic>();
+            database.CreateTable<Post>();
 
             logger.Notice("Tables ok.");
         }

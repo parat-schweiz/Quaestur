@@ -48,7 +48,7 @@ namespace SecurityServiceClient
                 var reply = _channel.Request(request);
                 CheckError(reply);
 
-                var exitCode = reply.ValueInt(SecurityServiceProtocol.ExitCodeProperty);
+                var exitCode = reply.ValueInt32(SecurityServiceProtocol.ExitCodeProperty);
                 var output = reply.ValueBytes(SecurityServiceProtocol.OutputDataProperty);
                 var error = reply.ValueBytes(SecurityServiceProtocol.ErrorDataProperty);
 

@@ -7,7 +7,7 @@ namespace DiscourseEngagement
 {
     public class Person : DatabaseObject
     {
-        public Field<int> DiscourseUserId { get; private set; }
+        public Field<int> UserId { get; private set; }
 
         public Person() : this(Guid.Empty)
         {
@@ -15,7 +15,7 @@ namespace DiscourseEngagement
 
         public Person(Guid id) : base(id)
         {
-            DiscourseUserId = new Field<int>(this, "number", 0);
+            UserId = new Field<int>(this, "userid", 0);
         }
 
         public override string ToString()

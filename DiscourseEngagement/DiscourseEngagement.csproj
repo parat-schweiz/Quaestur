@@ -45,6 +45,9 @@
     <Compile Include="Model\Person.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Model\Meta.cs" />
+    <Compile Include="Model\Topic.cs" />
+    <Compile Include="Model\Post.cs" />
+    <Compile Include="Cache.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

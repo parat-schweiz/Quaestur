@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 using BaseLibrary;
 using SiteLibrary;
 using QuaesturApi;
@@ -50,6 +51,8 @@ namespace DiscourseEngagement
         private void Sync()
         {
             SyncUsers();
+            SyncContent();
+            DoAwards();
         }
 
         private void SyncUsers()
@@ -58,7 +61,7 @@ namespace DiscourseEngagement
             var quaesturPersons = _quaestur.GetPersonList().ToList();
 
             foreach (var user in _discourse.GetUsers().ToList())
-            { 
+            {
                 if (user.Auid.HasValue)
                 {
                     if (quaesturPersons.Any(p => p.Id.Equals(user.Auid.Value)))
@@ -68,13 +71,13 @@ namespace DiscourseEngagement
                         if (person == null)
                         {
                             person = new Person(user.Auid.Value);
-                            person.DiscourseUserId.Value = user.Id;
+                            person.UserId.Value = user.Id;
                             _database.Save(person);
                             _logger.Notice("Added user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
-                        else if (person.DiscourseUserId.Value != user.Id)
+                        else if (person.UserId.Value != user.Id)
                         {
-                            person.DiscourseUserId.Value = user.Id;
+                            person.UserId.Value = user.Id;
                             _database.Save(person);
                             _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
@@ -101,31 +104,196 @@ namespace DiscourseEngagement
             }
         }
 
-        private void SyncTopics()
+        private void SyncContent()
         {
-            foreach (var topic in _discourse.GetTopics())
+            using (var transaction = _database.BeginTransaction())
             {
-                Console.WriteLine(topic.Id + " " + topic.Title);
-                if (topic.LikeCount > 0)
+                var cache = new Cache(_database);
+                cache.Reload();
+
+                foreach (var apiTopic in _discourse.GetTopics())
                 {
-                    var topic2 = _discourse.GetTopic(topic.Id);
-                    foreach (var post in topic2.Posts)
+                    var dbTopic = cache.GetTopic(apiTopic.Id);
+
+                    if (dbTopic == null)
                     {
-                        if (post.LikeCount > 0)
+                        _logger.Notice("New topic {0}", apiTopic.Id);
+                        dbTopic = new Topic(Guid.NewGuid());
+                        dbTopic.TopicId.Value = apiTopic.Id;
+                        dbTopic.PostsCount.Value = apiTopic.PostsCount;
+                        dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                        cache.Add(dbTopic);
+                        _database.Save(dbTopic);
+                        SyncTopic(cache, apiTopic, dbTopic);
+                    }
+                    else if (dbTopic.PostsCount.Value != apiTopic.PostsCount ||
+                             dbTopic.LikeCount.Value != apiTopic.LikeCount)
+                    {
+                        _logger.Notice("Updated topic {0}", apiTopic.Id);
+                        dbTopic.PostsCount.Value = apiTopic.PostsCount;
+                        dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                        _database.Save(dbTopic);
+                        SyncTopic(cache, apiTopic, dbTopic);
+                    }
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        private void SyncTopic(Cache cache, DiscourseApi.Topic apiTopic, Topic dbTopic)
+        {
+            apiTopic = _discourse.GetTopic(apiTopic.Id);
+
+            foreach (var apiPost in apiTopic.Posts)
+            {
+                var dbPost = cache.GetPost(apiTopic.Id, apiPost.Id);
+
+                if (dbPost == null)
+                {
+                    _logger.Notice("New post {0}", apiPost.Id);
+                    dbPost = new Post(Guid.NewGuid());
+                    dbPost.Topic.Value = cache.GetTopic(apiTopic.Id);
+                    dbPost.Person.Value = cache.GetPerson(apiPost.UserId);
+                    dbPost.PostId.Value = apiPost.Id;
+                    dbPost.Created.Value = apiPost.CreatedAt;
+                    dbPost.AwardDecision.Value = AwardDecision.None;
+                    cache.Add(dbPost);
+                    _database.Save(dbPost);
+                }
+            }
+        }
+
+        private void DoAwards()
+        {
+            using (var transaction = _database.BeginTransaction())
+            {
+                var cache = new Cache(_database);
+                cache.Reload();
+
+                var latest = new Dictionary<Guid, DateTime>();
+                foreach (var person in cache.Persons)
+                    latest.Add(person.Id.Value, new DateTime(1850, 1, 1));
+
+                foreach (var post in cache.Posts.OrderBy(p => p.Created))
+                { 
+                    if (post.AwardDecision.Value == AwardDecision.None)
+                    { 
+                        if (post.Person.Value == null)
                         {
-                            var likes = _discourse.GetLikes(post.Id);
-                            foreach (var like in likes)
+                            post.AwardDecision.Value = AwardDecision.None;
+                            _database.Save(post);
+                            _logger.Notice(
+                                "Not warding for {0}.{1} because no person assigned",
+                                post.Topic.Value.TopicId.Value,
+                                post.PostId.Value);
+                        }
+                        else
+                        {
+                            var backoff = post.Created.Value
+                                .Subtract(latest[post.Person.Value.Id.Value]);
+                            var backoffFactor = BackoffFactor(backoff);
+                            var conversationFactor = ConversationFactor(cache, post);
+                            var points = (int)Math.Floor(100d * backoffFactor * conversationFactor);
+                            var reason = string.Format(
+                                "Backoff {0:0.00}%, conversation {1:0.00}%",
+                                backoffFactor, conversationFactor);
+                            post.AwardedPoints.Value = points;
+                            post.AwardedCalculation.Value = reason;
+
+                            if (points > 0)
                             {
-                                Console.WriteLine(topic2.Id.ToString() + " " + post.Id.ToString() + " " + like);
+                                post.AwardDecision.Value = AwardDecision.Positive;
+                                _logger.Notice(
+                                   "Awarding {0} for {1}.{2}. Reason: {3}",
+                                   points,
+                                   post.Topic.Value.TopicId.Value,
+                                   post.PostId.Value,
+                                   reason);
                             }
+                            else
+                            {
+                                post.AwardDecision.Value = AwardDecision.Negative;
+                                _logger.Notice(
+                                   "Not warding for {0}.{1} because result 0 points. Reason {2}",
+                                   post.Topic.Value.TopicId.Value,
+                                   post.PostId.Value,
+                                   reason);
+                            }
+
+                            _database.Save(post);
                         }
                     }
+
+                    if (post.Person.Value != null)
+                        latest[post.Person.Value.Id.Value] = post.Created.Value;
+                }
+
+                transaction.Commit();
+            }
+        }
+
+        private double ConversationFactor(Cache cache, Post post)
+        {
+            var thread = new Queue<Post>(cache.Posts
+                .Where(p => p.Topic.Value == post.Topic.Value)
+                .Where(p => p.PostId < post.PostId)
+                .OrderByDescending(p => p.PostId));
+            var participants = new List<Guid>();
+            participants.Add(post.Person.Value.Id.Value);
+            var addon = new Queue<double>(ConversationAddon);
+            var factor = addon.Dequeue();
+
+            while (thread.Count > 0 && addon.Count < 0)
+            {
+                var p = thread.Dequeue(); 
+
+                if (p.Person.Value != null &&
+                    !participants.Contains(p.Person.Value.Id.Value))
+                {
+                    participants.Add(p.Person.Value.Id.Value);
+                    factor += addon.Dequeue();
                 }
             }
 
-            foreach (var person in _quaestur.GetPersonList())
+            return factor;
+        }
+
+        private IEnumerable<double> ConversationAddon
+        {
+            get
             {
-                Console.WriteLine(person.Id.ToString() + " " + person.Username); 
+                yield return 0.4d;
+                yield return 0.3d;
+                yield return 0.2d;
+                yield return 0.1d;
+            }
+        }
+
+        private double BackoffFactor(TimeSpan backoff)
+        {
+            var factor = 0d;
+
+            foreach (var level in Levels)
+            {
+                var length = new TimeSpan(Math.Min(backoff.Ticks, level.Item1.Ticks));
+                var add = level.Item2 / level.Item1.TotalSeconds * length.TotalSeconds;
+                factor += add;
+                backoff = backoff.Subtract(length);
+            }
+
+            return factor;
+        }
+
+        private IEnumerable<Tuple<TimeSpan, double>> Levels
+        {
+            get
+            {
+                yield return new Tuple<TimeSpan, double>(new TimeSpan(0, 0, 1, 0), 0d);
+                yield return new Tuple<TimeSpan, double>(new TimeSpan(0, 0, 1, 0), 0.03d);
+                yield return new Tuple<TimeSpan, double>(new TimeSpan(0, 0, 58, 0), 0.27d);
+                yield return new Tuple<TimeSpan, double>(new TimeSpan(0, 23, 0, 0), 0.6d);
+                yield return new Tuple<TimeSpan, double>(new TimeSpan(6, 0, 0, 0), 0.1d);
             }
         }
     }
