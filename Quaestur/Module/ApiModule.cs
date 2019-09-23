@@ -221,26 +221,27 @@ namespace Quaestur
             DatabaseObject dbObj = obj;
             var json = new JObject();
             json.Add(Property("id", dbObj.Id));
+            json.Add(new JProperty("type", typeof(T).Name));
 
             if (dbObj is Person person)
             {
                 json.Add(Property("username", person.UserName));
-                return json;
             }
             else if (dbObj is Organization organization)
             {
                 json.Add(Property("name", organization.Name));
-                return json;
             }
             else if (dbObj is Group group)
             {
                 json.Add(Property("name", group.Name));
-                return json;
             }
-            else
+            else if (dbObj is Points points)
             {
-                throw new ArgumentException(); 
+                json.Add(Property("ownerid", points.Owner.Value.Id));
+                json.Add(Property("budgetid", points.Budget.Value.Id));
             }
+
+            return json;
         }
 
         public void SetErrorAuthenticationFailed()
@@ -394,6 +395,19 @@ namespace Quaestur
             }
         }
 
+        public bool TryValueGuid(JObject request, string key, out Guid value)
+        {
+            if (request.TryValueGuid(key, out value))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
         public bool TryValueDateTime(JObject request, string key, out DateTime value)
         { 
             if (request.TryValueString(key, out string stringValue) &&
@@ -404,6 +418,22 @@ namespace Quaestur
             else
             {
                 value = new DateTime(1850, 1, 1);
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
+        public bool TryValueEnum<T>(JObject request, string key, out T value)
+            where T : struct
+        {
+            if (request.TryValueString(key, out string stringValue) &&
+                Enum.TryParse(stringValue, out value))
+            {
+                return true;
+            }
+            else
+            {
+                value = default(T);
                 SetErrorMissingOrMalformed(key);
                 return false;
             }
@@ -465,8 +495,6 @@ namespace Quaestur
 
     public class ApiModule : QuaesturModule
     {
-        private ApiContext _context;
-
         public ApiModule()
         {
             Get("/api/v2/organization/list", parameters =>
@@ -477,9 +505,9 @@ namespace Quaestur
                 {
                     var organization = Database
                         .Query<Organization>()
-                        .Where(o => _context.HasApiAccess(o, PartAccess.Structure, AccessRight.Read))
+                        .Where(o => response.Context.HasApiAccess(o, PartAccess.Structure, AccessRight.Read))
                         .OrderBy(o => o.GetText(Translator));
-                    response.SetList(organization, _context);
+                    response.SetList(organization, response.Context);
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");
@@ -492,9 +520,9 @@ namespace Quaestur
                 {
                     var organization = Database
                         .Query<Group>()
-                        .Where(g => _context.HasApiAccess(g, PartAccess.Structure, AccessRight.Read))
+                        .Where(g => response.Context.HasApiAccess(g, PartAccess.Structure, AccessRight.Read))
                         .OrderBy(g => g.Name.GetText(Translator));
-                    response.SetList(organization, _context);
+                    response.SetList(organization, response.Context);
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");
@@ -507,9 +535,9 @@ namespace Quaestur
                 {
                     var persons = Database
                         .Query<Person>()
-                        .Where(p => _context.HasApiAccess(p, PartAccess.Anonymous, AccessRight.Read))
+                        .Where(p => response.Context.HasApiAccess(p, PartAccess.Anonymous, AccessRight.Read))
                         .OrderBy(p => p.UserName.Value);
-                    response.SetList(persons, _context);
+                    response.SetList(persons, response.Context);
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");
@@ -520,11 +548,13 @@ namespace Quaestur
 
                 if (response.CheckLogin(Request) &&
                     response.TryParseJson(ReadBody(), out JObject request) &&
-                    response.TryReadObjectField(request, "personid", out Person person) &&
+                    response.TryReadObjectField(request, "ownerid", out Person person) &&
                     response.TryReadObjectField(request, "budgetid", out PointBudget budget) &&
                     response.TryValueInt32(request, "amount", out int amount) &&
                     response.TryValueString(request, "reason", out string reason) &&
                     response.TryValueDateTime(request, "moment", out DateTime moment) &&
+                    response.TryValueEnum(request, "referencetype", out PointsReferenceType referenceType) &&
+                    response.TryValueGuid(request, "referenceid", out Guid referenceId) &&
                     response.HasAccess(person, PartAccess.Points, AccessRight.Write) &&
                     response.HasAccess(budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
                 {
@@ -534,13 +564,21 @@ namespace Quaestur
                     points.Amount.Value = amount;
                     points.Moment.Value = moment;
                     points.Reason.Value = reason;
-                    Database.Save(points);
-                    Journal("API",
-                            person,
-                            "Journal.API.Points.Add",
-                            "Added points through the API",
-                            "Added points {0}.",
-                            t => points.GetText(t));
+                    points.ReferenceType.Value = referenceType;
+                    points.ReferenceId.Value = referenceId;
+
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        Database.Save(points);
+                        Journal("API",
+                                person,
+                                "Journal.API.Points.Add",
+                                "Added points through the API",
+                                "Added points {0}.",
+                                t => points.GetText(t));
+                    }
+
+                    response.SetObject(points, response.Context);
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");

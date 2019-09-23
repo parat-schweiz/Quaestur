@@ -7,7 +7,8 @@ namespace Quaestur
 {
     public enum PointsReferenceType
     {
-        None = 0 
+        None = 0,
+        DiscoursePost = 1,
     }
 
     public static class PointsReferenceTypeExtensions
@@ -18,6 +19,8 @@ namespace Quaestur
             {
                 case PointsReferenceType.None:
                     return translator.Get("Enum.PointsReferenceType.None", "Value 'None' in PointsReferenceType enum", "None");
+                case PointsReferenceType.DiscoursePost:
+                    return translator.Get("Enum.PointsReferenceType.DiscoursePost", "Value 'DiscoursePost' in PointsReferenceType enum", "Discourse Post");
                 default:
                     throw new NotSupportedException();
             }
