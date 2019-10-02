@@ -30,6 +30,7 @@ namespace Quaestur
                 if (!match.Success &&
                     match.Groups.Count < 3)
                 {
+                    Global.Log.Notice("Invalid id at matrix login: {0}", id);
                     var error = new JObject(
                         new JProperty("auth",
                             new JObject(
@@ -40,8 +41,9 @@ namespace Quaestur
                 var userName = match.Groups[1].Value.ToLower();
                 var domain = match.Groups[2].Value;
 
-                if (domain != Global.Config.MatrixDomain)
+                if (!Global.Config.MatrixDomains.Contains(domain))
                 {
+                    Global.Log.Notice("Invalid domain at matrix login: {0}", domain);
                     var error = new JObject(
                         new JProperty("auth",
                             new JObject(

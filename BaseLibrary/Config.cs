@@ -152,10 +152,47 @@ namespace BaseLibrary
         }
     }
 
+    public abstract class ConfigMultiItem<T> : ConfigItem
+    {
+        protected string Tag { get; private set; }
+        private Action<T> _add;
+
+        public ConfigMultiItem(string tag, Action<T> add)
+        {
+            Tag = tag;
+            _add = add;
+        }
+
+        protected abstract T Convert(string value);
+
+        public override void Load(XElement root)
+        {
+            var elements = root.Elements(Tag);
+
+            foreach (var element in elements)
+            {
+                _add(Convert(element.Value));
+            }
+        }
+    }
+
     public class ConfigItemString : ConfigItem<string>
     {
         public ConfigItemString(string tag, Action<string> assign)
             : base(tag, assign)
+        {
+        }
+
+        protected override string Convert(string value)
+        {
+            return value;
+        }
+    }
+
+    public class ConfigMultiItemString : ConfigMultiItem<string>
+    {
+        public ConfigMultiItemString(string tag, Action<string> add)
+            : base(tag, add)
         {
         }
 
