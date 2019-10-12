@@ -587,7 +587,7 @@ namespace Quaestur
                         .Where(b => b.Period.Value.StartDate.Value.Date <= DateTime.UtcNow.Date)
                         .Where(b => b.Period.Value.EndDate.Value.Date >= DateTime.UtcNow.Date)
                         .Where(b => response.Context.HasApiAccess(b.Owner.Value, PartAccess.PointBudget, AccessRight.Read))
-                        .OrderBy(b => b.Label.Value);
+                        .OrderBy(b => b.Label.Value.AnyValue);
                     response.SetList(budgets, response.Context);
                 }
 

@@ -166,7 +166,7 @@ namespace DiscourseEngagement
 
         private void DoAwards()
         {
-            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label == "X");
+            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label == "Aktionen");
 
             using (var transaction = _database.BeginTransaction())
             {
