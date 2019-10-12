@@ -111,7 +111,7 @@ namespace DiscourseEngagement
                 var cache = new Cache(_database);
                 cache.Reload();
 
-                foreach (var apiTopic in _discourse.GetTopics())
+                foreach (var apiTopic in _discourse.GetTopics().ToList())
                 {
                     var dbTopic = cache.GetTopic(apiTopic.Id);
 
@@ -166,6 +166,8 @@ namespace DiscourseEngagement
 
         private void DoAwards()
         {
+            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label == "X");
+
             using (var transaction = _database.BeginTransaction())
             {
                 var cache = new Cache(_database);
@@ -175,13 +177,13 @@ namespace DiscourseEngagement
                 foreach (var person in cache.Persons)
                     latest.Add(person.Id.Value, new DateTime(1850, 1, 1));
 
-                foreach (var post in cache.Posts.OrderBy(p => p.Created))
+                foreach (var post in cache.Posts.OrderBy(p => p.Created.Value))
                 { 
                     if (post.AwardDecision.Value == AwardDecision.None)
                     { 
                         if (post.Person.Value == null)
                         {
-                            post.AwardDecision.Value = AwardDecision.None;
+                            post.AwardDecision.Value = AwardDecision.Negative;
                             _database.Save(post);
                             _logger.Notice(
                                 "Not warding for {0}.{1} because no person assigned",
@@ -196,8 +198,8 @@ namespace DiscourseEngagement
                             var conversationFactor = ConversationFactor(cache, post);
                             var points = (int)Math.Floor(100d * backoffFactor * conversationFactor);
                             var reason = string.Format(
-                                "Backoff {0:0.00}%, conversation {1:0.00}%",
-                                backoffFactor, conversationFactor);
+                                "Backoff {0:0.0}%, conversation {1:0.0}%",
+                                backoffFactor * 100, conversationFactor * 100);
                             post.AwardedPoints.Value = points;
                             post.AwardedCalculation.Value = reason;
 

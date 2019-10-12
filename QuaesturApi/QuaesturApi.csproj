@@ -39,6 +39,7 @@
     <Compile Include="Quaestur.cs" />
     <Compile Include="Person.cs" />
     <Compile Include="QuaesturApiConfig.cs" />
+    <Compile Include="PointBudget.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

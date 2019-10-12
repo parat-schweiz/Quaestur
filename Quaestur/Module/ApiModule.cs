@@ -195,7 +195,27 @@ namespace Quaestur
             return new JProperty(name, field.Value.ToString());
         }
 
+        private JProperty Property(string name, Field<DateTime> field)
+        {
+            return new JProperty(name, field.Value.FormatIso());
+        }
+
         private JProperty Property(string name, Field<Guid> field)
+        {
+            return new JProperty(name, field.Value.ToString());
+        }
+
+        private JProperty Property(string name, DecimalField field)
+        {
+            return new JProperty(name, field.Value.ToString());
+        }
+
+        private JProperty Property(string name, Field<long> field)
+        {
+            return new JProperty(name, field.Value.ToString());
+        }
+
+        private JProperty Property(string name, Field<int> field)
         {
             return new JProperty(name, field.Value.ToString());
         }
@@ -239,6 +259,20 @@ namespace Quaestur
             {
                 json.Add(Property("ownerid", points.Owner.Value.Id));
                 json.Add(Property("budgetid", points.Budget.Value.Id));
+            }
+            else if (dbObj is PointBudget budget)
+            {
+                json.Add(Property("label", budget.Label));
+                json.Add(Property("periodid", budget.Period.Value.Id));
+                json.Add(Property("ownerid", budget.Owner.Value.Id));
+                json.Add(Property("currentpoints", budget.CurrentPoints));
+                json.Add(Property("share", budget.Share));
+            }
+            else if (dbObj is BudgetPeriod period)
+            {
+                json.Add(Property("startdate", period.StartDate));
+                json.Add(Property("enddate", period.EndDate));
+                json.Add(Property("organizationid", period.Organization.Value.Id));
             }
 
             return json;
@@ -538,6 +572,38 @@ namespace Quaestur
                         .Where(p => response.Context.HasApiAccess(p, PartAccess.Anonymous, AccessRight.Read))
                         .OrderBy(p => p.UserName.Value);
                     response.SetList(persons, response.Context);
+                }
+
+                return Response.AsText(response.ToJson(), "application/json");
+            });
+            Get("/api/v2/pointbudget/list", parameters =>
+            {
+                var response = CreateResponse();
+
+                if (response.CheckLogin(Request))
+                {
+                    var budgets = Database
+                        .Query<PointBudget>()
+                        .Where(b => b.Period.Value.StartDate.Value.Date <= DateTime.UtcNow.Date)
+                        .Where(b => b.Period.Value.EndDate.Value.Date >= DateTime.UtcNow.Date)
+                        .Where(b => response.Context.HasApiAccess(b.Owner.Value, PartAccess.PointBudget, AccessRight.Read))
+                        .OrderBy(b => b.Label.Value);
+                    response.SetList(budgets, response.Context);
+                }
+
+                return Response.AsText(response.ToJson(), "application/json");
+            });
+            Get("/api/v2/budgetperiods/list", parameters =>
+            {
+                var response = CreateResponse();
+
+                if (response.CheckLogin(Request))
+                {
+                    var periods = Database
+                        .Query<BudgetPeriod>()
+                        .Where(b => response.Context.HasApiAccess(b.Organization.Value, PartAccess.PointBudget, AccessRight.Read))
+                        .OrderBy(b => b.ToString());
+                    response.SetList(periods, response.Context);
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");

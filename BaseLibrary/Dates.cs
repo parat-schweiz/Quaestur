@@ -1,8 +1,25 @@
 ﻿using System;
+using System.Globalization;
+
 namespace BaseLibrary
 {
     public static class Dates
     {
+        public static string FormatIso(this DateTime value)
+        {
+            return value.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
+        }
+
+        public static DateTime ParseIsoDate(this string value)
+        {
+            return DateTime.ParseExact(value, "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
+        }
+
+        public static bool TryParseIsoDate(string value, out DateTime date)
+        {
+            return DateTime.TryParseExact(value, "yyyyMMddTHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out date);
+        }
+
         public static TimeSpan ComputeOverlap(DateTime start1, DateTime end1, DateTime start2, DateTime end2)
         {
             // make sure range 1 is shorter than range 2

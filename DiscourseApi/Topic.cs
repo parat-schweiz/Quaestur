@@ -29,7 +29,11 @@ namespace DiscourseApi
             ReplyCount = obj.Value<int>("reply_count");
             LikeCount = obj.Value<int>("like_count");
             Views = obj.Value<int>("views");
-            Tags = new List<string>(obj.Value<JArray>("tags").Values<string>());
+
+            Tags = new List<string>();
+            var tags = obj.Value<JArray>("tags");
+            if (tags != null) tags.Values<string>();
+
             Posts = new List<Post>();
             var postStream = obj.Value<JObject>("post_stream");
 

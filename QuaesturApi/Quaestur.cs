@@ -44,6 +44,12 @@ namespace QuaesturApi
             return result.Value<JArray>("result").Values<JObject>().Select(x => new Person(x));
         }
 
+        public IEnumerable<PointBudget> GetPointBudgetList()
+        {
+            var result = Request("api/v2/pointbudget/list", HttpMethod.Get, null);
+            return result.Value<JArray>("result").Values<JObject>().Select(x => new PointBudget(x));
+        }
+
         private JObject Request(string endpoint, HttpMethod method, JObject data, params UrlParameter[] parameters)
         {
             var url = string.Join("/", _config.ApiUrl, endpoint);
