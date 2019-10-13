@@ -24,7 +24,7 @@ namespace QuaesturApi
             BudgetId = Guid.Parse(obj.Value<string>("budgetid"));
             Amount = obj.Value<int>("amount");
             Reason = obj.Value<string>("reason");
-            Moment = obj.Value<string>("moment").ParseIsoDate();
+            Moment = obj.Value<DateTime>("moment");
             ReferenceType = (PointsReferenceType)Enum.Parse(typeof(PointsReferenceType), obj.Value<string>("referencetype"));
             ReferenceId = Guid.Parse(obj.Value<string>("referenceid"));
         }

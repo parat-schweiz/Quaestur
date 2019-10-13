@@ -651,6 +651,7 @@ namespace Quaestur
                                 "Added points through the API",
                                 "Added points {0}.",
                                 t => points.GetText(t));
+                        transaction.Commit();
                     }
 
                     response.SetObject(points, response.Context);

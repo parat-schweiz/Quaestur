@@ -69,7 +69,7 @@ namespace QuaesturApi
             obj.Add("referencetype", referenceType.ToString());
             obj.Add("referenceid", referenceId);
             var result = Request("/api/v2/points/add", HttpMethod.Post, obj);
-            return new Points(result);
+            return new Points(result.Value<JObject>("result"));
         }
 
         private JObject Request(string endpoint, HttpMethod method, JObject data, params UrlParameter[] parameters)
