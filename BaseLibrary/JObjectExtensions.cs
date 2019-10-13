@@ -90,6 +90,20 @@ namespace Newtonsoft.Json.Linq
             }
         }
 
+        public static bool TryValueDateTime(this JObject obj, string key, out DateTime value)
+        {
+            try
+            {
+                value = obj.ValueDateTime(key);
+                return true;
+            }
+            catch
+            {
+                value = new DateTime(1850, 1, 1);
+                return false;
+            }
+        }
+
         public static bool TryValueGuid(this JObject obj, string key, out Guid value)
         {
             try
@@ -101,6 +115,20 @@ namespace Newtonsoft.Json.Linq
             {
                 value = Guid.Empty;
                 return false; 
+            }
+        }
+
+        public static DateTime ValueDateTime(this JObject obj, string key)
+        {
+            var value = obj.Value<DateTime>(key);
+
+            if (value == null)
+            {
+                throw new ArgumentNullException("Property " + key + " not present");
+            }
+            else
+            {
+                return value;
             }
         }
 

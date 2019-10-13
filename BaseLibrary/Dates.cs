@@ -7,17 +7,17 @@ namespace BaseLibrary
     {
         public static string FormatIso(this DateTime value)
         {
-            return value.ToString("yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
+            return value.ToString("yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
         }
 
         public static DateTime ParseIsoDate(this string value)
         {
-            return DateTime.ParseExact(value, "yyyyMMddTHHmmss", CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture);
         }
 
         public static bool TryParseIsoDate(string value, out DateTime date)
         {
-            return DateTime.TryParseExact(value, "yyyyMMddTHHmmss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out date);
+            return DateTime.TryParseExact(value, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out date);
         }
 
         public static TimeSpan ComputeOverlap(DateTime start1, DateTime end1, DateTime start2, DateTime end2)

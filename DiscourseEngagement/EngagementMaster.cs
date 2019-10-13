@@ -166,7 +166,7 @@ namespace DiscourseEngagement
 
         private void DoAwards()
         {
-            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label == "Aktionen");
+            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label[QuaesturApi.Language.English] == "Aktionen");
 
             using (var transaction = _database.BeginTransaction())
             {
@@ -205,7 +205,10 @@ namespace DiscourseEngagement
 
                             if (points > 0)
                             {
+                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty);
                                 post.AwardDecision.Value = AwardDecision.Positive;
+                                post.AwardedPointsId.Value = result.Id;
+                                post.AwardedPoints.Value = points;
                                 _logger.Notice(
                                    "Awarding {0} for {1}.{2}. Reason: {3}",
                                    points,

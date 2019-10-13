@@ -40,6 +40,10 @@
     <Compile Include="Person.cs" />
     <Compile Include="QuaesturApiConfig.cs" />
     <Compile Include="PointBudget.cs" />
+    <Compile Include="MultiLanguageString.cs" />
+    <Compile Include="Language.cs" />
+    <Compile Include="PointsReferenceType.cs" />
+    <Compile Include="Points.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

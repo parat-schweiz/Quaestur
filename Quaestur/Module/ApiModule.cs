@@ -195,6 +195,12 @@ namespace Quaestur
             return new JProperty(name, field.Value.ToString());
         }
 
+        private JProperty Property<T>(string name, EnumField<T> field)
+             where T : struct, IConvertible
+        {
+            return new JProperty(name, field.Value.ToString());
+        }
+
         private JProperty Property(string name, Field<DateTime> field)
         {
             return new JProperty(name, field.Value.FormatIso());
@@ -259,6 +265,10 @@ namespace Quaestur
             {
                 json.Add(Property("ownerid", points.Owner.Value.Id));
                 json.Add(Property("budgetid", points.Budget.Value.Id));
+                json.Add(Property("amount", points.Amount));
+                json.Add(Property("reason", points.Reason));
+                json.Add(Property("referencetype", points.ReferenceType));
+                json.Add(Property("referenceid", points.ReferenceId));
             }
             else if (dbObj is PointBudget budget)
             {
@@ -444,8 +454,7 @@ namespace Quaestur
 
         public bool TryValueDateTime(JObject request, string key, out DateTime value)
         { 
-            if (request.TryValueString(key, out string stringValue) &&
-                DateTime.TryParseExact(stringValue, "yyyy-MM-ddTHH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out value))
+            if (request.TryValueDateTime(key, out value))
             {
                 return true;
             }

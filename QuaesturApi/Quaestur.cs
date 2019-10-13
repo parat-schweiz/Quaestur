@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using BaseLibrary;
 
 namespace QuaesturApi
 {
@@ -48,6 +49,27 @@ namespace QuaesturApi
         {
             var result = Request("api/v2/pointbudget/list", HttpMethod.Get, null);
             return result.Value<JArray>("result").Values<JObject>().Select(x => new PointBudget(x));
+        }
+
+        public Points AddPoints(
+            Guid ownerId,
+            Guid budgetId, 
+            int amount, 
+            string reason, 
+            DateTime moment,
+            PointsReferenceType referenceType,
+            Guid referenceId)
+        {
+            var obj = new JObject();
+            obj.Add("ownerid", ownerId);
+            obj.Add("budgetid", budgetId);
+            obj.Add("amount", amount);
+            obj.Add("reason", reason);
+            obj.Add("moment", moment.FormatIso());
+            obj.Add("referencetype", referenceType.ToString());
+            obj.Add("referenceid", referenceId);
+            var result = Request("/api/v2/points/add", HttpMethod.Post, obj);
+            return new Points(result);
         }
 
         private JObject Request(string endpoint, HttpMethod method, JObject data, params UrlParameter[] parameters)
