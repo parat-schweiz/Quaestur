@@ -242,22 +242,30 @@ namespace DiscourseEngagement
         {
             var thread = new Queue<Post>(cache.Posts
                 .Where(p => p.Topic.Value == post.Topic.Value)
-                .Where(p => p.PostId < post.PostId)
-                .OrderByDescending(p => p.PostId));
+                .Where(p => p.PostId.Value < post.PostId.Value)
+                .OrderByDescending(p => p.PostId.Value));
             var participants = new List<Guid>();
-            participants.Add(post.Person.Value.Id.Value);
             var addon = new Queue<double>(ConversationAddon);
             var factor = addon.Dequeue();
 
-            while (thread.Count > 0 && addon.Count < 0)
+            while (thread.Count > 0)
             {
-                var p = thread.Dequeue(); 
+                var p = thread.Dequeue();
 
-                if (p.Person.Value != null &&
-                    !participants.Contains(p.Person.Value.Id.Value))
+                if (p.Person.Value != null)
                 {
-                    participants.Add(p.Person.Value.Id.Value);
-                    factor += addon.Dequeue();
+                    if (p.Person.Value.Id.Equals(post.Person.Value.Id))
+                    {
+                        participants = new List<Guid>();
+                        addon = new Queue<double>(ConversationAddon);
+                        factor = addon.Dequeue();
+                    }
+                    else if (!participants.Contains(p.Person.Value.Id.Value) &&
+                             addon.Count > 0)
+                    {
+                        participants.Add(p.Person.Value.Id.Value);
+                        factor += addon.Dequeue();
+                    }
                 }
             }
 
