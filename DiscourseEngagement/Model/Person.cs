@@ -8,6 +8,8 @@ namespace DiscourseEngagement
     public class Person : DatabaseObject
     {
         public Field<int> UserId { get; private set; }
+        public StringField UserName { get; private set; }
+        public EnumField<Language> Language { get; private set; }
 
         public Person() : this(Guid.Empty)
         {
@@ -16,6 +18,8 @@ namespace DiscourseEngagement
         public Person(Guid id) : base(id)
         {
             UserId = new Field<int>(this, "userid", 0);
+            UserName = new StringField(this, "username", 256, AllowStringType.SimpleText);
+            Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, SiteLibrary.LanguageExtensions.Translate);
         }
 
         public override string ToString()
@@ -30,7 +34,17 @@ namespace DiscourseEngagement
 
         public override void Delete(IDatabase database)
         {
-            database.Delete(this); 
+            foreach (var like in database.Query<Like>(DC.Equal("personid", Id.Value)))
+            {
+                database.Delete(like);
+            }
+
+            foreach (var post in database.Query<Post>(DC.Equal("personid", Id.Value)))
+            {
+                database.Delete(post);
+            }
+
+            database.Delete(this);
         }
     }
 }

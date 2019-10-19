@@ -20,9 +20,12 @@ namespace DiscourseEngagement
             logger.Notice("Checking tables...");
 
             database.CreateTable<Meta>();
+            database.CreateTable<Phrase>();
+            database.CreateTable<PhraseTranslation>();
             database.CreateTable<Person>();
             database.CreateTable<Topic>();
             database.CreateTable<Post>();
+            database.CreateTable<Like>();
 
             logger.Notice("Tables ok.");
         }

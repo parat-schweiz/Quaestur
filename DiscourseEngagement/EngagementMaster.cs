@@ -64,7 +64,9 @@ namespace DiscourseEngagement
             {
                 if (user.Auid.HasValue)
                 {
-                    if (quaesturPersons.Any(p => p.Id.Equals(user.Auid.Value)))
+                    var questurPerson = quaesturPersons.SingleOrDefault(p => p.Id.Equals(user.Auid.Value));
+
+                    if (questurPerson != null)
                     {
                         var person = databasePersons.SingleOrDefault(p => p.Id.Equals(user.Auid.Value));
 
@@ -72,12 +74,16 @@ namespace DiscourseEngagement
                         {
                             person = new Person(user.Auid.Value);
                             person.UserId.Value = user.Id;
+                            person.UserName.Value = user.Username;
+                            person.Language.Value = SiteLibrary.Language.English;
                             _database.Save(person);
                             _logger.Notice("Added user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
                         else if (person.UserId.Value != user.Id)
                         {
                             person.UserId.Value = user.Id;
+                            person.UserName.Value = user.Username;
+                            person.Language.Value = SiteLibrary.Language.English;
                             _database.Save(person);
                             _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
@@ -158,8 +164,37 @@ namespace DiscourseEngagement
                     dbPost.PostId.Value = apiPost.Id;
                     dbPost.Created.Value = apiPost.CreatedAt;
                     dbPost.AwardDecision.Value = AwardDecision.None;
+                    dbPost.LikeCount.Value = apiPost.LikeCount;
                     cache.Add(dbPost);
                     _database.Save(dbPost);
+                    SyncLikes(cache, apiPost, dbPost);
+                }
+                else if (dbPost.LikeCount < apiPost.LikeCount)
+                {
+                    dbPost.LikeCount.Value = apiPost.LikeCount;
+                    _database.Save(dbPost);
+                    SyncLikes(cache, apiPost, dbPost);
+                }
+            }
+        }
+
+        private void SyncLikes(Cache cache, DiscourseApi.Post apiPost, Post dbPost)
+        {
+            var likes = _discourse.GetLikes(apiPost.Id);
+
+            foreach (var userId in likes)
+            {
+                var dbLike = cache.GetLike(apiPost.Id, userId);
+
+                if (dbLike == null)
+                {
+                    dbLike = new Like(Guid.NewGuid());
+                    dbLike.Person.Value = cache.GetPerson(userId);
+                    dbLike.Post.Value = dbPost;
+                    dbLike.Created.Value = DateTime.Now;
+                    dbLike.AwardDecision.Value = AwardDecision.None;
+                    cache.Add(dbLike);
+                    _database.Save(dbLike);
                 }
             }
         }
@@ -170,6 +205,7 @@ namespace DiscourseEngagement
 
             using (var transaction = _database.BeginTransaction())
             {
+                var translation = new Translation(_database);
                 var cache = new Cache(_database);
                 cache.Reload();
 
@@ -178,9 +214,9 @@ namespace DiscourseEngagement
                     latest.Add(person.Id.Value, new DateTime(1850, 1, 1));
 
                 foreach (var post in cache.Posts.OrderBy(p => p.Created.Value))
-                { 
+                {
                     if (post.AwardDecision.Value == AwardDecision.None)
-                    { 
+                    {
                         if (post.Person.Value == null)
                         {
                             post.AwardDecision.Value = AwardDecision.Negative;
@@ -197,9 +233,13 @@ namespace DiscourseEngagement
                             var backoffFactor = BackoffFactor(backoff);
                             var conversationFactor = ConversationFactor(cache, post);
                             var points = (int)Math.Floor(100d * backoffFactor * conversationFactor);
-                            var reason = string.Format(
-                                "Backoff {0:0.0}%, conversation {1:0.0}%",
-                                backoffFactor * 100, conversationFactor * 100);
+                            var reason = translation.Get(
+                                post.Person.Value.Language.Value,
+                                "Award.Post.Reason",
+                                "When a person posts on discourse",
+                                "Posting in discourse, backoff factor {0:0.0}%, conversation factor {1:0.0}%",
+                                backoffFactor * 100, 
+                                conversationFactor * 100);
                             post.AwardedPoints.Value = points;
                             post.AwardedCalculation.Value = reason;
 
@@ -232,6 +272,65 @@ namespace DiscourseEngagement
 
                     if (post.Person.Value != null)
                         latest[post.Person.Value.Id.Value] = post.Created.Value;
+                }
+
+                foreach (var like in cache.Likes)
+                {
+                    if (like.AwardDecision.Value == AwardDecision.None)
+                    {
+                        if (like.Person.Value == null)
+                        {
+                            like.AwardDecision.Value = AwardDecision.Negative;
+                            _database.Save(like);
+                            _logger.Notice(
+                                "Not warding for {0}.{1}.{2} because no person assigned",
+                                like.Post.Value.Topic.Value.TopicId.Value,
+                                like.Post.Value.PostId,
+                                like.Person.Value.UserId);
+                        }
+                        else
+                        {
+                            like.AwardDecision.Value = AwardDecision.Positive;
+                            like.AwardedFromPoints.Value = 10;
+                            like.AwardedFromCalculation.Value = translation.Get(
+                                like.Person.Value.Language.Value,
+                                "Award.Like.From.Reason",
+                                "When the person gives a like in discourse",
+                                "Giving a like in discourse");
+                            like.AwardedToPoints.Value = 20;
+                            like.AwardedToCalculation.Value = translation.Get(
+                                like.Post.Value.Person.Value.Language.Value,
+                                "Award.Like.To.Reason",
+                                "When the person recieves a like in discourse",
+                                "Receiving a like in discourse"); 
+                            var resultFrom = _quaestur.AddPoints(
+                                like.Person.Value.Id, 
+                                budget.Id,
+                                like.AwardedFromPoints.Value.Value, 
+                                like.AwardedFromCalculation.Value, 
+                                DateTime.UtcNow, 
+                                PointsReferenceType.None, 
+                                Guid.Empty);
+                            var resultTo = _quaestur.AddPoints(
+                                like.Post.Value.Person.Value.Id, 
+                                budget.Id,
+                                like.AwardedToPoints.Value.Value,
+                                like.AwardedToCalculation.Value,
+                                DateTime.UtcNow,
+                                PointsReferenceType.None,
+                                Guid.Empty);
+                            like.AwardedFromPointsId.Value = resultFrom.Id;
+                            like.AwardedToPointsId.Value = resultTo.Id;
+                            _database.Save(like);
+                            _logger.Notice(
+                                "Awarding {0}/{1} for like {2}.{3}.{4}",
+                                like.AwardedFromPoints.Value,
+                                like.AwardedToPoints.Value,
+                                like.Post.Value.Topic.Value.TopicId.Value,
+                                like.Post.Value.PostId,
+                                like.Person.Value.UserId);
+                        }
+                    }
                 }
 
                 transaction.Commit();

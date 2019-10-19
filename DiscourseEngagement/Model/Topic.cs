@@ -34,6 +34,11 @@ namespace DiscourseEngagement
 
         public override void Delete(IDatabase database)
         {
+            foreach (var post in database.Query<Post>(DC.Equal("topicid", Id.Value)))
+            {
+                database.Delete(post);
+            }
+
             database.Delete(this); 
         }
     }

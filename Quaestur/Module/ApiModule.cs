@@ -231,6 +231,11 @@ namespace Quaestur
             return new JProperty(name, field.Value);
         }
 
+        private JProperty Property(string name, string value)
+        {
+            return new JProperty(name, value);
+        }
+
         private JProperty Property(string name, MultiLanguageStringField field)
         {
             var texts = new JObject();
@@ -252,6 +257,17 @@ namespace Quaestur
             if (dbObj is Person person)
             {
                 json.Add(Property("username", person.UserName));
+                json.Add(Property("language", person.Language));
+
+                if (context.HasApiAccess(person, PartAccess.Demography, AccessRight.Read))
+                {
+                    json.Add(Property("lastname", person.LastName));
+                    json.Add(Property("firstname", person.FirstName));
+                    json.Add(Property("middlenames", person.MiddleNames));
+                    json.Add(Property("fullname", person.FullName));
+                    json.Add(Property("shorthand", person.ShortHand));
+                    json.Add(Property("birthdate", person.BirthDate));
+                }
             }
             else if (dbObj is Organization organization)
             {

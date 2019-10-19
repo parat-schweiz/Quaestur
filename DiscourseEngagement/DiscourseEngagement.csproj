@@ -48,6 +48,7 @@
     <Compile Include="Model\Topic.cs" />
     <Compile Include="Model\Post.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="Model\Like.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

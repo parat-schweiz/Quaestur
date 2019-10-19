@@ -12,6 +12,7 @@ namespace DiscourseEngagement
         private readonly Dictionary<int, Topic> _topics;
         private readonly Dictionary<int, Person> _persons;
         private readonly Dictionary<string, Post> _posts;
+        private readonly Dictionary<string, Like> _likes;
 
         public Cache(IDatabase database)
         {
@@ -19,6 +20,7 @@ namespace DiscourseEngagement
             _topics = new Dictionary<int, Topic>();
             _persons = new Dictionary<int, Person>();
             _posts = new Dictionary<string, Post>();
+            _likes = new Dictionary<string, Like>();
         }
 
         public void Add(Person person)
@@ -43,6 +45,23 @@ namespace DiscourseEngagement
                 _posts.Add(key, post); 
         }
 
+        public void Add(Like like)
+        {
+            var key = GetLikeKey(like);
+            if (!_likes.ContainsKey(key))
+                _likes.Add(key, like);
+        }
+
+        private string GetLikeKey(Like like)
+        {
+            return GetLikeKey(like.Post.Value.PostId, like.Person.Value.UserId); 
+        }
+
+        private string GetLikeKey(int postId, int userId)
+        {
+            return string.Format("{0}.{1}", postId, userId);
+        }
+
         private string GetPostKey(Post post)
         {
             return GetPostKey(post.Topic.Value.TopicId.Value, post.PostId.Value);
@@ -58,6 +77,7 @@ namespace DiscourseEngagement
             _topics.Clear();
             _persons.Clear();
             _posts.Clear();
+            _likes.Clear();
 
             foreach(var person in _database.Query<Person>())
             {
@@ -73,6 +93,11 @@ namespace DiscourseEngagement
             {
                 Add(post);
             }
+
+            foreach (var like in _database.Query<Like>())
+            {
+                Add(like);
+            }
         }
 
         public bool ContainsPerson(int userId)
@@ -83,6 +108,16 @@ namespace DiscourseEngagement
         public Person GetPerson(int userId)
         {
             return ContainsPerson(userId) ? _persons[userId] : null;
+        }
+
+        public bool ContainsLike(int postId, int userId)
+        {
+            return _likes.ContainsKey(GetLikeKey(postId, userId)); 
+        }
+
+        public Like GetLike(int postId, int userId)
+        {
+            return ContainsLike(postId, userId) ? _likes[GetLikeKey(postId, userId)] : null;
         }
 
         public bool ContainsTopic(int topicId)
@@ -118,6 +153,11 @@ namespace DiscourseEngagement
         public IEnumerable<Post> Posts
         {
             get { return _posts.Values; }
+        }
+
+        public IEnumerable<Like> Likes
+        {
+            get { return _likes.Values; } 
         }
 
         public IEnumerable<Post> GetPostsByPerson(int userId)
