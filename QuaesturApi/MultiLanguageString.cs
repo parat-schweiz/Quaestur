@@ -21,6 +21,19 @@ namespace QuaesturApi
             }
         }
 
+        public bool IsAny(string compare)
+        {
+            foreach (var value in _values)
+            {
+                if (value.Value == compare)
+                {
+                    return true; 
+                }
+            }
+
+            return false;
+        }
+
         public string this[Language language]
         {
             get

@@ -19,7 +19,7 @@ namespace DiscourseApi
         public List<string> Tags { get; private set; }
         public List<Post> Posts { get; private set; }
 
-        public Topic(JObject obj)
+        public Topic(JObject obj, IEnumerable<Post> posts)
         {
             Id = obj.Value<int>("id");
             Title = obj.Value<string>("title");
@@ -34,20 +34,13 @@ namespace DiscourseApi
             var tags = obj.Value<JArray>("tags");
             if (tags != null) tags.Values<string>();
 
-            Posts = new List<Post>();
-            var postStream = obj.Value<JObject>("post_stream");
-
-            if (postStream != null)
+            if (posts != null)
             {
-                var postList = postStream.Value<JArray>("posts");
-
-                if (postList != null)
-                {
-                    foreach (JObject postObj in postList)
-                    {
-                        Posts.Add(new Post(postObj));
-                    }
-                }
+                Posts = posts.ToList();
+            }
+            else
+            {
+                Posts = new List<Post>();
             }
         }
     }

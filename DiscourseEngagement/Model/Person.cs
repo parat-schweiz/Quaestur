@@ -8,7 +8,8 @@ namespace DiscourseEngagement
     public class Person : DatabaseObject
     {
         public Field<int> UserId { get; private set; }
-        public StringField UserName { get; private set; }
+        public StringField DiscourseUserName { get; private set; }
+        public StringField QuaesturUserName { get; private set; }
         public EnumField<Language> Language { get; private set; }
 
         public Person() : this(Guid.Empty)
@@ -18,7 +19,8 @@ namespace DiscourseEngagement
         public Person(Guid id) : base(id)
         {
             UserId = new Field<int>(this, "userid", 0);
-            UserName = new StringField(this, "username", 256, AllowStringType.SimpleText);
+            DiscourseUserName = new StringField(this, "discourseusername", 256, AllowStringType.SimpleText);
+            QuaesturUserName = new StringField(this, "quaesturusername", 256, AllowStringType.SimpleText);
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, SiteLibrary.LanguageExtensions.Translate);
         }
 

@@ -92,6 +92,165 @@ namespace Quaestur
             return CurrentSession.HasPersonNewAccess();
         }
 
+        private bool CheckAccess(AccessRight requestedRight, AccessRight actualRight)
+        {
+            switch (requestedRight)
+            {
+                case AccessRight.Write:
+                    return actualRight == AccessRight.Write;
+                case AccessRight.Read:
+                    return actualRight == AccessRight.Write || actualRight == AccessRight.Read;
+                default:
+                    return false; 
+            } 
+        }
+
+        public bool HasAccess(Person subject, Person person, PartAccess part, AccessRight right)
+        {
+            var roles = subject.RoleAssignments.Select(r => r.Role.Value).ToList();
+            var permissions = new List<Permission>(roles
+                .SelectMany(r => Database.Query<Permission>(DC.Equal("roleid", r.Id.Value)))
+                .Distinct());
+
+            foreach (var permission in permissions)
+            {
+                if (permission.Part.Value == part)
+                {
+                    switch (permission.Subject.Value)
+                    {
+                        case SubjectAccess.SystemWide:
+                            if (CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.SubOrganization:
+                            if (person.Memberships.Any(m => m.Organization.Value == permission.Role.Value.Group.Value.Organization.Value) &&
+                                person.Memberships.Any(m => permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(m.Organization.Value)) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Organization:
+                            if (person.Memberships.Any(m => m.Organization.Value == permission.Role.Value.Group.Value.Organization.Value) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Group:
+                            if (person.RoleAssignments.Any(r => r.Role.Value.Group.Value == permission.Role.Value.Group.Value) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+
+        public bool HasAccess(Person subject, Group group, PartAccess part, AccessRight right)
+        {
+            var roles = subject.RoleAssignments.Select(r => r.Role.Value).ToList();
+            var permissions = new List<Permission>(roles
+                .SelectMany(r => Database.Query<Permission>(DC.Equal("roleid", r.Id.Value)))
+                .Distinct());
+
+            foreach (var permission in permissions)
+            {
+                if (permission.Part.Value == part)
+                {
+                    switch (permission.Subject.Value)
+                    {
+                        case SubjectAccess.SystemWide:
+                            if (CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.SubOrganization:
+                            if (permission.Role.Value.Group.Value.Organization.Value.Groups.Contains(group) &&
+                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Any(o => o.Groups.Contains(group)) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Organization:
+                            if (permission.Role.Value.Group.Value.Organization.Value.Groups.Contains(group) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Group:
+                            if (permission.Role.Value.Group.Value == group &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasAccess(Person subject, Organization organization, PartAccess part, AccessRight right)
+        {
+            var roles = subject.RoleAssignments.Select(r => r.Role.Value).ToList();
+            var permissions = new List<Permission>(roles
+                .SelectMany(r => Database.Query<Permission>(DC.Equal("roleid", r.Id.Value)))
+                .Distinct());
+
+            foreach (var permission in permissions)
+            {
+                if (permission.Part.Value == part)
+                {
+                    switch (permission.Subject.Value)
+                    {
+                        case SubjectAccess.SystemWide:
+                            if (CheckAccess(right, permission.Right.Value))
+                            {
+                                return true; 
+                            }
+                            break;
+                        case SubjectAccess.SubOrganization:
+                            if (permission.Role.Value.Group.Value.Organization.Value == organization &&
+                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(organization) &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Organization:
+                            if (permission.Role.Value.Group.Value.Organization.Value == organization &&
+                                CheckAccess(right, permission.Right.Value))
+                            {
+                                return true;
+                            }
+                            break;
+                        case SubjectAccess.Group:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public bool HasAllAccessOf(Person person)
         {
             var session = CurrentSession;

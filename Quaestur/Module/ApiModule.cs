@@ -661,16 +661,38 @@ namespace Quaestur
                     points.ReferenceType.Value = referenceType;
                     points.ReferenceId.Value = referenceId;
 
-                    using (var transaction = Database.BeginTransaction())
+                    var success = true;
+
+                    if (request.TryValueGuid("impersonateid", out Guid id))
                     {
-                        Database.Save(points);
-                        Journal("API",
-                                person,
-                                "Journal.API.Points.Add",
-                                "Added points through the API",
-                                "Added points {0}.",
-                                t => points.GetText(t));
-                        transaction.Commit();
+                        var impersonate = Database.Query<Person>(id);
+
+                        if (impersonate == null)
+                        {
+                            response.SetErrorAccessDenied();
+                            success = false;
+                        }
+                        else
+                        {
+                            response.SetErrorAccessDenied();
+                            success = HasAccess(impersonate, person, PartAccess.Points, AccessRight.Write) &&
+                                      HasAccess(impersonate, budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write);
+                        }
+                    }
+
+                    if (success)
+                    {
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            Database.Save(points);
+                            Journal("API",
+                                    person,
+                                    "Journal.API.Points.Add",
+                                    "Added points through the API",
+                                    "Added points {0}.",
+                                    t => points.GetText(t));
+                            transaction.Commit();
+                        }
                     }
 
                     response.SetObject(points, response.Context);
@@ -684,5 +706,5 @@ namespace Quaestur
         {
             return new ApiResponse(Database);
         }
-            }
+    }
 }

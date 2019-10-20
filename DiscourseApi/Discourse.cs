@@ -53,8 +53,13 @@ namespace DiscourseApi
 
         public void Post(Topic topic, string text)
         {
+            Post(topic.Id, text);
+        }
+
+        public void Post(int topicId, string text)
+        {
             var request = new JObject();
-            request.Add(new JProperty("topic_id", topic.Id));
+            request.Add(new JProperty("topic_id", topicId));
             request.Add(new JProperty("raw", text));
             request.Add(new JProperty("archetype", "regular"));
             request.Add(new JProperty("nested_post", true));
@@ -87,7 +92,48 @@ namespace DiscourseApi
         {
             var endpoint = string.Format("t/{0}.json", topicId);
             var response = Request<JObject>(endpoint, HttpMethod.Get, null);
-            return new Topic(response);
+
+            var postStream = response.Value<JObject>("post_stream");
+            var posts = new List<Post>();
+
+            if (postStream != null)
+            {
+                var postList = postStream.Value<JArray>("stream");
+                var postIds = new Queue<int>(postList.Values<int>());
+
+                while (postIds.Count > 0)
+                {
+                    var query = new List<int>();
+
+                    while (postIds.Count > 0 && query.Count < 12)
+                    {
+                        query.Add(postIds.Dequeue()); 
+                    }
+
+                    if (query.Count > 0)
+                    {
+                        var postQuery = string.Join("&", query.Select(x => "post_ids[]=" + x));
+                        var postEndpoint = string.Format("t/{0}/posts.json?{1}", topicId, postQuery);
+                        var postResponse = Request<JObject>(postEndpoint, HttpMethod.Get, null);
+                        var postResponseStream = postResponse.Value<JObject>("post_stream");
+
+                        if (postStream != null)
+                        {
+                            var postReqponseList = postResponseStream.Value<JArray>("posts");
+
+                            if (postReqponseList != null)
+                            {
+                                foreach (JObject postObj in postReqponseList)
+                                {
+                                    posts.Add(new Post(postObj));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return new Topic(response, posts);
         }
 
         public IEnumerable<Topic> GetTopics()
@@ -101,7 +147,7 @@ namespace DiscourseApi
 
                 foreach (JObject obj in list)
                 {
-                    yield return new Topic(obj);
+                    yield return new Topic(obj, null);
                 }
 
                 var perPage = response.Value<JObject>("topic_list").Value<int>("per_page");
@@ -113,7 +159,7 @@ namespace DiscourseApi
         private T Request<T>(
             string endpoint, 
             HttpMethod method, 
-            JObject data, 
+            JToken data, 
             params UrlParameter[] parameters)
             where T : JContainer
         {

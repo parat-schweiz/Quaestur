@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using BaseLibrary;
 using SiteLibrary;
 using QuaesturApi;
@@ -89,7 +90,8 @@ namespace DiscourseEngagement
                         {
                             person = new Person(user.Auid.Value);
                             person.UserId.Value = user.Id;
-                            person.UserName.Value = user.Username;
+                            person.QuaesturUserName.Value = questurPerson.Username;
+                            person.DiscourseUserName.Value = user.Username;
                             person.Language.Value = Convert(questurPerson.Language);
                             _database.Save(person);
                             _logger.Notice("Added user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
@@ -97,7 +99,8 @@ namespace DiscourseEngagement
                         else if (person.UserId.Value != user.Id)
                         {
                             person.UserId.Value = user.Id;
-                            person.UserName.Value = user.Username;
+                            person.QuaesturUserName.Value = questurPerson.Username;
+                            person.DiscourseUserName.Value = user.Username;
                             person.Language.Value = Convert(questurPerson.Language);
                             _database.Save(person);
                             _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
@@ -183,12 +186,90 @@ namespace DiscourseEngagement
                     cache.Add(dbPost);
                     _database.Save(dbPost);
                     SyncLikes(cache, apiPost, dbPost);
+                    CheckInstructionPost(cache, apiPost, dbPost);
                 }
                 else if (dbPost.LikeCount < apiPost.LikeCount)
                 {
                     dbPost.LikeCount.Value = apiPost.LikeCount;
                     _database.Save(dbPost);
                     SyncLikes(cache, apiPost, dbPost);
+                }
+            }
+        }
+
+        private void CheckInstructionPost(Cache cache, DiscourseApi.Post apiPost, Post dbPost)
+        {
+            var text = Regex.Replace(apiPost.Text, "<.+?>", string.Empty);
+            var lines = text
+                .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+
+            var reason = lines.First().Trim();
+            var match = Regex.Match(lines.Last().Trim(),
+                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ]+)”$");
+
+            if (match.Success)
+            {
+                var points = int.Parse(match.Groups[1].Value);
+                var username = match.Groups[2].Value;
+                var budgetLabel = match.Groups[3].Value;
+                var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", apiPost.TopicId, apiPost.Id);
+                var owner = cache.Persons.SingleOrDefault(p => p.DiscourseUserName.Value == username);
+                var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.Label.IsAny(budgetLabel));
+                var translation = new Translation(_database);
+                var translator = new Translator(translation, dbPost.Person.Value.Language.Value);
+                var quote = "[quote]" + Environment.NewLine + text + Environment.NewLine + "[/quote]";
+
+                if (owner == null)
+                {
+                    var response = translator.Get(
+                        "Award.Assign.Error.UserUnkown",
+                        "When the owner is unknown when assigning points through post",
+                        "Cannot determine mentioned user.");
+                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                    _discourse.Post(apiPost.TopicId, postText);
+                    _logger.Notice(
+                       "Cannot find user at assignment in {0}.{1}",
+                       dbPost.Topic.Value.TopicId.Value,
+                       dbPost.PostId.Value);
+                }
+                else if (budget == null)
+                {
+                    var response = translator.Get(
+                        "Award.Assign.Error.BudgetUnkown",
+                        "When the points budget is unknown when assigning points through post",
+                        "Cannot determine mentioned points budget.");
+                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                    _discourse.Post(apiPost.TopicId, postText);
+                    _logger.Notice(
+                       "Cannot find points budget at assignment in {0}.{1}",
+                       dbPost.Topic.Value.TopicId.Value,
+                       dbPost.PostId.Value);
+                }
+                else
+                {
+                    var result = _quaestur.AddPoints(
+                        owner.Id.Value, 
+                        budget.Id, 
+                        points, 
+                        reason, 
+                        url, 
+                        apiPost.CreatedAt, 
+                        PointsReferenceType.None, 
+                        Guid.Empty, 
+                        dbPost.Person.Value.Id.Value);
+                    var response = translator.Get(
+                        "Award.Assign.Error.Assigned",
+                        "When points are assigned through post",
+                        "Assigned points.");
+                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                    _discourse.Post(apiPost.TopicId, postText);
+                    _logger.Notice(
+                       "Awarding {0} to {1} because assignment in {2}.{3}",
+                       points,
+                       owner.UserId,
+                       dbPost.Topic.Value.TopicId.Value,
+                       dbPost.PostId.Value,
+                       reason);
                 }
             }
         }
@@ -261,7 +342,7 @@ namespace DiscourseEngagement
 
                             if (points > 0)
                             {
-                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, url, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty);
+                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, url, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty, null);
                                 post.AwardDecision.Value = AwardDecision.Positive;
                                 post.AwardedPointsId.Value = result.Id;
                                 post.AwardedPoints.Value = points;
@@ -328,7 +409,8 @@ namespace DiscourseEngagement
                                 url,
                                 DateTime.UtcNow, 
                                 PointsReferenceType.None, 
-                                Guid.Empty);
+                                Guid.Empty,
+                                null);
                             var resultTo = _quaestur.AddPoints(
                                 like.Post.Value.Person.Value.Id, 
                                 budget.Id,
@@ -337,7 +419,8 @@ namespace DiscourseEngagement
                                 url,
                                 DateTime.UtcNow,
                                 PointsReferenceType.None,
-                                Guid.Empty);
+                                Guid.Empty,
+                                null);
                             like.AwardedFromPointsId.Value = resultFrom.Id;
                             like.AwardedToPointsId.Value = resultTo.Id;
                             _database.Save(like);

@@ -59,7 +59,8 @@ namespace QuaesturApi
             string url,
             DateTime moment,
             PointsReferenceType referenceType,
-            Guid referenceId)
+            Guid referenceId,
+            Guid? impersonateId)
         {
             var obj = new JObject();
             obj.Add("ownerid", ownerId);
@@ -70,6 +71,8 @@ namespace QuaesturApi
             obj.Add("moment", moment.FormatIso());
             obj.Add("referencetype", referenceType.ToString());
             obj.Add("referenceid", referenceId);
+            if (impersonateId.HasValue)
+                obj.Add("impersonateid", impersonateId.Value);
             var result = Request("/api/v2/points/add", HttpMethod.Post, obj);
             return new Points(result.Value<JObject>("result"));
         }
