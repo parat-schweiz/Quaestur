@@ -29,21 +29,9 @@ namespace SiteLibrary
             return Get(language, key, hint, technical, ((IEnumerable<object>)parameters));
         }
 
-        private string[] ToStringArray(IEnumerable<object> parameters)
-        {
-            var list = new List<string>();
-
-            foreach (object i in parameters)
-            {
-                list.Add(i.ToString()); 
-            }
-
-            return list.ToArray();
-        }
-
         public string Get(Language language, string key, string hint, string technical, IEnumerable<object> parameters)
         {
-            var parametersArray = ToStringArray(parameters);
+            var parametersArray = parameters.ToArray();
 
             lock (_db)
             {

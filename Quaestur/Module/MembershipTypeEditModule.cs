@@ -810,6 +810,7 @@ namespace Quaestur
             points.Moment.Value = DateTime.Now.Date.AddDays(addDays);
             points.Amount.Value = amount;
             points.Reason.Value = reason;
+            points.Url.Value = string.Empty;
             return points;
         }
 

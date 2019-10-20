@@ -12,6 +12,9 @@ namespace DiscourseEngagement
         public DiscourseApiConfig DiscourseApi { get; private set; }
         public ConfigSectionDatabase Database { get; private set; }
         public string LogFilePrefix { get; private set; }
+        public int PostPoints { get; private set; }
+        public int LikeGivePoints { get; private set; }
+        public int LikeRecievePoints { get; private set; }
 
         public EngagementConfig()
         {
@@ -35,6 +38,9 @@ namespace DiscourseEngagement
             get
             {
                 yield return new ConfigItemString("LogFilePrefix", v => LogFilePrefix = v);
+                yield return new ConfigItemInt32("PostPoints", v => PostPoints = v);
+                yield return new ConfigItemInt32("LikeGivePoints", v => LikeGivePoints = v);
+                yield return new ConfigItemInt32("LikeRecievePoints", v => LikeRecievePoints = v);
             }
         }
     }

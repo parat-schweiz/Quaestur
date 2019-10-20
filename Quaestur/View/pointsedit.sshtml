@@ -31,6 +31,7 @@ function assignValidation(resultData){
   assignFieldValidation("Moment", result);
   assignFieldValidation("Amount", result);
   assignFieldValidation("Reason", result);
+  assignFieldValidation("Url", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -40,6 +41,7 @@ $("#@Model.ButtonId").click(function() {
   formData.Moment = $("#pointsMoment").val();
   formData.Amount = $("#pointsAmount").val();
   formData.Reason = $("#pointsReason").val();
+  formData.Url = $("#pointsUrl").val();
   $.post("/points/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -89,6 +91,13 @@ $('#pointsOrganization').on('change', function() {
         <label for="pointsReason">@Model.PhraseFieldReason</label>
         <input type="text" id="pointsReason" class="form-control" value="@Model.Reason"/>
         <div id="pointsReasonFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsUrl">@Model.PhraseFieldUrl</label>
+        <input type="text" id="pointsUrl" class="form-control" value="@Model.Url"/>
+        <div id="pointsUrlFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

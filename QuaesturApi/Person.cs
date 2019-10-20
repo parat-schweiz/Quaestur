@@ -15,7 +15,7 @@ namespace QuaesturApi
         {
             Id = Guid.Parse(obj.Value<string>("id"));
             Username = obj.Value<string>("username");
-            Language = (Language)Enum.Parse(typeof(Language), obj.Value<string>("username"));
+            Language = (Language)Enum.Parse(typeof(Language), obj.Value<string>("language"));
         }
     }
 }

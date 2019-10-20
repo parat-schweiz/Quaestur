@@ -34,6 +34,7 @@ namespace Quaestur
         public Field<DateTime> Moment { get; private set; }
         public Field<int> Amount { get; private set; }
         public StringField Reason { get; private set; }
+        public StringField Url { get; private set; }
         public EnumField<PointsReferenceType> ReferenceType { get; private set; }
         public Field<Guid> ReferenceId { get; private set; }
 
@@ -48,6 +49,7 @@ namespace Quaestur
             Moment = new Field<DateTime>(this, "moment", DateTime.UtcNow);
             Amount = new Field<int>(this, "amount", 0);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
+            Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);
             ReferenceType = new EnumField<PointsReferenceType>(this, "referencetype", PointsReferenceType.None, PointsReferenceTypeExtensions.Translate);
             ReferenceId = new Field<Guid>(this, "referenceid", Guid.Empty);
         }

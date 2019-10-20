@@ -23,7 +23,17 @@ namespace Quaestur
             Budget = points.Budget.Value.GetText(translator);
             Moment = points.Moment.Value.ToString("dd.MM.yyyy");
             Amount = points.Amount.Value.ToString();
-            Reason = points.Reason.Value;
+
+            if (!string.IsNullOrEmpty(points.Url))
+            {
+                Reason = string.Format("<a target=\"_blank\" href=\"{0}\">{1}</a>",
+                    points.Url.Value.Escape(),
+                    points.Reason.Value.Escape());
+            }
+            else
+            {
+                Reason = points.Reason.Value.Escape();
+            }
         }
     }
 

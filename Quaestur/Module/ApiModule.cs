@@ -283,6 +283,7 @@ namespace Quaestur
                 json.Add(Property("budgetid", points.Budget.Value.Id));
                 json.Add(Property("amount", points.Amount));
                 json.Add(Property("reason", points.Reason));
+                json.Add(Property("url", points.Url));
                 json.Add(Property("referencetype", points.ReferenceType));
                 json.Add(Property("referenceid", points.ReferenceId));
             }
@@ -643,6 +644,7 @@ namespace Quaestur
                     response.TryReadObjectField(request, "budgetid", out PointBudget budget) &&
                     response.TryValueInt32(request, "amount", out int amount) &&
                     response.TryValueString(request, "reason", out string reason) &&
+                    response.TryValueString(request, "url", out string url) &&
                     response.TryValueDateTime(request, "moment", out DateTime moment) &&
                     response.TryValueEnum(request, "referencetype", out PointsReferenceType referenceType) &&
                     response.TryValueGuid(request, "referenceid", out Guid referenceId) &&
@@ -655,6 +657,7 @@ namespace Quaestur
                     points.Amount.Value = amount;
                     points.Moment.Value = moment;
                     points.Reason.Value = reason;
+                    points.Url.Value = url;
                     points.ReferenceType.Value = referenceType;
                     points.ReferenceId.Value = referenceId;
 

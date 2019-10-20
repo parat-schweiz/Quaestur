@@ -55,6 +55,21 @@ namespace DiscourseEngagement
             DoAwards();
         }
 
+        private SiteLibrary.Language Convert(QuaesturApi.Language language)
+        {
+            switch (language)
+            {
+                case QuaesturApi.Language.German:
+                    return SiteLibrary.Language.German;
+                case QuaesturApi.Language.French:
+                    return SiteLibrary.Language.French;
+                case QuaesturApi.Language.Italian:
+                    return SiteLibrary.Language.Italian;
+                default:
+                    return SiteLibrary.Language.English;
+            } 
+        }
+
         private void SyncUsers()
         {
             var databasePersons = _database.Query<Person>();
@@ -75,7 +90,7 @@ namespace DiscourseEngagement
                             person = new Person(user.Auid.Value);
                             person.UserId.Value = user.Id;
                             person.UserName.Value = user.Username;
-                            person.Language.Value = SiteLibrary.Language.English;
+                            person.Language.Value = Convert(questurPerson.Language);
                             _database.Save(person);
                             _logger.Notice("Added user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
@@ -83,7 +98,7 @@ namespace DiscourseEngagement
                         {
                             person.UserId.Value = user.Id;
                             person.UserName.Value = user.Username;
-                            person.Language.Value = SiteLibrary.Language.English;
+                            person.Language.Value = Convert(questurPerson.Language);
                             _database.Save(person);
                             _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
@@ -232,7 +247,7 @@ namespace DiscourseEngagement
                                 .Subtract(latest[post.Person.Value.Id.Value]);
                             var backoffFactor = BackoffFactor(backoff);
                             var conversationFactor = ConversationFactor(cache, post);
-                            var points = (int)Math.Floor(100d * backoffFactor * conversationFactor);
+                            var points = (int)Math.Floor((double)_config.PostPoints * backoffFactor * conversationFactor);
                             var reason = translation.Get(
                                 post.Person.Value.Language.Value,
                                 "Award.Post.Reason",
@@ -240,12 +255,13 @@ namespace DiscourseEngagement
                                 "Posting in discourse, backoff factor {0:0.0}%, conversation factor {1:0.0}%",
                                 backoffFactor * 100, 
                                 conversationFactor * 100);
+                            var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", post.Topic.Value.TopicId, post.PostId);
                             post.AwardedPoints.Value = points;
                             post.AwardedCalculation.Value = reason;
 
                             if (points > 0)
                             {
-                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty);
+                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, url, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty);
                                 post.AwardDecision.Value = AwardDecision.Positive;
                                 post.AwardedPointsId.Value = result.Id;
                                 post.AwardedPoints.Value = points;
@@ -291,23 +307,25 @@ namespace DiscourseEngagement
                         else
                         {
                             like.AwardDecision.Value = AwardDecision.Positive;
-                            like.AwardedFromPoints.Value = 10;
+                            like.AwardedFromPoints.Value = _config.LikeGivePoints;
                             like.AwardedFromCalculation.Value = translation.Get(
                                 like.Person.Value.Language.Value,
                                 "Award.Like.From.Reason",
                                 "When the person gives a like in discourse",
                                 "Giving a like in discourse");
-                            like.AwardedToPoints.Value = 20;
+                            like.AwardedToPoints.Value = _config.LikeRecievePoints;
                             like.AwardedToCalculation.Value = translation.Get(
                                 like.Post.Value.Person.Value.Language.Value,
                                 "Award.Like.To.Reason",
                                 "When the person recieves a like in discourse",
-                                "Receiving a like in discourse"); 
+                                "Receiving a like in discourse");
+                            var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", like.Post.Value.Topic.Value.TopicId, like.Post.Value.PostId);
                             var resultFrom = _quaestur.AddPoints(
                                 like.Person.Value.Id, 
                                 budget.Id,
                                 like.AwardedFromPoints.Value.Value, 
                                 like.AwardedFromCalculation.Value, 
+                                url,
                                 DateTime.UtcNow, 
                                 PointsReferenceType.None, 
                                 Guid.Empty);
@@ -316,6 +334,7 @@ namespace DiscourseEngagement
                                 budget.Id,
                                 like.AwardedToPoints.Value.Value,
                                 like.AwardedToCalculation.Value,
+                                url,
                                 DateTime.UtcNow,
                                 PointsReferenceType.None,
                                 Guid.Empty);

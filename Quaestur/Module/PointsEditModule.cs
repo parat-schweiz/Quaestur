@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -17,11 +18,13 @@ namespace Quaestur
         public string Moment;
         public string Amount;
         public string Reason;
+        public string Url;
         public List<NamedIdViewModel> Budgets;
         public string PhraseFieldBudget;
         public string PhraseFieldMoment;
         public string PhraseFieldAmount;
         public string PhraseFieldReason;
+        public string PhraseFieldUrl;
 
         public PointsEditViewModel()
         { 
@@ -36,6 +39,7 @@ namespace Quaestur
             PhraseFieldMoment = translator.Get("Points.Edit.Field.Moment", "Field 'Moment' in the edit points dialog", "Moment").EscapeHtml();
             PhraseFieldAmount = translator.Get("Points.Edit.Field.Amount", "Field 'Amount' in the edit points dialog", "Amount").EscapeHtml();
             PhraseFieldReason = translator.Get("Points.Edit.Field.Reason", "Field 'Reason' in the edit points dialog", "Reason").EscapeHtml();
+            PhraseFieldUrl = translator.Get("Points.Edit.Field.Url", "Field 'Url' in the edit points dialog", "Url").EscapeHtml();
             Budgets = new List<NamedIdViewModel>();
         }
 
@@ -48,6 +52,7 @@ namespace Quaestur
             Moment = string.Empty;
             Amount = string.Empty;
             Reason = string.Empty;
+            Url = string.Empty;
             Budgets.AddRange(
                 db.Query<PointBudget>()
                 .Where(b => DateTime.UtcNow.Date >= b.Period.Value.StartDate.Value.Date &&
@@ -66,6 +71,7 @@ namespace Quaestur
             Moment = points.Moment.Value.ToString("dd.MM.yyyy");
             Amount = points.Amount.Value.ToString();
             Reason = points.Reason.Value;
+            Url = points.Url.Value;
             Budgets.AddRange(
                 db.Query<PointBudget>()
                 .Where(b => DateTime.UtcNow.Date >= b.Period.Value.StartDate.Value.Date &&
@@ -113,6 +119,13 @@ namespace Quaestur
                         status.AssignDateString("Moment", points.Moment, model.Moment);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
+                        status.AssignStringFree("Url", points.Url, model.Url);
+
+                        if (!string.IsNullOrEmpty(points.Url.Value) &&
+                            !Regex.IsMatch(points.Url.Value, "^https(s)?://([a-zA-Z0-9\\-\\_]{2,256}\\.)+[a-zA-Z0-9\\-\\_]{2,256}(/[a-zA-Z0-9\\-\\_\\.\\?\\&\\=\\+\\*\\(\\)\\[\\]/,;'#@$]*)?$"))
+                        {
+                            status.SetValidationError("Url", "Points.Edit.Url.Invalid", "When the Url in the points edit dialog is not valid", "Invalid Url");
+                        }
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
@@ -163,6 +176,7 @@ namespace Quaestur
                         status.AssignDateString("Moment", points.Moment, model.Moment);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
+                        status.AssignStringFree("Url", points.Url, model.Url);
                         points.Owner.Value = person;
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))

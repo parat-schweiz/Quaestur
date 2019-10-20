@@ -56,6 +56,7 @@ namespace QuaesturApi
             Guid budgetId, 
             int amount, 
             string reason, 
+            string url,
             DateTime moment,
             PointsReferenceType referenceType,
             Guid referenceId)
@@ -65,6 +66,7 @@ namespace QuaesturApi
             obj.Add("budgetid", budgetId);
             obj.Add("amount", amount);
             obj.Add("reason", reason);
+            obj.Add("url", url);
             obj.Add("moment", moment.FormatIso());
             obj.Add("referencetype", referenceType.ToString());
             obj.Add("referenceid", referenceId);

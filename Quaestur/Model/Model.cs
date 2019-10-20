@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 24;
+        public static int CurrentVersion = 25;
 
         public static void Install(IDatabase database)
         {
@@ -115,6 +115,9 @@ namespace Quaestur
                 case 24:
                     database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderDate);
                     database.AddColumn<Person>(p => p.PaymentParameterUpdateReminderLevel);
+                    break;
+                case 25:
+                    database.AddColumn<Points>(p => p.Url);
                     break;
                 default:
                     throw new NotSupportedException();

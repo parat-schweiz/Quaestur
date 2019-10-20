@@ -70,6 +70,6 @@ namespace QuaesturApi
                     yield return Language.Italian;
                     break;
             }
-        } 
+        }
     }
 }
