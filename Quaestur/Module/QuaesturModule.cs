@@ -125,8 +125,8 @@ namespace Quaestur
                             }
                             break;
                         case SubjectAccess.SubOrganization:
-                            if (person.Memberships.Any(m => m.Organization.Value == permission.Role.Value.Group.Value.Organization.Value) &&
-                                person.Memberships.Any(m => permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(m.Organization.Value)) &&
+                            if ((person.Memberships.Any(m => m.Organization.Value == permission.Role.Value.Group.Value.Organization.Value) ||
+                                person.Memberships.Any(m => permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(m.Organization.Value))) &&
                                 CheckAccess(right, permission.Right.Value))
                             {
                                 return true;
@@ -176,8 +176,8 @@ namespace Quaestur
                             }
                             break;
                         case SubjectAccess.SubOrganization:
-                            if (permission.Role.Value.Group.Value.Organization.Value.Groups.Contains(group) &&
-                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Any(o => o.Groups.Contains(group)) &&
+                            if ((permission.Role.Value.Group.Value.Organization.Value.Groups.Contains(group) ||
+                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Any(o => o.Groups.Contains(group))) &&
                                 CheckAccess(right, permission.Right.Value))
                             {
                                 return true;
@@ -226,8 +226,8 @@ namespace Quaestur
                             }
                             break;
                         case SubjectAccess.SubOrganization:
-                            if (permission.Role.Value.Group.Value.Organization.Value == organization &&
-                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(organization) &&
+                            if ((permission.Role.Value.Group.Value.Organization.Value == organization ||
+                                permission.Role.Value.Group.Value.Organization.Value.Subordinates.Contains(organization)) &&
                                 CheckAccess(right, permission.Right.Value))
                             {
                                 return true;

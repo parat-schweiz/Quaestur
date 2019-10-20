@@ -12,6 +12,10 @@ using BaseLibrary;
 
 namespace QuaesturApi
 {
+    public class ApiAccessDeniedException : Exception
+    { 
+    }
+
     public class UrlParameter
     {
         public string Key { get; private set; }
@@ -110,7 +114,15 @@ namespace QuaesturApi
 
             if (result.Value<string>("status") != "success")
             {
-                throw new IOException(result.Value<string>("error"));
+                var error = result.Value<string>("error");
+                if (error == "Access denied")
+                {
+                    throw new ApiAccessDeniedException();
+                }
+                else
+                {
+                    throw new IOException(error);
+                }
             }
 
             return result;

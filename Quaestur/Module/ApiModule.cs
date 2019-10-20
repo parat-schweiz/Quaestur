@@ -672,11 +672,11 @@ namespace Quaestur
                             response.SetErrorAccessDenied();
                             success = false;
                         }
-                        else
+                        else if (!HasAccess(impersonate, person, PartAccess.Points, AccessRight.Write) ||
+                                 !HasAccess(impersonate, budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
                         {
                             response.SetErrorAccessDenied();
-                            success = HasAccess(impersonate, person, PartAccess.Points, AccessRight.Write) &&
-                                      HasAccess(impersonate, budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write);
+                            success = false;
                         }
                     }
 

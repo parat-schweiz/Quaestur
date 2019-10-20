@@ -247,29 +247,45 @@ namespace DiscourseEngagement
                 }
                 else
                 {
-                    var result = _quaestur.AddPoints(
-                        owner.Id.Value, 
-                        budget.Id, 
-                        points, 
-                        reason, 
-                        url, 
-                        apiPost.CreatedAt, 
-                        PointsReferenceType.None, 
-                        Guid.Empty, 
-                        dbPost.Person.Value.Id.Value);
-                    var response = translator.Get(
-                        "Award.Assign.Error.Assigned",
-                        "When points are assigned through post",
-                        "Assigned points.");
-                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
-                    _discourse.Post(apiPost.TopicId, postText);
-                    _logger.Notice(
-                       "Awarding {0} to {1} because assignment in {2}.{3}",
-                       points,
-                       owner.UserId,
-                       dbPost.Topic.Value.TopicId.Value,
-                       dbPost.PostId.Value,
-                       reason);
+                    try
+                    {
+                        var result = _quaestur.AddPoints(
+                            owner.Id.Value,
+                            budget.Id,
+                            points,
+                            reason,
+                            url,
+                            apiPost.CreatedAt,
+                            PointsReferenceType.None,
+                            Guid.Empty,
+                            dbPost.Person.Value.Id.Value);
+                        var response = translator.Get(
+                            "Award.Assign.Assigned",
+                            "When points are assigned through post",
+                            "Assigned points.");
+                        var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                        _discourse.Post(apiPost.TopicId, postText);
+                        _logger.Notice(
+                           "Awarding {0} to {1} because assignment in {2}.{3}",
+                           points,
+                           owner.UserId,
+                           dbPost.Topic.Value.TopicId.Value,
+                           dbPost.PostId.Value,
+                           reason);
+                    }
+                    catch (ApiAccessDeniedException)
+                    {
+                        var response = translator.Get(
+                            "Award.Assign.Error.Denied",
+                            "When the access is denied when assigning points through post",
+                            "Not permitted to assign points.");
+                        var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                        _discourse.Post(apiPost.TopicId, postText);
+                        _logger.Notice(
+                           "Access denied at assignment in {0}.{1}",
+                           dbPost.Topic.Value.TopicId.Value,
+                           dbPost.PostId.Value);
+                    }
                 }
             }
         }
@@ -342,7 +358,16 @@ namespace DiscourseEngagement
 
                             if (points > 0)
                             {
-                                var result = _quaestur.AddPoints(post.Person.Value.Id, budget.Id, points, reason, url, DateTime.UtcNow, PointsReferenceType.None, Guid.Empty, null);
+                                var result = _quaestur.AddPoints(
+                                    post.Person.Value.Id, 
+                                    budget.Id, 
+                                    points, 
+                                    reason, 
+                                    url, 
+                                    DateTime.UtcNow, 
+                                    PointsReferenceType.None, 
+                                    Guid.Empty, 
+                                    null);
                                 post.AwardDecision.Value = AwardDecision.Positive;
                                 post.AwardedPointsId.Value = result.Id;
                                 post.AwardedPoints.Value = points;
