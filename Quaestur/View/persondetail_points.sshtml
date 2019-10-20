@@ -3,9 +3,6 @@ $("#pointsRowAdd").click(function(){
   showPointsEditDialog("add", "@Model.Id");
 });
 @Each.List
-$("#pointsRowEdit1@Current.Id").click(function(){
-  showPointsEditDialog("edit", "@Current.Id");
-});
 $("#pointsRowEdit2@Current.Id").click(function(){
   showPointsEditDialog("edit", "@Current.Id");
 });
@@ -55,9 +52,9 @@ function showPointsEditDialog(method, id){
   <tbody>
     @Each.List
     <tr class="clickable-row">
-      <td width="35%" id="pointsRowEdit2@Current.Id" class="@Model.Editable">@Current.Reason</td>
-      <td width="35%" id="pointsRowEdit3@Current.Id" class="@Model.Editable">@Current.Budget</td>
-      <td width="15%" id="pointsRowEdit1@Current.Id" class="@Model.Editable">@Current.Moment</td>
+      <td width="35%">@Current.Reason</td>
+      <td width="35%" id="pointsRowEdit2@Current.Id" class="@Model.Editable">@Current.Budget</td>
+      <td width="15%" id="pointsRowEdit3@Current.Id" class="@Model.Editable">@Current.Moment</td>
       <td width="10%" id="pointsRowEdit4@Current.Id" class="@Model.Editable">@Current.Amount</td>
       <td width="5%" id="pointsRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
