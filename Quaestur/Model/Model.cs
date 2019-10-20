@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 24;
+        public static int CurrentVersion = 25;
 
         public static void Install(IDatabase database)
         {
