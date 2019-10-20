@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 25;
+        public static int CurrentVersion = 24;
 
         public static void Install(IDatabase database)
         {
@@ -80,6 +80,7 @@ namespace Quaestur
             if (meta == null)
             {
                 meta = new Meta(Guid.NewGuid());
+                database.Save(meta);
             }
 
             while (meta.Version.Value < CurrentVersion)
