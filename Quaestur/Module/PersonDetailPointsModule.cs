@@ -16,6 +16,7 @@ namespace Quaestur
         public string Moment;
         public string Amount;
         public string Reason;
+        public string PhraseDeleteConfirmationQuestion;
 
         public PersonDetailPointsItemViewModel(IDatabase database, Translator translator, Points points)
         {
@@ -34,6 +35,8 @@ namespace Quaestur
             {
                 Reason = points.Reason.Value.Escape();
             }
+
+            PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Points.Delete.Confirm.Question", "Delete points confirmation question", "Do you really wish to delete points {0}?", points.GetText(translator)).EscapeHtml();
         }
     }
 
@@ -46,6 +49,8 @@ namespace Quaestur
         public string PhraseHeaderMoment;
         public string PhraseHeaderAmount;
         public string PhraseHeaderReason;
+        public string PhraseDeleteConfirmationTitle;
+        public string PhraseDeleteConfirmationInfo;
 
         public PersonDetailPointsViewModel(IDatabase database, Translator translator, Session session, Person person)
         {
@@ -61,6 +66,8 @@ namespace Quaestur
             PhraseHeaderMoment = translator.Get("Person.Detail.Points.Header.Moment", "Column 'Moment' on the points tab of the person detail page", "Moment");
             PhraseHeaderAmount = translator.Get("Person.Detail.Points.Header.Amount", "Column 'Amount' on the points tab of the person detail page", "Amount");
             PhraseHeaderReason = translator.Get("Person.Detail.Points.Header.Reason", "Column 'Reason' on the points tab of the person detail page", "Reason");
+            PhraseDeleteConfirmationTitle = translator.Get("Person.Detail.Master.Points.Delete.Confirm.Title", "Delete points confirmation title", "Delete?").EscapeHtml();
+            PhraseDeleteConfirmationInfo = string.Empty;
         }
     }
 

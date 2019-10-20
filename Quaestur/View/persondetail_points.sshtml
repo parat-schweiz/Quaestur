@@ -19,8 +19,17 @@ $("#pointsRowEdit@Current.Id").click(function(){
   showPointsEditDialog("edit", "@Current.Id");
 });
 $("#pointsRowDelete@Current.Id").click(function(){
-  $.get("/points/delete/@Current.Id", function(data, status){
-    showPoints();
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/points/delete/@Current.Id", function(data, status){
+          showPoints();
+        });
+      },
+      cancel: function () {},
+    }
   });
 });
 @EndEach
