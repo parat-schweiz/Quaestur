@@ -693,9 +693,9 @@ namespace Quaestur
                                     t => points.GetText(t));
                             transaction.Commit();
                         }
-                    }
 
-                    response.SetObject(points, response.Context);
+                        response.SetObject(points, response.Context);
+                    }
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");
