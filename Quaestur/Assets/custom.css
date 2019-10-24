@@ -167,3 +167,7 @@ input[type=checkbox] {
 .row-lightred-background {
     background-color: #ff818e;
 }
+
+.invisible {
+  visibility: hidden;
+}

@@ -1,9 +1,20 @@
 ﻿using System;
+using System.Globalization;
 
 namespace BaseLibrary
 {
     public static class FormatterExtensions
     {
+        public static string FormatThousands(this long value)
+        {
+            return string.Format(CultureInfo.GetCultureInfo("de-CH"), "{0:#,##0}", value);
+        }
+
+        public static string FormatThousands(this int value)
+        {
+            return string.Format(CultureInfo.GetCultureInfo("de-CH"), "{0:#,##0}", value);
+        }
+
         public static string SizeFormat(this int value)
         {
             return ((long)value).SizeFormat();

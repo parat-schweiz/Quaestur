@@ -55,9 +55,9 @@ function showPointsTallyEditDialog(method, id){
     <tr class='clickable-row'>
       <td width="18%"><a href="/pointstally/download/@Current.Id">@Current.FromDate</a></td>
       <td width="18%" id="pointsTallyRowEdit1@Current.Id" class="@Model.Editable">@Current.UntilDate</td>
-      <td width="18%" id="pointsTallyRowEdit2@Current.Id" class="@Model.Editable">@Current.Considered</td>
-      <td width="18%" id="pointsTallyRowEdit3@Current.Id" class="@Model.Editable">@Current.ForwardBalance</td>
-      <td width="18%" id="pointsTallyRowEdit4@Current.Id" class="@Model.Editable">@Current.CreatedDate</td>
+      <td width="18%" id="pointsTallyRowEdit2@Current.Id" class="@Model.Editable" align="right">@Current.Considered</td>
+      <td width="18%" id="pointsTallyRowEdit3@Current.Id" class="@Model.Editable" align="right">@Current.ForwardBalance</td>
+      <td width="18%" id="pointsTallyRowEdit4@Current.Id" class="@Model.Editable" align="right">@Current.CreatedDate</td>
       <td width="10%" id="pointsTallyRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach

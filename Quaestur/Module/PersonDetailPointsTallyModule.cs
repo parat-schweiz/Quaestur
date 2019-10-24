@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -22,7 +23,7 @@ namespace Quaestur
             FromDate = pointsTally.FromDate.Value.ToString("dd.MM.yyyy");
             UntilDate = pointsTally.UntilDate.Value.ToString("dd.MM.yyyy");
             CreatedDate = pointsTally.CreatedDate.Value.ToString("dd.MM.yyyy");
-            Considered = pointsTally.Considered.Value.ToString();
+            Considered = pointsTally.Considered.Value.FormatThousands();
             ForwardBalance = pointsTally.ForwardBalance.Value.ToString();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.PointsTallys.Delete.Confirm.Question", "Delete pointsTally confirmation question", "Do you really wish to delete pointsTally {0}?", pointsTally.GetText(translator)).EscapeHtml();
         }

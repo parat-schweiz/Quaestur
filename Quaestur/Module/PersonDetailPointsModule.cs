@@ -6,6 +6,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -19,6 +20,7 @@ namespace Quaestur
         public string Reason;
         public string Editable;
         public string Bold;
+        public string DeleteVisible;
         public string PhraseDeleteConfirmationQuestion;
 
         public PersonDetailPointsItemViewModel(Translator translator, long running)
@@ -27,10 +29,11 @@ namespace Quaestur
             Budget = string.Empty;
             Moment = string.Empty;
             Amount = string.Empty;
-            Running = running.ToString();
+            Running = running.FormatThousands();
             Reason = translator.Get("Person.Detail.Points.Title.Balance", "Title of the current balancy in points tab of person details", "Balance");
             Bold = "bold";
             Editable = string.Empty;
+            DeleteVisible = "invisible";
             PhraseDeleteConfirmationQuestion = string.Empty;
         }
 
@@ -40,23 +43,25 @@ namespace Quaestur
             Budget = string.Empty;
             Moment = tally.FromDate.Value.ToString("dd.MM.yyyy") + " - " + 
                      tally.UntilDate.Value.ToString("dd.MM.yyyy");
-            Amount = tally.Considered.Value.ToString();
-            Running = tally.ForwardBalance.Value.ToString();
+            Amount = tally.Considered.Value.FormatThousands();
+            Running = tally.ForwardBalance.Value.FormatThousands();
             Reason = translator.Get("Person.Detail.Points.Title.Tally", "Title of a tally in points tab of person details", "Tally");
             Bold = "bold";
             Editable = string.Empty;
+            DeleteVisible = "invisible";
             PhraseDeleteConfirmationQuestion = string.Empty;
         }
 
-        public PersonDetailPointsItemViewModel(Translator translator, Points points, long running, bool editAccss)
+        public PersonDetailPointsItemViewModel(Translator translator, Points points, long running, bool allowEdit)
         {
             Id = points.Id.Value.ToString();
             Budget = points.Budget.Value.GetText(translator);
             Moment = points.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm");
-            Amount = points.Amount.Value.ToString();
-            Running = running.ToString();
+            Amount = points.Amount.Value.FormatThousands();
+            Running = running.FormatThousands();
             Bold = string.Empty;
-            Editable = editAccss ? "editable" : "accessdenied";
+            Editable = allowEdit ? "editable" : "accessdenied";
+            DeleteVisible = !allowEdit ? "invisible" : string.Empty;
 
             if (!string.IsNullOrEmpty(points.Url))
             {
@@ -112,9 +117,10 @@ namespace Quaestur
                 }
                 else
                 {
+                    var allowEdit = editAccess && (tallyQueue.Count < 1);
                     var points = pointsQueue.Dequeue();
                     running += points.Amount;
-                    List.Add(new PersonDetailPointsItemViewModel(translator, points, running, editAccess));
+                    List.Add(new PersonDetailPointsItemViewModel(translator, points, running, allowEdit));
                 }
             }
 
