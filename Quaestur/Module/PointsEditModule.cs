@@ -15,13 +15,15 @@ namespace Quaestur
         public string Method;
         public string Id;
         public string Budget;
-        public string Moment;
+        public string MomentDate;
+        public string MomentTime;
         public string Amount;
         public string Reason;
         public string Url;
         public List<NamedIdViewModel> Budgets;
         public string PhraseFieldBudget;
-        public string PhraseFieldMoment;
+        public string PhraseFieldMomentDate;
+        public string PhraseFieldMomentTime;
         public string PhraseFieldAmount;
         public string PhraseFieldReason;
         public string PhraseFieldUrl;
@@ -36,7 +38,8 @@ namespace Quaestur
                    "pointsEditDialog")
         {
             PhraseFieldBudget = translator.Get("Points.Edit.Field.Budget", "Field 'Budget' in the edit points dialog", "Budget").EscapeHtml();
-            PhraseFieldMoment = translator.Get("Points.Edit.Field.Moment", "Field 'Moment' in the edit points dialog", "Moment").EscapeHtml();
+            PhraseFieldMomentDate = translator.Get("Points.Edit.Field.Moment.Date", "Field 'Moment Date' in the edit points dialog", "Date").EscapeHtml();
+            PhraseFieldMomentTime = translator.Get("Points.Edit.Field.Moment.Time", "Field 'Moment Time' in the edit points dialog", "Time").EscapeHtml();
             PhraseFieldAmount = translator.Get("Points.Edit.Field.Amount", "Field 'Amount' in the edit points dialog", "Amount").EscapeHtml();
             PhraseFieldReason = translator.Get("Points.Edit.Field.Reason", "Field 'Reason' in the edit points dialog", "Reason").EscapeHtml();
             PhraseFieldUrl = translator.Get("Points.Edit.Field.Url", "Field 'Url' in the edit points dialog", "Url").EscapeHtml();
@@ -49,7 +52,8 @@ namespace Quaestur
             Method = "add";
             Id = person.Id.ToString();
             Budget = string.Empty;
-            Moment = string.Empty;
+            MomentDate = string.Empty;
+            MomentTime = string.Empty;
             Amount = string.Empty;
             Reason = string.Empty;
             Url = string.Empty;
@@ -68,7 +72,8 @@ namespace Quaestur
             Method = "edit";
             Id = points.Id.ToString();
             Budget = string.Empty;
-            Moment = points.Moment.Value.ToString("dd.MM.yyyy");
+            MomentDate = points.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy");
+            MomentTime = points.Moment.Value.ToLocalTime().ToString("HH:mm:ss");
             Amount = points.Amount.Value.ToString();
             Reason = points.Reason.Value;
             Url = points.Url.Value;
@@ -116,7 +121,8 @@ namespace Quaestur
                     if (status.HasAccess(points.Owner.Value, PartAccess.Points, AccessRight.Write))
                     {
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("Moment", points.Moment, model.Moment);
+                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
+                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
                         status.AssignStringFree("Url", points.Url, model.Url);
@@ -129,6 +135,8 @@ namespace Quaestur
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
+                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
+
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);
@@ -173,7 +181,8 @@ namespace Quaestur
                     {
                         var points = new Points(Guid.NewGuid());
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("Moment", points.Moment, model.Moment);
+                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
+                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
                         status.AssignStringFree("Url", points.Url, model.Url);
@@ -181,6 +190,8 @@ namespace Quaestur
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
+                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
+
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);

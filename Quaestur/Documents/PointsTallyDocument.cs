@@ -147,8 +147,8 @@ namespace Quaestur
 
             var list = _pointsOverride ?? _database
                 .Query<Points>(DC.Equal("ownerid", _person.Id.Value))
-                .Where(p => p.Moment.Value.Date >= PointsTally.FromDate.Value &&
-                            p.Moment.Value.Date <= PointsTally.UntilDate.Value)
+                .Where(p => p.Moment.Value.ToLocalTime().Date >= PointsTally.FromDate.Value &&
+                            p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
             var sum = list.Sum(p => p.Amount);
             PointsTally.Considered.Value = Math.Min(sum, _membership.Type.Value.MaximumPoints.Value);
@@ -229,7 +229,7 @@ namespace Quaestur
 
                 text.Append(p.Reason.Value);
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(p.Moment.Value.Date.ToString("dd.MM.yyyy"));
+                text.Append(p.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"));
                 text.Append(@"} & \multicolumn{1}{r}{");
                 text.Append(p.Amount.Value);
                 text.Append(@"} & \multicolumn{1}{r}{");

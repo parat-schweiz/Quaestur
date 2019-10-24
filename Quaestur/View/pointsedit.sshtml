@@ -28,7 +28,8 @@ function assignFieldValidation(field, result){
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
   assignFieldValidation("Budget", result);
-  assignFieldValidation("Moment", result);
+  assignFieldValidation("MomentDate", result);
+  assignFieldValidation("MomentTime", result);
   assignFieldValidation("Amount", result);
   assignFieldValidation("Reason", result);
   assignFieldValidation("Url", result);
@@ -38,7 +39,8 @@ function assignValidation(resultData){
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();
   formData.Budget = $("#pointsBudget").val();
-  formData.Moment = $("#pointsMoment").val();
+  formData.MomentDate = $("#pointsMomentDate").val();
+  formData.MomentTime = $("#pointsMomentTime").val();
   formData.Amount = $("#pointsAmount").val();
   formData.Reason = $("#pointsReason").val();
   formData.Url = $("#pointsUrl").val();
@@ -74,9 +76,16 @@ $('#pointsOrganization').on('change', function() {
     </div>
     <div class="form-row">
       <div class="col-12 mb-3">
-        <label for="pointsMoment">@Model.PhraseFieldMoment</label>
-        <input type="text" id="pointsMoment" class="form-control datepicker" value="@Model.Moment"/>
-        <div id="pointsMomentFeedback" class="valid-feedback"></div>
+        <label for="pointsMomentDate">@Model.PhraseFieldMomentDate</label>
+        <input type="text" id="pointsMomentDate" class="form-control datepicker" value="@Model.MomentDate"/>
+        <div id="pointsMomentDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsMomentTime">@Model.PhraseFieldMomentTime</label>
+        <input type="text" id="pointsMomentTime" class="form-control" value="@Model.MomentTime"/>
+        <div id="pointsMomentTimeFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

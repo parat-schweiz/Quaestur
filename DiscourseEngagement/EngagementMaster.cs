@@ -217,7 +217,9 @@ namespace DiscourseEngagement
                 var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.Label.IsAny(budgetLabel));
                 var translation = new Translation(_database);
                 var translator = new Translator(translation, dbPost.Person.Value.Language.Value);
-                var quote = "[quote]" + Environment.NewLine + text + Environment.NewLine + "[/quote]";
+                var quote = string.Format(
+                    "[quote=\"{0}, post:{1}, topic:{2}, full:true\"]\n{3}\n[/quote]",
+                    apiPost.Username, apiPost.Id, apiPost.TopicId, text);
 
                 if (owner == null)
                 {

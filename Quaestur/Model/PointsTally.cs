@@ -35,12 +35,14 @@ namespace Quaestur
 
         public override string ToString()
         {
-            return FromDate.Value.ToString("dd.MM.yyyy") + " / " + UntilDate.Value.ToString("dd.MM.yyyy");
+            return FromDate.Value.ToString("dd.MM.yyyy") + " / " + 
+                   UntilDate.Value.ToString("dd.MM.yyyy");
         }
 
         public override string GetText(Translator translator)
         {
-            return FromDate.Value.ToString("dd.MM.yyyy") + " / " + UntilDate.Value.ToString("dd.MM.yyyy");
+            return FromDate.Value.ToString("dd.MM.yyyy") + " / " + 
+                   UntilDate.Value.ToString("dd.MM.yyyy");
         }
 
         public override void Delete(IDatabase database)

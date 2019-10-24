@@ -3,6 +3,9 @@ $("#pointsRowAdd").click(function(){
   showPointsEditDialog("add", "@Model.Id");
 });
 @Each.List
+$("#pointsRowEdit1@Current.Id").click(function(){
+  showPointsEditDialog("edit", "@Current.Id");
+});
 $("#pointsRowEdit2@Current.Id").click(function(){
   showPointsEditDialog("edit", "@Current.Id");
 });
@@ -43,20 +46,22 @@ function showPointsEditDialog(method, id){
   <thead>
     <tr class='centering clickable-row'>
       <th width="35%">@Model.PhraseHeaderReason</th>
-      <th width="35%">@Model.PhraseHeaderBudget</th>
+      <th width="25%">@Model.PhraseHeaderBudget</th>
       <th width="15%">@Model.PhraseHeaderMoment</th>
       <th width="10%">@Model.PhraseHeaderAmount</th>
+      <th width="10%">@Model.PhraseHeaderRunning</th>
       <th width="5%"></th>
     </tr>
   </thead>
   <tbody>
     @Each.List
     <tr class="clickable-row">
-      <td width="35%">@Current.Reason</td>
-      <td width="35%" id="pointsRowEdit2@Current.Id" class="@Model.Editable">@Current.Budget</td>
-      <td width="15%" id="pointsRowEdit3@Current.Id" class="@Model.Editable">@Current.Moment</td>
-      <td width="10%" id="pointsRowEdit4@Current.Id" class="@Model.Editable">@Current.Amount</td>
-      <td width="5%" id="pointsRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="35%" class="@Current.Bold">@Current.Reason</td>
+      <td width="25%" id="pointsRowEdit1@Current.Id" class="@Current.Bold @Current.Editable">@Current.Budget</td>
+      <td width="15%" id="pointsRowEdit2@Current.Id" class="@Current.Bold @Current.Editable">@Current.Moment</td>
+      <td width="10%" id="pointsRowEdit3@Current.Id" class="@Current.Bold @Current.Editable">@Current.Amount</td>
+      <td width="10%" id="pointsRowEdit4@Current.Id" class="@Current.Bold @Current.Editable">@Current.Running</td>
+      <td width="5%" id="pointsRowDelete@Current.Id"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class="centering clickable-row">

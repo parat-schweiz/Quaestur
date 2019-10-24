@@ -807,7 +807,7 @@ namespace Quaestur
         {
             var points = new Points(Guid.NewGuid());
             points.Owner.Value = person;
-            points.Moment.Value = DateTime.Now.Date.AddDays(addDays);
+            points.Moment.Value = DateTime.Now.AddDays(addDays);
             points.Amount.Value = amount;
             points.Reason.Value = reason;
             points.Url.Value = string.Empty;
