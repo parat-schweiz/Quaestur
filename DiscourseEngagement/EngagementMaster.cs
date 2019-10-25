@@ -200,6 +200,23 @@ namespace DiscourseEngagement
             }
         }
 
+        private Match MultiMatch(string text)
+        {
+            var patterns = new string[]
+            {
+                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ]+)”$",
+                "^([0-9]+) points for @([a-zA-Z0-9_\\-]+) from budget “([a-zA-Z0-9 ]+)”$",
+            };
+
+            foreach (var pattern in patterns)
+            {
+                var match = Regex.Match(text, pattern);
+                if (match.Success) return match;
+            }
+
+            return null;
+        }
+
         private void CheckInstructionPost(Cache cache, DiscourseApi.Post apiPost, Post dbPost)
         {
             var text = Regex.Replace(apiPost.Text, "<.+?>", string.Empty);
@@ -207,10 +224,9 @@ namespace DiscourseEngagement
                 .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
             var reason = lines.First().Trim();
-            var match = Regex.Match(lines.Last().Trim(),
-                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ]+)”$");
+            var match = MultiMatch(lines.Last().Trim());
 
-            if (match.Success)
+            if (match != null && match.Success)
             {
                 var points = int.Parse(match.Groups[1].Value);
                 var username = match.Groups[2].Value;
@@ -318,7 +334,8 @@ namespace DiscourseEngagement
 
         private void DoAwards()
         {
-            var budget = _quaestur.GetPointBudgetList().Single(b => b.Label[QuaesturApi.Language.English] == "Aktionen");
+            var budget = _quaestur.GetPointBudgetList()
+                .Single(b => b.Label.IsAny(_config.DiscourseBudgetLabel));
 
             using (var transaction = _database.BeginTransaction())
             {
