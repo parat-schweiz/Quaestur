@@ -196,15 +196,15 @@ namespace Quaestur
             text.Append(@"\hline\hline ");
             text.Append(tableRowConsidered);
             text.Append(@" & & & \multicolumn{1}{r}{");
-            text.Append(PointsTally.Considered.Value);
+            text.Append(PointsTally.Considered.Value.FormatThousands());
             text.Append(@"} \\ ");
             text.Append(tableRowCarryOver);
             text.Append(@" & & & \multicolumn{1}{r}{");
-            text.Append(PointsTally.ForwardBalance.Value);
+            text.Append(PointsTally.ForwardBalance.Value.FormatThousands());
             text.Append(@"} \\ }");
             text.AppendLine();
 
-            text.Append(@"\begin{supertabular}{p{10cm} p{2cm} p{1.2cm} p{1.2cm}}");
+            text.Append(@"\begin{supertabular}{p{7.2cm} p{2cm} p{1.2cm} p{1.2cm}}");
             text.AppendLine();
             long runUp = 0;
 
@@ -216,9 +216,9 @@ namespace Quaestur
                 text.Append(@" & \multicolumn{1}{r}{");
                 text.Append(PointsTally.FromDate.Value);
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(_lastTally.ForwardBalance.Value);
+                text.Append(_lastTally.ForwardBalance.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(runUp);
+                text.Append(runUp.FormatThousands());
                 text.Append(@"} \\");
                 text.AppendLine();
             }
@@ -231,9 +231,9 @@ namespace Quaestur
                 text.Append(@" & \multicolumn{1}{r}{");
                 text.Append(p.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"));
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(p.Amount.Value);
+                text.Append(p.Amount.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
-                text.Append(runUp);
+                text.Append(runUp.FormatThousands());
                 text.Append(@"} \\");
                 text.AppendLine();
             }
