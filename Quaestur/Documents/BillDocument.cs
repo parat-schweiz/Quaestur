@@ -19,6 +19,7 @@ namespace Quaestur
         private List<Tuple<Membership, IPaymentModel>> _allIncluded;
 
         public Bill Bill { get; private set; }
+        public bool RequiresPersonalPaymentUpdate { get; private set; }
 
         public BillDocument(Translator translator, IDatabase database, Membership membership)
         {
@@ -97,7 +98,9 @@ namespace Quaestur
             IncludeParent(_membership);
             IncludeChildren(_membership);
 
-            return true;
+            RequiresPersonalPaymentUpdate = _allIncluded
+                .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
+            return !RequiresPersonalPaymentUpdate;
         }
 
         private void IncludeChildren(Membership membership)
