@@ -259,6 +259,7 @@
     <Compile Include="Model\ApiPermission.cs" />
     <Compile Include="Module\ApiClientModule.cs" />
     <Compile Include="Module\ApiPermissionModule.cs" />
+    <Compile Include="Module\RequireCompleteAuthenticationModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

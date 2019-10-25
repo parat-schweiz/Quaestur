@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using Nancy;
+using Nancy.Helpers;
+using Nancy.Responses;
 using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -25,7 +27,7 @@ namespace Quaestur
         protected void RequireCompleteLogin()
         {
             this.RequiresAuthentication();
-            this.RequiresClaims(c => c.Type == Quaestur.Session.AuthenticationClaim && c.Value == Quaestur.Session.AuthenticationClaimComplete);
+            this.RequireCompleteAuthentication();
         }
 
         protected string ReadBody()
