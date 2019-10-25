@@ -88,6 +88,24 @@ namespace DiscourseApi
                 .Select(o => o.Value<int>("id")));
         }
 
+        public IEnumerable<Category> GetCategories()
+        {
+            var endpoint = "/categories.json";
+            var response = Request<JObject>(endpoint, HttpMethod.Get, null);
+
+            var categoryList = response.Value<JObject>("category_list");
+
+            if (categoryList != null)
+            {
+                var categories = categoryList.Value<JArray>("categories");
+
+                foreach (var category in categories.Values<JObject>())
+                {
+                    yield return new Category(category); 
+                }
+            }
+        }
+
         public Topic GetTopic(int topicId)
         {
             var endpoint = string.Format("t/{0}.json", topicId);
@@ -134,6 +152,27 @@ namespace DiscourseApi
             }
 
             return new Topic(response, posts);
+        }
+
+        public IEnumerable<Topic> GetTopics(Category category)
+        {
+            bool done = false;
+
+            for (int page = 0; !done; page++)
+            {
+                var endpoint = string.Format("c/{0}.json", category.Id);
+                var response = Request<JObject>(endpoint, HttpMethod.Get, null, "page".Param(page));
+                var list = response.Value<JObject>("topic_list").Value<JArray>("topics");
+
+                foreach (JObject obj in list)
+                {
+                    yield return new Topic(obj, null);
+                }
+
+                var perPage = response.Value<JObject>("topic_list").Value<int>("per_page");
+
+                done = list.Count() < perPage;
+            }
         }
 
         public IEnumerable<Topic> GetTopics()

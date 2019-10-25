@@ -50,6 +50,7 @@
     <Compile Include="DiscourseApiConfig.cs" />
     <Compile Include="Post.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="Category.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

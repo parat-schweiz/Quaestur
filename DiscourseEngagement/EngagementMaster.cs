@@ -135,29 +135,32 @@ namespace DiscourseEngagement
                 var cache = new Cache(_database);
                 cache.Reload();
 
-                foreach (var apiTopic in _discourse.GetTopics().ToList())
+                foreach (var apiCategory in _discourse.GetCategories().ToList())
                 {
-                    var dbTopic = cache.GetTopic(apiTopic.Id);
+                    foreach (var apiTopic in _discourse.GetTopics(apiCategory).ToList())
+                    {
+                        var dbTopic = cache.GetTopic(apiTopic.Id);
 
-                    if (dbTopic == null)
-                    {
-                        _logger.Notice("New topic {0}", apiTopic.Id);
-                        dbTopic = new Topic(Guid.NewGuid());
-                        dbTopic.TopicId.Value = apiTopic.Id;
-                        dbTopic.PostsCount.Value = apiTopic.PostsCount;
-                        dbTopic.LikeCount.Value = apiTopic.LikeCount;
-                        cache.Add(dbTopic);
-                        _database.Save(dbTopic);
-                        SyncTopic(cache, apiTopic, dbTopic);
-                    }
-                    else if (dbTopic.PostsCount.Value != apiTopic.PostsCount ||
-                             dbTopic.LikeCount.Value != apiTopic.LikeCount)
-                    {
-                        _logger.Notice("Updated topic {0}", apiTopic.Id);
-                        dbTopic.PostsCount.Value = apiTopic.PostsCount;
-                        dbTopic.LikeCount.Value = apiTopic.LikeCount;
-                        _database.Save(dbTopic);
-                        SyncTopic(cache, apiTopic, dbTopic);
+                        if (dbTopic == null)
+                        {
+                            _logger.Notice("New topic {0}", apiTopic.Id);
+                            dbTopic = new Topic(Guid.NewGuid());
+                            dbTopic.TopicId.Value = apiTopic.Id;
+                            dbTopic.PostsCount.Value = apiTopic.PostsCount;
+                            dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                            cache.Add(dbTopic);
+                            _database.Save(dbTopic);
+                            SyncTopic(cache, apiTopic, dbTopic);
+                        }
+                        else if (dbTopic.PostsCount.Value != apiTopic.PostsCount ||
+                                 dbTopic.LikeCount.Value != apiTopic.LikeCount)
+                        {
+                            _logger.Notice("Updated topic {0}", apiTopic.Id);
+                            dbTopic.PostsCount.Value = apiTopic.PostsCount;
+                            dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                            _database.Save(dbTopic);
+                            SyncTopic(cache, apiTopic, dbTopic);
+                        }
                     }
                 }
 
