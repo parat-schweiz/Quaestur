@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscourseEngagement", "Disc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiscourseApi", "DiscourseApi\DiscourseApi.csproj", "{7F497285-D30E-446C-AF52-BC91C5612739}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineApi", "RedmineApi\RedmineApi.csproj", "{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineEngagement", "RedmineEngagement\RedmineEngagement.csproj", "{35C37C10-5855-4920-9801-623AE5EA1257}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -67,6 +71,14 @@ Global
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Debug|x86.Build.0 = Debug|Any CPU
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Release|x86.ActiveCfg = Release|Any CPU
 		{7F497285-D30E-446C-AF52-BC91C5612739}.Release|x86.Build.0 = Release|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Debug|x86.Build.0 = Debug|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Release|x86.ActiveCfg = Release|Any CPU
+		{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}.Release|x86.Build.0 = Release|Any CPU
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Debug|x86.ActiveCfg = Debug|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Debug|x86.Build.0 = Debug|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.ActiveCfg = Release|x86
+		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0
