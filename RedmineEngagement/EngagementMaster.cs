@@ -272,7 +272,8 @@ namespace RedmineEngagement
             dbAssignment.AwardedCalculation.Value = assignmentConfig.Reason;
             dbAssignment.AwardedPoints.Value = points;
 
-            var apiPoints = _quaestur.AddPoints(
+
+                        var apiPoints = _quaestur.AddPoints(
                 dbPerson.Id,
                 budget.Id,
                 points,
@@ -285,6 +286,21 @@ namespace RedmineEngagement
 
             dbAssignment.AwardedPointsId.Value = apiPoints.Id;
             _database.Save(dbAssignment);
+
+            _logger.Notice(
+                "Assigned {0} to {1} from budget {2}.",
+                points,
+                dbPerson.UserName,
+                budget.Label);
+            var notes = string.Format(
+                "{0} Punkte an @{1} aus Budget {2}",
+                points,
+                dbPerson.UserName,
+                budget.Label);
+            _redmine.AddNote(apiIssue.Id, notes);
+            apiIssue = _redmine.GetIssue(apiIssue.Id);
+            dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+            _database.Save(dbIssue);
         }
     }
 }

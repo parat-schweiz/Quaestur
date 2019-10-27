@@ -9,6 +9,7 @@ namespace Quaestur
     {
         None = 0,
         DiscoursePost = 1,
+        RedmineIssue = 2
     }
 
     public static class PointsReferenceTypeExtensions
