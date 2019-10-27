@@ -53,7 +53,7 @@ namespace RedmineApi
 
         public Issue GetIssue(int issueId)
         {
-            var endpoint = string.Format("/issue/{0}.json", issueId);
+            var endpoint = string.Format("/issues/{0}.json", issueId);
             var response = Request<JObject>(endpoint, HttpMethod.Get, null);
             var issue = response.Value<JObject>("issue");
             return new Issue(issue);
@@ -66,7 +66,7 @@ namespace RedmineApi
 
             do
             {
-                var response = Request<JObject>("/issues.json", HttpMethod.Get, null);
+                var response = Request<JObject>("/issues.json?status_id=*", HttpMethod.Get, null);
 
                 foreach (var issue in response.Value<JArray>("issues").Values<JObject>())
                 {

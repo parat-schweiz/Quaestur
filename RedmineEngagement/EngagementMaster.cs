@@ -95,6 +95,7 @@ namespace RedmineEngagement
                         else
                         {
                             dbPerson = new Person(person.Id);
+                            dbPerson.UserId.Value = user.Id;
                             dbPerson.UserName.Value = user.Username;
                             dbPerson.Language.Value = Convert(person.Language);
                             _database.Save(dbPerson);
@@ -124,6 +125,9 @@ namespace RedmineEngagement
                         {
                             dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                             _database.Save(dbIssue);
+                            _logger.Info(
+                                "Updated issue {0}",
+                                apiIssue.Id);
                             SyncIssue(dbIssue, apiIssue);
                         }
                     }
@@ -134,6 +138,9 @@ namespace RedmineEngagement
                         dbIssue.CreatedOn.Value = apiIssue.CreatedOn;
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
+                        _logger.Info(
+                            "New issue {0}",
+                            apiIssue.Id);
                         SyncIssue(dbIssue, apiIssue);
                     } 
                 }
@@ -154,7 +161,7 @@ namespace RedmineEngagement
         {
             if (dbIssue.Assignments.Any(a => a.ConfigId == assignmentConfig.Id))
             {
-                return; 
+                return;
             }
 
             var assign = true;
@@ -169,55 +176,88 @@ namespace RedmineEngagement
 
             if (!assign)
             {
-                return; 
+                return;
             }
 
-            Person dbPerson = _cache.GetPerson(apiIssue.AssignedTo.Id);
+            Person dbPerson = null;
 
-            if (!string.IsNullOrEmpty(assignmentConfig.UserField))
+            switch (assignmentConfig.UserField)
             {
-                var field = apiIssue.CustomFields
-                    .SingleOrDefault(f => f.Name == assignmentConfig.UserField);
+                case "Author":
+                    if (apiIssue.Author == null)
+                    {
+                        return;
+                    }
 
-                if (field != null)
-                {
-                    dbPerson = _cache.GetPerson(field.Value);
+                    dbPerson = _cache.GetPerson(apiIssue.Author.Id);
 
                     if (dbPerson == null)
                     {
                         _logger.Notice(
-                            "Cannot find user '{0}' from issue {1}",
-                            field.Value,
+                            "Cannot find author user id {0} from issue {1}",
+                            apiIssue.Author.Id,
                             apiIssue.Id);
-                        _redmine.AddNote(apiIssue.Id, "Benutzer nicht gefunden.");
+                        _redmine.AddNote(apiIssue.Id, "Erstellender Benutzer nicht gefunden.");
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
                         return;
                     }
-                }
-                else
-                {
-                    _logger.Warning(
-                        "Cannot find username field '{0}' from assignment config '{1}' in issue {2}",
-                        assignmentConfig.UserField,
-                        assignmentConfig.Id,
-                        apiIssue.Id);
-                    return;
-                }
-            }
+                    break;
+                case "Assignee":
+                    if (apiIssue.AssignedTo == null)
+                    {
+                        return;
+                    }
 
-            if (dbPerson == null)
-            {
-                _logger.Notice(
-                    "Cannot find user id {0} from issue {1}",
-                    apiIssue.AssignedTo.Id,
-                    apiIssue.Id);
-                _redmine.AddNote(apiIssue.Id, "Benutzer nicht gefunden.");
-                apiIssue = _redmine.GetIssue(apiIssue.Id);
-                dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
-                _database.Save(dbIssue);
-                return;
+                    dbPerson = _cache.GetPerson(apiIssue.AssignedTo.Id);
+
+                    if (dbPerson == null)
+                    {
+                        _logger.Notice(
+                            "Cannot find assignee user id {0} from issue {1}",
+                            apiIssue.AssignedTo.Id,
+                            apiIssue.Id);
+                        _redmine.AddNote(apiIssue.Id, "Zusgewiesener Benutzer nicht gefunden.");
+                        apiIssue = _redmine.GetIssue(apiIssue.Id);
+                        dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                        _database.Save(dbIssue);
+                        return;
+                    }
+                    break;
+                default:
+                    var field = apiIssue.CustomFields
+                        .SingleOrDefault(f => f.Name == assignmentConfig.UserField);
+
+                    if (field != null)
+                    {
+                        dbPerson =
+                            !string.IsNullOrEmpty(field.Value) ?
+                            _cache.GetPerson(field.Value) : null;
+
+                        if (dbPerson == null)
+                        {
+                            _logger.Notice(
+                                "Cannot find user '{0}' from issue {1}",
+                                field.Value,
+                                apiIssue.Id);
+                            _redmine.AddNote(apiIssue.Id, "Benutzer nicht gefunden.");
+                            apiIssue = _redmine.GetIssue(apiIssue.Id);
+                            dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                            _database.Save(dbIssue);
+                            return;
+                        }
+                    }
+                    else
+                    {
+                        _logger.Warning(
+                            "Cannot find username field '{0}' from assignment config '{1}' in issue {2}",
+                            assignmentConfig.UserField,
+                            assignmentConfig.Id,
+                            apiIssue.Id);
+                        return;
+                    }
+                    break;
             }
 
             int points = assignmentConfig.Points;
@@ -253,6 +293,11 @@ namespace RedmineEngagement
                 }
             }
 
+            if (points == 0)
+            {
+                return; 
+            }
+
             var budget = _quaestur.GetPointBudgetList()
                 .SingleOrDefault(b => b.Label.IsAny(assignmentConfig.PointsBudget));
 
@@ -272,13 +317,12 @@ namespace RedmineEngagement
             dbAssignment.AwardedCalculation.Value = assignmentConfig.Reason;
             dbAssignment.AwardedPoints.Value = points;
 
-
-                        var apiPoints = _quaestur.AddPoints(
+            var apiPoints = _quaestur.AddPoints(
                 dbPerson.Id,
                 budget.Id,
                 points,
                 assignmentConfig.Reason,
-                _config.RedmineApi.ApiUrl + "/issue/" + apiIssue.Id.ToString(),
+                _config.RedmineApi.ApiUrl + "/issues/" + apiIssue.Id.ToString(),
                 apiIssue.UpdatedOn,
                 PointsReferenceType.RedmineIssue,
                 dbAssignment.Id.Value,
@@ -291,12 +335,12 @@ namespace RedmineEngagement
                 "Assigned {0} to {1} from budget {2}.",
                 points,
                 dbPerson.UserName,
-                budget.Label);
+                budget.Label[QuaesturApi.Language.English]);
             var notes = string.Format(
                 "{0} Punkte an @{1} aus Budget {2}",
                 points,
                 dbPerson.UserName,
-                budget.Label);
+                budget.Label[QuaesturApi.Language.German]);
             _redmine.AddNote(apiIssue.Id, notes);
             apiIssue = _redmine.GetIssue(apiIssue.Id);
             dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;

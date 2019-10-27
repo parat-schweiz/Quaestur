@@ -21,6 +21,20 @@ namespace RedmineApi
         public NamedId AssignedTo { get; private set; }
         public List<CustomField> CustomFields { get; private set; }
 
+        private NamedId GetNamedId(JObject obj, string key)
+        {
+            var subObj = obj.Value<JObject>(key);
+
+            if (subObj == null)
+            {
+                return null;
+            }
+            else
+            {
+                return new NamedId(subObj); 
+            }
+        }
+
         public Issue(JObject obj)
         {
             Id = obj.Value<int>("id");
@@ -28,12 +42,12 @@ namespace RedmineApi
             Description = obj.Value<string>("description");
             CreatedOn = obj.Value<DateTime>("created_on");
             UpdatedOn = obj.Value<DateTime>("updated_on");
-            Project = new NamedId(obj.Value<JObject>("project"));
-            Tracker = new NamedId(obj.Value<JObject>("tracker"));
-            Status = new NamedId(obj.Value<JObject>("status"));
-            Category = new NamedId(obj.Value<JObject>("category"));
-            Author = new NamedId(obj.Value<JObject>("author"));
-            AssignedTo = new NamedId(obj.Value<JObject>("assigned_to"));
+            Project = GetNamedId(obj, "project");
+            Tracker = GetNamedId(obj, "tracker");
+            Status = GetNamedId(obj, "status");
+            Category = GetNamedId(obj, "category");
+            Author = GetNamedId(obj, "author");
+            AssignedTo = GetNamedId(obj, "assigned_to");
             CustomFields = new List<CustomField>();
             var customFields = obj.Value<JArray>("custom_fields");
 

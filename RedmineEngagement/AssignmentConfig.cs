@@ -34,7 +34,7 @@ namespace RedmineEngagement
                 yield return new ConfigItemString("PointsBudget", v => PointsBudget = v);
                 yield return new ConfigItemString("PointsField", v => PointsField = v, false);
                 yield return new ConfigItemInt32("Points", v => Points = v, false);
-                yield return new ConfigItemString("UserField", v => UserField = v, false);
+                yield return new ConfigItemString("UserField", v => UserField = v);
                 yield return new ConfigItemString("Tracker", v => Tracker = v, false);
                 yield return new ConfigItemString("Status", v => Status = v, false);
                 yield return new ConfigItemString("Project", v => Project = v, false);
