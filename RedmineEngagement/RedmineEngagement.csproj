@@ -30,12 +30,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="EngagementMaster.cs" />
     <Compile Include="EngagementConfig.cs" />
+    <Compile Include="AssignmentConfig.cs" />
+    <Compile Include="Model\Meta.cs" />
+    <Compile Include="Model\Model.cs" />
+    <Compile Include="Model\Person.cs" />
+    <Compile Include="Model\Issue.cs" />
+    <Compile Include="Model\Assignment.cs" />
+    <Compile Include="Cache.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
@@ -54,6 +63,9 @@
       <Project>{AD639BDE-0987-4B05-B995-800EE5589815}</Project>
       <Name>QuaesturApi</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Model\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

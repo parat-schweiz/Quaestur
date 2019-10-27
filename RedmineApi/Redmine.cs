@@ -51,6 +51,33 @@ namespace RedmineApi
             _config = config;
         }
 
+        public Issue GetIssue(int issueId)
+        {
+            var endpoint = string.Format("/issue/{0}.json", issueId);
+            var response = Request<JObject>(endpoint, HttpMethod.Get, null);
+            var issue = response.Value<JObject>("issue");
+            return new Issue(issue);
+        }
+
+        public IEnumerable<Issue> GetIssues()
+        {
+            int count = 0;
+            int total = int.MaxValue;
+
+            do
+            {
+                var response = Request<JObject>("/issues.json", HttpMethod.Get, null);
+
+                foreach (var issue in response.Value<JArray>("issues").Values<JObject>())
+                {
+                    count++;
+                    yield return new Issue(issue);
+                }
+
+                total = response.Value<int>("total_count");
+            } while (count < total);
+        }
+
         public IEnumerable<User> GetUsers()
         {
             int count = 0;
@@ -70,12 +97,22 @@ namespace RedmineApi
             } while (count < total);
         }
 
+        public void AddNote(int issueId, string notes)
+        {
+            var update = new JObject(
+                new JProperty("issue",
+                    new JObject(
+                        new JProperty("notes", notes))));
+            var endpoint = string.Format("/issues/{0}.json", issueId);
+            Request<JValue>(endpoint, HttpMethod.Put, update);
+        }
+
         private T Request<T>(
             string endpoint, 
             HttpMethod method, 
             JToken data, 
             params UrlParameter[] parameters)
-            where T : JContainer
+            where T : JToken
         {
             var url = string.Join("/", _config.ApiUrl, endpoint);
             var paramString = string.Join("&", parameters.Select(p => string.Format("{0}={1}", p.Key, p.Value)));
@@ -122,9 +159,13 @@ namespace RedmineApi
             {
                 return JArray.Parse(responseText) as T;
             }
+            else if (typeof(T) == typeof(JValue))
+            {
+                return new JValue(responseText) as T;
+            }
             else
             {
-                throw new NotSupportedException(); 
+                throw new NotSupportedException();
             }
         }
     }

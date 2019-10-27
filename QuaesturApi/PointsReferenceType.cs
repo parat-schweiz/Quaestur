@@ -6,5 +6,6 @@ namespace QuaesturApi
     {
         None = 0,
         DiscoursePost = 1,
+        RedmineIssue = 2
     }
 }

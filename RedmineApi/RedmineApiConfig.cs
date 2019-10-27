@@ -19,5 +19,7 @@ namespace RedmineApi
                 yield return new ConfigItemString("RedmineApiKey", v => ApiKey = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }

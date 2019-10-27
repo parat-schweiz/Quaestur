@@ -19,5 +19,7 @@ namespace QuaesturApi
                 yield return new ConfigItemString("QuaesturApiSecret", v => ApiSecret = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }

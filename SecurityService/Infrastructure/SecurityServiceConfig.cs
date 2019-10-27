@@ -45,5 +45,7 @@ namespace SecurityService
                 yield return new ConfigItemString("LogFilePrefix", v => LogFilePrefix = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }

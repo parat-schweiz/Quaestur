@@ -48,6 +48,9 @@
     <Compile Include="Redmine.cs" />
     <Compile Include="RedmineApiConfig.cs" />
     <Compile Include="User.cs" />
+    <Compile Include="Issue.cs" />
+    <Compile Include="NamedId.cs" />
+    <Compile Include="CustomField.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

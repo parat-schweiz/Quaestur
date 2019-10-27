@@ -45,5 +45,7 @@ namespace DiscourseEngagement
                 yield return new ConfigItemString("DiscourseBudgetLabel", v => DiscourseBudgetLabel = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }

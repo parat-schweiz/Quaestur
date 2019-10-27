@@ -19,6 +19,8 @@ namespace BaseLibrary
                 yield return new ConfigItemBytes("SecurityServiceKey", v => SecurityServiceKey = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 
     public class ConfigSectionOauth2Client : ConfigSection
@@ -40,6 +42,8 @@ namespace BaseLibrary
                 yield return new ConfigItemString("OAuth2ClientSecret", v => OAuth2ClientSecret = v);
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 
     public class ConfigSectionMail : ConfigSection
@@ -63,6 +67,8 @@ namespace BaseLibrary
                 yield return new ConfigItemString("SystemMailAddress", v => SystemMailAddress = v);
             } 
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 
     public class ConfigSectionDatabase : ConfigSection 
@@ -84,6 +90,8 @@ namespace BaseLibrary
                 yield return new ConfigItemString("DatabasePassword", v => DatabasePassword = v);
             } 
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 
     public abstract class Config : ConfigSection
@@ -101,18 +109,61 @@ namespace BaseLibrary
         }
     }
 
+    public abstract class SubConfig
+    {
+        public string Tag { get; private set; }
+
+        public SubConfig(string tag)
+        {
+            Tag = tag;
+        }
+
+        public abstract void Load(XElement element);
+    }
+
+    public class SubConfig<T> : SubConfig
+    {
+        private Func<XElement, T> _create;
+        private Action<T> _assign;
+
+        public SubConfig(string tag, Func<XElement, T> create, Action<T> assign)
+            : base(tag)
+        {
+            _create = create;
+            _assign = assign;
+        }
+
+        public override void Load(XElement element)
+        {
+            _assign(_create(element));
+        }
+    }
+
     public abstract class ConfigSection
     {
         public abstract IEnumerable<ConfigItem> ConfigItems { get; }
 
+        public abstract IEnumerable<SubConfig> SubConfigs { get; }
+
         public virtual void Load(string filename)
         {
             var document = XDocument.Load(filename);
-            var root = document.Root;
+            Load(document.Root);
+        }
 
+        public virtual void Load(XElement root)
+        {
             foreach (var configItem in ConfigItems)
             {
                 configItem.Load(root);
+            }
+
+            foreach (var subConfig in SubConfigs)
+            {
+                foreach (var element in root.Elements(subConfig.Tag))
+                {
+                    subConfig.Load(element); 
+                } 
             }
         }
     }
@@ -126,11 +177,13 @@ namespace BaseLibrary
     {
         protected string Tag { get; private set; }
         private Action<T> _assign;
+        private bool _required;
 
-        public ConfigItem(string tag, Action<T> assign)
+        public ConfigItem(string tag, Action<T> assign, bool required)
         {
             Tag = tag;
             _assign = assign;
+            _required = required;
         }
 
         protected abstract T Convert(string value);
@@ -139,7 +192,7 @@ namespace BaseLibrary
         {
             var elements = root.Elements(Tag);
 
-            if (!elements.Any())
+            if (!elements.Any() && _required)
             {
                 throw new XmlException("Config node " + Tag + " not found");
             }
@@ -148,7 +201,10 @@ namespace BaseLibrary
                 throw new XmlException("Config node " + Tag + " ambigous");
             }
 
-            _assign(Convert(elements.Single().Value));
+            if (elements.Any())
+            {
+                _assign(Convert(elements.Single().Value));
+            }
         }
     }
 
@@ -178,8 +234,8 @@ namespace BaseLibrary
 
     public class ConfigItemString : ConfigItem<string>
     {
-        public ConfigItemString(string tag, Action<string> assign)
-            : base(tag, assign)
+        public ConfigItemString(string tag, Action<string> assign, bool required = true)
+            : base(tag, assign, required)
         {
         }
 
@@ -204,8 +260,8 @@ namespace BaseLibrary
 
     public class ConfigItemInt32 : ConfigItem<int>
     {
-        public ConfigItemInt32(string tag, Action<int> assign) 
-            : base(tag, assign)
+        public ConfigItemInt32(string tag, Action<int> assign, bool required = true)
+            : base(tag, assign, required)
         {
         }
 
@@ -224,8 +280,8 @@ namespace BaseLibrary
 
     public class ConfigItemBytes : ConfigItem<byte[]>
     {
-        public ConfigItemBytes(string tag, Action<byte[]> assign) 
-            : base(tag, assign)
+        public ConfigItemBytes(string tag, Action<byte[]> assign, bool required = true) 
+            : base(tag, assign, required)
         {
         }
 

@@ -50,5 +50,7 @@ namespace Quaestur
                 yield return new ConfigMultiItemString("MatrixDomain", v => MatrixDomains.Add(v));
             }
         }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 }
