@@ -51,6 +51,11 @@ namespace SiteLibrary
             return new DataValueCondition(columnName, DataOperator.Equal, value, null); 
         }
 
+        public static DataCondition NotEqual(string columnName, object value)
+        {
+            return new DataValueCondition(columnName, DataOperator.NotEqual, value, null);
+        }
+
         public static DataCondition EqualLower(string columnName, string value)
         {
             return new DataValueCondition(columnName, DataOperator.Equal, value, "LOWER");

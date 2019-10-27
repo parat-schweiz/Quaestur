@@ -260,6 +260,8 @@
     <Compile Include="Module\ApiClientModule.cs" />
     <Compile Include="Module\ApiPermissionModule.cs" />
     <Compile Include="Module\RequireCompleteAuthenticationModule.cs" />
+    <Compile Include="Model\Sequence.cs" />
+    <Compile Include="Model\ReservedUserName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

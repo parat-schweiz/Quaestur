@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -84,24 +85,72 @@ namespace Quaestur
                 {
                     if (status.HasAccess(person, PartAccess.Demography, AccessRight.Write))
                     {
-                        if (HasAllAccessOf(person))
+                        using (var transaction = Database.BeginTransaction())
                         {
-                            status.AssignStringRequired("UserName", person.UserName, model.UserName);
-                        }
+                            if (HasAllAccessOf(person) &&
+                                !string.IsNullOrEmpty(model.UserName) &&
+                                person.UserName.Value != model.UserName)
+                            {
+                                if (Database.Query<ReservedUserName>(DC.Equal("username", model.UserName)
+                                    .And(DC.NotEqual("userid", person.Id.Value))).Any())
+                                {
+                                    status.SetValidationError(
+                                        "UserName",
+                                        "Person.Detail.Head.Edit.ReservedUserName",
+                                        "When username is reserved",
+                                        "This username is reserved");
+                                }
+                                else if (Database.Query<Person>(DC.Equal("username", model.UserName)
+                                    .And(DC.NotEqual("id", person.Id.Value))).Any())
+                                {
+                                    status.SetValidationError(
+                                        "UserName",
+                                        "Person.Detail.Head.Edit.AllocatedUserName",
+                                        "When username is allocated",
+                                        "This username is already allocated");
+                                }
+                                else
+                                {
+                                    if (!Database.Query<ReservedUserName>(DC.Equal("username", person.UserName.Value)
+                                        .And(DC.Equal("userid", person.Id.Value))).Any())
+                                    {
+                                        var reserveOldUserName = new ReservedUserName(Guid.NewGuid());
+                                        reserveOldUserName.UserId.Value = person.Id.Value;
+                                        reserveOldUserName.UserName.Value = person.UserName.Value;
+                                        Database.Save(reserveOldUserName);
+                                    }
 
-                        status.AssignStringFree("Title", person.Title, model.Titles);
-                        status.AssignStringFree("FirstName", person.FirstName, model.FirstName);
-                        status.AssignStringFree("MiddleNames", person.MiddleNames, model.MiddleNames);
-                        status.AssignStringFree("LastName", person.LastName, model.LastName);
+                                    status.AssignStringRequired("UserName", person.UserName, model.UserName);
 
-                        if (status.IsSuccess)
-                        {
-                            Database.Save(person);
-                            Journal(person,
-                                "Name.Journal.Edit",
-                                "Journal entry edited names",
-                                "Changed names {0}",
-                                t => person.GetText(t));
+                                    var oldReservedUserName = Database.Query<ReservedUserName>(DC.Equal("username", person.UserName.Value)
+                                        .And(DC.Equal("userid", person.Id.Value))).SingleOrDefault();
+
+                                    if (oldReservedUserName != null)
+                                    {
+                                        oldReservedUserName.Delete(Database);
+                                    }
+                                }
+                            }
+
+                            status.AssignStringFree("Title", person.Title, model.Titles);
+                            status.AssignStringFree("FirstName", person.FirstName, model.FirstName);
+                            status.AssignStringFree("MiddleNames", person.MiddleNames, model.MiddleNames);
+                            status.AssignStringFree("LastName", person.LastName, model.LastName);
+
+                            if (status.IsSuccess)
+                            {
+                                Database.Save(person);
+                                Journal(person,
+                                    "Name.Journal.Edit",
+                                    "Journal entry edited names",
+                                    "Changed names {0}",
+                                    t => person.GetText(t));
+                                transaction.Commit();
+                            }
+                            else
+                            {
+                                transaction.Rollback(); 
+                            }
                         }
                     }
                 }

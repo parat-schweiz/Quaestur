@@ -428,6 +428,11 @@ namespace Quaestur
                 session.Delete(database);
             }
 
+            var reservedUserName = new ReservedUserName(Guid.NewGuid());
+            reservedUserName.UserId.Value = Id.Value;
+            reservedUserName.UserName.Value = UserName.Value;
+            database.Save(reservedUserName);
+
             database.Delete(this); 
         }
     }
