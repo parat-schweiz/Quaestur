@@ -73,12 +73,30 @@ namespace SiteLibrary
                 case EscapeMode.Html:
                     return value.EscapeHtml();
                 case EscapeMode.Latex:
-                    return value;
+                    return value.EscapeLatex();
                 case EscapeMode.None:
                     return value;
                 default:
                     throw new NotSupportedException(); 
             }
+        }
+
+        public static string EscapeLatex(this string value, bool allowNewLine = false)
+        {
+            value = value
+                .Replace(@"%", @"\%")
+                .Replace(@"_", @"\_");
+
+            if (allowNewLine)
+            {
+                value = value.Replace(Environment.NewLine, "\\");
+            }
+            else
+            {
+                value = value.Replace(Environment.NewLine, " "); 
+            }
+
+            return value;
         }
 
         public static string EscapeHtml(this string value, bool allowNewLine = false)

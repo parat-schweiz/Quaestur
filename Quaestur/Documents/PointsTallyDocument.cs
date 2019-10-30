@@ -227,7 +227,7 @@ namespace Quaestur
             {
                 runUp += p.Amount.Value;
 
-                text.Append(p.Reason.Value);
+                text.Append(p.Reason.Value.EscapeLatex());
                 text.Append(@" & \multicolumn{1}{r}{");
                 text.Append(p.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"));
                 text.Append(@"} & \multicolumn{1}{r}{");
