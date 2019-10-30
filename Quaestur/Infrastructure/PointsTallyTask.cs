@@ -90,7 +90,7 @@ namespace Quaestur
         private void SendTally(IDatabase database, Membership membership, PointsTally tally)
         {
             var pointsTallyMailTemplate = membership.Type.Value.GetPointsTallyMail(database, membership.Person.Value.Language.Value);
-            var message = PointsTallyTask.CreateMail(database, membership, pointsTallyMailTemplate, null);
+            var message = CreateMail(database, membership, pointsTallyMailTemplate, tally);
             Global.MailCounter.Used();
             Global.Mail.Send(message);
         }
@@ -163,19 +163,26 @@ namespace Quaestur
             htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
             alternative.Add(htmlPart);
 
-            var content = new Multipart("mixed");
-            content.Add(alternative);
-            var pdfFileName = tally.CreatedDate.Value.ToString("yyyy-MM-dd") + ".pdf";
-            var documentStream = new System.IO.MemoryStream(tally.DocumentData.Value);
-            var documentPart = new MimePart("application", "pdf");
-            documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
-            documentPart.ContentType.Name = pdfFileName;
-            documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-            documentPart.ContentDisposition.FileName = pdfFileName;
-            documentPart.ContentTransferEncoding = ContentEncoding.Base64;
-            content.Add(documentPart);
+            if (tally != null)
+            {
+                var content = new Multipart("mixed");
+                content.Add(alternative);
+                var pdfFileName = tally.CreatedDate.Value.ToString("yyyy-MM-dd") + ".pdf";
+                var documentStream = new System.IO.MemoryStream(tally.DocumentData.Value);
+                var documentPart = new MimePart("application", "pdf");
+                documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
+                documentPart.ContentType.Name = pdfFileName;
+                documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                documentPart.ContentDisposition.FileName = pdfFileName;
+                documentPart.ContentTransferEncoding = ContentEncoding.Base64;
+                content.Add(documentPart);
 
-            return Global.Mail.Create(from, to, senderKey, null, subject, content);
+                return Global.Mail.Create(from, to, senderKey, null, subject, content);
+            }
+            else
+            {
+                return Global.Mail.Create(from, to, senderKey, null, subject, alternative);
+            }
         }
     }
 }
