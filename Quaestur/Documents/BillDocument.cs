@@ -104,6 +104,7 @@ namespace Quaestur
 
             _lastTally = _database
                 .Query<PointsTally>(DC.Equal("personid", _person.Id.Value))
+                .Where(t => t.UntilDate.Value < Bill.UntilDate.Value)
                 .OrderByDescending(t => t.UntilDate.Value)
                 .FirstOrDefault();
             _maxPoints = _person.Memberships
@@ -188,7 +189,7 @@ namespace Quaestur
         {
             var endDate = membership.EndDate.Value ?? DateTime.Now.AddYears(10);
             double billDays = Bill.UntilDate.Value.Date.Subtract(Bill.FromDate.Value.Date).TotalDays;
-            double overlapDays = Dates.ComputeOverlap(Bill.UntilDate.Value.Date, Bill.FromDate.Value.Date, membership.StartDate.Value, endDate).TotalDays;
+            double overlapDays = Dates.ComputeOverlap(Bill.FromDate.Value.Date, Bill.UntilDate.Value.Date, membership.StartDate.Value, endDate).TotalDays;
             return (long)Math.Floor(membership.Type.Value.MaximumPoints.Value / billDays * overlapDays);
         }
 
