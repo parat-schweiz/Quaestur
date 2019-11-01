@@ -151,8 +151,14 @@ namespace Quaestur
                             p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
             var sum = list.Sum(p => p.Amount);
-            PointsTally.Considered.Value = Math.Min(sum, _membership.Type.Value.MaximumPoints.Value);
-            PointsTally.ForwardBalance.Value = Math.Min(sum - PointsTally.Considered.Value, _membership.Type.Value.MaximumBalanceForward);
+            var maxConsideredPoints = _membership.Person.Value.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .Sum(m => m.Type.Value.MaximumPoints.Value);
+            var maxForwardPoints = _membership.Person.Value.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .Sum(m => m.Type.Value.MaximumBalanceForward.Value);
+            PointsTally.Considered.Value = Math.Min(sum, maxConsideredPoints);
+            PointsTally.ForwardBalance.Value = Math.Min(sum - PointsTally.Considered.Value, maxForwardPoints);
 
             var text = new StringBuilder();
 
