@@ -108,8 +108,8 @@ namespace Quaestur
             while (pointsQueue.Count > 0)
             {
                 if ((tallyQueue.Count > 0) &&
-                    (tallyQueue.Peek().UntilDate.Value.Date.AddDays(1) >
-                    pointsQueue.Peek().Moment))
+                    (pointsQueue.Peek().Moment.Value >
+                    tallyQueue.Peek().UntilDate.Value.Date.AddDays(1)))
                 {
                     var tally = tallyQueue.Dequeue();
                     running = tally.ForwardBalance.Value;
