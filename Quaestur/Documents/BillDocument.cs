@@ -111,7 +111,7 @@ namespace Quaestur
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => MaxPoints(m));
             _consideredPoints = _lastTally != null ? _lastTally.Considered.Value : 0;
-            _portionOfDiscount = Math.Max(1m, _consideredPoints / _maxPoints);
+            _portionOfDiscount = (_maxPoints > 0) ? Math.Min(1m, _consideredPoints / _maxPoints) : 0m;
 
             RequiresPersonalPaymentUpdate = _allIncluded
                 .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
@@ -277,20 +277,23 @@ namespace Quaestur
                 text.Append(@" \\");
                 text.AppendLine();
 
-                text.Append(@"~~~~~");
-                text.Append(_translator.Get(
-                    "Document.Bill.FeeDiscount",
-                    "Period fee in the bill document",
-                    "{0:0.0}% of max {1:0.0}% discount",
-                    actualDiscount * 100m,
-                    maxDiscount * 100m)
-                    .EscapeLatex());
-                text.Append(@" & ");
-                text.Append(_settings.Currency);
-                text.Append(@" & ");
-                text.Append(discountAmount);
-                text.Append(@" \\");
-                text.AppendLine();
+                if (_portionOfDiscount > 0m)
+                {
+                    text.Append(@"~~~~~");
+                    text.Append(_translator.Get(
+                        "Document.Bill.FeeDiscount",
+                        "Period fee in the bill document",
+                        "{0:0.0}% of max {1:0.0}% discount",
+                        actualDiscount * 100m,
+                        maxDiscount * 100m)
+                        .EscapeLatex());
+                    text.Append(@" & ");
+                    text.Append(_settings.Currency);
+                    text.Append(@" & ");
+                    text.Append(discountAmount);
+                    text.Append(@" \\");
+                    text.AppendLine();
+                }
 
                 text.Append(@"~ & ~ & ~ \\");
                 text.AppendLine();
