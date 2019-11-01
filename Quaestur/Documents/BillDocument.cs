@@ -111,7 +111,8 @@ namespace Quaestur
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => MaxPoints(m));
             _consideredPoints = _lastTally != null ? _lastTally.Considered.Value : 0;
-            _portionOfDiscount = (_maxPoints > 0) ? Math.Min(1m, _consideredPoints / _maxPoints) : 0m;
+            _portionOfDiscount = (_maxPoints > 0) ? 
+                Math.Min(1m, (decimal)_consideredPoints / (decimal)_maxPoints) : 0m;
 
             RequiresPersonalPaymentUpdate = _allIncluded
                 .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
