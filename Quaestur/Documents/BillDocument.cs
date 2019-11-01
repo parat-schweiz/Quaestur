@@ -104,14 +104,14 @@ namespace Quaestur
 
             _lastTally = _database
                 .Query<PointsTally>(DC.Equal("personid", _person.Id.Value))
-                .Where(t => t.UntilDate.Value < Bill.UntilDate.Value)
+                .Where(t => t.UntilDate.Value < Bill.FromDate.Value)
                 .OrderByDescending(t => t.UntilDate.Value)
                 .FirstOrDefault();
             _maxPoints = _person.Memberships
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => MaxPoints(m));
             _consideredPoints = _lastTally != null ? _lastTally.Considered.Value : 0;
-            _portionOfDiscount = Math.Max(1m, _maxPoints / _consideredPoints);
+            _portionOfDiscount = Math.Max(1m, _consideredPoints / _maxPoints);
 
             RequiresPersonalPaymentUpdate = _allIncluded
                 .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
