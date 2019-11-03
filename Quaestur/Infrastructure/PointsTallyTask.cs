@@ -56,8 +56,6 @@ namespace Quaestur
             foreach (var person in persons
                 .Where(p => !p.Deleted.Value))
             {
-                Global.Log.Warning("Points tally check: {0}", person.ShortHand);
-
                 var membership = person.Memberships
                     .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
                                 m.Type.Value.Payment.Value != PaymentModel.None &&
