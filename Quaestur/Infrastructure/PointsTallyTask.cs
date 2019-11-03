@@ -67,8 +67,6 @@ namespace Quaestur
 
                 if (membership != null)
                 {
-                    Global.Log.Warning("Points tally check: {0}", membership.ToString());
-
                     var lastTally = database
                         .Query<PointsTally>(DC.Equal("personid", person.Id.Value))
                         .OrderByDescending(t => t.UntilDate.Value)
@@ -76,20 +74,13 @@ namespace Quaestur
                     var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
                     var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
 
-                    Global.Log.Warning("Points tally check: Last tally until date {0}", lastTallyUntilDate.ToString());
-                    Global.Log.Warning("Points tally check: Until date {0}", untilDate.ToString());
-
                     if (DateTime.UtcNow.Date > untilDate.Date &&
                         untilDate.Date > lastTallyUntilDate.Date)
                     {
-                        Global.Log.Warning("Points tally check: Creating tally");
-
                         var tally = CreatePointsTally(database, translation, membership);
 
                         if (tally != null)
                         {
-                            Global.Log.Warning("Points tally check: Tally created");
-
                             SendTally(database, membership, tally);
                             _maxMailsCount--;
                         }
