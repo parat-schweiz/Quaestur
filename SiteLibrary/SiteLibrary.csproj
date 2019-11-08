@@ -63,7 +63,7 @@
       <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.4.0\lib\net47\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.4.0.1\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
