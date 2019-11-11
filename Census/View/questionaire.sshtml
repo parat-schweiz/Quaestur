@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateQuestionaireList(){
+      $.get("/questionaire/list", function(data, status){
+          if (data){
+              $("#questionaireList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateQuestionaireList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="questionaireList">
+</div>
+@EndSection

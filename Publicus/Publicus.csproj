@@ -191,6 +191,7 @@
     <Compile Include="Model\MasterRole.cs" />
     <Compile Include="Model\SearchSettings.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
+    <Compile Include="Module\DialogViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

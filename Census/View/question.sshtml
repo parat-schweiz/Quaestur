@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateQuestionList(){
+      $.get("/question/list/@Model.Id", function(data, status){
+          if (data){
+              $("#questionList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateQuestionList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="questionList">
+</div>
+@EndSection

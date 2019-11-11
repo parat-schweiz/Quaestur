@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineApi", "RedmineApi\Re
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineEngagement", "RedmineEngagement\RedmineEngagement.csproj", "{35C37C10-5855-4920-9801-623AE5EA1257}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Census", "Census\Census.csproj", "{EE3636B8-B523-42A3-9842-C43B3D963A85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -79,6 +81,10 @@ Global
 		{35C37C10-5855-4920-9801-623AE5EA1257}.Debug|x86.Build.0 = Debug|x86
 		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.ActiveCfg = Release|x86
 		{35C37C10-5855-4920-9801-623AE5EA1257}.Release|x86.Build.0 = Release|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Debug|x86.ActiveCfg = Debug|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Debug|x86.Build.0 = Debug|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.ActiveCfg = Release|x86
+		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

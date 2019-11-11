@@ -1,0 +1,102 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#option' + field + key;
+  var feedbackId = '#option' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#option' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagText == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagText == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("CheckedValue", result);
+  assignFieldValidation("UncheckedValue", result);
+  @Each.Text
+  assignFieldMultiValidation("Text", "@Current.Key", result);
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.CheckedValue = $("#optionCheckedValue").val();
+  formData.UncheckedValue = $("#optionUncheckedValue").val();
+  formData.Text = new Array();
+  @Each.Text
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#optionText@Current.Key").val()
+  formData.Text.push(obj@Current.Key);
+  @EndEach
+  $.post("/option/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateOptionList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Text
+      <div class="col-12 mb-3">
+        <label for="optionText@Current.Key">@Current.Phrase</label>
+        <input type="text" id="optionText@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="optionTextFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="optionCheckedValue">@Model.PhraseFieldCheckedValue</label>
+        <input type="text" id="optionCheckedValue" class="form-control" value="@Model.CheckedValue"/>
+        <div id="optionCheckedValueFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="optionUncheckedValue">@Model.PhraseFieldUncheckedValue</label>
+        <input type="text" id="optionUncheckedValue" class="form-control" value="@Model.UncheckedValue"/>
+        <div id="optionUncheckedValueFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection
