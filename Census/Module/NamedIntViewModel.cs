@@ -51,6 +51,11 @@ namespace Census
             Selected = selected;
         }
 
+        public NamedIntViewModel(Translator translator, VariableType type, bool selected)
+            : this((int)type, type.Translate(translator), selected)
+        {
+        }
+
         public NamedIntViewModel(Translator translator, Language language, bool selected)
             : this((int)language, language.Translate(translator), selected)
         {

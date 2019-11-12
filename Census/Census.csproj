@@ -103,6 +103,8 @@
     <Compile Include="Model\Section.cs" />
     <Compile Include="Module\SectionModule.cs" />
     <Compile Include="Module\SwitchViewModel.cs" />
+    <Compile Include="Model\Variable.cs" />
+    <Compile Include="Module\VariableModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
@@ -550,6 +552,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\sectionlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\variable.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\variableedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\variablelist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

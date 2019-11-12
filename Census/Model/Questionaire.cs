@@ -9,6 +9,7 @@ namespace Census
         public ForeignKeyField<Group, Questionaire> Owner { get; private set; }
         public MultiLanguageStringField Name { get; private set; }
         public List<Section> Sections { get; private set; }
+        public List<Variable> Variables { get; private set; }
 
         public Questionaire() : this(Guid.Empty)
         {
@@ -19,6 +20,7 @@ namespace Census
             Owner = new ForeignKeyField<Group, Questionaire>(this, "ownerid", false, null);
             Name = new MultiLanguageStringField(this, "name");
             Sections = new List<Section>();
+            Variables = new List<Variable>();
         }
 
         public override IEnumerable<MultiCascade> Cascades
@@ -26,11 +28,17 @@ namespace Census
             get
             {
                 yield return new MultiCascade<Section>("questionaireid", Id.Value, () => Sections);
+                yield return new MultiCascade<Variable>("questionaireid", Id.Value, () => Variables);
             }
         }
 
         public override void Delete(IDatabase database)
         {
+            foreach (var variable in database.Query<Variable>(DC.Equal("questionaireid", Id.Value)))
+            {
+                variable.Delete(database);
+            }
+
             foreach (var question in database.Query<Section>(DC.Equal("questionaireid", Id.Value)))
             {
                 question.Delete(database); 

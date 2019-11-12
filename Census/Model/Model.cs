@@ -25,6 +25,7 @@ namespace Census
             database.CreateTable<RoleAssignment>();
             database.CreateTable<Permission>();
             database.CreateTable<Questionaire>();
+            database.CreateTable<Variable>();
             database.CreateTable<Section>();
             database.CreateTable<Question>();
             database.CreateTable<Option>();
