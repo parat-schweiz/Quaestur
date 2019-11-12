@@ -14,9 +14,21 @@ namespace Census
         public string Method;
         public string Id;
         public List<MultiItemViewModel> Text;
+        public List<NamedIntViewModel> CheckedModifications;
+        public string CheckedModification;
+        public List<NamedIdViewModel> CheckedVariables;
+        public string CheckedVariable;
         public string CheckedValue;
+        public List<NamedIntViewModel> UncheckedModifications;
+        public string UncheckedModification;
+        public List<NamedIdViewModel> UncheckedVariables;
+        public string UncheckedVariable;
         public string UncheckedValue;
+        public string PhraseFieldCheckedModification;
+        public string PhraseFieldCheckedVariable;
         public string PhraseFieldCheckedValue;
+        public string PhraseFieldUncheckedModification;
+        public string PhraseFieldUncheckedVariable;
         public string PhraseFieldUncheckedValue;
 
         public OptionEditViewModel()
@@ -26,8 +38,29 @@ namespace Census
         public OptionEditViewModel(Translator translator)
             : base(translator, translator.Get("Option.Edit.Title", "Title of the option edit dialog", "Edit option"), "optionEditDialog")
         {
+            PhraseFieldCheckedModification = translator.Get("Option.Edit.Field.CheckedModification", "Checked modification field in the option edit dialog", "Checked modification").EscapeHtml();
+            PhraseFieldCheckedVariable = translator.Get("Option.Edit.Field.CheckedVariable", "Checked variable field in the option edit dialog", "Checked variable").EscapeHtml();
             PhraseFieldCheckedValue = translator.Get("Option.Edit.Field.CheckedValue", "Checked value field in the option edit dialog", "Checked value").EscapeHtml();
+            PhraseFieldUncheckedModification = translator.Get("Option.Edit.Field.UncheckedModification", "Unchecked modification field in the option edit dialog", "Unchecked modification").EscapeHtml();
+            PhraseFieldUncheckedVariable = translator.Get("Option.Edit.Field.UncheckedVariable", "Unchecked variable field in the option edit dialog", "Unchecked variable").EscapeHtml();
             PhraseFieldUncheckedValue = translator.Get("Option.Edit.Field.UncheckedValue", "Unchecked value field in the option edit dialog", "Unchecked value").EscapeHtml();
+            CheckedModifications = new List<NamedIntViewModel>();
+            UncheckedModifications = new List<NamedIntViewModel>();
+        }
+
+        private void AddModifications(Translator translator, List<NamedIntViewModel> list, Func<VariableModification, bool> selected)
+        {
+            list.Add(new NamedIntViewModel(translator, VariableModification.None, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Add, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.And, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Append, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Divide, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Multiply, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Or, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Remove, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Set, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Subtract, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.Xor, selected));
         }
 
         public OptionEditViewModel(Translator translator, IDatabase db, Session session, Question question)
@@ -38,6 +71,16 @@ namespace Census
             Text = translator.CreateLanguagesMultiItem("Option.Edit.Field.Text", "Text field in the option edit dialog", "Text ({0})", new MultiLanguageString());
             CheckedValue = "0";
             UncheckedValue = "0";
+            AddModifications(translator, CheckedModifications, v => v == VariableModification.None);
+            AddModifications(translator, UncheckedModifications, v => v == VariableModification.None);
+            CheckedVariables = new List<NamedIdViewModel>(
+                question.Section.Value.Questionaire.Value.Variables
+                .Select(v => new NamedIdViewModel(translator, v, false))
+                .OrderBy(v => v.Name));
+            UncheckedVariables = new List<NamedIdViewModel>(
+                question.Section.Value.Questionaire.Value.Variables
+                .Select(v => new NamedIdViewModel(translator, v, false))
+                .OrderBy(v => v.Name));
         }
 
         public OptionEditViewModel(Translator translator, IDatabase db, Session session, Option option)
@@ -46,8 +89,16 @@ namespace Census
             Method = "edit";
             Id = option.Id.ToString();
             Text = translator.CreateLanguagesMultiItem("Option.Edit.Field.Text", "Text field in the option edit dialog", "Text ({0})", option.Text.Value);
-            CheckedValue = option.CheckedValue.Value.ToString();
-            UncheckedValue = option.UncheckedValue.Value.ToString();
+            AddModifications(translator, CheckedModifications, v => v == option.CheckedModification.Value);
+            AddModifications(translator, UncheckedModifications, v => v == option.UncheckedModification.Value);
+            CheckedVariables = new List<NamedIdViewModel>(
+                option.Question.Value.Section.Value.Questionaire.Value.Variables
+                .Select(v => new NamedIdViewModel(translator, v, v == option.CheckedVariable.Value))
+                .OrderBy(v => v.Name));
+            UncheckedVariables = new List<NamedIdViewModel>(
+                option.Question.Value.Section.Value.Questionaire.Value.Variables
+                .Select(v => new NamedIdViewModel(translator, v, v == option.UncheckedVariable.Value))
+                .OrderBy(v => v.Name));
         }
     }
 

@@ -4,6 +4,55 @@ using SiteLibrary;
 
 namespace Census
 {
+    public enum VariableModification
+    {
+        None = 0,
+        Set = 1,
+        And = 2,
+        Or = 3,
+        Xor = 4,
+        Add = 5,
+        Subtract = 6,
+        Multiply = 7,
+        Divide = 8,
+        Append = 9,
+        Remove = 10,
+    }
+
+    public static class VariableModificationExtensions
+    {
+        public static string Translate(this VariableModification modification, Translator translator)
+        {
+            switch (modification)
+            {
+                case VariableModification.None:
+                    return translator.Get("Enum.VariableModification.None", "None value in the variable modification enum", "None");
+                case VariableModification.Set:
+                    return translator.Get("Enum.VariableModification.Set", "Set value in the variable modification enum", "Set");
+                case VariableModification.And:
+                    return translator.Get("Enum.VariableModification.And", "And value in the variable modification enum", "And");
+                case VariableModification.Or:
+                    return translator.Get("Enum.VariableModification.Or", "Or value in the variable modification enum", "Or");
+                case VariableModification.Xor:
+                    return translator.Get("Enum.VariableModification.Xor", "Xor value in the variable modification enum", "Xor");
+                case VariableModification.Add:
+                    return translator.Get("Enum.VariableModification.Add", "Add value in the variable modification enum", "Add");
+                case VariableModification.Subtract:
+                    return translator.Get("Enum.VariableModification.Subtract", "Subtract value in the variable modification enum", "Subtract");
+                case VariableModification.Multiply:
+                    return translator.Get("Enum.VariableModification.Multiply", "Multiply value in the variable modification enum", "Multiply");
+                case VariableModification.Divide:
+                    return translator.Get("Enum.VariableModification.Divide", "Divide value in the variable modification enum", "Divide");
+                case VariableModification.Append:
+                    return translator.Get("Enum.VariableModification.Append", "Append value in the variable modification enum", "Append");
+                case VariableModification.Remove:
+                    return translator.Get("Enum.VariableModification.Remove", "Remove value in the variable modification enum", "Remove");
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+
     public enum VariableType
     {
         Boolean = 0,

@@ -44,6 +44,13 @@ namespace Census
             Selected = selected;
         }
 
+        public NamedIdViewModel(Translator translator, Variable variable, bool selected)
+        {
+            Id = variable.Id.ToString();
+            Name = variable.GetText(translator);
+            Selected = selected;
+        }
+
         public NamedIdViewModel(Translator translator, Group group, bool selected)
         {
             Id = group.Id.ToString();
