@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -69,7 +70,7 @@ namespace Quaestur
                 case "Person.Language":
                     return _person.Language.Value.Translate(_translator);
                 case "Person.BirthDate":
-                    return _person.BirthDate.Value.ToString("dd.MM.yyyy");
+                    return _person.BirthDate.Value.FormatSwissDay();
                 case "Person.Address.FiveLines":
                     return CreatePostalAddressFiveLines();
                 case "Person.Parameter.Income.Url":

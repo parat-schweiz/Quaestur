@@ -269,8 +269,8 @@ namespace Quaestur
                     "Document.Bill.PeriodFee",
                     "Period fee in the bill document",
                     "Fee from {0} until {1}",
-                    Bill.FromDate.Value.ToString("dd.MM.yyyy"),
-                    Bill.UntilDate.Value.ToString("dd.MM.yyyy")));
+                    Bill.FromDate.Value.FormatSwissDay(),
+                    Bill.UntilDate.Value.FormatSwissDay()));
                 text.Append(@" & ");
                 text.Append(_settings.Currency);
                 text.Append(@" & ");
@@ -340,11 +340,11 @@ namespace Quaestur
                 case "Bill.Organization":
                     return _organization.Name.Value[_translator.Language];
                 case "Bill.FromDate":
-                    return Bill.FromDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.FromDate.Value.FormatSwissDay();
                 case "Bill.UntilDate":
-                    return Bill.UntilDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.UntilDate.Value.FormatSwissDay();
                 case "Bill.CreatedDate":
-                    return Bill.CreatedDate.Value.ToString("dd.MM.yyyy");
+                    return Bill.CreatedDate.Value.FormatSwissDay();
                 case "Bill.Number":
                     return Bill.Number.Value;
                 case "Bill.Amount":

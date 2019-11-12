@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -32,7 +33,7 @@ namespace Quaestur
             : this(translator)
         {
             Id = person.Id.ToString();
-            Birthdate = person.BirthDate.Value.ToString("dd.MM.yyyy");
+            Birthdate = person.BirthDate.Value.FormatSwissDay();
             Language = ((int)person.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, person.Language.Value == SiteLibrary.Language.English));

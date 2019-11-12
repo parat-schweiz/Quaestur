@@ -72,7 +72,7 @@ namespace Publicus
         {
             Method = "edit";
             Id = document.Id.ToString();
-            CreatedDate = document.CreatedDate.Value.ToString("dd.MM.yyyy");
+            CreatedDate = document.CreatedDate.Value.FormatSwissDay();
             FileName = document.FileName.Value.EscapeHtml();
             FilePath = "/document/download/" + document.Id.Value.ToString();
             FileSize = "(" + document.Data.Value.Length.SizeFormat() + ")";

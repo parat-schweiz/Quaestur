@@ -56,11 +56,23 @@ namespace Quaestur
         {
             if (period <= 7)
             {
-                return 3; 
+                return 2; 
+            }
+            else if (period <= 10)
+            {
+                return 3;
             }
             else if (period <= 16)
             {
-                return 5; 
+                return 4;
+            }
+            else if (period <= 21)
+            {
+                return 5;
+            }
+            else if (period <= 31)
+            {
+                return 7;
             }
             else if (period <= 66)
             {
@@ -98,8 +110,8 @@ namespace Quaestur
             {
                 var mainModel = membership.Type.Value.CreatePaymentModel(database);
                 var period = mainModel.GetBillingPeriod();
-                var lastBill = GetLastBill(database, membership);
                 var before = GetBefore(period);
+                var lastBill = GetLastBill(database, membership);
 
                 if (lastBill == null)
                 {
@@ -107,7 +119,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return lastBill.UntilDate.Value.AddDays(1 + period - before).Date;
+                    return lastBill.UntilDate.Value.AddDays(-before).Date;
                 }
             }
         }
@@ -220,7 +232,7 @@ namespace Quaestur
 
                 text.Append(tableRowBalanceForward);
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(PointsTally.FromDate.Value);
+                text.Append(PointsTally.FromDate.Value.FormatSwissMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
                 text.Append(_lastTally.ForwardBalance.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
@@ -235,7 +247,7 @@ namespace Quaestur
 
                 text.Append(p.Reason.Value.EscapeLatex());
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(p.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"));
+                text.Append(p.Moment.Value.ToLocalTime().FormatSwissMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
                 text.Append(p.Amount.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
@@ -262,11 +274,11 @@ namespace Quaestur
                 case "PointsTally.TableContent":
                     return CreateTableContent();
                 case "PointsTally.FromDate":
-                    return PointsTally.FromDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.FromDate.Value.FormatSwissDay();
                 case "PointsTally.UntilDate":
-                    return PointsTally.UntilDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.UntilDate.Value.FormatSwissDay();
                 case "PointsTally.CreatedDate":
-                    return PointsTally.CreatedDate.Value.ToString("dd.MM.yyyy");
+                    return PointsTally.CreatedDate.Value.FormatSwissDay();
                 default:
                     throw new NotSupportedException(); 
             }

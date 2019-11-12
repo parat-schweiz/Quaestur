@@ -6,6 +6,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -57,10 +58,10 @@ namespace Quaestur
             Method = "edit";
             Id = membership.Id.ToString();
             Organization = membership.Organization.Value.Name.Value[translator.Language].EscapeHtml();
-            StartDate = membership.StartDate.Value.ToString("dd.MM.yyyy");
+            StartDate = membership.StartDate.Value.FormatSwissDay();
             EndDate =
                 membership.EndDate.Value.HasValue ?
-                membership.EndDate.Value.Value.ToString("dd.MM.yyyy") :
+                membership.EndDate.Value.Value.FormatSwissDay() :
                 string.Empty;
             Organizations.AddRange(
                 db.Query<Organization>()

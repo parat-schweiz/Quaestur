@@ -67,9 +67,9 @@ namespace Quaestur
         {
             Method = "edit";
             Id = pointsTally.Id.ToString();
-            FromDate = pointsTally.FromDate.Value.ToString("dd.MM.yyyy");
-            UntilDate = pointsTally.UntilDate.Value.ToString("dd.MM.yyyy");
-            CreatedDate = pointsTally.CreatedDate.Value.ToString("dd.MM.yyyy");
+            FromDate = pointsTally.FromDate.Value.FormatSwissDay();
+            UntilDate = pointsTally.UntilDate.Value.FormatSwissDay();
+            CreatedDate = pointsTally.CreatedDate.Value.FormatSwissDay();
             Considered = pointsTally.Considered.Value.ToString();
             ForwardBalance = pointsTally.ForwardBalance.Value.ToString();
             FileName = pointsTally.FileName(translator).EscapeHtml();

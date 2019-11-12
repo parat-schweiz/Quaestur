@@ -6,6 +6,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Publicus
 {
@@ -35,7 +36,7 @@ namespace Publicus
             List = new List<ContactDetailDemographyItemViewModel>();
             List.Add(new ContactDetailDemographyItemViewModel(
                 translator.Get("Contact.Detail.Demography.Birthdate", "Birthdate item in demography part of the contact detail page", "Birthdate"), 
-                contact.BirthDate.Value.ToString("dd.MM.yyyy")));
+                contact.BirthDate.Value.FormatSwissDay()));
             List.Add(new ContactDetailDemographyItemViewModel(
                 translator.Get("Contact.Detail.Demography.Language", "Language item in demography part of the contact detail page", "Language"),
                 contact.Language.Value.Translate(translator)));

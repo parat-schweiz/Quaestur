@@ -6,6 +6,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Publicus
 {
@@ -56,10 +57,10 @@ namespace Publicus
             Method = "edit";
             Id = subscription.Id.ToString();
             Feed = subscription.Feed.Value.Name.Value[translator.Language].EscapeHtml();
-            StartDate = subscription.StartDate.Value.ToString("dd.MM.yyyy");
+            StartDate = subscription.StartDate.Value.FormatSwissDay();
             EndDate =
                 subscription.EndDate.Value.HasValue ?
-                subscription.EndDate.Value.Value.ToString("dd.MM.yyyy") :
+                subscription.EndDate.Value.Value.FormatSwissDay() :
                 string.Empty;
             Feeds.AddRange(
                 db.Query<Feed>()

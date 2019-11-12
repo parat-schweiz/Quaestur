@@ -41,8 +41,8 @@ namespace Quaestur
         {
             Id = string.Empty;
             Budget = string.Empty;
-            Moment = tally.FromDate.Value.ToString("dd.MM.yyyy") + " - " + 
-                     tally.UntilDate.Value.ToString("dd.MM.yyyy");
+            Moment = tally.FromDate.Value.FormatSwissDay() + " - " + 
+                     tally.UntilDate.Value.FormatSwissDay();
             Amount = tally.Considered.Value.FormatThousands();
             Running = tally.ForwardBalance.Value.FormatThousands();
             Reason = translator.Get("Person.Detail.Points.Title.Tally", "Title of a tally in points tab of person details", "Tally");
@@ -122,6 +122,13 @@ namespace Quaestur
                     running += points.Amount;
                     List.Add(new PersonDetailPointsItemViewModel(translator, points, running, allowEdit));
                 }
+            }
+
+            while (tallyQueue.Count > 0)
+            {
+                var tally = tallyQueue.Dequeue();
+                running = tally.ForwardBalance.Value;
+                List.Add(new PersonDetailPointsItemViewModel(translator, tally));
             }
 
             List.Add(new PersonDetailPointsItemViewModel(translator, running));

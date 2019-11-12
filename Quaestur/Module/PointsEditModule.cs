@@ -7,6 +7,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
+using BaseLibrary;
 
 namespace Quaestur
 {
@@ -72,7 +73,7 @@ namespace Quaestur
             Method = "edit";
             Id = points.Id.ToString();
             Budget = string.Empty;
-            MomentDate = points.Moment.Value.ToLocalTime().ToString("dd.MM.yyyy");
+            MomentDate = points.Moment.Value.ToLocalTime().FormatSwissDay();
             MomentTime = points.Moment.Value.ToLocalTime().ToString("HH:mm:ss");
             Amount = points.Amount.Value.ToString();
             Reason = points.Reason.Value;
