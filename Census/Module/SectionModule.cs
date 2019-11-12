@@ -58,16 +58,12 @@ namespace Census
     {
         public string Id;
         public string Name;
-        public string Editable;
         public string PhraseDeleteConfirmationQuestion;
 
         public SectionListItemViewModel(Translator translator, Session session, Section section)
         {
             Id = section.Id.Value.ToString();
             Name = section.Name.Value[translator.Language];
-            Editable =
-                session.HasAccess(section.Questionaire.Value.Owner.Value, PartAccess.Structure, AccessRight.Write) ?
-                "editable" : "accessdenied";
             PhraseDeleteConfirmationQuestion = translator.Get("Section.List.Delete.Confirm.Section", "Delete section confirmation section", "Do you really wish to delete section {0}?", section.GetText(translator));
         }
     }
@@ -81,6 +77,7 @@ namespace Census
         public string PhraseDeleteConfirmationInfo;
         public string PhraseHeaderQuestions;
         public List<SectionListItemViewModel> List;
+        public string Editable;
         public bool AddAccess;
 
         public SectionListViewModel(Translator translator, IDatabase database, Session session, Questionaire questionaire)
@@ -93,9 +90,10 @@ namespace Census
             PhraseHeaderQuestions = translator.Get("Section.List.Header.Questions", "Header part 'Questions' in the section list", "Questions");
             List = new List<SectionListItemViewModel>(
                 questionaire.Sections
-                .Select(g => new SectionListItemViewModel(translator, session, g))
-                .OrderBy(g => g.Name));
-            AddAccess = session.HasAccess(questionaire.Owner.Value, PartAccess.Questionaire, AccessRight.Write);
+                .OrderBy(s => s.Ordering.Value)
+                .Select(s => new SectionListItemViewModel(translator, session, s)));
+            AddAccess = session.HasAccess(questionaire.Owner.Value, PartAccess.Structure, AccessRight.Write);
+            Editable = AddAccess ? "editable" : "accessdenied";
         }
     }
 
@@ -206,6 +204,7 @@ namespace Census
                         var section = new Section(Guid.NewGuid());
                         status.AssignMultiLanguageRequired("Name", section.Name, model.Name);
 
+                        section.Ordering.Value = questionaire.Sections.MaxOrDefault(q => q.Ordering.Value, 0) + 1;
                         section.Questionaire.Value = questionaire;
 
                         if (status.IsSuccess)
@@ -237,6 +236,45 @@ namespace Census
                 }
 
                 return string.Empty;
+            });
+            Post("/section/switch", parameters =>
+            {
+                var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
+                var status = CreateStatus();
+
+                using (var transaction = Database.BeginTransaction())
+                {
+                    var source = Database.Query<Section>(model.SourceId);
+                    var target = Database.Query<Section>(model.TargetId);
+
+                    if (status.ObjectNotNull(source) &&
+                        status.ObjectNotNull(target) &&
+                        status.HasAccess(source.Owner, PartAccess.Questionaire, AccessRight.Write) &&
+                        status.HasAccess(target.Owner, PartAccess.Questionaire, AccessRight.Write))
+                    {
+                        if (source.Questionaire.Value == target.Questionaire.Value)
+                        {
+                            var sourcePrecedence = source.Ordering.Value;
+                            var targetPrecedence = target.Ordering.Value;
+                            source.Ordering.Value = targetPrecedence;
+                            target.Ordering.Value = sourcePrecedence;
+
+                            if (source.Dirty || target.Dirty)
+                            {
+                                Database.Save(source);
+                                Database.Save(target);
+                                transaction.Commit();
+                                Notice("{0} switched {1} and {2}", CurrentSession.User.UserName.Value, source, target);
+                            }
+                        }
+                        else
+                        {
+                            status.SetErrorNotFound(); 
+                        }
+                    }
+                }
+
+                return status.CreateJsonData();
             });
         }
     }

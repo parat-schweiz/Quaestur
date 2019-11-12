@@ -102,6 +102,7 @@
     <Compile Include="Module\OptionModule.cs" />
     <Compile Include="Model\Section.cs" />
     <Compile Include="Module\SectionModule.cs" />
+    <Compile Include="Module\SwitchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />

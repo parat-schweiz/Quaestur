@@ -8,6 +8,7 @@ namespace Census
     {
         public ForeignKeyField<Questionaire, Section> Questionaire { get; private set; }
         public MultiLanguageStringField Name { get; private set; }
+        public Field<int> Ordering { get; private set; }
         public List<Question> Questions { get; private set; }
 
         public Section() : this(Guid.Empty)
@@ -18,6 +19,7 @@ namespace Census
         {
             Questionaire = new ForeignKeyField<Questionaire, Section>(this, "questionaireid", false, q => q.Sections);
             Name = new MultiLanguageStringField(this, "name");
+            Ordering = new Field<int>(this, "ordering", 0);
             Questions = new List<Question>();
         }
 

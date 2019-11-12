@@ -31,6 +31,7 @@ namespace Census
         public ForeignKeyField<Section, Question> Section { get; private set; }
         public MultiLanguageStringField Text { get; private set; }
         public EnumField<QuestionType> Type { get; private set; }
+        public Field<int> Ordering { get; private set; }
         public List<Option> Options { get; private set; }
 
         public Question() : this(Guid.Empty)
@@ -42,6 +43,7 @@ namespace Census
             Section = new ForeignKeyField<Section, Question>(this, "sectionid", false, s => s.Questions);
             Text = new MultiLanguageStringField(this, "text");
             Type = new EnumField<QuestionType>(this, "type", QuestionType.SelectOne, QuestionTypeExtensions.Translate);
+            Ordering = new Field<int>(this, "ordering", 0);
             Options = new List<Option>();
         }
 

@@ -30,6 +30,28 @@ $("#questionRowDelete@Current.Id").click(function(){
     }
   });
 });
+$("#questionRowMove@Current.Id").on('dragstart', function(evt){
+  evt.originalEvent.dataTransfer.setData("questionDrag", "@Current.Id");
+});
+$("#questionRowMove@Current.Id").on('dragover', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("questionDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = "move"
+  }
+});
+$("#questionRowMove@Current.Id").on('drop', function(evt){
+  var sourceId = evt.originalEvent.dataTransfer.getData("questionDrag");
+  if (sourceId) {
+    evt.preventDefault();
+    var formData = new Object();
+    formData.SourceId = sourceId;
+    formData.TargetId = '@Current.Id';
+    $.post("/question/switch", JSON.stringify(formData), function(dummyData, status){
+      updateQuestionList();
+    });
+  }
+});
 @EndEach
 </script>
 <table class="table table-hover table-fixed">
@@ -41,15 +63,16 @@ $("#questionRowDelete@Current.Id").click(function(){
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="80%" id="questionRowEdit@Current.Id" class="@Current.Editable">@Current.Text</td>
+      <td width="75%" id="questionRowEdit@Current.Id" class="@Model.Editable">@Current.Text</td>
       <td width="15%"><a href="/option/@Current.Id">@Current.PhraseHeaderOptions</a></td>
-      <td width="5%" id="questionRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="5%" id="questionRowMove@Current.Id" class="@Model.Editable" draggable="true"><span class="fas fa-grip-horizontal" ></span></td>
+      <td width="5%" id="questionRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     @If.AddAccess
     <tr class='centering clickable-row'>
-      <td width="80%" id="questionRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
-      <td width="20%" colspan="2"></td>
+      <td width="90%" colspan="2" id="questionRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%" colspan="2"></td>
     </tr>
     @EndIf
   </tbody>

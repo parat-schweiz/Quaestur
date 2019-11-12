@@ -68,7 +68,6 @@ namespace Census
     {
         public string Id;
         public string Text;
-        public string Editable;
         public string PhraseDeleteConfirmationOption;
         public string PhraseHeaderOptions;
 
@@ -76,9 +75,6 @@ namespace Census
         {
             Id = option.Id.Value.ToString();
             Text = option.Text.Value[translator.Language];
-            Editable =
-                session.HasAccess(option.Owner, PartAccess.Questionaire, AccessRight.Write) ?
-                "editable" : "accessdenied";
             PhraseDeleteConfirmationOption = translator.Get("Option.List.Delete.Confirm.Option", "Delete option confirmation option", "Do you really wish to delete option {0}?", option.GetText(translator));
         }
     }
@@ -92,6 +88,7 @@ namespace Census
         public string PhraseDeleteConfirmationTitle;
         public string PhraseDeleteConfirmationInfo;
         public List<OptionListItemViewModel> List;
+        public string Editable;
         public bool AddAccess;
 
         public OptionListViewModel(Translator translator, IDatabase database, Session session, Question question)
@@ -104,9 +101,10 @@ namespace Census
             PhraseDeleteConfirmationInfo = string.Empty;
             List = new List<OptionListItemViewModel>(
                 question.Options
-                .Select(g => new OptionListItemViewModel(translator, session, g))
-                .OrderBy(g => g.Text));
+                .OrderBy(o => o.Ordering.Value)
+                .Select(o => new OptionListItemViewModel(translator, session, o)));
             AddAccess = session.HasAccess(question.Owner, PartAccess.Questionaire, AccessRight.Write);
+            Editable = AddAccess ? "editable" : "accessdenied";
         }
     }
 
@@ -221,6 +219,7 @@ namespace Census
                         status.AssignInt32String("CheckedValue", option.CheckedValue, model.CheckedValue);
                         status.AssignInt32String("UncheckedValue", option.UncheckedValue, model.UncheckedValue);
 
+                        option.Ordering.Value = question.Options.MaxOrDefault(o => o.Ordering.Value, 0) + 1;
                         option.Question.Value = question;
 
                         if (status.IsSuccess)
@@ -252,6 +251,46 @@ namespace Census
                 }
 
                 return string.Empty;
+            });
+            Post("/option/switch", parameters =>
+            {
+                var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
+                var status = CreateStatus();
+
+                using (var transaction = Database.BeginTransaction())
+                {
+                    var source = Database.Query<Option>(model.SourceId);
+                    var target = Database.Query<Option>(model.TargetId);
+
+                    if (status.ObjectNotNull(source) &&
+                        status.ObjectNotNull(target) &&
+                        status.HasAccess(source.Owner, PartAccess.Questionaire, AccessRight.Write) &&
+                        status.HasAccess(target.Owner, PartAccess.Questionaire, AccessRight.Write))
+                    {
+                        if (source.Question.Value == target.Question.Value)
+                        {
+                            var sourcePrecedence = source.Ordering.Value;
+                            var targetPrecedence = target.Ordering.Value;
+                            source.Ordering.Value = targetPrecedence;
+                            target.Ordering.Value = sourcePrecedence;
+
+                            if (source.Dirty || target.Dirty)
+                            {
+                                Database.Save(source);
+                                Database.Save(target);
+                                transaction.Commit();
+                                Notice("{0} switched {1} and {2}", CurrentSession.User.UserName.Value, source, target);
+                            }
+                        }
+                        else
+                        {
+                            status.SetErrorNotFound();
+                        }
+
+                    }
+                }
+
+                return status.CreateJsonData();
             });
         }
     }

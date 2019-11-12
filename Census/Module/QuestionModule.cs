@@ -67,7 +67,6 @@ namespace Census
     {
         public string Id;
         public string Text;
-        public string Editable;
         public string PhraseDeleteConfirmationQuestion;
         public string PhraseHeaderOptions;
 
@@ -75,9 +74,6 @@ namespace Census
         {
             Id = question.Id.Value.ToString();
             Text = question.Text.Value[translator.Language];
-            Editable =
-                session.HasAccess(question.Owner, PartAccess.Structure, AccessRight.Write) ?
-                "editable" : "accessdenied";
             PhraseDeleteConfirmationQuestion = translator.Get("Question.List.Delete.Confirm.Question", "Delete question confirmation question", "Do you really wish to delete question {0}?", question.GetText(translator));
             switch (question.Type.Value)
             {
@@ -101,6 +97,7 @@ namespace Census
         public string PhraseDeleteConfirmationTitle;
         public string PhraseDeleteConfirmationInfo;
         public List<QuestionListItemViewModel> List;
+        public string Editable;
         public bool AddAccess;
 
         public QuestionListViewModel(Translator translator, IDatabase database, Session session, Section section)
@@ -113,9 +110,10 @@ namespace Census
             PhraseDeleteConfirmationInfo = translator.Get("Question.List.Delete.Confirm.Info", "Delete question confirmation info", "This will also delete all options under that question.");
             List = new List<QuestionListItemViewModel>(
                 section.Questions
-                .Select(g => new QuestionListItemViewModel(translator, session, g))
-                .OrderBy(g => g.Text));
+                .OrderBy(q => q.Ordering.Value)
+                .Select(q => new QuestionListItemViewModel(translator, session, q)));
             AddAccess = session.HasAccess(section.Owner, PartAccess.Questionaire, AccessRight.Write);
+            Editable = AddAccess ? "editable" : "accessdenied";
         }
     }
 
@@ -228,6 +226,7 @@ namespace Census
                         status.AssignMultiLanguageRequired("Name", question.Text, model.Text);
                         status.AssignEnumIntString("Type", question.Type, model.Type);
 
+                        question.Ordering.Value = section.Questions.MaxOrDefault(q => q.Ordering.Value, 0) + 1;
                         question.Section.Value = section;
 
                         if (status.IsSuccess)
@@ -259,6 +258,46 @@ namespace Census
                 }
 
                 return string.Empty;
+            });
+            Post("/question/switch", parameters =>
+            {
+                var model = JsonConvert.DeserializeObject<SwitchViewModel>(ReadBody());
+                var status = CreateStatus();
+
+                using (var transaction = Database.BeginTransaction())
+                {
+                    var source = Database.Query<Question>(model.SourceId);
+                    var target = Database.Query<Question>(model.TargetId);
+
+                    if (status.ObjectNotNull(source) &&
+                        status.ObjectNotNull(target) &&
+                        status.HasAccess(source.Owner, PartAccess.Questionaire, AccessRight.Write) &&
+                        status.HasAccess(target.Owner, PartAccess.Questionaire, AccessRight.Write))
+                    {
+                        if (source.Section.Value == target.Section.Value)
+                        {
+                            var sourcePrecedence = source.Ordering.Value;
+                            var targetPrecedence = target.Ordering.Value;
+                            source.Ordering.Value = targetPrecedence;
+                            target.Ordering.Value = sourcePrecedence;
+
+                            if (source.Dirty || target.Dirty)
+                            {
+                                Database.Save(source);
+                                Database.Save(target);
+                                transaction.Commit();
+                                Notice("{0} switched {1} and {2}", CurrentSession.User.UserName.Value, source, target);
+                            }
+                        }
+                        else
+                        {
+                            status.SetErrorNotFound();
+                        }
+
+                    }
+                }
+
+                return status.CreateJsonData();
             });
         }
     }

@@ -10,6 +10,7 @@ namespace Census
         public MultiLanguageStringField Text { get; private set; }
         public Field<int> CheckedValue { get; private set; }
         public Field<int> UncheckedValue { get; private set; }
+        public Field<int> Ordering { get; private set; }
 
         public Option() : this(Guid.Empty)
         {
@@ -21,6 +22,7 @@ namespace Census
             Text = new MultiLanguageStringField(this, "text");
             CheckedValue = new Field<int>(this, "checkedvalue", 0);
             UncheckedValue = new Field<int>(this, "uncheckedvalue", 0);
+            Ordering = new Field<int>(this, "ordering", 0);
         }
 
         public override void Delete(IDatabase database)
