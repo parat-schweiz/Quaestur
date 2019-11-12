@@ -16,7 +16,8 @@ namespace Census
         Multiply = 7,
         Divide = 8,
         Append = 9,
-        Remove = 10,
+        AddToList = 10,
+        RemoveFromList = 11,
     }
 
     public static class VariableModificationExtensions
@@ -45,8 +46,10 @@ namespace Census
                     return translator.Get("Enum.VariableModification.Divide", "Divide value in the variable modification enum", "Divide");
                 case VariableModification.Append:
                     return translator.Get("Enum.VariableModification.Append", "Append value in the variable modification enum", "Append");
-                case VariableModification.Remove:
-                    return translator.Get("Enum.VariableModification.Remove", "Remove value in the variable modification enum", "Remove");
+                case VariableModification.AddToList:
+                    return translator.Get("Enum.VariableModification.AddToList", "Add to list value in the variable modification enum", "Add to list");
+                case VariableModification.RemoveFromList:
+                    return translator.Get("Enum.VariableModification.RemoveFromList", "Remove from list value in the variable modification enum", "Remove from list");
                 default:
                     throw new NotSupportedException();
             }
@@ -57,10 +60,12 @@ namespace Census
     {
         Boolean = 0,
         Integer = 1,
-        String = 2,
-        ListOfBooleans = 3,
-        ListOfIntegers = 4,
-        ListOfStrings = 5,
+        Double = 2,
+        String = 3,
+        ListOfBooleans = 4,
+        ListOfIntegers = 5,
+        ListOfDouble = 6,
+        ListOfStrings = 7,
     }
 
     public static class VariableTypeExtensions
@@ -73,6 +78,8 @@ namespace Census
                     return translator.Get("Enum.VariableType.Boolean", "Boolean value in the variable type enum", "Boolean");
                 case VariableType.Integer:
                     return translator.Get("Enum.VariableType.Integer", "Integer value in the variable type enum", "Integer");
+                case VariableType.Double:
+                    return translator.Get("Enum.VariableType.Double", "Double value in the variable type enum", "Double");
                 case VariableType.String:
                     return translator.Get("Enum.VariableType.String", "String value in the variable type enum", "String");
                 case VariableType.ListOfBooleans:

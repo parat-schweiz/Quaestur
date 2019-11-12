@@ -57,7 +57,8 @@ namespace Census
             list.Add(new NamedIntViewModel(translator, VariableModification.Divide, selected));
             list.Add(new NamedIntViewModel(translator, VariableModification.Multiply, selected));
             list.Add(new NamedIntViewModel(translator, VariableModification.Or, selected));
-            list.Add(new NamedIntViewModel(translator, VariableModification.Remove, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.AddToList, selected));
+            list.Add(new NamedIntViewModel(translator, VariableModification.RemoveFromList, selected));
             list.Add(new NamedIntViewModel(translator, VariableModification.Set, selected));
             list.Add(new NamedIntViewModel(translator, VariableModification.Subtract, selected));
             list.Add(new NamedIntViewModel(translator, VariableModification.Xor, selected));
@@ -161,6 +162,120 @@ namespace Census
 
     public class OptionEdit : CensusModule
     {
+        private bool IsBoolValue(string value)
+        {
+            switch (value.ToLowerInvariant())
+            {
+                case "yes":
+                case "no":
+                case "true":
+                case "false":
+                case "1":
+                case "0":
+                    return true;
+                default:
+                    return false; 
+            } 
+        }
+
+        private void CheckModification(
+            PostStatus status,
+            string modificationField,
+            EnumField<VariableModification> modification,
+            string variableField,
+            ForeignKeyField<Variable, Option> variable,
+            string valueField,
+            StringField value)
+        {
+            if (status.IsSuccess)
+            {
+                if (modification.Value != VariableModification.None &&
+                    variable.Value == null)
+                {
+                    status.SetValidationError(variableField, "Option.Edit.Validation.VariableMissing", "Variable is missing when modification is set in the option edit dialog", "Variable must be set");
+                }
+            }
+
+            if (status.IsSuccess)
+            {
+                switch (modification.Value)
+                {
+                    case VariableModification.None:
+                    case VariableModification.Set:
+                        break;
+                    case VariableModification.Or:
+                    case VariableModification.And:
+                    case VariableModification.Xor:
+                        if (variable.Value.Type.Value != VariableType.Boolean)
+                        {
+                            status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeBoolean", "Variable not boolean when logic modification is set in the option edit dialog", "Variable must be of boolean type");
+                        }
+                        break;
+                    case VariableModification.Add:
+                    case VariableModification.Subtract:
+                    case VariableModification.Multiply:
+                    case VariableModification.Divide:
+                        if (variable.Value.Type.Value != VariableType.Integer &&
+                            variable.Value.Type.Value != VariableType.Double)
+                        {
+                            status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustNumber", "Variable not of some number type when logic modification is set in the option edit dialog", "Variable must be some number type");
+                        }
+                        break;
+                    case VariableModification.Append:
+                        if (variable.Value.Type.Value != VariableType.String)
+                        {
+                            status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeString", "Variable not of string type when logic modification is set in the option edit dialog", "Variable must be of boolean type");
+                        }
+                        break;
+                    case VariableModification.AddToList:
+                    case VariableModification.RemoveFromList:
+                        if (variable.Value.Type.Value != VariableType.ListOfBooleans &&
+                            variable.Value.Type.Value != VariableType.ListOfIntegers &&
+                            variable.Value.Type.Value != VariableType.ListOfDouble &&
+                            variable.Value.Type.Value != VariableType.ListOfStrings)
+                        {
+                            status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeList", "Variable not of some list type when logic modification is set in the option edit dialog", "Variable must be of some list type");
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+
+            if (status.IsSuccess)
+            {
+                switch (variable.Value.Type.Value)
+                {
+                    case VariableType.Boolean:
+                    case VariableType.ListOfBooleans:
+                        if (!IsBoolValue(value.Value))
+                        {
+                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeBoolean", "Value must represent a boolean when modification involves boolean variable is set in the option edit dialog", "Value must represent a boolean");
+                        }
+                        break;
+                    case VariableType.Integer:
+                    case VariableType.ListOfIntegers:
+                        if (!int.TryParse(value.Value, out int dummy))
+                        {
+                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeInteger", "Value must represent an integer when modification involves boolean variable is set in the option edit dialog", "Value must represent an integer");
+                        }
+                        break;
+                    case VariableType.Double:
+                    case VariableType.ListOfDouble:
+                        if (!double.TryParse(value.Value, out double dummy2))
+                        {
+                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeDouble", "Value must represent a floating point number when modification involves boolean variable is set in the option edit dialog", "Value must represent a floating point number");
+                        }
+                        break;
+                    case VariableType.String:
+                    case VariableType.ListOfStrings:
+                        break;
+                    default:
+                        throw new NotSupportedException(); 
+                } 
+            }
+        }
+
         public OptionEdit()
         {
             this.RequiresAuthentication();
@@ -225,8 +340,28 @@ namespace Census
                     if (status.HasAccess(option.Owner, PartAccess.Questionaire, AccessRight.Write))
                     {
                         status.AssignMultiLanguageRequired("Name", option.Text, model.Text);
-                        status.AssignInt32String("CheckedValue", option.CheckedValue, model.CheckedValue);
-                        status.AssignInt32String("UncheckedValue", option.UncheckedValue, model.UncheckedValue);
+                        status.AssignEnumIntString("CheckedModification", option.CheckedModification, model.CheckedModification);
+                        status.AssignObjectIdString("CheckedVariable", option.CheckedVariable, model.CheckedVariable);
+                        status.AssignStringFree("CheckedValue", option.CheckedValue, model.CheckedValue);
+                        status.AssignEnumIntString("UncheckedModification", option.UncheckedModification, model.UncheckedModification);
+                        status.AssignObjectIdString("UncheckedVariable", option.UncheckedVariable, model.UncheckedVariable);
+                        status.AssignStringFree("UncheckedValue", option.UncheckedValue, model.UncheckedValue);
+                        CheckModification(
+                            status,
+                            "CheckedModification",
+                            option.CheckedModification,
+                            "CheckedVariable",
+                            option.CheckedVariable,
+                            "CheckedValue",
+                            option.CheckedValue);
+                        CheckModification(
+                            status,
+                            "UncheckedModification",
+                            option.UncheckedModification,
+                            "UncheckedVariable",
+                            option.UncheckedVariable,
+                            "UncheckedValue",
+                            option.UncheckedValue);
 
                         if (status.IsSuccess)
                         {
@@ -267,8 +402,28 @@ namespace Census
                         var model = JsonConvert.DeserializeObject<OptionEditViewModel>(ReadBody());
                         var option = new Option(Guid.NewGuid());
                         status.AssignMultiLanguageRequired("Name", option.Text, model.Text);
-                        status.AssignInt32String("CheckedValue", option.CheckedValue, model.CheckedValue);
-                        status.AssignInt32String("UncheckedValue", option.UncheckedValue, model.UncheckedValue);
+                        status.AssignEnumIntString("CheckedModification", option.CheckedModification, model.CheckedModification);
+                        status.AssignObjectIdString("CheckedVariable", option.CheckedVariable, model.CheckedVariable);
+                        status.AssignStringFree("CheckedValue", option.CheckedValue, model.CheckedValue);
+                        status.AssignEnumIntString("UncheckedModification", option.UncheckedModification, model.UncheckedModification);
+                        status.AssignObjectIdString("UncheckedVariable", option.UncheckedVariable, model.UncheckedVariable);
+                        status.AssignStringFree("UncheckedValue", option.UncheckedValue, model.UncheckedValue);
+                        CheckModification(
+                            status,
+                            "CheckedModification",
+                            option.CheckedModification,
+                            "CheckedVariable",
+                            option.CheckedVariable,
+                            "CheckedValue",
+                            option.CheckedValue);
+                        CheckModification(
+                            status,
+                            "UncheckedModification",
+                            option.UncheckedModification,
+                            "UncheckedVariable",
+                            option.UncheckedVariable,
+                            "UncheckedValue",
+                            option.UncheckedValue);
 
                         option.Ordering.Value = question.Options.MaxOrDefault(o => o.Ordering.Value, 0) + 1;
                         option.Question.Value = question;
