@@ -21,8 +21,12 @@ function assignFieldMultiValidation(field, key, result){
 function assignFieldValidation(field, result){
   var fieldId = '#option' + field;
   var validation = result[field + 'Validation'];
+  console.log(fieldId);
+  console.log($(fieldId));
+  console.log($(fieldId)[0]);
+  console.log(validation);
   if (validation){
-    if ($(fieldId)[0].tagText == 'SELECT'){
+    if ($(fieldId)[0].tagName == 'SELECT'){
       $(fieldId).parent().addClass('is-invalid');
     }else{
       $(fieldId).addClass('is-invalid');
@@ -31,7 +35,7 @@ function assignFieldValidation(field, result){
     $(fieldId + "Feedback").removeClass('valid-feedback');
     $(fieldId + "Feedback").html(validation);
   }else{
-    if ($(fieldId)[0].tagText == 'SELECT'){
+    if ($(fieldId)[0].tagName == 'SELECT'){
       $(fieldId).parent().removeClass('is-invalid');
     }else{
       $(fieldId).removeClass('is-invalid');
