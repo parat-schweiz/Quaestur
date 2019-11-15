@@ -43,7 +43,11 @@ function assignFieldValidation(field, result){
 }
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
+  assignFieldValidation("CheckedModification", result);
+  assignFieldValidation("CheckedVariable", result);
   assignFieldValidation("CheckedValue", result);
+  assignFieldValidation("UncheckedModification", result);
+  assignFieldValidation("UncheckedVariable", result);
   assignFieldValidation("UncheckedValue", result);
   @Each.Text
   assignFieldMultiValidation("Text", "@Current.Key", result);
@@ -53,7 +57,11 @@ function assignValidation(resultData){
 }
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();
+  formData.CheckedModification = $("#optionCheckedModification").val();
+  formData.CheckedVariable = $("#optionCheckedVariable").val();
   formData.CheckedValue = $("#optionCheckedValue").val();
+  formData.UncheckedModification = $("#optionUncheckedModification").val();
+  formData.UncheckedVariable = $("#optionUncheckedVariable").val();
   formData.UncheckedValue = $("#optionUncheckedValue").val();
   formData.Text = new Array();
   @Each.Text
@@ -85,9 +93,53 @@ $('.selectpicker').selectpicker();
     </div>
     <div class="form-row">
       <div class="col-12 mb-3">
+        <label for="optionCheckedModification">@Model.PhraseFieldCheckedModification</label>
+        <select id="optionCheckedModification" class="selectpicker form-control" data-live-search="true">
+          @Each.CheckedModifications
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="optionCheckedModificationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="optionCheckedVariable">@Model.PhraseFieldCheckedVariable</label>
+        <select id="optionCheckedVariable" class="selectpicker form-control" data-live-search="true">
+          @Each.CheckedVariables
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="optionCheckedVariableFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
         <label for="optionCheckedValue">@Model.PhraseFieldCheckedValue</label>
         <input type="text" id="optionCheckedValue" class="form-control" value="@Model.CheckedValue"/>
         <div id="optionCheckedValueFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="optionUncheckedModification">@Model.PhraseFieldUncheckedModification</label>
+        <select id="optionUncheckedModification" class="selectpicker form-control" data-live-search="true">
+          @Each.UncheckedModifications
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="optionUncheckedModificationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="optionUncheckedVariable">@Model.PhraseFieldUncheckedVariable</label>
+        <select id="optionUncheckedVariable" class="selectpicker form-control" data-live-search="true">
+          @Each.UncheckedVariables
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="optionUncheckedVariableFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

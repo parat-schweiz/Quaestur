@@ -64,6 +64,13 @@ namespace Census
             list.Add(new NamedIntViewModel(translator, VariableModification.Xor, selected));
         }
 
+        private NamedIdViewModel CreateNoneValue(Translator translator, bool selected)
+        {
+            return new NamedIdViewModel(
+                translator.Get("Option.Edit.Field.Value.None", "None value in fields on the option edit dialog", "None"),
+                false, selected);
+        }
+
         public OptionEditViewModel(Translator translator, IDatabase db, Session session, Question question)
             : this(translator)
         {
@@ -74,11 +81,15 @@ namespace Census
             UncheckedValue = "0";
             AddModifications(translator, CheckedModifications, v => v == VariableModification.None);
             AddModifications(translator, UncheckedModifications, v => v == VariableModification.None);
-            CheckedVariables = new List<NamedIdViewModel>(
+            CheckedVariables = new List<NamedIdViewModel>();
+            CheckedVariables.Add(CreateNoneValue(translator, true));
+            CheckedVariables.AddRange(
                 question.Section.Value.Questionaire.Value.Variables
                 .Select(v => new NamedIdViewModel(translator, v, false))
                 .OrderBy(v => v.Name));
-            UncheckedVariables = new List<NamedIdViewModel>(
+            UncheckedVariables = new List<NamedIdViewModel>();
+            UncheckedVariables.Add(CreateNoneValue(translator, true));
+            UncheckedVariables.AddRange(
                 question.Section.Value.Questionaire.Value.Variables
                 .Select(v => new NamedIdViewModel(translator, v, false))
                 .OrderBy(v => v.Name));
@@ -92,11 +103,15 @@ namespace Census
             Text = translator.CreateLanguagesMultiItem("Option.Edit.Field.Text", "Text field in the option edit dialog", "Text ({0})", option.Text.Value);
             AddModifications(translator, CheckedModifications, v => v == option.CheckedModification.Value);
             AddModifications(translator, UncheckedModifications, v => v == option.UncheckedModification.Value);
-            CheckedVariables = new List<NamedIdViewModel>(
+            CheckedVariables = new List<NamedIdViewModel>();
+            CheckedVariables.Add(CreateNoneValue(translator, null == option.CheckedVariable.Value));
+            CheckedVariables.AddRange(
                 option.Question.Value.Section.Value.Questionaire.Value.Variables
                 .Select(v => new NamedIdViewModel(translator, v, v == option.CheckedVariable.Value))
                 .OrderBy(v => v.Name));
-            UncheckedVariables = new List<NamedIdViewModel>(
+            UncheckedVariables = new List<NamedIdViewModel>();
+            UncheckedVariables.Add(CreateNoneValue(translator, null == option.CheckedVariable.Value));
+            UncheckedVariables.AddRange(
                 option.Question.Value.Section.Value.Questionaire.Value.Variables
                 .Select(v => new NamedIdViewModel(translator, v, v == option.UncheckedVariable.Value))
                 .OrderBy(v => v.Name));
@@ -187,16 +202,13 @@ namespace Census
             string valueField,
             StringField value)
         {
-            if (status.IsSuccess)
+            if (modification.Value != VariableModification.None &&
+                variable.Value == null)
             {
-                if (modification.Value != VariableModification.None &&
-                    variable.Value == null)
-                {
-                    status.SetValidationError(variableField, "Option.Edit.Validation.VariableMissing", "Variable is missing when modification is set in the option edit dialog", "Variable must be set");
-                }
+                status.SetValidationError(variableField, "Option.Edit.Validation.VariableMissing", "Variable is missing when modification is set in the option edit dialog", "Variable must be set");
             }
 
-            if (status.IsSuccess)
+            if (variable.Value != null)
             {
                 switch (modification.Value)
                 {
@@ -222,7 +234,11 @@ namespace Census
                         }
                         break;
                     case VariableModification.Append:
-                        if (variable.Value.Type.Value != VariableType.String)
+                        if (variable == null)
+                        {
+                            status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeSet", "Variable not set in the option edit dialog", "Some variable must be set");
+                        }
+                        else if (variable.Value.Type.Value != VariableType.String)
                         {
                             status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeString", "Variable not of string type when logic modification is set in the option edit dialog", "Variable must be of boolean type");
                         }
@@ -230,9 +246,9 @@ namespace Census
                     case VariableModification.AddToList:
                     case VariableModification.RemoveFromList:
                         if (variable.Value.Type.Value != VariableType.ListOfBooleans &&
-                            variable.Value.Type.Value != VariableType.ListOfIntegers &&
-                            variable.Value.Type.Value != VariableType.ListOfDouble &&
-                            variable.Value.Type.Value != VariableType.ListOfStrings)
+                                 variable.Value.Type.Value != VariableType.ListOfIntegers &&
+                                 variable.Value.Type.Value != VariableType.ListOfDouble &&
+                                 variable.Value.Type.Value != VariableType.ListOfStrings)
                         {
                             status.SetValidationError(variableField, "Option.Edit.Validation.VariableMustBeList", "Variable not of some list type when logic modification is set in the option edit dialog", "Variable must be of some list type");
                         }
@@ -242,7 +258,7 @@ namespace Census
                 }
             }
 
-            if (status.IsSuccess)
+            if (variable.Value != null)
             {
                 switch (variable.Value.Type.Value)
                 {
