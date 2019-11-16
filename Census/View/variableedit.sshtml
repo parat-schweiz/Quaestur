@@ -43,6 +43,7 @@ function assignFieldValidation(field, result){
 }
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
+  assignFieldValidation("InitialValue", result);
   assignFieldValidation("Type", result);
   @Each.Name
   assignFieldMultiValidation("Name", "@Current.Key", result);
@@ -52,6 +53,7 @@ function assignValidation(resultData){
 }
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();
+  formData.InitialValue = $("#variableInitialValue").val();
   formData.Type = $("#variableType").val();
   formData.Name = new Array();
   @Each.Name
@@ -90,6 +92,13 @@ $('.selectpicker').selectpicker();
           @EndEach
         </select>
         <div id="variableTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="variableInitialValue">@Model.PhraseFieldInitialValue</label>
+        <input type="text" id="variableInitialValue" class="form-control" value="@Model.InitialValue"/>
+        <div id="variableInitialValueFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

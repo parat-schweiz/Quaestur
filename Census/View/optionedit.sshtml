@@ -35,7 +35,7 @@ function assignFieldValidation(field, result){
     $(fieldId + "Feedback").removeClass('valid-feedback');
     $(fieldId + "Feedback").html(validation);
   }else{
-    if ($(fieldId)[0].tagName == 'SELECT'){
+    if ($(fieldId)[0].tagText == 'SELECT'){
       $(fieldId).parent().removeClass('is-invalid');
     }else{
       $(fieldId).removeClass('is-invalid');

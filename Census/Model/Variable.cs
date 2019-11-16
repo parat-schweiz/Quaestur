@@ -99,6 +99,7 @@ namespace Census
         public ForeignKeyField<Questionaire, Variable> Questionaire { get; private set; }
         public MultiLanguageStringField Name { get; private set; }
         public EnumField<VariableType> Type { get; private set; }
+        public StringField InitialValue { get; private set; }
 
         public Variable() : this(Guid.Empty)
         {
@@ -109,6 +110,7 @@ namespace Census
             Questionaire = new ForeignKeyField<Questionaire, Variable>(this, "questionaireid", false, q => q.Variables);
             Name = new MultiLanguageStringField(this, "text");
             Type = new EnumField<VariableType>(this, "type", VariableType.Boolean, VariableTypeExtensions.Translate);
+            InitialValue = new StringField(this, "initialvalue", 256, AllowStringType.SimpleText);
         }
 
         public override void Delete(IDatabase database)

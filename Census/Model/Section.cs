@@ -4,6 +4,49 @@ using SiteLibrary;
 
 namespace Census
 {
+    public enum ConditionType
+    {
+        None = 0,
+        Equal = 1,
+        NotEqual = 2,
+        Greater = 3,
+        Lesser = 4,
+        GreaterOrEqual = 5,
+        LesserOrEqual = 6,
+        Contains = 7,
+        DoesNotContain = 8,
+    }
+
+    public static class ConditionTypeExtensions
+    {
+        public static string Translate(this ConditionType type, Translator translator)
+        {
+            switch (type)
+            {
+                case ConditionType.None:
+                    return translator.Get("Enum.ConditionType.None", "None value in the condition type enum", "None");
+                case ConditionType.Equal:
+                    return translator.Get("Enum.ConditionType.Equal", "Equal value in the condition type enum", "Equal");
+                case ConditionType.NotEqual:
+                    return translator.Get("Enum.ConditionType.NotEqual", "Not equal value in the condition type enum", "Not equal");
+                case ConditionType.Greater:
+                    return translator.Get("Enum.ConditionType.Greater", "Greater value in the condition type enum", "Greater");
+                case ConditionType.Lesser:
+                    return translator.Get("Enum.ConditionType.Lesser", "Lesser value in the condition type enum", "Lesser");
+                case ConditionType.GreaterOrEqual:
+                    return translator.Get("Enum.ConditionType.GreaterOrEqual", "Greater or equal value in the condition type enum", "Greater or equal");
+                case ConditionType.LesserOrEqual:
+                    return translator.Get("Enum.ConditionType.LesserOrEqual", "Lesser or equal value in the condition type enum", "Lesser or equal");
+                case ConditionType.Contains:
+                    return translator.Get("Enum.ConditionType.Contains", "Contains value in the condition type enum", "Contains");
+                case ConditionType.DoesNotContain:
+                    return translator.Get("Enum.ConditionType.DoesNotContain", "Does not contain value in the condition type enum", "Does not contain");
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+    }
+
     public class Section : DatabaseObject
     {
         public ForeignKeyField<Questionaire, Section> Questionaire { get; private set; }

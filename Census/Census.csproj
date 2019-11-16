@@ -105,6 +105,7 @@
     <Compile Include="Module\SwitchViewModel.cs" />
     <Compile Include="Model\Variable.cs" />
     <Compile Include="Module\VariableModule.cs" />
+    <Compile Include="Util\Variables.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
@@ -112,6 +113,7 @@
     <Folder Include="Infrastructure\" />
     <Folder Include="View\" />
     <Folder Include="Assets\" />
+    <Folder Include="Util\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

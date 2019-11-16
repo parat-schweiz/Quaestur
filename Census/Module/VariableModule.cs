@@ -17,6 +17,8 @@ namespace Census
         public string Type;
         public List<NamedIntViewModel> Types;
         public string PhraseFieldType;
+        public string InitialValue;
+        public string PhraseFieldInitialValue;
 
         public VariableEditViewModel()
         {
@@ -26,6 +28,7 @@ namespace Census
             : base(translator, translator.Get("Variable.Edit.Title", "Title of the variable edit dialog", "Edit variable"), "variableEditDialog")
         {
             PhraseFieldType = translator.Get("Variable.Edit.Field.Type", "Type field in the variable edit dialog", "Type").EscapeHtml();
+            PhraseFieldInitialValue = translator.Get("Variable.Edit.Field.InitialValue", "Initial value field in the variable edit dialog", "Initial value").EscapeHtml();
             Types = new List<NamedIntViewModel>();
         }
 
@@ -35,6 +38,7 @@ namespace Census
             Method = "add";
             Id = questionaire.Id.Value.ToString();
             Name = translator.CreateLanguagesMultiItem("Variable.Edit.Field.Name", "Name field in the variable edit dialog", "Name ({0})", new MultiLanguageString());
+            InitialValue = string.Empty;
             Types.Add(new NamedIntViewModel(translator, VariableType.Boolean, false));
             Types.Add(new NamedIntViewModel(translator, VariableType.Integer, false));
             Types.Add(new NamedIntViewModel(translator, VariableType.String, false));
@@ -49,6 +53,7 @@ namespace Census
             Method = "edit";
             Id = variable.Id.ToString();
             Name = translator.CreateLanguagesMultiItem("Variable.Edit.Field.Name", "Name field in the variable edit dialog", "Name ({0})", variable.Name.Value);
+            InitialValue = variable.InitialValue.Value;
             Types.Add(new NamedIntViewModel(translator, VariableType.Boolean, variable.Type.Value == VariableType.Boolean));
             Types.Add(new NamedIntViewModel(translator, VariableType.Integer, variable.Type.Value == VariableType.Integer));
             Types.Add(new NamedIntViewModel(translator, VariableType.String, variable.Type.Value == VariableType.String));
@@ -183,6 +188,8 @@ namespace Census
                     {
                         status.AssignMultiLanguageRequired("Name", variable.Name, model.Name);
                         status.AssignEnumIntString("Type", variable.Type, model.Type);
+                        status.AssignStringFree("InitialValue", variable.InitialValue, model.InitialValue);
+                        Variables.CheckValue(status, variable.Type.Value, variable.InitialValue.Value, "InitialValue");
 
                         if (status.IsSuccess)
                         {
@@ -224,6 +231,8 @@ namespace Census
                         var variable = new Variable(Guid.NewGuid());
                         status.AssignMultiLanguageRequired("Name", variable.Name, model.Name);
                         status.AssignEnumIntString("Type", variable.Type, model.Type);
+                        status.AssignStringFree("InitialValue", variable.InitialValue, model.InitialValue);
+                        Variables.CheckValue(status, variable.Type.Value, variable.InitialValue.Value, "InitialValue");
 
                         variable.Questionaire.Value = questionaire;
 

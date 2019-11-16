@@ -77,8 +77,8 @@ namespace Census
             Method = "add";
             Id = question.Id.Value.ToString();
             Text = translator.CreateLanguagesMultiItem("Option.Edit.Field.Text", "Text field in the option edit dialog", "Text ({0})", new MultiLanguageString());
-            CheckedValue = "0";
-            UncheckedValue = "0";
+            CheckedValue = string.Empty;
+            UncheckedValue = string.Empty;
             AddModifications(translator, CheckedModifications, v => v == VariableModification.None);
             AddModifications(translator, UncheckedModifications, v => v == VariableModification.None);
             CheckedVariables = new List<NamedIdViewModel>();
@@ -101,6 +101,8 @@ namespace Census
             Method = "edit";
             Id = option.Id.ToString();
             Text = translator.CreateLanguagesMultiItem("Option.Edit.Field.Text", "Text field in the option edit dialog", "Text ({0})", option.Text.Value);
+            CheckedValue = option.CheckedValue.Value;
+            UncheckedValue = option.UncheckedValue.Value;
             AddModifications(translator, CheckedModifications, v => v == option.CheckedModification.Value);
             AddModifications(translator, UncheckedModifications, v => v == option.UncheckedModification.Value);
             CheckedVariables = new List<NamedIdViewModel>();
@@ -177,22 +179,6 @@ namespace Census
 
     public class OptionEdit : CensusModule
     {
-        private bool IsBoolValue(string value)
-        {
-            switch (value.ToLowerInvariant())
-            {
-                case "yes":
-                case "no":
-                case "true":
-                case "false":
-                case "1":
-                case "0":
-                    return true;
-                default:
-                    return false; 
-            } 
-        }
-
         private void CheckModification(
             PostStatus status,
             string modificationField,
@@ -260,35 +246,7 @@ namespace Census
 
             if (variable.Value != null)
             {
-                switch (variable.Value.Type.Value)
-                {
-                    case VariableType.Boolean:
-                    case VariableType.ListOfBooleans:
-                        if (!IsBoolValue(value.Value))
-                        {
-                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeBoolean", "Value must represent a boolean when modification involves boolean variable is set in the option edit dialog", "Value must represent a boolean");
-                        }
-                        break;
-                    case VariableType.Integer:
-                    case VariableType.ListOfIntegers:
-                        if (!int.TryParse(value.Value, out int dummy))
-                        {
-                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeInteger", "Value must represent an integer when modification involves boolean variable is set in the option edit dialog", "Value must represent an integer");
-                        }
-                        break;
-                    case VariableType.Double:
-                    case VariableType.ListOfDouble:
-                        if (!double.TryParse(value.Value, out double dummy2))
-                        {
-                            status.SetValidationError(valueField, "Option.Edit.Validation.ValueMustBeDouble", "Value must represent a floating point number when modification involves boolean variable is set in the option edit dialog", "Value must represent a floating point number");
-                        }
-                        break;
-                    case VariableType.String:
-                    case VariableType.ListOfStrings:
-                        break;
-                    default:
-                        throw new NotSupportedException(); 
-                } 
+                Variables.CheckValue(status, variable.Value.Type.Value, value.Value, valueField);
             }
         }
 
