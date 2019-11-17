@@ -4,6 +4,7 @@ using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
 using Nancy.Conventions;
+using Nancy.Session;
 
 namespace Census
 {
@@ -23,6 +24,8 @@ namespace Census
     {
         public void Initialize(IPipelines pipelines)
         {
+            CookieBasedSessions.Enable(pipelines);
+
             var formsAuthConfiguration =
                 new FormsAuthenticationConfiguration()
                 {

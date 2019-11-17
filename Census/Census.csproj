@@ -106,6 +106,9 @@
     <Compile Include="Model\Variable.cs" />
     <Compile Include="Module\VariableModule.cs" />
     <Compile Include="Util\Variables.cs" />
+    <Compile Include="Module\SurveyModule.cs" />
+    <Compile Include="Infrastructure\SurveySession.cs" />
+    <Compile Include="Infrastructure\SurveySessionManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />

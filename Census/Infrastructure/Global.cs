@@ -18,6 +18,20 @@ namespace Census
         private static SecurityService _security;
         private static Gpg _gpg;
         private static MailCounter _mailCounter;
+        private static SurveySessionManager _surveySessions;
+
+        public static SurveySessionManager SurveySessions
+        {
+            get
+            {
+                if (_surveySessions == null)
+                {
+                    _surveySessions = new SurveySessionManager();
+                }
+
+                return _surveySessions;
+            }
+        }
 
         public static MailCounter MailCounter
         {
