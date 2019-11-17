@@ -53,6 +53,9 @@ namespace Census
         public MultiLanguageStringField Name { get; private set; }
         public Field<int> Ordering { get; private set; }
         public List<Question> Questions { get; private set; }
+        public EnumField<ConditionType> ConditionType { get; private set; }
+        public ForeignKeyField<Variable, Section> ConditionVariable { get; private set; }
+        public StringField ConditionValue { get; private set; }
 
         public Section() : this(Guid.Empty)
         {
@@ -63,6 +66,9 @@ namespace Census
             Questionaire = new ForeignKeyField<Questionaire, Section>(this, "questionaireid", false, q => q.Sections);
             Name = new MultiLanguageStringField(this, "name");
             Ordering = new Field<int>(this, "ordering", 0);
+            ConditionType = new EnumField<ConditionType>(this, "conditiontype", Census.ConditionType.None, ConditionTypeExtensions.Translate);
+            ConditionVariable = new ForeignKeyField<Variable, Section>(this, "conditionvariableid", true, null);
+            ConditionValue = new StringField(this, "conditionvalue", 256, AllowStringType.SimpleText);
             Questions = new List<Question>();
         }
 

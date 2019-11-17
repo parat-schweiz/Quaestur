@@ -43,6 +43,9 @@ function assignFieldValidation(field, result){
 }
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
+  assignFieldValidation("ConditionType", result);
+  assignFieldValidation("ConditionVariable", result);
+  assignFieldValidation("ConditionValue", result);
   @Each.Name
   assignFieldMultiValidation("Name", "@Current.Key", result);
   @EndEach
@@ -51,6 +54,9 @@ function assignValidation(resultData){
 }
 $("#@Model.ButtonId").click(function() {
   var formData = new Object();
+  formData.ConditionType = $("#sectionConditionType").val();
+  formData.ConditionVariable = $("#sectionConditionVariable").val();
+  formData.ConditionValue = $("#sectionConditionValue").val();
   formData.Name = new Array();
   @Each.Name
   var obj@Current.Key = new Object();
@@ -79,6 +85,34 @@ $('.selectpicker').selectpicker();
       </div>
       @EndEach
     </div>
-  </form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionType">@Model.PhraseFieldConditionType</label>
+        <select id="sectionConditionType" class="selectpicker form-control" data-live-search="true">
+          @Each.ConditionTypes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="sectionConditionTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionVariable">@Model.PhraseFieldConditionVariable</label>
+        <select id="sectionConditionVariable" class="selectpicker form-control" data-live-search="true">
+          @Each.ConditionVariables
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="sectionConditionVariableFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sectionConditionValue">@Model.PhraseFieldConditionValue</label>
+        <input type="text" id="sectionConditionValue" class="form-control" value="@Model.ConditionValue"/>
+        <div id="sectionConditionValueFeedback" class="valid-feedback"></div>
+      </div>
+    </div>  </form>
 </div>
 @EndSection

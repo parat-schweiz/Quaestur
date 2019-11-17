@@ -14,31 +14,69 @@ namespace Census
         public string Method;
         public string Id;
         public List<MultiItemViewModel> Name;
+        public List<NamedIntViewModel> ConditionTypes;
+        public string ConditionType;
+        public List<NamedIdViewModel> ConditionVariables;
+        public string ConditionVariable;
+        public string ConditionValue;
+        public string PhraseFieldConditionType;
+        public string PhraseFieldConditionVariable;
+        public string PhraseFieldConditionValue;
 
         public SectionEditViewModel()
         {
         }
 
-        public SectionEditViewModel(Translator translator)
+        public SectionEditViewModel(Translator translator, IDatabase database, ConditionType conditionType)
             : base(translator, translator.Get("Section.Edit.Title", "Title of the section edit dialog", "Edit section"), "sectionEditDialog")
         {
+            PhraseFieldConditionType = translator.Get("Section.Edit.Field.ConditionType", "Condition type field in the option edit dialog", "Condition type").EscapeHtml();
+            PhraseFieldConditionVariable = translator.Get("Section.Edit.Field.ConditionVariable", "Condition variable field in the option edit dialog", "Condition variable").EscapeHtml();
+            PhraseFieldConditionValue = translator.Get("Section.Edit.Field.ConditionValue", "Condition value field in the option edit dialog", "Condition value").EscapeHtml();
+            ConditionTypes = new List<NamedIntViewModel>();
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.None, Census.ConditionType.None == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.Equal, Census.ConditionType.Equal == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.NotEqual, Census.ConditionType.NotEqual == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.Greater, Census.ConditionType.Greater == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.GreaterOrEqual, Census.ConditionType.GreaterOrEqual == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.Lesser, Census.ConditionType.Lesser == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.LesserOrEqual, Census.ConditionType.LesserOrEqual == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.Contains, Census.ConditionType.Contains == conditionType));
+            ConditionTypes.Add(new NamedIntViewModel(translator, Census.ConditionType.DoesNotContain, Census.ConditionType.DoesNotContain == conditionType));
         }
 
-        public SectionEditViewModel(Translator translator, IDatabase db, Session session, Questionaire questionaire)
-            : this(translator)
+        private NamedIdViewModel CreateNoneValue(Translator translator, bool selected)
+        {
+            return new NamedIdViewModel(
+                translator.Get("Section.Edit.Field.ConditionValue.None", "None value in fields on the section edit dialog", "None"),
+                false, selected);
+        }
+
+        public SectionEditViewModel(Translator translator, IDatabase database, Session session, Questionaire questionaire)
+            : this(translator, database, Census.ConditionType.None)
         {
             Method = "add";
             Id = questionaire.Id.Value.ToString();
             Name = translator.CreateLanguagesMultiItem("Section.Edit.Field.Name", "Name field in the section edit dialog", "Name ({0})", new MultiLanguageString());
+            ConditionVariables = new List<NamedIdViewModel>();
+            ConditionVariables.Add(CreateNoneValue(translator, true));
+            ConditionVariables.AddRange(questionaire.Variables
+                .Select(v => new NamedIdViewModel(translator, v, false)));
+            ConditionValue = string.Empty;
         }
 
-        public SectionEditViewModel(Translator translator, IDatabase db, Session session, Section section)
-            : this(translator)
+        public SectionEditViewModel(Translator translator, IDatabase database, Session session, Section section)
+            : this(translator, database, section.ConditionType.Value)
         {
             Method = "edit";
             Id = section.Id.ToString();
             Name = translator.CreateLanguagesMultiItem("Section.Edit.Field.Name", "Name field in the section edit dialog", "Name ({0})", section.Name.Value);
-         }
+            ConditionVariables = new List<NamedIdViewModel>();
+            ConditionVariables.Add(CreateNoneValue(translator, section.ConditionVariable.Value == null));
+            ConditionVariables.AddRange(section.Questionaire.Value.Variables
+                .Select(v => new NamedIdViewModel(translator, v, section.ConditionVariable.Value == v)));
+            ConditionValue = section.ConditionValue.Value;
+        }
     }
 
     public class SectionViewModel : MasterViewModel
@@ -99,6 +137,58 @@ namespace Census
 
     public class SectionEdit : CensusModule
     {
+        private void CheckCondition(PostStatus status, Section section)
+        {
+            if (section.ConditionType.Value != ConditionType.None &&
+                section.ConditionVariable.Value == null)
+            {
+                status.SetValidationError("ConditionVariable", "Section.Edit.Validation.VariableMissing", "Variable is missing when modification is set in the section edit dialog", "Variable must be set");
+            }
+
+            if (section.ConditionVariable.Value != null)
+            {
+                switch (section.ConditionType.Value)
+                {
+                    case ConditionType.None:
+                        break;
+                    case ConditionType.Equal:
+                    case ConditionType.NotEqual:
+                        if (section.ConditionVariable.Value.Type.Value != VariableType.Boolean &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.Double &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.Integer &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.String)
+                        {
+                            status.SetValidationError("ConditionVariable", "Section.Edit.Validation.VariableMustBeScalar", "Variable not scalar when logic modification is set in the section edit dialog", "Variable must be of some scalar type");
+                        }
+                        break;
+                    case ConditionType.Greater:
+                    case ConditionType.GreaterOrEqual:
+                    case ConditionType.Lesser:
+                    case ConditionType.LesserOrEqual:
+                        if (section.ConditionVariable.Value.Type.Value != VariableType.Double &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.Integer)
+                        {
+                            status.SetValidationError("ConditionVariable", "Section.Edit.Validation.VariableMustBeNumber", "Variable not number when logic modification is set in the section edit dialog", "Variable must be of some number type");
+                        }
+                        break;
+                    case ConditionType.Contains:
+                    case ConditionType.DoesNotContain:
+                        if (section.ConditionVariable.Value.Type.Value != VariableType.ListOfBooleans &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.ListOfDouble &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.ListOfIntegers &&
+                            section.ConditionVariable.Value.Type.Value != VariableType.ListOfStrings)
+                        {
+                            status.SetValidationError("ConditionVariable", "Section.Edit.Validation.VariableMustBeList", "Variable not list when logic modification is set in the section edit dialog", "Variable must be of some list type");
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                Variables.CheckValue(status, section.ConditionVariable.Value.Type.Value, section.ConditionValue.Value, "ConditionValue");
+            }
+        }
+
         public SectionEdit()
         {
             this.RequiresAuthentication();
@@ -163,6 +253,10 @@ namespace Census
                     if (status.HasAccess(section.Questionaire.Value.Owner.Value, PartAccess.Questionaire, AccessRight.Write))
                     {
                         status.AssignMultiLanguageRequired("Name", section.Name, model.Name);
+                        status.AssignEnumIntString("ConditionType", section.ConditionType, model.ConditionType);
+                        status.AssignObjectIdString("ConditionVariable", section.ConditionVariable, model.ConditionVariable);
+                        status.AssignStringFree("ConditionValue", section.ConditionValue, model.ConditionValue);
+                        CheckCondition(status, section);
 
                         if (status.IsSuccess)
                         {
@@ -203,6 +297,10 @@ namespace Census
                         var model = JsonConvert.DeserializeObject<SectionEditViewModel>(ReadBody());
                         var section = new Section(Guid.NewGuid());
                         status.AssignMultiLanguageRequired("Name", section.Name, model.Name);
+                        status.AssignEnumIntString("ConditionType", section.ConditionType, model.ConditionType);
+                        status.AssignObjectIdString("ConditionVariable", section.ConditionVariable, model.ConditionVariable);
+                        status.AssignStringFree("ConditionValue", section.ConditionValue, model.ConditionValue);
+                        CheckCondition(status, section);
 
                         section.Ordering.Value = questionaire.Sections.MaxOrDefault(q => q.Ordering.Value, 0) + 1;
                         section.Questionaire.Value = questionaire;
