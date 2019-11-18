@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Census - @Model.Title</title>
+    <link rel="stylesheet" href="/Assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/Assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-select/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-editor/css/editor.css">
+    <link rel="stylesheet" href="/Assets/jquery-confirm/jquery-confirm.min.css">
+    <link rel="stylesheet" href="/Assets/custom.css">
+    <script src="/Assets/jquery-3.3.1.min.js"></script>
+    <script src="/Assets/popper.min.js"></script>
+    <script src="/Assets/bootstrap/js/bootstrap-notify.min.js"></script>
+    <script src="/Assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/Assets/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="/Assets/bootstrap-select/js/i18n/defaults-en_US.min.js"></script>
+    <script src="/Assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/Assets/bootstrap-editor/js/editor.js"></script>
+    <script src="/Assets/tinymce/tinymce.min.js"></script>
+    <script src="/Assets/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="/Assets/waitdialog.js"></script>
+    @Section['script'];
+  </head>
+  <body>
+    <div class="container">
+      <div class="row header">
+        <div class="col-12">
+        </div>
+      </div>
+      <div class="row data">
+        <div class="col-12">
+          @Section['data'];
+        </div>
+      </div>
+      <div class="row subnav">
+        <div class="col-12">
+          @Section['subnav'];
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

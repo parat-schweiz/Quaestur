@@ -17,6 +17,36 @@ using SiteLibrary;
 
 namespace Census
 {
+    public class SurveyOptionViewModel
+    {
+        public string Id;
+        public string Text;
+
+        public SurveyOptionViewModel(Translator translator, Option option)
+        {
+            Id = option.Id.Value.ToString();
+            Text = option.Text.Value[translator.Language];
+        }
+    }
+
+    public class SurveyQuestionViewModel
+    {
+        public string Title;
+        public string Id;
+        public string Text;
+        public List<SurveyOptionViewModel> Options;
+
+        public SurveyQuestionViewModel(Translator translator, Question question)
+        {
+            Title = question.Section.Value.Questionaire.Value.Name.Value[translator.Language];
+            Id = question.Id.Value.ToString();
+            Text = question.Text.Value[translator.Language];
+            Options = new List<SurveyOptionViewModel>(question
+                .Options.OrderBy(o => o.Ordering.Value)
+                .Select(o => new SurveyOptionViewModel(translator, o)));
+        }
+    }
+
     public class SurveyModule : CensusModule
     {
         private const string SurveySessionKey = "surveysession";
@@ -56,12 +86,30 @@ namespace Census
 
                 var session = GetSession();
                 session.CurrentQuestionId = firstQuestion.Id;
+                session.Language = Language.German;
                 return Response.AsRedirect("/q");
             });
             Get("/q", parameters =>
             {
                 var session = GetSession();
-                return session.Id.ToString();
+                var question = Database.Query<Question>(session.CurrentQuestionId);
+
+                if (question != null)
+                {
+                    switch (question.Type.Value)
+                    {
+                        case QuestionType.SelectOne:
+                            return View["View/survery_question_selectone.sshtml",
+                                new SurveyQuestionViewModel(Translator, question)];
+                        case QuestionType.SelectMany:
+                            return View["View/survery_question_selectmany.sshtml",
+                                new SurveyQuestionViewModel(Translator, question)];
+                        default:
+                            throw new NotSupportedException(); 
+                    }
+                }
+
+                return string.Empty;
             });
         }
     }

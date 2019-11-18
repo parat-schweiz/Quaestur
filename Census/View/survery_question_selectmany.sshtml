@@ -1,0 +1,25 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <h2>@Model.Text</h2>
+      </div>
+    </div>
+    @Each.Option
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <input type="checkbox" class="form-control" name="@Current.Id" value="selected">@Current.Text<br>
+      </div>
+    </div>
+    @EndEach
+  </form>
+</div>
+@EndSection

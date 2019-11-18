@@ -12,6 +12,7 @@ namespace Census
         public Guid Id { get; private set; }
         public DateTime LastUsed { get; private set; }
         public Guid CurrentQuestionId { get; set; }
+        public Language Language { get; set; }
 
         public SurveySession()
         {
