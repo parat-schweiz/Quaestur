@@ -1,7 +1,35 @@
-﻿@Master['View/master.sshtml']
+﻿@Master['View/survey.sshtml']
 
 @Section['script']
 <script>
+function getFormData(){
+  var item = new Object();
+  var formData = new Object();
+  formData.Values = new Array();
+  @Each.Options
+  item = new Object();
+  item['Key'] = "@Current.Id";
+  item['Value'] = $("#check@Current.Id").is(":checked");
+  formData.Values.push(item);
+  @EndEach
+  return formData;
+}
+$(document).ready(function() {
+  $("#backButton").click(function(event) {
+    var formData = getFormData();
+    $.post("/q/back", JSON.stringify(formData), function(resultData, status){
+      window.location.href = "/q";
+    });
+    event.preventDefault();
+  });
+  $("#nextButton").click(function(event) {
+    var formData = getFormData();
+    $.post("/q/next", JSON.stringify(formData), function(resultData, status){
+      window.location.href = "/q";
+    });
+    event.preventDefault();
+  });
+});
 </script>
 @EndSection
 
@@ -13,10 +41,13 @@
         <h2>@Model.Text</h2>
       </div>
     </div>
-    @Each.Option
+    @Each.Options
     <div class="form-row">
       <div class="col-12 mb-3">
-        <input type="checkbox" class="form-control" name="@Current.Id" value="selected">@Current.Text<br>
+        <div class="custom-control custom-checkbox">
+          <input type="checkbox" class="custom-control-input" id="check@Current.Id">
+          <label class="custom-control-label" for="check@Current.Id">@Current.Text</label>
+        </div>
       </div>
     </div>
     @EndEach

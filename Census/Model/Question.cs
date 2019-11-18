@@ -75,6 +75,11 @@ namespace Census
             return Section.GetText(translator) + " / " + Text.Value[translator.Language];
         }
 
+        public Questionaire Questionaire
+        {
+            get { return Section.Value.Questionaire.Value; }
+        }
+
         public Group Owner
         {
             get

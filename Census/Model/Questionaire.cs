@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using SiteLibrary;
 
@@ -55,6 +56,46 @@ namespace Census
         public override string GetText(Translator translator)
         {
             return Name.Value[translator.Language];
+        }
+
+        public IEnumerable<Question> AllQuestions
+        {
+            get
+            {
+                return Sections
+                    .OrderBy(s => s.Ordering.Value)
+                    .SelectMany(s => s.Questions.OrderBy(q => q.Ordering.Value));
+            }
+        }
+
+        public Question NextQuestion(Question question)
+        {
+            var questions = AllQuestions.ToList();
+            var index = questions.IndexOf(question);
+
+            if (index >= 0 && index + 1 < questions.Count)
+            {
+                return questions[index + 1];
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public Question LastQuestion(Question question)
+        {
+            var questions = AllQuestions.ToList();
+            var index = questions.IndexOf(question);
+
+            if (index - 1 >= 0)
+            {
+                return questions[index - 1];
+            }
+            else
+            {
+                return null; 
+            }
         }
     }
 }

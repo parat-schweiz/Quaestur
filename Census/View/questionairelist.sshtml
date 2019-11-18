@@ -43,25 +43,26 @@ $("#questionaireRowDelete@Current.Id").click(function(){
 <table class="table table-hover table-fixed">
   <thead>
     <tr class='centering clickable-row'>
-      <th width="60%">@Model.PhraseHeaderName</th>
+      <th width="45%">@Model.PhraseHeaderName</th>
       <th width="20%">@Model.PhraseHeaderOwner</th>
-      <th width="15%"></th>
+      <th width="30%"></th>
       <th width="5%"></th>
     </tr>
   </thead>
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="55%" id="questionaireRowEdit1@Current.Id" class="@Current.Editable">@Current.Name</td>
+      <td width="45%" id="questionaireRowEdit1@Current.Id" class="@Current.Editable">@Current.Name</td>
       <td width="20%" id="questionaireRowEdit2@Current.Id" class="@Current.Editable">@Current.Owner</td>
       <td width="10%"><a href="/section/@Current.Id">@Model.PhraseHeaderSections</a></td>
       <td width="10%"><a href="/variable/@Current.Id">@Model.PhraseHeaderVariables</a></td>
+      <td width="10%"><a href="/q/@Current.Id">@Model.PhraseHeaderPreview</a></td>
       <td width="5%" id="questionaireRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     @If.AddAccess
     <tr class='centering clickable-row'>
-      <td colspan="4" width="95%" id="questionaireRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td colspan="5" width="95%" id="questionaireRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
       <td width="5%"></td>
     </tr>
     @EndIf

@@ -36,7 +36,12 @@
       </div>
       <div class="row subnav">
         <div class="col-12">
-          @Section['subnav'];
+          @If.ShowBack
+          <button id="backButton" type="button" class="btn btn-default btn-dialog">@Model.PhraseButtonBack</button>
+          @EndIf
+          @If.ShowNext
+          <button id="nextButton" type="button" class="btn btn-default btn-dialog">@Model.PhraseButtonNext</button>
+          @EndIf
         </div>
       </div>
     </div>

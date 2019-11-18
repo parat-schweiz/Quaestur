@@ -87,6 +87,7 @@ namespace Census
         public string PhraseHeaderOwner;
         public string PhraseHeaderSections;
         public string PhraseHeaderVariables;
+        public string PhraseHeaderPreview;
         public string PhraseDeleteConfirmationTitle;
         public string PhraseDeleteConfirmationInfo;
         public List<QuestionaireListItemViewModel> List;
@@ -97,6 +98,7 @@ namespace Census
             PhraseHeaderName = translator.Get("Questionaire.List.Header.Name", "Column 'Name' in the questionaire list", "Name").EscapeHtml();
             PhraseHeaderOwner = translator.Get("Questionaire.List.Header.Owner", "Column 'Owner' in the questionaire list", "Owner").EscapeHtml();
             PhraseHeaderSections = translator.Get("Questionaire.List.Header.Sections", "Column 'Sections' in the questionaire list", "Sections").EscapeHtml();
+            PhraseHeaderPreview = translator.Get("Questionaire.List.Header.Preview ", "Column 'Preview' in the questionaire list", "Preview").EscapeHtml();
             PhraseHeaderVariables = translator.Get("Questionaire.List.Header.Variables", "Column 'Variables' in the questionaire list", "Variables").EscapeHtml();
             PhraseDeleteConfirmationTitle = translator.Get("Questionaire.List.Delete.Confirm.Title", "Delete questionaire confirmation title", "Delete?").EscapeHtml();
             PhraseDeleteConfirmationInfo = translator.Get("Questionaire.List.Delete.Confirm.Info", "Delete questionaire confirmation info", "This will also delete all questions and options under that questionaire.").EscapeHtml();

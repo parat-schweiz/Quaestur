@@ -35,6 +35,10 @@ namespace Census
         public string Id;
         public string Text;
         public List<SurveyOptionViewModel> Options;
+        public bool ShowNext;
+        public bool ShowBack;
+        public string PhraseButtonBack;
+        public string PhraseButtonNext;
 
         public SurveyQuestionViewModel(Translator translator, Question question)
         {
@@ -44,6 +48,10 @@ namespace Census
             Options = new List<SurveyOptionViewModel>(question
                 .Options.OrderBy(o => o.Ordering.Value)
                 .Select(o => new SurveyOptionViewModel(translator, o)));
+            ShowNext = question.Questionaire.NextQuestion(question) != null;
+            ShowBack = question.Questionaire.LastQuestion(question) != null;
+            PhraseButtonBack = translator.Get("Survey.Question.Button.Back", "Back button the survey question page", "Back").EscapeHtml();
+            PhraseButtonNext = translator.Get("Survey.Question.Button.Next", "Next button the survey question page", "Next").EscapeHtml();
         }
     }
 
@@ -74,6 +82,10 @@ namespace Census
             }
         }
 
+        private void NoteQuestionResult(PostStatus status, Question question, JObject result)
+        { 
+        }
+
         public SurveyModule()
         {
             Get("/q/{id}", parameters =>
@@ -81,9 +93,7 @@ namespace Census
                 string idString = parameters.id;
                 var questionaire = Database.Query<Questionaire>(idString);
                 var firstQuestion = questionaire
-                    .Sections.OrderBy(s => s.Ordering).First()
-                    .Questions.OrderBy(q => q.Ordering).First();
-
+                    .AllQuestions.First();
                 var session = GetSession();
                 session.CurrentQuestionId = firstQuestion.Id;
                 session.Language = Language.German;
@@ -110,6 +120,70 @@ namespace Census
                 }
 
                 return string.Empty;
+            });
+            Post("/q/next", parameters =>
+            {
+                var session = GetSession();
+                var question = Database.Query<Question>(session.CurrentQuestionId);
+                var status = CreateStatus();
+
+                if (question != null)
+                {
+                    var result = JObject.Parse(ReadBody());
+                    NoteQuestionResult(status, question, result);
+
+                    if (status.IsSuccess)
+                    {
+                        var nextQuestion = question.Questionaire.NextQuestion(question);
+
+                        if (nextQuestion != null)
+                        {
+                            session.CurrentQuestionId = nextQuestion.Id; 
+                        }
+                        else
+                        {
+                            status.SetError("Survey.Question.NoNextQuestion", "No next question survey page", "Cannot go beyond last question");
+                        }
+                    }
+                }
+                else
+                {
+                    status.SetError("Survey.Question.NotFound", "Question not found on survey page", "Question not found");
+                }
+
+                return status.CreateJsonData();
+            });
+            Post("/q/back", parameters =>
+            {
+                var session = GetSession();
+                var question = Database.Query<Question>(session.CurrentQuestionId);
+                var status = CreateStatus();
+
+                if (question != null)
+                {
+                    var result = JObject.Parse(ReadBody());
+                    NoteQuestionResult(status, question, result);
+
+                    if (status.IsSuccess)
+                    {
+                        var lastQuestion = question.Questionaire.LastQuestion(question);
+
+                        if (lastQuestion != null)
+                        {
+                            session.CurrentQuestionId = lastQuestion.Id;
+                        }
+                        else
+                        {
+                            status.SetError("Survey.Question.NoLastQuestion", "No last question survey page", "Cannot go back beyond frist question");
+                        }
+                    }
+                }
+                else
+                {
+                    status.SetError("Survey.Question.NotFound", "Question not found on survey page", "Question not found");
+                }
+
+                return status.CreateJsonData();
             });
         }
     }
