@@ -71,6 +71,11 @@ namespace Quaestur
                         .FirstOrDefault();
                     var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
                     var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
+                    Global.Log.Notice(
+                        "Checking tally for {0} (last tally {1}, until date {2})",
+                        person.ShortHand,
+                        lastTallyUntilDate,
+                        untilDate);
 
                     if (DateTime.UtcNow.Date > untilDate.Date &&
                         untilDate.Date > lastTallyUntilDate.Date)

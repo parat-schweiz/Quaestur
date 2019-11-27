@@ -24,6 +24,7 @@ namespace Quaestur
 
         public Bill Bill { get; private set; }
         public bool RequiresPersonalPaymentUpdate { get; private set; }
+        public bool RequiresNewPointsTally { get; private set; }
 
         public BillDocument(Translator translator, IDatabase database, Membership membership)
         {
@@ -107,6 +108,22 @@ namespace Quaestur
                 .Where(t => t.UntilDate.Value < Bill.FromDate.Value)
                 .OrderByDescending(t => t.UntilDate.Value)
                 .FirstOrDefault();
+
+            if (lastBill != null &&
+                _lastTally != null &&
+                lastBill.FromDate.Value > _lastTally.UntilDate.Value)
+            {
+                // The last tally was already considered in last bill,
+                // therefore there is a tally missing that should be
+                // considered now.
+                RequiresNewPointsTally = true;
+                return false; 
+            }
+            else
+            {
+                RequiresNewPointsTally = false;
+            }
+
             _maxPoints = _person.Memberships
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => MaxPoints(m));
