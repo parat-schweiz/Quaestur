@@ -113,11 +113,23 @@ namespace Quaestur
                 _lastTally != null &&
                 lastBill.FromDate.Value > _lastTally.UntilDate.Value)
             {
-                // The last tally was already considered in last bill,
-                // therefore there is a tally missing that should be
-                // considered now.
-                RequiresNewPointsTally = true;
-                return false; 
+                var shouldHaveTally = _person.Memberships
+                    .Any(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
+                         m.Type.Value.Payment.Value != PaymentModel.None &&
+                         m.Type.Value.MaximumPoints.Value > 0);
+
+                // The last tally was already considered in last bill
+                if (shouldHaveTally)
+                {
+                    // there should be a newer tally which is missing
+                    RequiresNewPointsTally = true;
+                    return false;
+                }
+                else
+                {
+                    // no need for a tally
+                    RequiresNewPointsTally = false;
+                }
             }
             else
             {
