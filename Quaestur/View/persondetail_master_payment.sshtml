@@ -1,0 +1,28 @@
+﻿<script>
+@Each.List
+$("#phrase@Current.Id").click(function(){
+  window.location.href = "@Current.Url";
+});
+$("#text@Current.Id").click(function(){
+  window.location.href = "@Current.Url";
+});
+@EndEach
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="person-master-card">
+        @Each.List
+        <tr class="clickable-row @Model.Editable">
+          <td width="50%" id="phrase@Current.Id" class="paymentRowEdit">@Current.Phrase</td>
+          <td width="50%" id="text@Current.Id" class="paymentRowEdit">@Current.Text</td>
+        </tr>
+        @EndEach
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="paymentEditDialog"/>

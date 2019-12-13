@@ -15,6 +15,16 @@ namespace BaseLibrary
             return string.Format(CultureInfo.GetCultureInfo("de-CH"), "{0:#,##0}", value);
         }
 
+        public static string FormatMoney(this double value)
+        {
+            return string.Format(CultureInfo.GetCultureInfo("de-CH"), "{0:#,##0.00}", value);
+        }
+
+        public static string FormatMoney(this decimal value)
+        {
+            return string.Format(CultureInfo.GetCultureInfo("de-CH"), "{0:#,##0.00}", value);
+        }
+
         public static string SizeFormat(this int value)
         {
             return ((long)value).SizeFormat();

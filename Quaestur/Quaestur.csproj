@@ -262,6 +262,7 @@
     <Compile Include="Module\RequireCompleteAuthenticationModule.cs" />
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\ReservedUserName.cs" />
+    <Compile Include="Module\PersonDetailMasterPaymentModue.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -975,6 +976,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\apipermissionlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\persondetail_master_payment.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

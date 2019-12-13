@@ -14,12 +14,14 @@ namespace Quaestur
         public string Id;
         public bool DemographyRead;
         public bool ContactRead;
+        public bool BillingRead;
 
         public PersonMasterViewModel(Person person, Session session)
         {
             Id = person.Id.ToString();
             DemographyRead = session.HasAccess(person, PartAccess.Demography, AccessRight.Read);
             ContactRead = session.HasAccess(person, PartAccess.Demography, AccessRight.Read);
+            BillingRead = session.HasAccess(person, PartAccess.Billing, AccessRight.Read);
         }
     }
 

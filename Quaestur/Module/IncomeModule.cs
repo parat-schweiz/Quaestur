@@ -74,6 +74,7 @@ namespace Quaestur
 
     public class IncomeEditViewModel : MasterViewModel
     {
+        public string Id;
         public string Info1;
         public string Info2;
         public string Info3;
@@ -101,6 +102,7 @@ namespace Quaestur
             translator.Get("Income.Edit.Title", "Title of the income edit dialog", "Edit income"),
             session)
         {
+            Id = person.Id.ToString();
             Currency = database.Query<SystemWideSettings>().Single().Currency.Value;
             var fullTaxParameter = PaymentModelFederalTax.GetFullTax(person);
             FullTax = fullTaxParameter != null ? string.Format("{0:0.00}", fullTaxParameter.Value) : string.Empty;
@@ -134,6 +136,19 @@ namespace Quaestur
                 return View["View/income.sshtml",
                     new IncomeEditViewModel(Database, Translator, person, CurrentSession)];
             });
+            Get("/income/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var person = Database.Query<Person>(idString);
+
+                if (person != null)
+                {
+                    return View["View/income.sshtml",
+                        new IncomeEditViewModel(Database, Translator, person, CurrentSession)];
+                }
+
+                return string.Empty;
+            });
             Post("/income/computefulltax", parameters =>
             {
                 var inputString = ReadBody();
@@ -143,7 +158,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return string.Empty; 
+                    return string.Empty;
                 }
             });
             Post("/income/membershipfee", parameters =>
@@ -159,30 +174,34 @@ namespace Quaestur
                     return string.Empty;
                 }
             });
-            Post("/income/updatefulltax", parameters =>
+            Post("/income/{id}/updatefulltax", parameters =>
             {
-                var inputString = ReadBody();
-                if (decimal.TryParse(inputString, out decimal input))
+                string idString = parameters.id;
+                var person = Database.Query<Person>(idString);
+
+                if (person != null &&
+                    HasAccess(person, PartAccess.Billing, AccessRight.Write))
                 {
-                    using (var transaction = Database.BeginTransaction())
+                    var inputString = ReadBody();
+                    if (decimal.TryParse(inputString, out decimal input))
                     {
-                        var person = Database.Query<Person>(CurrentSession.User.Id.Value);
-                        PaymentModelFederalTax.SetFullTax(Database, person, input);
-                        person.PaymentParameterUpdateReminderDate.Value = null;
-                        person.PaymentParameterUpdateReminderLevel.Value = null;
-                        Database.Save(person);
-                        Journal(person,
-                            "Income.Journal.Report",
-                            "Journal entry when person reports income",
-                            "Income reported.");
-                        transaction.Commit();
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            PaymentModelFederalTax.SetFullTax(Database, person, input);
+                            person.PaymentParameterUpdateReminderDate.Value = null;
+                            person.PaymentParameterUpdateReminderLevel.Value = null;
+                            Database.Save(person);
+                            Journal(person,
+                                "Income.Journal.Report",
+                                "Journal entry when person reports income",
+                                "Income reported.");
+                            transaction.Commit();
+                        }
+                        return "OK";
                     }
-                    return "OK";
                 }
-                else
-                {
-                    return string.Empty;
-                }
+
+                return string.Empty;
             });
         }
     }

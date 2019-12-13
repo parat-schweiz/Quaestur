@@ -41,12 +41,20 @@
           }
       });
   }
+  function updateMasterDataPayment(){
+      $.get("/person/detail/master/payment/@Model.Id", function(data, status){
+          if (data){
+              $("#masterDataPayment").html(data);
+          }
+      });
+  }
   updateMasterDataDemography();
   updateMasterDataPostal();
   updateMasterDataEMail();
   updateMasterDataPhone();
   updateMasterDataPublicKeys();
   updateMasterDataDelete();
+  updateMasterDataPayment();
 </script>
 <div class="container">
   <div class="row header">
@@ -64,6 +72,10 @@
     <div class="col-lg-4" id="masterDataPublicKeys">
     </div>
     <div class="col-lg-4" id="masterDataDelete">
+    </div>
+    @EndIf
+    @If.BillingRead
+    <div class="col-lg-4" id="masterDataPayment">
     </div>
     @EndIf
   </div>

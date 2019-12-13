@@ -109,7 +109,7 @@
       var fullTaxString = $("#incomeFullTax").val();
       if (isAmount(fullTaxString)) {
         var fullTax = parseAmount(fullTaxString);
-        $.post("/income/updatefulltax", fullTax.toFixed(2), function(resultData, status){
+        $.post("/income/@Current.Id/updatefulltax", fullTax.toFixed(2), function(resultData, status){
           if (resultData){
             window.location.href = "/";
           }
