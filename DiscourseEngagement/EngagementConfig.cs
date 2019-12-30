@@ -16,6 +16,7 @@ namespace DiscourseEngagement
         public int LikeGivePoints { get; private set; }
         public int LikeRecievePoints { get; private set; }
         public string DiscourseBudgetLabel { get; private set; }
+        public DateTime MinimumDate { get; private set; }
 
         public EngagementConfig()
         {
@@ -43,6 +44,7 @@ namespace DiscourseEngagement
                 yield return new ConfigItemInt32("LikeGivePoints", v => LikeGivePoints = v);
                 yield return new ConfigItemInt32("LikeRecievePoints", v => LikeRecievePoints = v);
                 yield return new ConfigItemString("DiscourseBudgetLabel", v => DiscourseBudgetLabel = v);
+                yield return new ConfigItemDateTime("MinimumDate", v => MinimumDate = v);
             }
         }
 

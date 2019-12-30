@@ -97,6 +97,27 @@ namespace RedmineApi
             } while (count < total);
         }
 
+        public IEnumerable<NamedId> GetIssueStatuses()
+        {
+            var response = Request<JObject>("/issue_statuses.json", HttpMethod.Get, null);
+
+            foreach (var status in response.Value<JArray>("issue_statuses").Values<JObject>())
+            {
+                yield return new NamedId(status);
+            }
+        }
+
+        public void UpdateStatus(int issueId, int statusId, string notes)
+        {
+            var update = new JObject(
+                new JProperty("issue",
+                    new JObject(
+                        new JProperty("status_id", statusId),
+                        new JProperty("notes", notes))));
+            var endpoint = string.Format("/issues/{0}.json", issueId);
+            Request<JValue>(endpoint, HttpMethod.Put, update);
+        }
+
         public void AddNote(int issueId, string notes)
         {
             var update = new JObject(
