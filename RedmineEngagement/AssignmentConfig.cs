@@ -19,6 +19,9 @@ namespace RedmineEngagement
         public string Project { get; private set; }
         public string Category { get; private set; }
         public string Reason { get; private set; }
+        public DateTime MinimumDate { get; private set; } = DateTime.MinValue;
+        public DateTime MaximumDate { get; private set; } = DateTime.MaxValue;
+        public string NewStatus { get; private set; }
 
         public AssignmentConfig(XElement element)
         {
@@ -40,6 +43,9 @@ namespace RedmineEngagement
                 yield return new ConfigItemString("Project", v => Project = v, false);
                 yield return new ConfigItemString("Category", v => Category = v, false);
                 yield return new ConfigItemString("Reason", v => Reason = v);
+                yield return new ConfigItemDateTime("MinimumDate", v => MinimumDate = v, false);
+                yield return new ConfigItemDateTime("MaximumDate", v => MaximumDate = v, false);
+                yield return new ConfigItemString("NewStatus", v => NewStatus = v, false);
             } 
         }
 

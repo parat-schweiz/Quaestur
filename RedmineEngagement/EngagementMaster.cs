@@ -188,6 +188,14 @@ namespace RedmineEngagement
                     {
                         return;
                     }
+                    else if (apiIssue.CreatedOn < assignmentConfig.MinimumDate)
+                    {
+                        return;
+                    }
+                    else if (apiIssue.CreatedOn > assignmentConfig.MaximumDate)
+                    {
+                        return;
+                    }
 
                     dbPerson = _cache.GetPerson(apiIssue.Author.Id);
 
@@ -203,9 +211,18 @@ namespace RedmineEngagement
                         _database.Save(dbIssue);
                         return;
                     }
+
                     break;
                 case "Assignee":
                     if (apiIssue.AssignedTo == null)
+                    {
+                        return;
+                    }
+                    else if (apiIssue.UpdatedOn < assignmentConfig.MinimumDate)
+                    {
+                        return;
+                    }
+                    else if (apiIssue.UpdatedOn > assignmentConfig.MaximumDate)
                     {
                         return;
                     }
@@ -310,18 +327,37 @@ namespace RedmineEngagement
                 return;
             }
 
+            NamedId newStatus = null;
+
+            if (!string.IsNullOrEmpty(assignmentConfig.NewStatus))
+            {
+                newStatus = _redmine.GetIssueStatuses()
+                    .SingleOrDefault(s => s.Name == assignmentConfig.NewStatus);
+
+                if (newStatus == null)
+                {
+                    _logger.Warning(
+                        "Cannot find status '{0}' from assignment config '{1}'",
+                        assignmentConfig.NewStatus,
+                        assignmentConfig.Id);
+                }
+            }
+
             var dbAssignment = new Assignment(Guid.NewGuid());
             dbAssignment.Person.Value = dbPerson;
             dbAssignment.ConfigId.Value = assignmentConfig.Id;
             dbAssignment.Issue.Value = dbIssue;
             dbAssignment.AwardedCalculation.Value = assignmentConfig.Reason;
             dbAssignment.AwardedPoints.Value = points;
+            var reason = string.Format(
+                assignmentConfig.Reason,
+                apiIssue.Subject);
 
             var apiPoints = _quaestur.AddPoints(
                 dbPerson.Id,
                 budget.Id,
                 points,
-                assignmentConfig.Reason,
+                reason,
                 _config.RedmineApi.ApiUrl + "/issues/" + apiIssue.Id.ToString(),
                 apiIssue.UpdatedOn,
                 PointsReferenceType.RedmineIssue,
@@ -341,7 +377,16 @@ namespace RedmineEngagement
                 points,
                 dbPerson.UserName,
                 budget.Label[QuaesturApi.Language.German]);
-            _redmine.AddNote(apiIssue.Id, notes);
+
+            if (newStatus == null)
+            {
+                _redmine.AddNote(apiIssue.Id, notes);
+            }
+            else
+            {
+                _redmine.UpdateStatus(apiIssue.Id, newStatus.Id, notes);
+            }
+
             apiIssue = _redmine.GetIssue(apiIssue.Id);
             dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
             _database.Save(dbIssue);

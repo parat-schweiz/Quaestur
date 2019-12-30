@@ -351,7 +351,16 @@ namespace DiscourseEngagement
                 {
                     if (post.AwardDecision.Value == AwardDecision.None)
                     {
-                        if (post.Person.Value == null)
+                        if (post.Created.Value < _config.MinimumDate)
+                        {
+                            post.AwardDecision.Value = AwardDecision.Negative;
+                            _database.Save(post);
+                            _logger.Notice(
+                                "Not warding for {0}.{1} because before minimum date",
+                                post.Topic.Value.TopicId.Value,
+                                post.PostId.Value);
+                        }
+                        else if (post.Person.Value == null)
                         {
                             post.AwardDecision.Value = AwardDecision.Negative;
                             _database.Save(post);
@@ -422,7 +431,18 @@ namespace DiscourseEngagement
                 {
                     if (like.AwardDecision.Value == AwardDecision.None)
                     {
-                        if (like.Person.Value == null)
+                        if (DateTime.UtcNow < _config.MinimumDate ||
+                            like.Post.Value.Created.Value < _config.MinimumDate)
+                        {
+                            like.AwardDecision.Value = AwardDecision.Negative;
+                            _database.Save(like);
+                            _logger.Notice(
+                                "Not warding for {0}.{1}.{2} before minimumdate",
+                                like.Post.Value.Topic.Value.TopicId.Value,
+                                like.Post.Value.PostId,
+                                like.Person.Value.UserId);
+                        }
+                        else if (like.Person.Value == null)
                         {
                             like.AwardDecision.Value = AwardDecision.Negative;
                             _database.Save(like);

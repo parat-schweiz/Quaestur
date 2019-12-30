@@ -245,6 +245,19 @@ namespace BaseLibrary
         }
     }
 
+    public class ConfigItemDateTime : ConfigItem<DateTime>
+    {
+        public ConfigItemDateTime(string tag, Action<DateTime> assign, bool required = true)
+            : base(tag, assign, required)
+        {
+        }
+
+        protected override DateTime Convert(string value)
+        {
+            return value.ParseIsoDate();
+        }
+    }
+
     public class ConfigMultiItemString : ConfigMultiItem<string>
     {
         public ConfigMultiItemString(string tag, Action<string> add)
