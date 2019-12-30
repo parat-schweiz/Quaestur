@@ -2,6 +2,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <StartAction>Project</StartAction>
-    <StartArguments>/Security/Test/redmineengagement.xml</StartArguments>
+    <StartArguments>/Security/Test/redmineengagement-hot.xml</StartArguments>
   </PropertyGroup>
 </Project>
