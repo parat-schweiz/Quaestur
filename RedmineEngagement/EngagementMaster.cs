@@ -343,15 +343,15 @@ namespace RedmineEngagement
                 }
             }
 
+            var reason = assignmentConfig.Reason
+                .Replace("$Subject", apiIssue.Subject);
+
             var dbAssignment = new Assignment(Guid.NewGuid());
             dbAssignment.Person.Value = dbPerson;
             dbAssignment.ConfigId.Value = assignmentConfig.Id;
             dbAssignment.Issue.Value = dbIssue;
-            dbAssignment.AwardedCalculation.Value = assignmentConfig.Reason;
+            dbAssignment.AwardedCalculation.Value = reason;
             dbAssignment.AwardedPoints.Value = points;
-            var reason = string.Format(
-                assignmentConfig.Reason,
-                apiIssue.Subject);
 
             var apiPoints = _quaestur.AddPoints(
                 dbPerson.Id,
