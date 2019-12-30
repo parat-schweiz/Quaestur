@@ -223,8 +223,8 @@ namespace DiscourseEngagement
             var lines = text
                 .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            var reason = lines.First().Trim();
-            var match = MultiMatch(lines.Last().Trim());
+            var reason = lines.FirstOrDefault().Trim();
+            var match = MultiMatch(lines.LastOrDefault().Trim());
 
             if (match != null && match.Success)
             {

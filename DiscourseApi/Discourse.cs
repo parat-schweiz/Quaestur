@@ -166,7 +166,7 @@ namespace DiscourseApi
 
                 foreach (JObject obj in list)
                 {
-                    yield return new Topic(obj, null);
+                    yield return new Topic(obj, null);  
                 }
 
                 var perPage = response.Value<JObject>("topic_list").Value<int>("per_page");
