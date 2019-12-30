@@ -210,31 +210,57 @@ namespace DiscourseApi
                 url += "?" + paramString; 
             }
 
-            var request = new HttpRequestMessage();
-            request.Method = method;
-            request.RequestUri = new Uri(url);
-
-            if (_config.ApiKey != null && _config.ApiUsername != null)
+            while (true)
             {
-                request.Headers.Add("Api-Key", _config.ApiKey);
-                request.Headers.Add("Api-Username", _config.ApiUsername);
+                var request = new HttpRequestMessage();
+                request.Method = method;
+                request.RequestUri = new Uri(url);
+
+                if (_config.ApiKey != null && _config.ApiUsername != null)
+                {
+                    request.Headers.Add("Api-Key", _config.ApiKey);
+                    request.Headers.Add("Api-Username", _config.ApiUsername);
+                }
+
+                if (method == HttpMethod.Post ||
+                    method == HttpMethod.Put)
+                {
+                    request.Content = new StringContent(data.ToString(), Encoding.UTF8, "application/json");
+                }
+
+                var client = new HttpClient();
+                var waitResponse = client.SendAsync(request);
+                waitResponse.Wait();
+                var response = waitResponse.Result;
+
+                switch ((int)response.StatusCode)
+                {
+                    case (int)HttpStatusCode.OK:
+                    case (int)HttpStatusCode.Created:
+                    case (int)HttpStatusCode.Accepted:
+                        return JsonResponse<T>(ReadResponseText(response));
+                    case (int)HttpStatusCode.NoContent:
+                        return null;
+                    case 429:
+                        Console.WriteLine("Too many requests");
+                        System.Threading.Thread.Sleep(100);
+                        break;
+                    default:
+                        throw new IOException(string.Format("Server HTTP status code {0}", response.StatusCode));
+                }
             }
+        }
 
-            if (method == HttpMethod.Post ||
-                method == HttpMethod.Put)
-            {
-                request.Content = new StringContent(data.ToString(),Encoding.UTF8, "application/json");
-            }
-
-            var client = new HttpClient();
-            var waitResponse = client.SendAsync(request);
-            waitResponse.Wait();
-            var response = waitResponse.Result;
-
+        private static string ReadResponseText(HttpResponseMessage response)
+        {
             var waitRead = response.Content.ReadAsByteArrayAsync();
             waitRead.Wait();
             var responseText = Encoding.UTF8.GetString(waitRead.Result);
+            return responseText;
+        }
 
+        private static T JsonResponse<T>(string responseText) where T : JContainer
+        {
             if (typeof(T) == typeof(JObject))
             {
                 return JObject.Parse(responseText) as T;
@@ -245,7 +271,7 @@ namespace DiscourseApi
             }
             else
             {
-                throw new NotSupportedException(); 
+                throw new NotSupportedException();
             }
         }
     }

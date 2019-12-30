@@ -223,89 +223,92 @@ namespace DiscourseEngagement
             var lines = text
                 .Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            var reason = lines.FirstOrDefault().Trim();
-            var match = MultiMatch(lines.LastOrDefault().Trim());
-
-            if (match != null && match.Success)
+            if (lines.Any())
             {
-                var points = int.Parse(match.Groups[1].Value);
-                var username = match.Groups[2].Value;
-                var budgetLabel = match.Groups[3].Value;
-                var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", apiPost.TopicId, apiPost.Id);
-                var owner = cache.Persons.SingleOrDefault(p => p.DiscourseUserName.Value == username);
-                var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.FullLabel.IsAny(budgetLabel));
-                var translation = new Translation(_database);
-                var translator = new Translator(translation, dbPost.Person.Value.Language.Value);
-                var quote = string.Format(
-                    "[quote=\"{0}, post:{1}, topic:{2}, full:true\"]\n{3}\n[/quote]",
-                    apiPost.Username, apiPost.Id, apiPost.TopicId, text);
+                var reason = lines.First().Trim();
+                var match = MultiMatch(lines.Last().Trim());
 
-                if (owner == null)
+                if (match != null && match.Success)
                 {
-                    var response = translator.Get(
-                        "Award.Assign.Error.UserUnkown",
-                        "When the owner is unknown when assigning points through post",
-                        "Cannot determine mentioned user.");
-                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
-                    _discourse.Post(apiPost.TopicId, postText);
-                    _logger.Notice(
-                       "Cannot find user at assignment in {0}.{1}",
-                       dbPost.Topic.Value.TopicId.Value,
-                       dbPost.PostId.Value);
-                }
-                else if (budget == null)
-                {
-                    var response = translator.Get(
-                        "Award.Assign.Error.BudgetUnkown",
-                        "When the points budget is unknown when assigning points through post",
-                        "Cannot determine mentioned points budget.");
-                    var postText = quote + Environment.NewLine + Environment.NewLine + response;
-                    _discourse.Post(apiPost.TopicId, postText);
-                    _logger.Notice(
-                       "Cannot find points budget at assignment in {0}.{1}",
-                       dbPost.Topic.Value.TopicId.Value,
-                       dbPost.PostId.Value);
-                }
-                else
-                {
-                    try
+                    var points = int.Parse(match.Groups[1].Value);
+                    var username = match.Groups[2].Value;
+                    var budgetLabel = match.Groups[3].Value;
+                    var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", apiPost.TopicId, apiPost.Id);
+                    var owner = cache.Persons.SingleOrDefault(p => p.DiscourseUserName.Value == username);
+                    var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.FullLabel.IsAny(budgetLabel));
+                    var translation = new Translation(_database);
+                    var translator = new Translator(translation, dbPost.Person.Value.Language.Value);
+                    var quote = string.Format(
+                        "[quote=\"{0}, post:{1}, topic:{2}, full:true\"]\n{3}\n[/quote]",
+                        apiPost.Username, apiPost.Id, apiPost.TopicId, text);
+
+                    if (owner == null)
                     {
-                        var result = _quaestur.AddPoints(
-                            owner.Id.Value,
-                            budget.Id,
-                            points,
-                            reason,
-                            url,
-                            apiPost.CreatedAt,
-                            PointsReferenceType.None,
-                            Guid.Empty,
-                            dbPost.Person.Value.Id.Value);
                         var response = translator.Get(
-                            "Award.Assign.Assigned",
-                            "When points are assigned through post",
-                            "Assigned points.");
+                            "Award.Assign.Error.UserUnkown",
+                            "When the owner is unknown when assigning points through post",
+                            "Cannot determine mentioned user.");
                         var postText = quote + Environment.NewLine + Environment.NewLine + response;
                         _discourse.Post(apiPost.TopicId, postText);
                         _logger.Notice(
-                           "Awarding {0} to {1} because assignment in {2}.{3}",
-                           points,
-                           owner.UserId,
-                           dbPost.Topic.Value.TopicId.Value,
-                           dbPost.PostId.Value,
-                           reason);
-                    }
-                    catch (ApiAccessDeniedException)
-                    {
-                        var response = translator.Get(
-                            "Award.Assign.Error.Denied",
-                            "When the access is denied when assigning points through post",
-                            "Not permitted to assign points.");
-                        var postText = quote + Environment.NewLine + Environment.NewLine + response;
-                        _discourse.Post(apiPost.TopicId, postText);
-                        _logger.Notice(
-                           "Access denied at assignment in {0}.{1}",
+                           "Cannot find user at assignment in {0}.{1}",
                            dbPost.Topic.Value.TopicId.Value,
                            dbPost.PostId.Value);
+                    }
+                    else if (budget == null)
+                    {
+                        var response = translator.Get(
+                            "Award.Assign.Error.BudgetUnkown",
+                            "When the points budget is unknown when assigning points through post",
+                            "Cannot determine mentioned points budget.");
+                        var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                        _discourse.Post(apiPost.TopicId, postText);
+                        _logger.Notice(
+                           "Cannot find points budget at assignment in {0}.{1}",
+                           dbPost.Topic.Value.TopicId.Value,
+                           dbPost.PostId.Value);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var result = _quaestur.AddPoints(
+                                owner.Id.Value,
+                                budget.Id,
+                                points,
+                                reason,
+                                url,
+                                apiPost.CreatedAt,
+                                PointsReferenceType.None,
+                                Guid.Empty,
+                                dbPost.Person.Value.Id.Value);
+                            var response = translator.Get(
+                                "Award.Assign.Assigned",
+                                "When points are assigned through post",
+                                "Assigned points.");
+                            var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                            _discourse.Post(apiPost.TopicId, postText);
+                            _logger.Notice(
+                               "Awarding {0} to {1} because assignment in {2}.{3}",
+                               points,
+                               owner.UserId,
+                               dbPost.Topic.Value.TopicId.Value,
+                               dbPost.PostId.Value,
+                               reason);
+                        }
+                        catch (ApiAccessDeniedException)
+                        {
+                            var response = translator.Get(
+                                "Award.Assign.Error.Denied",
+                                "When the access is denied when assigning points through post",
+                                "Not permitted to assign points.");
+                            var postText = quote + Environment.NewLine + Environment.NewLine + response;
+                            _discourse.Post(apiPost.TopicId, postText);
+                            _logger.Notice(
+                               "Access denied at assignment in {0}.{1}",
+                               dbPost.Topic.Value.TopicId.Value,
+                               dbPost.PostId.Value);
+                        }
                     }
                 }
             }
@@ -437,7 +440,7 @@ namespace DiscourseEngagement
                             like.AwardDecision.Value = AwardDecision.Negative;
                             _database.Save(like);
                             _logger.Notice(
-                                "Not warding for {0}.{1}.{2} before minimumdate",
+                                "Not warding for {0}.{1}.{2} because before minimum date",
                                 like.Post.Value.Topic.Value.TopicId.Value,
                                 like.Post.Value.PostId,
                                 like.Person.Value.UserId);
