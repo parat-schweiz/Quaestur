@@ -353,7 +353,7 @@ namespace RedmineEngagement
             if (!string.IsNullOrEmpty(assignmentConfig.PointsBudget))
             {
                 budget = _quaestur.GetPointBudgetList()
-                    .SingleOrDefault(b => b.Label.IsAny(assignmentConfig.PointsBudget));
+                    .SingleOrDefault(b => b.FullLabel.IsAny(assignmentConfig.PointsBudget));
 
                 if (budget == null)
                 {

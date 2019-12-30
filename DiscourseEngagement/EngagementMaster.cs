@@ -233,7 +233,7 @@ namespace DiscourseEngagement
                 var budgetLabel = match.Groups[3].Value;
                 var url = _config.DiscourseApi.ApiUrl + string.Format("/t/{0}/{1}", apiPost.TopicId, apiPost.Id);
                 var owner = cache.Persons.SingleOrDefault(p => p.DiscourseUserName.Value == username);
-                var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.Label.IsAny(budgetLabel));
+                var budget = _quaestur.GetPointBudgetList().SingleOrDefault(b => b.FullLabel.IsAny(budgetLabel));
                 var translation = new Translation(_database);
                 var translator = new Translator(translation, dbPost.Person.Value.Language.Value);
                 var quote = string.Format(
@@ -335,7 +335,7 @@ namespace DiscourseEngagement
         private void DoAwards()
         {
             var budget = _quaestur.GetPointBudgetList()
-                .Single(b => b.Label.IsAny(_config.DiscourseBudgetLabel));
+                .Single(b => b.FullLabel.IsAny(_config.DiscourseBudgetLabel));
 
             using (var transaction = _database.BeginTransaction())
             {
