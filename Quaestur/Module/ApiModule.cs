@@ -246,6 +246,21 @@ namespace Quaestur
             return new JProperty(name, texts);
         }
 
+        private JProperty Property(string name, string separator, params MultiLanguageStringField[] fields)
+        {
+            var texts = new JObject();
+            texts.Add(new JProperty(Language.English.ToString().ToLowerInvariant(), Join(Language.English, separator, fields)));
+            texts.Add(new JProperty(Language.German.ToString().ToLowerInvariant(), Join(Language.German, separator, fields)));
+            texts.Add(new JProperty(Language.French.ToString().ToLowerInvariant(), Join(Language.French, separator, fields)));
+            texts.Add(new JProperty(Language.Italian.ToString().ToLowerInvariant(), Join(Language.Italian, separator, fields)));
+            return new JProperty(name, texts);
+        }
+
+        private string Join(Language language, string separator, params MultiLanguageStringField[] fields)
+        {
+            return string.Join(separator, fields.Select(f => f.Value[language]));
+        }
+
         private JObject ConvertObject<T>(T obj, ApiContext context)
             where T : DatabaseObject
         {
@@ -294,6 +309,7 @@ namespace Quaestur
                 json.Add(Property("ownerid", budget.Owner.Value.Id));
                 json.Add(Property("currentpoints", budget.CurrentPoints));
                 json.Add(Property("share", budget.Share));
+                json.Add(Property("fulllabel", "/", budget.Owner.Value.Organization.Value.Name, budget.Owner.Value.Name, budget.Label));
             }
             else if (dbObj is BudgetPeriod period)
             {

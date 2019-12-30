@@ -11,6 +11,7 @@ namespace RedmineEngagement
     {
         public string Id { get; private set; }
         public string PointsBudget { get; private set; }
+        public string PointsBudgetField { get; private set; }
         public string PointsField { get; private set; }
         public int Points { get; private set; }
         public string UserField { get; private set; }
@@ -34,7 +35,8 @@ namespace RedmineEngagement
             get
             {
                 yield return new ConfigItemString("Id", v => Id = v);
-                yield return new ConfigItemString("PointsBudget", v => PointsBudget = v);
+                yield return new ConfigItemString("PointsBudget", v => PointsBudget = v, false);
+                yield return new ConfigItemString("PointsBudgetField", v => PointsBudgetField = v, false);
                 yield return new ConfigItemString("PointsField", v => PointsField = v, false);
                 yield return new ConfigItemInt32("Points", v => Points = v, false);
                 yield return new ConfigItemString("UserField", v => UserField = v);

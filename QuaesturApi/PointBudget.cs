@@ -9,6 +9,7 @@ namespace QuaesturApi
     {
         public Guid Id { get; private set; }
         public MultiLanguageString Label { get; private set; }
+        public MultiLanguageString FullLabel { get; private set; }
         public Guid OwnerId { get; private set; }
         public Guid PeriodId { get; private set; }
         public decimal Share { get; private set; }
@@ -18,6 +19,7 @@ namespace QuaesturApi
         {
             Id = Guid.Parse(obj.Value<string>("id"));
             Label = new MultiLanguageString(obj.Value<JObject>("label"));
+            FullLabel = new MultiLanguageString(obj.Value<JObject>("fulllabel"));
             OwnerId = Guid.Parse(obj.Value<string>("ownerid"));
             PeriodId = Guid.Parse(obj.Value<string>("periodid"));
             Share = obj.Value<decimal>("Share");

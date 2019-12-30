@@ -315,14 +315,60 @@ namespace RedmineEngagement
                 return; 
             }
 
-            var budget = _quaestur.GetPointBudgetList()
-                .SingleOrDefault(b => b.Label.IsAny(assignmentConfig.PointsBudget));
+            PointBudget budget = null;
+
+            if (!string.IsNullOrEmpty(assignmentConfig.PointsBudgetField))
+            {
+                var field = apiIssue.CustomFields
+                    .SingleOrDefault(f => f.Name == assignmentConfig.PointsBudgetField);
+
+                if (field != null)
+                {
+                    budget = _quaestur.GetPointBudgetList()
+                        .SingleOrDefault(b => b.FullLabel.IsAny(field.Value));
+
+                    if (budget == null)
+                    {
+                        _logger.Notice(
+                            "Cannot find points budget '{0}' from issue {1}",
+                            field.Value,
+                            apiIssue.Id);
+                        _redmine.AddNote(apiIssue.Id, "Punktebudget nicht gefunden.");
+                        apiIssue = _redmine.GetIssue(apiIssue.Id);
+                        dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                        _database.Save(dbIssue);
+                        return;
+                    }
+                }
+                else
+                {
+                    _logger.Warning(
+                        "Cannot find points budget field '{0}' from assignment config '{1}'",
+                        assignmentConfig.PointsBudgetField,
+                        assignmentConfig.Id);
+                    return;
+                }
+            }
+
+            if (!string.IsNullOrEmpty(assignmentConfig.PointsBudget))
+            {
+                budget = _quaestur.GetPointBudgetList()
+                    .SingleOrDefault(b => b.Label.IsAny(assignmentConfig.PointsBudget));
+
+                if (budget == null)
+                {
+                    _logger.Warning(
+                        "Cannot find points budget '{0}' from assignment config '{1}'",
+                        assignmentConfig.PointsBudget,
+                        assignmentConfig.Id);
+                    return;
+                }
+            }
 
             if (budget == null)
             {
                 _logger.Warning(
-                    "Cannot find budget '{0}' from assignment config '{1}'",
-                    assignmentConfig.PointsBudget,
+                    "No points budget configured in assignment config '{0}'",
                     assignmentConfig.Id);
                 return;
             }
