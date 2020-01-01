@@ -204,8 +204,8 @@ namespace DiscourseEngagement
         {
             var patterns = new string[]
             {
-                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ]+)”$",
-                "^([0-9]+) points for @([a-zA-Z0-9_\\-]+) from budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ]+)”$",
+                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
+                "^([0-9]+) points for @([a-zA-Z0-9_\\-]+) from budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
             };
 
             foreach (var pattern in patterns)
