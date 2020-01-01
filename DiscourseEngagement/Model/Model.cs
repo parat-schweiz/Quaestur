@@ -7,7 +7,7 @@ namespace DiscourseEngagement
 {
     public static class Model
     {
-        public static int CurrentVersion = 1;
+        public static int CurrentVersion = 2;
 
         public static void Install(IDatabase database, Logger logger)
         {
@@ -64,6 +64,9 @@ namespace DiscourseEngagement
             switch (version)
             {
                 case 1:
+                    break;
+                case 2:
+                    database.AddColumn<Topic>(t => t.LastPostedAt);
                     break;
                 default:
                     throw new NotSupportedException();

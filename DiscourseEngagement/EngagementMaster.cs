@@ -121,10 +121,6 @@ namespace DiscourseEngagement
                         }
                     }
                 }
-                else
-                {
-                    _logger.Notice("Not adding user {0}, id {1} because no AUID", user.Username, user.Id);
-                }
             }
         }
 
@@ -148,16 +144,19 @@ namespace DiscourseEngagement
                             dbTopic.TopicId.Value = apiTopic.Id;
                             dbTopic.PostsCount.Value = apiTopic.PostsCount;
                             dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                            dbTopic.LastPostedAt.Value = apiTopic.LastPostedAt;
                             cache.Add(dbTopic);
                             _database.Save(dbTopic);
                             SyncTopic(cache, apiTopic, dbTopic);
                         }
                         else if (dbTopic.PostsCount.Value != apiTopic.PostsCount ||
-                                 dbTopic.LikeCount.Value != apiTopic.LikeCount)
+                                 dbTopic.LikeCount.Value != apiTopic.LikeCount ||
+                                 dbTopic.LastPostedAt.Value != apiTopic.LastPostedAt)
                         {
                             _logger.Notice("Updated topic {0}", apiTopic.Id);
                             dbTopic.PostsCount.Value = apiTopic.PostsCount;
                             dbTopic.LikeCount.Value = apiTopic.LikeCount;
+                            dbTopic.LastPostedAt.Value = apiTopic.LastPostedAt;
                             _database.Save(dbTopic);
                             SyncTopic(cache, apiTopic, dbTopic);
                         }

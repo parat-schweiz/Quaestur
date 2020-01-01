@@ -15,6 +15,7 @@ namespace DiscourseApi
         public int PostsCount { get; private set; }
         public int ReplyCount { get; private set; }
         public int LikeCount { get; private set; }
+        public DateTime LastPostedAt { get; private set; }
         public int Views { get; private set; }
         public List<string> Tags { get; private set; }
         public List<Post> Posts { get; private set; }
@@ -29,6 +30,7 @@ namespace DiscourseApi
             ReplyCount = obj.Value<int>("reply_count");
             LikeCount = obj.Value<int>("like_count");
             Views = obj.Value<int>("views");
+            LastPostedAt = obj.Value<DateTime?>("last_posted_at") ?? new DateTime(1970, 1, 1);
 
             Tags = new List<string>();
             var tags = obj.Value<JArray>("tags");
