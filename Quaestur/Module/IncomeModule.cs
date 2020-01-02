@@ -32,9 +32,8 @@ namespace Quaestur
     {
         public List<OrganizationMembershipFeeViewModel> List;
 
-        public MembershipFeeViewModel(IDatabase database, Translator translator, Session session, decimal value)
+        public MembershipFeeViewModel(IDatabase database, Translator translator, Person person, decimal value)
         {
-            var person = database.Query<Person>(session.User.Id.Value);
             person.PaymentParameters.RemoveAll(p => p.Key.Value == PaymentModelFederalTax.FullTaxKey);
             var fullTaxParameter = new PersonalPaymentParameter(Guid.Empty);
             fullTaxParameter.Key.Value = PaymentModelFederalTax.FullTaxKey;
@@ -161,18 +160,24 @@ namespace Quaestur
                     return string.Empty;
                 }
             });
-            Post("/income/membershipfee", parameters =>
+            Post("/income/{id}/membershipfee", parameters =>
             {
-                var inputString = ReadBody();
-                if (decimal.TryParse(inputString, out decimal input))
+                string idString = parameters.id;
+                var person = Database.Query<Person>(idString);
+
+                if (person != null &&
+                    HasAccess(person, PartAccess.Billing, AccessRight.Write))
                 {
-                    return View["View/income_membershipfee.sshtml",
-                        new MembershipFeeViewModel(Database, Translator, CurrentSession, input)];
+                    var inputString = ReadBody();
+
+                    if (decimal.TryParse(inputString, out decimal input))
+                    {
+                        return View["View/income_membershipfee.sshtml",
+                            new MembershipFeeViewModel(Database, Translator, person, input)];
+                    }
                 }
-                else
-                {
-                    return string.Empty;
-                }
+
+                return string.Empty;
             });
             Post("/income/{id}/updatefulltax", parameters =>
             {
@@ -183,6 +188,7 @@ namespace Quaestur
                     HasAccess(person, PartAccess.Billing, AccessRight.Write))
                 {
                     var inputString = ReadBody();
+
                     if (decimal.TryParse(inputString, out decimal input))
                     {
                         using (var transaction = Database.BeginTransaction())
