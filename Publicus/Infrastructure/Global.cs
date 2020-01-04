@@ -25,7 +25,7 @@ namespace Publicus
             {
                 if (_mailCounter == null)
                 {
-                    _mailCounter = new MailCounter(30, 3);
+                    _mailCounter = new MailCounter(Config.MailCounter);
                 }
 
                 return _mailCounter;

@@ -11,6 +11,7 @@ namespace Publicus
     {
         public ConfigSectionDatabase Database { get; private set; }
         public ConfigSectionMail Mail { get; private set; }
+        public ConfigSectionMailCounter MailCounter { get; private set; }
         public ConfigSectionOauth2Client Oauth2 { get; private set; }
         public ConfigSectionSecurityServiceClient SecurityService { get; private set; }
 
@@ -18,6 +19,7 @@ namespace Publicus
         {
             Database = new ConfigSectionDatabase();
             Mail = new ConfigSectionMail();
+            MailCounter = new ConfigSectionMailCounter();
             Oauth2 = new ConfigSectionOauth2Client();
             SecurityService = new ConfigSectionSecurityServiceClient();
         }
@@ -28,6 +30,7 @@ namespace Publicus
             {
                 yield return Database;
                 yield return Mail;
+                yield return MailCounter;
                 yield return Oauth2;
                 yield return SecurityService;
             }

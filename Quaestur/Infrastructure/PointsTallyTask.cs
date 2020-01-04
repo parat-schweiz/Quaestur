@@ -56,36 +56,39 @@ namespace Quaestur
             foreach (var person in persons
                 .Where(p => !p.Deleted.Value))
             {
-                var membership = person.Memberships
-                    .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
-                                m.Type.Value.Payment.Value != PaymentModel.None &&
-                                m.Type.Value.MaximumPoints.Value > 0)
-                    .OrderByDescending(m => m.Organization.Value.Subordinates.Count())
-                    .FirstOrDefault();
-
-                if (membership != null)
+                if (Global.MailCounter.Available)
                 {
-                    var lastTally = database
-                        .Query<PointsTally>(DC.Equal("personid", person.Id.Value))
-                        .OrderByDescending(t => t.UntilDate.Value)
+                    var membership = person.Memberships
+                        .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
+                                    m.Type.Value.Payment.Value != PaymentModel.None &&
+                                    m.Type.Value.MaximumPoints.Value > 0)
+                        .OrderByDescending(m => m.Organization.Value.Subordinates.Count())
                         .FirstOrDefault();
-                    var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
-                    var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
-                    Global.Log.Notice(
-                        "Checking tally for {0} (last tally {1}, until date {2})",
-                        person.ShortHand,
-                        lastTallyUntilDate,
-                        untilDate);
 
-                    if (DateTime.UtcNow.Date > untilDate.Date &&
-                        untilDate.Date > lastTallyUntilDate.Date)
+                    if (membership != null)
                     {
-                        var tally = CreatePointsTally(database, translation, membership);
+                        var lastTally = database
+                            .Query<PointsTally>(DC.Equal("personid", person.Id.Value))
+                            .OrderByDescending(t => t.UntilDate.Value)
+                            .FirstOrDefault();
+                        var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
+                        var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
+                        Global.Log.Notice(
+                            "Checking tally for {0} (last tally {1}, until date {2})",
+                            person.ShortHand,
+                            lastTallyUntilDate,
+                            untilDate);
 
-                        if (tally != null)
+                        if (DateTime.UtcNow.Date > untilDate.Date &&
+                            untilDate.Date > lastTallyUntilDate.Date)
                         {
-                            SendTally(database, membership, tally);
-                            _maxMailsCount--;
+                            var tally = CreatePointsTally(database, translation, membership);
+
+                            if (tally != null)
+                            {
+                                SendTally(database, membership, tally);
+                                _maxMailsCount--;
+                            }
                         }
                     }
                 }

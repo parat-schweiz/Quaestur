@@ -60,7 +60,7 @@ namespace Quaestur
                 totalMembershipFee += yearlyMembershipFee;
             }
 
-            if (person.Memberships.Count > 1)
+            if (List.Count > 1)
             {
                 List.Add(
                     new OrganizationMembershipFeeViewModel(

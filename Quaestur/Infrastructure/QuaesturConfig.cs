@@ -11,12 +11,14 @@ namespace Quaestur
     {
         public ConfigSectionDatabase Database { get; private set; }
         public ConfigSectionMail Mail { get; private set; }
+        public ConfigSectionMailCounter MailCounter { get; private set; }
         public ConfigSectionSecurityServiceClient SecurityService { get; private set; }
 
         public QuaesturConfig()
         {
             Database = new ConfigSectionDatabase();
             Mail = new ConfigSectionMail();
+            MailCounter = new ConfigSectionMailCounter();
             SecurityService = new ConfigSectionSecurityServiceClient();
             MatrixDomains = new List<string>();
         }
@@ -27,6 +29,7 @@ namespace Quaestur
             {
                 yield return Database;
                 yield return Mail;
+                yield return MailCounter;
                 yield return SecurityService;
             }
         }

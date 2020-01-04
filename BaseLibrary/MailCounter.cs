@@ -10,10 +10,10 @@ namespace BaseLibrary
         private DateTime _last;
         private readonly object _lock = new object();
 
-        public MailCounter(int refillCount, int refillMinutes)
+        public MailCounter(ConfigSectionMailCounter config)
         {
-            _refillCount = refillCount;
-            _refillMinutes = refillMinutes;
+            _refillCount = config.MailCounterRefillCount;
+            _refillMinutes = config.MailCounterRefillMinutes;
             _counter = _refillCount;
             _last = DateTime.UtcNow;
         }

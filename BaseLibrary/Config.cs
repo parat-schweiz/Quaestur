@@ -71,6 +71,23 @@ namespace BaseLibrary
         public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
     }
 
+    public class ConfigSectionMailCounter : ConfigSection
+    {
+        public int MailCounterRefillMinutes { get; set; }
+        public int MailCounterRefillCount { get; set; }
+
+        public override IEnumerable<ConfigItem> ConfigItems
+        {
+            get
+            {
+                yield return new ConfigItemInt32("MailCounterRefillMinutes", v => MailCounterRefillMinutes = v);
+                yield return new ConfigItemInt32("MailCounterRefillCount", v => MailCounterRefillCount = v);
+            }
+        }
+
+        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
+    }
+
     public class ConfigSectionDatabase : ConfigSection 
     {
         public string DatabaseServer { get; set; }
