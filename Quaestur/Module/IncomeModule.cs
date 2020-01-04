@@ -44,7 +44,8 @@ namespace Quaestur
             var currency = database.Query<SystemWideSettings>().Single().Currency.Value;
             var totalMembershipFee = 0m;
 
-            foreach (var membership in person.Memberships
+            foreach (var membership in person.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .OrderByDescending(m => m.Organization.Value.Subordinates.Count()))
             {
                 var paymentModel = membership.Type.Value.CreatePaymentModel(database);
@@ -125,6 +126,12 @@ namespace Quaestur
 
     public class IncomeModule : QuaesturModule
     {
+        private bool HasAccessToReportIncome(Person person)
+        {
+            return person == CurrentSession.User ||
+                HasAccess(person, PartAccess.Billing, AccessRight.Write);
+        }
+
         public IncomeModule()
         {
             RequireCompleteLogin();
@@ -166,7 +173,7 @@ namespace Quaestur
                 var person = Database.Query<Person>(idString);
 
                 if (person != null &&
-                    HasAccess(person, PartAccess.Billing, AccessRight.Write))
+                    HasAccessToReportIncome(person))
                 {
                     var inputString = ReadBody();
 
@@ -185,7 +192,7 @@ namespace Quaestur
                 var person = Database.Query<Person>(idString);
 
                 if (person != null &&
-                    HasAccess(person, PartAccess.Billing, AccessRight.Write))
+                    HasAccessToReportIncome(person))
                 {
                     var inputString = ReadBody();
 

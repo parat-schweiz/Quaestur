@@ -34,7 +34,9 @@ namespace Quaestur
             Title = translator.Get("Person.Detail.Payment.Title", "Title of the payment part of the person detail page", "Payment").EscapeHtml();
             Id = person.Id.Value.ToString();
             List = new List<PersonDetailPaymentItemViewModel>();
-            var parameterTypes = person.ActiveMemberships.SelectMany(m => m.Type.Value.CreatePaymentModel(database).PersonalParameterTypes);
+            var parameterTypes = person.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .SelectMany(m => m.Type.Value.CreatePaymentModel(database).PersonalParameterTypes);
 
             var usesFederalTax = parameterTypes.Any(p => p.Key == PaymentModelFederalTax.FullTaxKey);
             if (usesFederalTax)
