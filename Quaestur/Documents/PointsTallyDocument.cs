@@ -154,6 +154,8 @@ namespace Quaestur
             var tableColumnPoints = _translator.Get("Document.PointsTally.Column.Points", "Points column in the points tally document", "Points");
             var tableColumnBalance = _translator.Get("Document.PointsTally.Column.Balance", "Balance column in the points tally document", "Balance");
             var tableRowConsidered = _translator.Get("Document.PointsTally.Row.Considered", "Considered row in the points tally document", "Considered");
+            var tableRowTriplePoints = _translator.Get("Document.PointsTally.Row.TriplePoints", "Triple points row in the points tally document", "Triple bonus for {0} points", _membership.Type.Value.TriplePoints.Value);
+            var tableRowDoublePoints = _translator.Get("Document.PointsTally.Row.DoublePoints", "Double points row in the points tally document", "Double points for {0} points", _membership.Type.Value.DoublePoints.Value);
             var tableRowBalanceForward = _translator.Get("Document.PointsTally.Row.BalanceForward", "Balance forward row in the points tally document", "Balance forward");
             var tableRowCarryOver = _translator.Get("Document.PointsTally.Row.CarryOver", "Carry over row in the points tally document", "Carry over");
 
@@ -162,15 +164,21 @@ namespace Quaestur
                 .Where(p => p.Moment.Value.ToLocalTime().Date >= PointsTally.FromDate.Value &&
                             p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
-            var sum = list.Sum(p => p.Amount);
+            var sum = list.Sum(p => (long)p.Amount);
+            var tripleBase = Math.Min(sum, _membership.Type.Value.TriplePoints.Value);
+            var doubleBase = Math.Min(Math.Max(0, sum - tripleBase), _membership.Type.Value.DoublePoints.Value);
+            var triplePoints = tripleBase * 2;
+            var doublePoints = doubleBase;
+            var sumPlusTriple = sum + triplePoints;
+            var sumPlusTripleDouble = sumPlusTriple + doublePoints;
             var maxConsideredPoints = _membership.Person.Value.ActiveMemberships
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => m.Type.Value.MaximumPoints.Value);
             var maxForwardPoints = _membership.Person.Value.ActiveMemberships
                 .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
                 .Sum(m => m.Type.Value.MaximumBalanceForward.Value);
-            PointsTally.Considered.Value = Math.Min(sum, maxConsideredPoints);
-            PointsTally.ForwardBalance.Value = Math.Min(sum - PointsTally.Considered.Value, maxForwardPoints);
+            PointsTally.Considered.Value = Math.Min(sumPlusTripleDouble, maxConsideredPoints);
+            PointsTally.ForwardBalance.Value = Math.Min(sumPlusTripleDouble - PointsTally.Considered.Value, maxForwardPoints);
 
             var text = new StringBuilder();
 
@@ -211,15 +219,43 @@ namespace Quaestur
             text.AppendLine();
 
             text.Append(@"\tablelasttail{");
+            if (_membership.Type.Value.TriplePoints.Value > 0 ||
+                _membership.Type.Value.TriplePoints.Value > 0)
+            {
+                text.Append(@"\hline ");
+            }
+            if (_membership.Type.Value.TriplePoints.Value > 0)
+            {
+                text.Append(tableRowTriplePoints);
+                text.Append(@" & & \multicolumn{1}{r}{");
+                text.Append(triplePoints.FormatThousands());
+                text.Append(@"} & \multicolumn{1}{r}{");
+                text.Append(sumPlusTriple.FormatThousands());
+                text.Append(@"} \\");
+                text.AppendLine();
+            }
+            if (_membership.Type.Value.DoublePoints.Value > 0)
+            {
+                text.Append(tableRowDoublePoints);
+                text.Append(@" & & \multicolumn{1}{r}{");
+                text.Append(doublePoints.FormatThousands());
+                text.Append(@"} & \multicolumn{1}{r}{");
+                text.Append(sumPlusTripleDouble.FormatThousands());
+                text.Append(@"} \\");
+                text.AppendLine();
+            }
             text.Append(@"\hline\hline ");
             text.Append(tableRowConsidered);
             text.Append(@" & & & \multicolumn{1}{r}{");
             text.Append(PointsTally.Considered.Value.FormatThousands());
-            text.Append(@"} \\ ");
+            text.Append(@"} \\");
+            text.AppendLine();
             text.Append(tableRowCarryOver);
             text.Append(@" & & & \multicolumn{1}{r}{");
             text.Append(PointsTally.ForwardBalance.Value.FormatThousands());
-            text.Append(@"} \\ }");
+            text.Append(@"} \\");
+            text.AppendLine();
+            text.Append(@"}");
             text.AppendLine();
 
             text.Append(@"\begin{supertabular}{p{7.2cm} p{2cm} p{1.2cm} p{1.2cm}}");

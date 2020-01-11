@@ -109,6 +109,8 @@ namespace Quaestur
         public Field<long> MaximumPoints { get; private set; }
         public Field<long> MaximumBalanceForward { get; private set; }
         public DecimalField MaximumDiscount { get; private set; }
+        public Field<long> TriplePoints { get; private set; }
+        public Field<long> DoublePoints { get; private set; }
         public ForeignKeyField<Group, MembershipType> SenderGroup { get; private set; }
         public List<PaymentParameter> PaymentParameters { get; private set; }
 
@@ -127,6 +129,8 @@ namespace Quaestur
             MaximumPoints = new Field<long>(this, "maximumpoints", 0);
             MaximumBalanceForward = new Field<long>(this, "maximumbalanceforward", 0);
             MaximumDiscount = new DecimalField(this, "maximumdiscount", 16, 4);
+            TriplePoints = new Field<long>(this, "triplepoints", 0);
+            DoublePoints = new Field<long>(this, "doublepoints", 0);
             SenderGroup = new ForeignKeyField<Group, MembershipType>(this, "sendergroup", true, null);
         }
 

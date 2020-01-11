@@ -58,6 +58,8 @@ namespace Quaestur
         public string MaximumPoints;
         public string MaximumBalanceForward;
         public string MaximumDiscount;
+        public string TriplePoints;
+        public string DoublePoints;
         public string SenderGroup;
         public List<NamedIntViewModel> Rights;
         public List<NamedIntViewModel> Payments;
@@ -79,6 +81,8 @@ namespace Quaestur
         public string PhraseFieldMaximumPoints;
         public string PhraseFieldMaximumBalanceForward;
         public string PhraseFieldMaximumDiscount;
+        public string PhraseFieldTriplePoints;
+        public string PhraseFieldDoublePoints;
         public string PhraseFieldPointsTallyMailTemplates;
         public string PhraseFieldBillDocumentTemplates;
         public string PhraseFieldPointsTallyDocumentTemplates;
@@ -102,6 +106,8 @@ namespace Quaestur
             PhraseFieldMaximumPoints = translator.Get("MembershipType.Edit.Field.MaximumPoints", "Maximum points field in the membership type edit dialog", "Maximum points").EscapeHtml();
             PhraseFieldMaximumBalanceForward = translator.Get("MembershipType.Edit.Field.MaximumBalanceForward", "Maximum balance forward points field in the membership type edit dialog", "Maximum balance forward").EscapeHtml();
             PhraseFieldMaximumDiscount = translator.Get("MembershipType.Edit.Field.MaximumDiscount", "Maximum discount field in the membership type edit dialog", "Maximum discount").EscapeHtml();
+            PhraseFieldTriplePoints = translator.Get("MembershipType.Edit.Field.TriplePoints", "Triple points field in the membership type edit dialog", "Triple points").EscapeHtml();
+            PhraseFieldDoublePoints = translator.Get("MembershipType.Edit.Field.DoublePoints", "Double points field in the membership type edit dialog", "Double points").EscapeHtml();
             PhraseFieldPointsTallyMailTemplates = translator.Get("MembershipType.Edit.Field.PointsTallyMailTemplates", "Points tally mail templates field in the membership type edit dialog", "Points tally mail templates").EscapeHtml();
             PhraseFieldBillDocumentTemplates = translator.Get("MembershipType.Edit.Field.BillDocumentTemplates", "Bill document templates field in the membership type edit dialog", "Bill document templates").EscapeHtml();
             PhraseFieldPointsTallyDocumentTemplates = translator.Get("MembershipType.Edit.Field.PointsTallyDocumentTemplates", "Points tally document templates field in the membership type edit dialog", "Points tally document templates").EscapeHtml();
@@ -125,6 +131,8 @@ namespace Quaestur
             MaximumPoints = string.Empty;
             MaximumBalanceForward = string.Empty;
             MaximumDiscount = string.Empty;
+            TriplePoints = string.Empty;
+            DoublePoints = string.Empty;
             Rights = new List<NamedIntViewModel>();
             Rights.Add(new NamedIntViewModel(translator, MembershipRight.Voting, false));
             Payments = new List<NamedIntViewModel>();
@@ -181,6 +189,8 @@ namespace Quaestur
             MaximumPoints = membershipType.MaximumPoints.Value.ToString();
             MaximumBalanceForward = membershipType.MaximumBalanceForward.Value.ToString();
             MaximumDiscount = membershipType.MaximumDiscount.Value.ToString();
+            TriplePoints = membershipType.TriplePoints.Value.ToString();
+            DoublePoints = membershipType.DoublePoints.Value.ToString();
             Rights = new List<NamedIntViewModel>();
             Rights.Add(new NamedIntViewModel(translator, MembershipRight.Voting, membershipType.Rights.Value.HasFlag(MembershipRight.Voting)));
             Payments = new List<NamedIntViewModel>();
@@ -787,6 +797,8 @@ namespace Quaestur
             status.AssignEnumIntString("Payment", membershipType.Payment, model.Payment);
             status.AssignEnumIntString("Collection", membershipType.Collection, model.Collection);
             status.AssignInt64String("MaximumPoints", membershipType.MaximumPoints, model.MaximumPoints);
+            status.AssignInt64String("TriplePoints", membershipType.TriplePoints, model.TriplePoints);
+            status.AssignInt64String("DoublePoints", membershipType.DoublePoints, model.DoublePoints);
             status.AssignInt64String("MaximumBalanceForward", membershipType.MaximumBalanceForward, model.MaximumBalanceForward);
             status.AssignDecimalString("MaximumDiscount", membershipType.MaximumDiscount, model.MaximumDiscount);
             status.AssignObjectIdString("SenderGroup", membershipType.SenderGroup, model.SenderGroup);
