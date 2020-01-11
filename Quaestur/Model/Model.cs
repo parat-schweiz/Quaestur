@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 26;
+        public static int CurrentVersion = 27;
 
         public static void Install(IDatabase database)
         {
@@ -124,6 +124,10 @@ namespace Quaestur
                     break;
                 case 26:
                     SetNextPersonNumber(database);
+                    break;
+                case 27:
+                    database.AddColumn<MembershipType>(m => m.TriplePoints);
+                    database.AddColumn<MembershipType>(m => m.DoublePoints);
                     break;
                 default:
                     throw new NotSupportedException();

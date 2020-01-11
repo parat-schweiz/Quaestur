@@ -52,6 +52,8 @@ function assignValidation(resultData){
   assignFieldValidation("MaximumPoints", result);
   assignFieldValidation("MaximumBalanceForward", result);
   assignFieldValidation("MaximumDiscount", result);
+  assignFieldValidation("TriplePoints", result);
+  assignFieldValidation("DoublePoints", result);
   assignFieldValidation("PointsTallyMails", result);
   assignFieldValidation("PointsTallyDocuments", result);
   assignFieldValidation("BillDocuments", result);
@@ -76,6 +78,8 @@ function getFormData(){
   formData.MaximumPoints = $("#membershipTypeMaximumPoints").val();
   formData.MaximumBalanceForward = $("#membershipTypeMaximumBalanceForward").val();
   formData.MaximumDiscount = $("#membershipTypeMaximumDiscount").val();
+  formData.TriplePoints = $("#membershipTypeTriplePoints").val();
+  formData.DoublePoints = $("#membershipTypeDoublePoints").val();
   formData.PointsTallyMailTemplates = $("#membershipTypePointsTallyMails").val();
   formData.PointsTallyDocumentTemplates = $("#membershipTypePointsTallyDocuments").val();
   formData.PaymentParameterUpdateRequiredMailTemplates = $("#membershipTypePaymentParameterUpdateRequiredMails").val();
@@ -210,6 +214,20 @@ $('.selectpicker').selectpicker();
         <label for="membershipTypeMaximumDiscount">@Model.PhraseFieldMaximumDiscount</label>
         <input type="text" id="membershipTypeMaximumDiscount" class="form-control" value="@Model.MaximumDiscount"/>
         <div id="membershipTypeMaximumDiscountFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeTriplePoints">@Model.PhraseFieldTriplePoints</label>
+        <input type="text" id="membershipTypeTriplePoints" class="form-control" value="@Model.TriplePoints"/>
+        <div id="membershipTypeTriplePointsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeDoublePoints">@Model.PhraseFieldDoublePoints</label>
+        <input type="text" id="membershipTypeDoublePoints" class="form-control" value="@Model.DoublePoints"/>
+        <div id="membershipTypeDoublePointsFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">
