@@ -17,6 +17,7 @@
     <script src="/Assets/bootstrap-select/js/bootstrap-select.min.js"></script>
     <script src="/Assets/bootstrap-select/js/i18n/defaults-en_US.min.js"></script>
     <script src="/Assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/Assets/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js"></script>
     <script src="/Assets/bootstrap-editor/js/editor.js"></script>
     <script src="/Assets/tinymce/tinymce.min.js"></script>
     <script src="/Assets/jquery-confirm/jquery-confirm.min.js"></script>

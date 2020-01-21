@@ -77,7 +77,8 @@ $("#@Model.ButtonId").click(function() {
 });
 $('.datepicker').datepicker({
     format: 'dd.mm.yyyy',
-    startDate: '-3650d'
+    startDate: '-3650d',
+    language: 'de'
 });
 $('.selectpicker').selectpicker();
 </script>

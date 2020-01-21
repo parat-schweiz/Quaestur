@@ -46,7 +46,8 @@ $("#@Model.ButtonId").click(function() {
 });
 $('.datepicker').datepicker({
   format: 'dd.mm.yyyy',
-  startDate: '-43800d'
+  startDate: '-43800d',
+  language: 'de'
 });
 $('.selectpicker').selectpicker();
 </script>
