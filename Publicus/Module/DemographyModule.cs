@@ -36,7 +36,7 @@ namespace Publicus
             : this(translator)
         {
             Id = contact.Id.ToString();
-            Birthdate = contact.BirthDate.Value.FormatSwissDay();
+            Birthdate = contact.BirthDate.Value.FormatSwissDateDay();
             Language = ((int)contact.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, contact.Language.Value == SiteLibrary.Language.English));

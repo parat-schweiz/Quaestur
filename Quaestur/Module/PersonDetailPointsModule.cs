@@ -41,8 +41,8 @@ namespace Quaestur
         {
             Id = string.Empty;
             Budget = string.Empty;
-            Moment = tally.FromDate.Value.FormatSwissDay() + " - " + 
-                     tally.UntilDate.Value.FormatSwissDay();
+            Moment = tally.FromDate.Value.FormatSwissDateDay() + " - " + 
+                     tally.UntilDate.Value.FormatSwissDateDay();
             Amount = tally.Considered.Value.FormatThousands();
             Running = tally.ForwardBalance.Value.FormatThousands();
             Reason = translator.Get("Person.Detail.Points.Title.Tally", "Title of a tally in points tab of person details", "Tally");

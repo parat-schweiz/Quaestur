@@ -68,7 +68,7 @@ namespace Publicus
                 case "Contact.Language":
                     return _contact.Language.Value.Translate(_translator);
                 case "Contact.BirthDate":
-                    return _contact.BirthDate.Value.FormatSwissDay();
+                    return _contact.BirthDate.Value.FormatSwissDateDay();
                 case "Contact.Address.FiveLines":
                     return CreatePostalAddressFiveLines();
                 default:

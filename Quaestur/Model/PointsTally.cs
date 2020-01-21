@@ -35,14 +35,14 @@ namespace Quaestur
 
         public override string ToString()
         {
-            return FromDate.Value.FormatSwissDay() + " / " + 
-                   UntilDate.Value.FormatSwissDay();
+            return FromDate.Value.FormatSwissDateDay() + " / " + 
+                   UntilDate.Value.FormatSwissDateDay();
         }
 
         public override string GetText(Translator translator)
         {
-            return FromDate.Value.FormatSwissDay() + " / " + 
-                   UntilDate.Value.FormatSwissDay();
+            return FromDate.Value.FormatSwissDateDay() + " / " + 
+                   UntilDate.Value.FormatSwissDateDay();
         }
 
         public override void Delete(IDatabase database)

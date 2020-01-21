@@ -32,7 +32,7 @@ namespace Quaestur
             List = new List<PersonDetailDemographyItemViewModel>();
             List.Add(new PersonDetailDemographyItemViewModel(
                 translator.Get("Person.Detail.Demography.Birthdate", "Birthdate item in demography part of the person detail page", "Birthdate"), 
-                person.BirthDate.Value.FormatSwissDay()));
+                person.BirthDate.Value.FormatSwissDateDay()));
             List.Add(new PersonDetailDemographyItemViewModel(
                 translator.Get("Person.Detail.Demography.Language", "Language item in demography part of the person detail page", "Language"),
                 person.Language.Value.Translate(translator)));

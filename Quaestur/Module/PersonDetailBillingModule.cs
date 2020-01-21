@@ -20,7 +20,7 @@ namespace Quaestur
             Id = bill.Id.Value.ToString();
             Number = bill.Number.Value.EscapeHtml();
             Status = bill.Status.Value.Translate(translator).EscapeHtml();
-            CreatedDate = bill.CreatedDate.Value.FormatSwissDay();
+            CreatedDate = bill.CreatedDate.Value.FormatSwissDateDay();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Bills.Delete.Confirm.Question", "Delete bill confirmation question", "Do you really wish to delete bill {0}?", bill.GetText(translator)).EscapeHtml();
         }
     }

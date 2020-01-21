@@ -205,6 +205,8 @@ namespace Quaestur
                 .Count().ToString();
 
             Subject = mailing.Subject.Value.EscapeHtml();
+            Date = DateTime.Now.FormatSwissDateDay();
+            Time = DateTime.Now.FormatTimeMinutes();
         }
     }
 

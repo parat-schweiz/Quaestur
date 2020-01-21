@@ -22,7 +22,7 @@ namespace Quaestur
         {
             Id = document.Id.Value.ToString();
             Type = document.Type.Value.Translate(translator).EscapeHtml();
-            CreatedDate = document.CreatedDate.Value.FormatSwissDay();
+            CreatedDate = document.CreatedDate.Value.FormatSwissDateDay();
             FileName = document.FileName.Value.EscapeHtml();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Documents.Delete.Confirm.Question", "Delete document confirmation question", "Do you really wish to delete document {0}?", document.GetText(translator)).EscapeHtml();
         }

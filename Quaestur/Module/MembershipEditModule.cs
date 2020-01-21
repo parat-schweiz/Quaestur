@@ -58,10 +58,10 @@ namespace Quaestur
             Method = "edit";
             Id = membership.Id.ToString();
             Organization = membership.Organization.Value.Name.Value[translator.Language].EscapeHtml();
-            StartDate = membership.StartDate.Value.FormatSwissDay();
+            StartDate = membership.StartDate.Value.FormatSwissDateDay();
             EndDate =
                 membership.EndDate.Value.HasValue ?
-                membership.EndDate.Value.Value.FormatSwissDay() :
+                membership.EndDate.Value.Value.FormatSwissDateDay() :
                 string.Empty;
             Organizations.AddRange(
                 db.Query<Organization>()

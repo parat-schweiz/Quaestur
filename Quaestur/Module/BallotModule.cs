@@ -49,7 +49,7 @@ namespace Quaestur
             Method = "add";
             Id = "new";
             Template = string.Empty;
-            EndDate = DateTime.Now.AddDays(21).Date.FormatSwissDay();
+            EndDate = DateTime.Now.AddDays(21).Date.FormatSwissDateDay();
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", new MultiLanguageString());
             Questions =  translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", new MultiLanguageString(AllowStringType.SafeLatex), EscapeMode.Latex);
             Templates = new List<NamedIdViewModel>(db
@@ -64,7 +64,7 @@ namespace Quaestur
             Method = "edit";
             Id = ballot.Id.ToString();
             Template = string.Empty;
-            EndDate = ballot.EndDate.Value.FormatSwissDay();
+            EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", ballot.AnnouncementText.Value);
             Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value, EscapeMode.Latex);
             Templates = new List<NamedIdViewModel>(db
@@ -99,9 +99,9 @@ namespace Quaestur
         {
             Id = ballot.Id.Value.ToString();
             Organizer = ballot.Template.Value.Organizer.Value.GetText(translator);
-            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).FormatSwissDay();
-            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).FormatSwissDay();
-            EndDate = ballot.EndDate.Value.FormatSwissDay();
+            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).FormatSwissDateDay();
+            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).FormatSwissDateDay();
+            EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             Status = ballot.Status.Value.Translate(translator);
             PhraseDeleteConfirmationQuestion = translator.Get("Ballot.List.Delete.Confirm.Question", "Delete ballot confirmation question", "Do you really wish to delete ballot {0}?", ballot.GetText(translator));
             var writeAccess = session.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write);

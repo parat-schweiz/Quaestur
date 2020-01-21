@@ -268,7 +268,7 @@ namespace Quaestur
 
                 text.Append(tableRowBalanceForward);
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(PointsTally.FromDate.Value.FormatSwissMinutes());
+                text.Append(PointsTally.FromDate.Value.FormatSwissDateMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
                 text.Append(_lastTally.ForwardBalance.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
@@ -283,7 +283,7 @@ namespace Quaestur
 
                 text.Append(p.Reason.Value.EscapeLatex());
                 text.Append(@" & \multicolumn{1}{r}{");
-                text.Append(p.Moment.Value.ToLocalTime().FormatSwissMinutes());
+                text.Append(p.Moment.Value.ToLocalTime().FormatSwissDateMinutes());
                 text.Append(@"} & \multicolumn{1}{r}{");
                 text.Append(p.Amount.Value.FormatThousands());
                 text.Append(@"} & \multicolumn{1}{r}{");
@@ -310,11 +310,11 @@ namespace Quaestur
                 case "PointsTally.TableContent":
                     return CreateTableContent();
                 case "PointsTally.FromDate":
-                    return PointsTally.FromDate.Value.FormatSwissDay();
+                    return PointsTally.FromDate.Value.FormatSwissDateDay();
                 case "PointsTally.UntilDate":
-                    return PointsTally.UntilDate.Value.FormatSwissDay();
+                    return PointsTally.UntilDate.Value.FormatSwissDateDay();
                 case "PointsTally.CreatedDate":
-                    return PointsTally.CreatedDate.Value.FormatSwissDay();
+                    return PointsTally.CreatedDate.Value.FormatSwissDateDay();
                 default:
                     throw new NotSupportedException(); 
             }

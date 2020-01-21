@@ -33,7 +33,7 @@ namespace Quaestur
             : this(translator)
         {
             Id = person.Id.ToString();
-            Birthdate = person.BirthDate.Value.FormatSwissDay();
+            Birthdate = person.BirthDate.Value.FormatSwissDateDay();
             Language = ((int)person.Language.Value).ToString();
             Languages = new List<NamedIntViewModel>();
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, person.Language.Value == SiteLibrary.Language.English));

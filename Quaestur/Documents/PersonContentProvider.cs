@@ -70,7 +70,7 @@ namespace Quaestur
                 case "Person.Language":
                     return _person.Language.Value.Translate(_translator);
                 case "Person.BirthDate":
-                    return _person.BirthDate.Value.FormatSwissDay();
+                    return _person.BirthDate.Value.FormatSwissDateDay();
                 case "Person.Address.FiveLines":
                     return CreatePostalAddressFiveLines();
                 case "Person.Parameter.Income.Url":

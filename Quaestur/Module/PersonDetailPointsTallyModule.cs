@@ -20,9 +20,9 @@ namespace Quaestur
         public PersonDetailPointsTallyItemViewModel(Translator translator, PointsTally pointsTally)
         {
             Id = pointsTally.Id.Value.ToString();
-            FromDate = pointsTally.FromDate.Value.FormatSwissDay();
-            UntilDate = pointsTally.UntilDate.Value.FormatSwissDay();
-            CreatedDate = pointsTally.CreatedDate.Value.FormatSwissDay();
+            FromDate = pointsTally.FromDate.Value.FormatSwissDateDay();
+            UntilDate = pointsTally.UntilDate.Value.FormatSwissDateDay();
+            CreatedDate = pointsTally.CreatedDate.Value.FormatSwissDateDay();
             Considered = pointsTally.Considered.Value.FormatThousands();
             ForwardBalance = pointsTally.ForwardBalance.Value.ToString();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.PointsTallys.Delete.Confirm.Question", "Delete pointsTally confirmation question", "Do you really wish to delete pointsTally {0}?", pointsTally.GetText(translator)).EscapeHtml();

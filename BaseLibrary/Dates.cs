@@ -5,19 +5,29 @@ namespace BaseLibrary
 {
     public static class Dates
     {
-        public static string FormatSwissDay(this DateTime value)
+        public static string FormatSwissDateDay(this DateTime value)
         {
             return value.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
         }
 
-        public static string FormatSwissMinutes(this DateTime value)
+        public static string FormatSwissDateMinutes(this DateTime value)
         {
             return value.ToString("dd.MM.yyyy HH:mm", CultureInfo.InvariantCulture);
         }
 
-        public static string FormatSwissSeconds(this DateTime value)
+        public static string FormatSwissDateSeconds(this DateTime value)
         {
             return value.ToString("dd.MM.yyyy HH:mm:ss", CultureInfo.InvariantCulture);
+        }
+
+        public static string FormatTimeMinutes(this DateTime value)
+        {
+            return value.ToString("HH:mm", CultureInfo.InvariantCulture);
+        }
+
+        public static string FormatTimeSeconds(this DateTime value)
+        {
+            return value.ToString("HH:mm:ss", CultureInfo.InvariantCulture);
         }
 
         public static string FormatIso(this DateTime value)

@@ -57,10 +57,10 @@ namespace Publicus
             Method = "edit";
             Id = subscription.Id.ToString();
             Feed = subscription.Feed.Value.Name.Value[translator.Language].EscapeHtml();
-            StartDate = subscription.StartDate.Value.FormatSwissDay();
+            StartDate = subscription.StartDate.Value.FormatSwissDateDay();
             EndDate =
                 subscription.EndDate.Value.HasValue ?
-                subscription.EndDate.Value.Value.FormatSwissDay() :
+                subscription.EndDate.Value.Value.FormatSwissDateDay() :
                 string.Empty;
             Feeds.AddRange(
                 db.Query<Feed>()

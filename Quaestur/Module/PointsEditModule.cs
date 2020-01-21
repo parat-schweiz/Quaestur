@@ -73,7 +73,7 @@ namespace Quaestur
             Method = "edit";
             Id = points.Id.ToString();
             Budget = string.Empty;
-            MomentDate = points.Moment.Value.ToLocalTime().FormatSwissDay();
+            MomentDate = points.Moment.Value.ToLocalTime().FormatSwissDateDay();
             MomentTime = points.Moment.Value.ToLocalTime().ToString("HH:mm:ss");
             Amount = points.Amount.Value.ToString();
             Reason = points.Reason.Value;
