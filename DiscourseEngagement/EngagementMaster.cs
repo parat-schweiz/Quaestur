@@ -518,24 +518,41 @@ namespace DiscourseEngagement
             var addon = new Queue<double>(ConversationAddon);
             var factor = addon.Dequeue();
 
+            _logger.Info("Calculating conversation factor for {0}.{1}", post.Topic.Value.TopicId.Value, post.PostId.Value);
+
             while (thread.Count > 0)
             {
                 var p = thread.Dequeue();
 
                 if (p.Person.Value != null)
                 {
+                    _logger.Info("Post {0}.{1} from user {2}", p.Topic.Value.TopicId.Value, p.PostId.Value, p.Person.Value.DiscourseUserName.Value);
+
                     if (p.Person.Value.Id.Equals(post.Person.Value.Id))
                     {
                         participants = new List<Guid>();
                         addon = new Queue<double>(ConversationAddon);
                         factor = addon.Dequeue();
+                        _logger.Info("Post from current user, factor is {0:0.00}", factor);
                     }
-                    else if (!participants.Contains(p.Person.Value.Id.Value) &&
-                             addon.Count > 0)
+                    else if (addon.Count < 1)
+                    {
+                        _logger.Info("Factor at maximum {0:0.00}", factor);
+                    }
+                    else if (participants.Contains(p.Person.Value.Id.Value))
+                    {
+                        _logger.Info("Participant already in factor of {0:0.00}", factor);
+                    }
+                    else
                     {
                         participants.Add(p.Person.Value.Id.Value);
                         factor += addon.Dequeue();
+                        _logger.Info("New participant, factor increased to {0:0.00}", factor);
                     }
+                }
+                else
+                {
+                    _logger.Info("Post {0}.{1} from unknown user", p.Topic.Value.TopicId.Value, p.PostId.Value); 
                 }
             }
 
