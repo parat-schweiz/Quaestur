@@ -35,6 +35,59 @@ namespace Quaestur
             database.Delete(this);
         }
 
+        private TimeSpan Length
+        {
+            get
+            {
+                return EndDate.Value.Date.Subtract(StartDate.Value.Date);
+            }
+        }
+
+        private decimal ComputePeriodFactor(IPaymentModel paymentModel)
+        {
+            var billingPeriod = paymentModel.GetBillingPeriod();
+            var daysLength = (int)Math.Floor(Length.TotalDays);
+
+            if (daysLength == billingPeriod)
+            {
+                return 1m;
+            }
+            else if (daysLength > billingPeriod)
+            {
+                if (daysLength >= 360 && daysLength <= 367)
+                {
+                    if (billingPeriod >= 28 && billingPeriod <= 32)
+                    {
+                        return 12m;
+                    }
+                    else if (billingPeriod >= 84 && billingPeriod <= 96)
+                    {
+                        return 4m;
+                    }
+                    else if (billingPeriod >= 168 && billingPeriod <= 192)
+                    {
+                        return 2m;
+                    }
+                    else if (billingPeriod >= 360 && billingPeriod <= 367)
+                    {
+                        return 1m; 
+                    }
+                    else
+                    {
+                        return (decimal)daysLength / (decimal)billingPeriod;
+                    }
+                }
+                else
+                {
+                    return (decimal)daysLength / (decimal)billingPeriod;
+                }
+            }
+            else
+            {
+                return (decimal)daysLength / (decimal)billingPeriod;
+            }
+        }
+
         public void UpdateTotalPoints(IDatabase database)
         {
             var memberships = database.Query<Membership>(DC.Equal("organizationid", Organization.Value.Id.Value));
@@ -42,10 +95,14 @@ namespace Quaestur
 
             foreach (var m in memberships)
             {
-                var length = EndDate.Value.Date.Subtract(StartDate.Value.Date);
-                var overlap = Dates.ComputeOverlap(m.StartDate.Value.Date, (m.EndDate.Value ?? DateTime.MaxValue).Date, StartDate.Value.Date, EndDate.Value.Date);
-                decimal fraction = (decimal)overlap.TotalDays / (decimal)length.TotalDays;
-                totalPoints += (long)Math.Floor((decimal)m.Type.Value.MaximumPoints.Value * fraction);
+                if (m.Type.Value.Payment.Value != PaymentModel.None)
+                {
+                    var overlap = Dates.ComputeOverlap(m.StartDate.Value.Date, (m.EndDate.Value ?? DateTime.MaxValue).Date, StartDate.Value.Date, EndDate.Value.Date);
+                    decimal fraction = (decimal)overlap.TotalDays / (decimal)Length.TotalDays;
+                    var paymentModel = m.Type.Value.CreatePaymentModel(database);
+                    var periodFactor = ComputePeriodFactor(paymentModel);
+                    totalPoints += (long)Math.Floor((decimal)m.Type.Value.MaximumPoints.Value * periodFactor * fraction);
+                }
             }
 
             var transfers = database.Query<PointTransfer>(DC.Equal("sinkid", Id.Value));
