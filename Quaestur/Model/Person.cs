@@ -393,6 +393,11 @@ namespace Quaestur
                 address.Delete(database);
             }
 
+            foreach (var publicKey in database.Query<PublicKey>(DC.Equal("personid", Id.Value)))
+            {
+                publicKey.Delete(database);
+            }
+
             foreach (var membership in database.Query<Membership>(DC.Equal("personid", Id.Value)))
             {
                 membership.Delete(database);
@@ -418,6 +423,21 @@ namespace Quaestur
                 entry.Delete(database);
             }
 
+            foreach (var parameter in database.Query<PersonalPaymentParameter>(DC.Equal("personid", Id.Value)))
+            {
+                parameter.Delete(database);
+            }
+
+            foreach (var pointsTally in database.Query<PointsTally>(DC.Equal("personid", Id.Value)))
+            {
+                pointsTally.Delete(database);
+            }
+
+            foreach (var points in database.Query<Points>(DC.Equal("ownerid", Id.Value)))
+            {
+                points.Delete(database);
+            }
+
             foreach (var authorization in database.Query<Oauth2Authorization>(DC.Equal("userid", Id.Value)))
             {
                 authorization.Delete(database);
@@ -426,6 +446,16 @@ namespace Quaestur
             foreach (var session in database.Query<Oauth2Session>(DC.Equal("userid", Id.Value)))
             {
                 session.Delete(database);
+            }
+
+            foreach (var session in database.Query<LoginLink>(DC.Equal("personid", Id.Value)))
+            {
+                session.Delete(database);
+            }
+
+            foreach (var settings in database.Query<SearchSettings>(DC.Equal("personid", Id.Value)))
+            {
+                settings.Delete(database);
             }
 
             var reservedUserName = new ReservedUserName(Guid.NewGuid());

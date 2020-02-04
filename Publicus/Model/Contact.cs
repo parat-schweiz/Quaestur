@@ -300,6 +300,11 @@ namespace Publicus
                 entry.Delete(database);
             }
 
+            foreach (var entry in database.Query<PublicKey>(DC.Equal("contactid", Id.Value)))
+            {
+                entry.Delete(database);
+            }
+
             database.Delete(this); 
         }
     }

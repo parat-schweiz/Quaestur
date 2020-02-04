@@ -4,6 +4,8 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
+using BaseLibrary;
+using SiteLibrary;
 
 namespace Quaestur
 {
@@ -67,6 +69,16 @@ namespace Quaestur
                     {
                         using (var transaction = Database.BeginTransaction())
                         {
+                            foreach (var mailing in Database.Query<Mailing>(DC.Equal("creatorid", person.Id.Value)))
+                            {
+                                mailing.Creator.Value = CurrentSession.User;
+                            }
+
+                            foreach (var document in Database.Query<Document>(DC.Equal("verifierid", person.Id.Value)))
+                            {
+                                document.Verifier.Value = CurrentSession.User;
+                            }
+
                             person.Delete(Database);
                             transaction.Commit();
                             Global.Log.Notice(
