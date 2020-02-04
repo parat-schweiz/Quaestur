@@ -87,12 +87,12 @@ $(document).ready(function() {
       </div>
       <div class="col-md-6 mb-3">
         <label for="mailingDate">@Model.PhraseFieldDate</label>
-        <input type="text" id="mailingDate" class="form-control datepicker" placeholder="31.12.2018"/>
+        <input type="text" id="mailingDate" class="form-control datepicker" placeholder="@Model.Date" value="@Model.Date"/>
         <div id="mailingDateFeedback" class="valid-feedback"></div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="mailingTime">@Model.PhraseFieldTime</label>
-        <input type="text" id="mailingTime" class="form-control timepicker" placeholder="23:59"/>
+        <input type="text" id="mailingTime" class="form-control timepicker" placeholder="@Model.Time" value="@Model.Time"/>
         <div id="mailingTimeFeedback" class="valid-feedback"></div>
       </div>
     </div>
