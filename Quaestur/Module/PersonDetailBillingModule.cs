@@ -44,7 +44,7 @@ namespace Quaestur
                 .OrderBy(d => d.CreatedDate.Value)
                 .Select(d => new PersonDetailBillItemViewModel(translator, d)));
             Editable =
-                session.HasAccess(person, PartAccess.TagAssignments, AccessRight.Write) ?
+                session.HasAccess(person, PartAccess.Billing, AccessRight.Write) ?
                 "editable" : "accessdenied";
             PhraseHeaderNumber = translator.Get("Person.Detail.Bill.Header.Number", "Column 'Number' on the bill tab of the person detail page", "Number").EscapeHtml();
             PhraseHeaderStatus = translator.Get("Person.Detail.Bill.Header.Status", "Column 'Status' on the bill tab of the person detail page", "Status").EscapeHtml();

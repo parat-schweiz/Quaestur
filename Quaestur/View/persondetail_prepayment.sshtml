@@ -1,0 +1,68 @@
+﻿<script>
+$("#prepaymentRowAdd").click(function(){
+  showPrepaymentEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#prepaymentRowEdit1@Current.Id").click(function(){
+  showPrepaymentEditDialog("edit", "@Current.Id");
+});
+$("#prepaymentRowEdit2@Current.Id").click(function(){
+  showPrepaymentEditDialog("edit", "@Current.Id");
+});
+$("#prepaymentRowEdit3@Current.Id").click(function(){
+  showPrepaymentEditDialog("edit", "@Current.Id");
+});
+$("#prepaymentRowEdit4@Current.Id").click(function(){
+  showPrepaymentEditDialog("edit", "@Current.Id");
+});
+$("#prepaymentRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/prepayment/delete/@Current.Id", function(data, status){
+          showPrepayment();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+function showPrepaymentEditDialog(method, id){
+  $.get("/prepayment/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#prepaymentEditDialog').replaceWith(data);
+      $('#prepaymentEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="15%">@Model.PhraseHeaderMoment</th>
+      <th width="50%">@Model.PhraseHeaderReason</th>
+      <th width="15%">@Model.PhraseHeaderAmount</th>
+      <th width="15%">@Model.PhraseHeaderBalance</th>
+      <th width="5%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="15%" id="prepaymentRowEdit1@Current.Id" class="@Model.Editable">@Current.Moment</td>
+      <td width="50%" id="prepaymentRowEdit2@Current.Id" class="@Model.Editable">@Current.Reason</td>
+      <td width="15%" id="prepaymentRowEdit3@Current.Id" class="@Model.Editable">@Current.Amount</td>
+      <td width="15%" id="prepaymentRowEdit4@Current.Id" class="@Model.Editable">@Current.Balance</td>
+      <td width="5%" id="prepaymentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="95%" colspan="4" id="prepaymentRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="5%"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="prepaymentEditDialog"/>

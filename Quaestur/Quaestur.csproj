@@ -266,6 +266,9 @@
     <Compile Include="Model\SystemWideFile.cs" />
     <Compile Include="Module\SystemWideFileModule.cs" />
     <Compile Include="Module\ResourceModule.cs" />
+    <Compile Include="Model\Prepayment.cs" />
+    <Compile Include="Module\PersonDetailPrepaymentModule.cs" />
+    <Compile Include="Module\PrepaymentModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -994,6 +997,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\images\quaestur.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\persondetail_prepayment.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\prepaymentedit.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -12,6 +12,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -29,6 +30,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -46,6 +48,25 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").addClass('active');
+              $("#menuPrepayment").removeClass('active');
+              $("#menuJournal").removeClass('active');
+              $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
+          }
+      });
+  }
+  function showPrepayment(){
+      $.get("/person/detail/prepayment/@Model.Id", function(data, status){
+          if (data){
+              $("#persondata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuMemberships").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuRoleAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").addClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -63,6 +84,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -80,6 +102,7 @@
               $("#menuRoleAssignments").addClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -97,6 +120,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").addClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -114,6 +138,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").addClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -131,6 +156,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").addClass('active');
               $("#menuPoints").removeClass('active');
@@ -148,6 +174,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").addClass('active');
@@ -165,6 +192,7 @@
               $("#menuRoleAssignments").removeClass('active');
               $("#menuDocuments").removeClass('active');
               $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
@@ -222,6 +250,9 @@
       @If.BillingReadable
       <li class="nav-item">
         <a id="menuBilling" class="nav-link" onclick="showBilling()" href="javascript:void(0);">@Model.PhraseTabBilling</a>
+      </li>
+      <li class="nav-item">
+        <a id="menuPrepayment" class="nav-link" onclick="showPrepayment()" href="javascript:void(0);">@Model.PhraseTabPrepayment</a>
       </li>
       <li class="nav-item">
         <a id="menuPointsTally" class="nav-link" onclick="showPointsTally()" href="javascript:void(0);">@Model.PhraseTabPointsTally</a>

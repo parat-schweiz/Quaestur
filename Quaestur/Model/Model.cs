@@ -41,6 +41,7 @@ namespace Quaestur
             database.CreateTable<Sending>();
             database.CreateTable<Document>();
             database.CreateTable<Bill>();
+            database.CreateTable<Prepayment>();
             database.CreateTable<BillSendingTemplate>();
             database.CreateTable<Export>();
             database.CreateTable<JournalEntry>();
