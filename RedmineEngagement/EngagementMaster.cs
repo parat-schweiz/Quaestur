@@ -142,7 +142,7 @@ namespace RedmineEngagement
                             "New issue {0}",
                             apiIssue.Id);
                         SyncIssue(dbIssue, apiIssue);
-                    } 
+                    }
                 }
 
                 transaction.Commit();
@@ -153,15 +153,28 @@ namespace RedmineEngagement
         {
             foreach (var assignmentConfig in _config.Assignments)
             {
-                CheckAssignment(dbIssue, apiIssue, assignmentConfig);
+                if (CheckAssignment(dbIssue, apiIssue, assignmentConfig))
+                {
+                    dbIssue = _database.Query<Issue>(dbIssue.Id.Value);
+                    apiIssue = _redmine.GetIssue(apiIssue.Id);
+                }
+            }
+
+            foreach (var statusUpdate in _config.StatusUpdates)
+            {
+                if (CheckStatusUpdate(dbIssue, apiIssue, statusUpdate))
+                {
+                    dbIssue = _database.Query<Issue>(dbIssue.Id.Value);
+                    apiIssue = _redmine.GetIssue(apiIssue.Id);
+                }
             }
         }
 
-        private void CheckAssignment(Issue dbIssue, RedmineApi.Issue apiIssue, AssignmentConfig assignmentConfig)
+        private bool CheckAssignment(Issue dbIssue, RedmineApi.Issue apiIssue, AssignmentConfig assignmentConfig)
         {
             if (dbIssue.Assignments.Any(a => a.ConfigId == assignmentConfig.Id))
             {
-                return;
+                return false;
             }
 
             var assign = true;
@@ -176,7 +189,7 @@ namespace RedmineEngagement
 
             if (!assign)
             {
-                return;
+                return false;
             }
 
             Person dbPerson = null;
@@ -186,15 +199,15 @@ namespace RedmineEngagement
                 case "Author":
                     if (apiIssue.Author == null)
                     {
-                        return;
+                        return false;
                     }
                     else if (apiIssue.CreatedOn < assignmentConfig.MinimumDate)
                     {
-                        return;
+                        return false;
                     }
                     else if (apiIssue.CreatedOn > assignmentConfig.MaximumDate)
                     {
-                        return;
+                        return false;
                     }
 
                     dbPerson = _cache.GetPerson(apiIssue.Author.Id);
@@ -209,22 +222,22 @@ namespace RedmineEngagement
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
-                        return;
+                        return true;
                     }
 
                     break;
                 case "Assignee":
                     if (apiIssue.AssignedTo == null)
                     {
-                        return;
+                        return false;
                     }
                     else if (apiIssue.UpdatedOn < assignmentConfig.MinimumDate)
                     {
-                        return;
+                        return false;
                     }
                     else if (apiIssue.UpdatedOn > assignmentConfig.MaximumDate)
                     {
-                        return;
+                        return false;
                     }
 
                     dbPerson = _cache.GetPerson(apiIssue.AssignedTo.Id);
@@ -239,7 +252,7 @@ namespace RedmineEngagement
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
-                        return;
+                        return true;
                     }
                     break;
                 default:
@@ -262,7 +275,7 @@ namespace RedmineEngagement
                             apiIssue = _redmine.GetIssue(apiIssue.Id);
                             dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                             _database.Save(dbIssue);
-                            return;
+                            return true;
                         }
                     }
                     else
@@ -272,7 +285,7 @@ namespace RedmineEngagement
                             assignmentConfig.UserField,
                             assignmentConfig.Id,
                             apiIssue.Id);
-                        return;
+                        return false;
                     }
                     break;
             }
@@ -296,7 +309,7 @@ namespace RedmineEngagement
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
-                        return;
+                        return true;
                     }
                 }
                 else
@@ -306,13 +319,13 @@ namespace RedmineEngagement
                         assignmentConfig.UserField,
                         assignmentConfig.Id,
                         apiIssue.Id);
-                    return;
+                    return false;
                 }
             }
 
             if (points == 0)
             {
-                return; 
+                return false;
             }
 
             PointBudget budget = null;
@@ -337,7 +350,7 @@ namespace RedmineEngagement
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
                         dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
                         _database.Save(dbIssue);
-                        return;
+                        return true;
                     }
                 }
                 else
@@ -346,7 +359,7 @@ namespace RedmineEngagement
                         "Cannot find points budget field '{0}' from assignment config '{1}'",
                         assignmentConfig.PointsBudgetField,
                         assignmentConfig.Id);
-                    return;
+                    return false;
                 }
             }
 
@@ -361,7 +374,7 @@ namespace RedmineEngagement
                         "Cannot find points budget '{0}' from assignment config '{1}'",
                         assignmentConfig.PointsBudget,
                         assignmentConfig.Id);
-                    return;
+                    return false;
                 }
             }
 
@@ -370,7 +383,7 @@ namespace RedmineEngagement
                 _logger.Warning(
                     "No points budget configured in assignment config '{0}'",
                     assignmentConfig.Id);
-                return;
+                return false;
             }
 
             NamedId newStatus = null;
@@ -436,6 +449,43 @@ namespace RedmineEngagement
             apiIssue = _redmine.GetIssue(apiIssue.Id);
             dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
             _database.Save(dbIssue);
+            return true;
+        }
+
+        private bool CheckStatusUpdate(Issue dbIssue, RedmineApi.Issue apiIssue, StatusUpdateConfig statusUpdate)
+        {
+            var update = true;
+            update &= statusUpdate.Status == apiIssue.Status.Name;
+            update &= string.IsNullOrEmpty(statusUpdate.Project) ||
+                      statusUpdate.Project == apiIssue.Project.Name;
+            update &= string.IsNullOrEmpty(statusUpdate.Tracker) ||
+                      statusUpdate.Tracker == apiIssue.Tracker.Name;
+            update &= string.IsNullOrEmpty(statusUpdate.Category) ||
+                      statusUpdate.Category == apiIssue.Category.Name;
+
+            if (!update)
+            {
+                return false;
+            }
+
+            var newStatus = _redmine.GetIssueStatuses()
+                .SingleOrDefault(s => s.Name == statusUpdate.NewStatus);
+
+            if (newStatus == null)
+            {
+                _logger.Warning(
+                    "Cannot find status '{0}' from assignment config '{1}'",
+                    statusUpdate.NewStatus,
+                    statusUpdate.Id);
+                return false;
+            }
+
+            _redmine.UpdateStatus(apiIssue.Id, newStatus.Id, string.Empty);
+
+            apiIssue = _redmine.GetIssue(apiIssue.Id);
+            dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+            _database.Save(dbIssue);
+            return true;
         }
     }
 }

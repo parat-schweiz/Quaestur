@@ -45,6 +45,7 @@
     <Compile Include="Model\Issue.cs" />
     <Compile Include="Model\Assignment.cs" />
     <Compile Include="Cache.cs" />
+    <Compile Include="StatusUpdateConfig.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
