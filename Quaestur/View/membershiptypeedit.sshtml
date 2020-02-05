@@ -57,6 +57,8 @@ function assignValidation(resultData){
   assignFieldValidation("PointsTallyMails", result);
   assignFieldValidation("PointsTallyDocuments", result);
   assignFieldValidation("BillDocuments", result);
+  assignFieldValidation("SettlementDocuments", result);
+  assignFieldValidation("SettlementMails", result);
   assignFieldValidation("PaymentParameterUpdateRequiredMails", result);
   assignFieldValidation("PaymentParameterUpdateInvitationMails", result);
   assignFieldValidation("SenderGroup", result);
@@ -82,6 +84,8 @@ function getFormData(){
   formData.DoublePoints = $("#membershipTypeDoublePoints").val();
   formData.PointsTallyMailTemplates = $("#membershipTypePointsTallyMails").val();
   formData.PointsTallyDocumentTemplates = $("#membershipTypePointsTallyDocuments").val();
+  formData.SettlementMailTemplates = $("#membershipTypeSettlementMails").val();
+  formData.SettlementDocumentTemplates = $("#membershipTypeSettlementDocuments").val();
   formData.PaymentParameterUpdateRequiredMailTemplates = $("#membershipTypePaymentParameterUpdateRequiredMails").val();
   formData.PaymentParameterUpdateInvitationMailTemplates = $("#membershipTypePaymentParameterUpdateInvitationMails").val();
   formData.BillDocumentTemplates = $("#membershipTypeBillDocuments").val();
@@ -111,6 +115,23 @@ $("#membershipTypeTestBillCreate").click(function(event) {
     }
     $("#membershipTypeTestBillCreateFeedback").html(statusObject.MessageText);
     $("#membershipTypeTestBillCreate").html("@Model.PhraseTestBillCreate");
+  });
+  event.preventDefault();
+});
+$("#membershipTypeTestSettlementCreate").click(function(event) {
+  $("#membershipTypeTestSettlementCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestSettlementCreate...");
+  $("#membershipTypeTestSettlementCreateFeedback").html('');
+  $.post("/membershiptype/testcreatesettlement/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
+    var statusObject = JSON.parse(statusData);
+    if (statusObject.MessageType == "success"){
+      $("#membershipTypeTestSettlementCreateFeedback").removeClass('markred');
+      $("#membershipTypeTestSettlementCreateFeedback").addClass('markgreen');
+    }else{
+      $("#membershipTypeTestSettlementCreateFeedback").addClass('markred');
+      $("#membershipTypeTestSettlementCreateFeedback").removeClass('markgreen');
+    }
+    $("#membershipTypeTestSettlementCreateFeedback").html(statusObject.MessageText);
+    $("#membershipTypeTestSettlementCreate").html("@Model.PhraseTestSettlementCreate");
   });
   event.preventDefault();
 });
@@ -249,6 +270,38 @@ $('.selectpicker').selectpicker();
     <div class="form-row">
       <div class="col-12 mb-3">
         <div id="membershipTypeTestBillCreateFeedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeSettlementDocuments">@Model.PhraseFieldSettlementDocumentTemplates</label>
+        <select id="membershipTypeSettlementDocuments" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SettlementDocuments
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSettlementDocumentsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeSettlementMails">@Model.PhraseFieldSettlementMailTemplates</label>
+        <select id="membershipTypeSettlementMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SettlementMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSettlementMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <button id ="membershipTypeTestSettlementCreate" type="button" class="btn btn-default">@Model.PhraseTestSettlementCreate</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div id="membershipTypeTestSettlementCreateFeedback"></div>
       </div>
     </div>
     <div class="form-row">

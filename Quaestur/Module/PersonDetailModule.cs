@@ -24,6 +24,7 @@ namespace Quaestur
         public string PhraseTabRoles;
         public string PhraseTabDocuments;
         public string PhraseTabBilling;
+        public string PhraseTabPrepayment;
         public string PhraseTabPointsTally;
         public string PhraseTabPoints;
         public string PhraseTabJournal;
@@ -41,6 +42,7 @@ namespace Quaestur
             PhraseTabRoles = translator.Get("Person.Detail.Tab.Roles", "Tab 'Roles' in the person detail page", "Roles");
             PhraseTabDocuments = translator.Get("Person.Detail.Tab.Documents", "Tab 'Documents' in the person detail page", "Documents");
             PhraseTabBilling = translator.Get("Person.Detail.Tab.Billing", "Tab 'Billing' in the person detail page", "Billing");
+            PhraseTabPrepayment = translator.Get("Person.Detail.Tab.Prepayment", "Tab 'Prepayment' in the person detail page", "Prepayment");
             PhraseTabPointsTally = translator.Get("Person.Detail.Tab.PointsTally", "Tab 'Points tally' in the person detail page", "Points tally");
             PhraseTabPoints = translator.Get("Person.Detail.Tab.Points", "Tab 'Points' in the person detail page", "Points");
             PhraseTabJournal = translator.Get("Person.Detail.Tab.Journal", "Tab 'Journal' in the person detail page", "Journal");

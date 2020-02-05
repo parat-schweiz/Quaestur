@@ -78,6 +78,8 @@ namespace Quaestur
                     return database.Query<BallotTemplate>(AssignedId.Value);
                 case TemplateAssignmentType.MembershipType:
                     return database.Query<MembershipType>(AssignedId.Value);
+                case TemplateAssignmentType.BillSendingTemplate:
+                    return database.Query<BillSendingTemplate>(AssignedId.Value);
                 default:
                     throw new NotSupportedException();
             }

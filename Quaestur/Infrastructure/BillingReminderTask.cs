@@ -34,16 +34,52 @@ namespace Quaestur
             {
                 _lastSending = DateTime.UtcNow;
                 Global.Log.Notice("Running mailing task");
+                var translation = new Translation(database);
 
                 foreach (var bill in database
                     .Query<Bill>()
                     .Where(b => b.Status.Value == BillStatus.New && !b.Membership.Value.Person.Value.Deleted.Value)
-                    .Where(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database))
                     .OrderByDescending(DaysSinceLastReminder))
                 {
-                    if (Global.MailCounter.Available)
+                    var currentPrepayment = bill.Membership.Value.Person.Value.CurrentPrepayment(database);
+
+                    if (currentPrepayment >= bill.Amount.Value)
                     {
-                        Send(database, bill);
+                        var translator = new Translator(translation, bill.Membership.Value.Person.Value.Language.Value);
+
+                        using (var transaction = database.BeginTransaction())
+                        {
+                            var prepayment = new Prepayment(Guid.NewGuid());
+                            prepayment.Person.Value = bill.Membership.Value.Person.Value;
+                            prepayment.Moment.Value = DateTime.UtcNow;
+                            prepayment.Amount.Value = -bill.Amount.Value;
+                            prepayment.Reason.Value = translator.Get(
+                                "BillingReminderTask.Prepayment.Reason.SettledBill",
+                                "Settle bill with prepayment in billing remainder task",
+                                "Settled bill {0}",
+                                bill.Number.Value);
+                            database.Save(prepayment);
+
+                            bill.Status.Value = BillStatus.Payed;
+                            bill.PayedDate.Value = prepayment.Moment.Value;
+                            database.Save(bill);
+
+                            Journal(database, bill,
+                                "BillingReminderTask.Journal.Prepayment.SettledBill",
+                                "Journal entry for settle bill from prepayment",
+                                "Settled bill {0} with amount {1} from prepayment",
+                                t => bill.Number.Value,
+                                t => bill.Amount.Value.FormatMoney());
+
+                            transaction.Commit();
+                        }
+                    }
+                    else if (DaysSinceLastReminder(bill) > bill.Membership.Value.Type.Value.GetReminderPeriod(database))
+                    {
+                        if (Global.MailCounter.Available)
+                        {
+                            Send(database, bill);
+                        }
                     }
                 }
 
@@ -79,14 +115,13 @@ namespace Quaestur
             var translator = new Translator(translation, person.Language.Value);
             var template = database
                 .Query<BillSendingTemplate>(DC.Equal("membershiptypeid", membershipType.Id.Value))
-                .FirstOrDefault(t => t.Language == person.Language.Value && level >= t.MinReminderLevel && level <= t.MaxReminderLevel);
+                .FirstOrDefault(t => level >= t.MinReminderLevel && level <= t.MaxReminderLevel);
 
             if (template == null)
             {
-                Global.Log.Notice("No bill sending template for {0} in {1} in {2} at level {3}",
+                Global.Log.Notice("No bill sending template for {0} in {1} at level {2}",
                     membershipType.Name.Value[person.Language.Value],
                     membershipType.Organization.Value.Name.Value[person.Language.Value],
-                    person.Language.Value.Translate(translator),
                     level);
                 bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-7d);
                 bill.Membership.Value.UpdateVotingRight(database);
@@ -215,7 +250,8 @@ namespace Quaestur
                 return false;
             }
 
-            var letter = new UniversalDocument(translator, person, template.LetterLatex);
+            var latexTemplate = template.GetBillSendingLetter(database, person.Language.Value);
+            var letter = new UniversalDocument(translator, person, latexTemplate.Text.Value);
             var document = letter.Compile();
 
             if (document == null)
@@ -298,8 +334,9 @@ namespace Quaestur
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
             var templator = new Templator(new PersonContentProvider(translator, person));
-            var htmlText = templator.Apply(template.MailHtmlText);
-            var plainText = templator.Apply(template.MailPlainText);
+            var mailTemplate = template.GetBillSendingMail(database, person.Language.Value);
+            var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
+            var plainText = templator.Apply(mailTemplate.PlainText.Value);
             var alternative = new Multipart("alternative");
             var plainPart = new TextPart("plain") { Text = plainText };
             plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
@@ -320,7 +357,7 @@ namespace Quaestur
             try
             {
                 Global.MailCounter.Used();
-                Global.Mail.Send(from, to, senderKey, recipientKey, template.MailSubject, content);
+                Global.Mail.Send(from, to, senderKey, recipientKey, mailTemplate.Subject.Value, content);
 
                 if (level < 2)
                 {

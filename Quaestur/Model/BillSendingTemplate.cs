@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using SiteLibrary;
 
 namespace Quaestur
@@ -46,6 +47,9 @@ namespace Quaestur
         public StringField LetterLatex { get; private set; }
         public EnumField<SendingMode> SendingMode { get; private set; }
 
+        public const string BillSendingLetterFieldName = "BillSendingLetters";
+        public const string BillSendingMailFieldName = "BillSendingMails";
+
         public BillSendingTemplate() : this(Guid.Empty)
         {
         }
@@ -63,6 +67,54 @@ namespace Quaestur
             MailSender = new ForeignKeyField<Group, BillSendingTemplate>(this, "mailsenderid", false, null);
             LetterLatex = new StringField(this, "letterlatex", 262144, AllowStringType.SafeLatex);
             SendingMode = new EnumField<SendingMode>(this, "sendingmode", Quaestur.SendingMode.MailOnly, SendingModeExtensions.Translate);
+        }
+
+        public TemplateField BillSendingLetter
+        {
+            get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingLetterFieldName); }
+        }
+
+        public TemplateField BillSendingMail
+        {
+            get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingMailFieldName); }
+        }
+
+        public IEnumerable<LatexTemplateAssignment> BillSendingLetters(IDatabase database)
+        {
+            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingLetterFieldName)));
+        }
+
+        public IEnumerable<MailTemplateAssignment> BillSendingMails(IDatabase database)
+        {
+            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingMailFieldName)));
+        }
+
+        public LatexTemplate GetBillSendingLetter(IDatabase database, Language language)
+        {
+            var list = BillSendingLetters(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
+        }
+
+        public MailTemplate GetBillSendingMail(IDatabase database, Language language)
+        {
+            var list = BillSendingMails(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
         }
 
         public override void Delete(IDatabase database)

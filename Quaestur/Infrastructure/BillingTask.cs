@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using BaseLibrary;
 using SiteLibrary;
+using MimeKit;
 
 namespace Quaestur
 {
@@ -89,14 +91,6 @@ namespace Quaestur
 
         private bool CreateBill(IDatabase database, Translation translation, Membership membership)
         {
-            var template = membership.Type.Value.GetBillDocument(database, membership.Person.Value.Language.Value);
-
-            if (template == null)
-            {
-                Global.Log.Error("Missing bill template for {0}, {1} of {2}", membership.Person.Value.FullName, membership.Type.Value.ToString(), membership.Organization.Value.ToString());
-                return false;
-            }
-
             Translator translator = new Translator(translation, membership.Person.Value.Language.Value);
             var billDocument = new BillDocument(translator, database, membership);
 
@@ -104,6 +98,11 @@ namespace Quaestur
             {
                 using (var transaction = database.BeginTransaction())
                 {
+                    if (billDocument.Prepayment != null)
+                    {
+                        database.Save(billDocument.Prepayment); 
+                    }
+
                     database.Save(billDocument.Bill);
                     membership.UpdateVotingRight(database);
                     database.Save(membership);
@@ -116,8 +115,15 @@ namespace Quaestur
                         t => billDocument.Bill.Number.Value,
                         t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
                         t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+
                     transaction.Commit();
                 }
+
+                if (billDocument.Prepayment != null)
+                {
+                    SentSettlementMail(database, billDocument.Bill, membership);
+                }
+
                 return true;
             }
             else if (billDocument.RequiresPersonalPaymentUpdate)
@@ -159,6 +165,98 @@ namespace Quaestur
                     t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
                 Global.Log.Error(billDocument.ErrorText);
                 return false;
+            }
+        }
+
+        private bool SentSettlementMail(IDatabase database, Bill bill, Membership membership)
+        {
+            var person = membership.Person.Value;
+            var mailSender = membership.Type.Value.SenderGroup.Value;
+
+            if (string.IsNullOrEmpty(person.PrimaryMailAddress))
+            {
+                Journal(database, membership,
+                    "Document.Settlement.NoMailAddress",
+                    "When no mail address is available in settlement",
+                    "No mail address available to send settlement {0}",
+                    t => bill.Number.Value);
+                return false;
+            }
+
+            var message = CreateSettlementMail(database, membership, bill);
+
+            try
+            {
+                Global.MailCounter.Used();
+                Global.Mail.Send(message);
+
+                Journal(database, membership,
+                    "Document.Settlement.SentMail",
+                    "Successfully sent settlement mail",
+                    "Sent settlement {0} by e-mail to {1}",
+                    t => bill.Number.Value,
+                    t => person.PrimaryMailAddress);
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Journal(database, membership,
+                    "Document.Settlement.MailFailed",
+                    "Failed to sent settlment mail",
+                    "Sending settlement e-mail to {0} failed",
+                    t => person.PrimaryMailAddress);
+                Global.Log.Error(exception.ToString());
+                return false;
+            }
+        }
+
+        public static MimeMessage CreateSettlementMail(IDatabase database, Membership membership, Bill bill)
+        {
+            var person = membership.Person.Value;
+            var group = membership.Type.Value.SenderGroup.Value;
+            var from = new MailboxAddress(
+                group.MailName.Value[person.Language.Value],
+                group.MailAddress.Value[person.Language.Value]);
+            var to = new MailboxAddress(
+                person.ShortHand,
+                person.PrimaryMailAddress);
+            var senderKey = string.IsNullOrEmpty(group.GpgKeyId.Value) ? null :
+                new GpgPrivateKeyInfo(
+                group.GpgKeyId.Value,
+                group.GpgKeyPassphrase.Value);
+            var recipientKey = person.GetPublicKey();
+            var translation = new Translation(database);
+            var translator = new Translator(translation, person.Language.Value);
+            var templator = new Templator(new PersonContentProvider(translator, person));
+            var mailTemplate = membership.Type.Value.GetSettlementMail(database, person.Language.Value);
+            var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
+            var plainText = templator.Apply(mailTemplate.PlainText.Value);
+            var alternative = new Multipart("alternative");
+            var plainPart = new TextPart("plain") { Text = plainText };
+            plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(plainPart);
+            var htmlPart = new TextPart("html") { Text = htmlText };
+            htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(htmlPart);
+
+            if (bill != null)
+            {
+                var content = new Multipart("mixed");
+                content.Add(alternative);
+                var documentStream = new System.IO.MemoryStream(bill.DocumentData);
+                var documentPart = new MimePart("application", "pdf");
+                documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
+                documentPart.ContentType.Name = bill.Number.Value + ".pdf";
+                documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                documentPart.ContentDisposition.FileName = bill.Number.Value + ".pdf";
+                documentPart.ContentTransferEncoding = ContentEncoding.Base64;
+                content.Add(documentPart);
+                return Global.Mail.Create(from, to, senderKey, recipientKey, mailTemplate.Subject.Value, content);
+            }
+            else
+            {
+                return Global.Mail.Create(from, to, senderKey, recipientKey, mailTemplate.Subject.Value, alternative);
             }
         }
     }

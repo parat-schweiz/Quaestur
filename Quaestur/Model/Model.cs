@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 27;
+        public static int CurrentVersion = 28;
 
         public static void Install(IDatabase database)
         {
@@ -41,6 +41,7 @@ namespace Quaestur
             database.CreateTable<Sending>();
             database.CreateTable<Document>();
             database.CreateTable<Bill>();
+            database.CreateTable<Prepayment>();
             database.CreateTable<BillSendingTemplate>();
             database.CreateTable<Export>();
             database.CreateTable<JournalEntry>();
@@ -130,8 +131,63 @@ namespace Quaestur
                     database.AddColumn<MembershipType>(m => m.TriplePoints);
                     database.AddColumn<MembershipType>(m => m.DoublePoints);
                     break;
+                case 28:
+                    ChangeBillSendingTemplates(database);
+                    break;
                 default:
                     throw new NotSupportedException();
+            }
+        }
+
+        private static void ChangeBillSendingTemplates(IDatabase database)
+        {
+            foreach (var billSendingTemplate in database.Query<BillSendingTemplate>())
+            {
+                if (!string.IsNullOrEmpty(billSendingTemplate.LetterLatex.Value))
+                {
+                    var letterTemplate = new LatexTemplate(Guid.NewGuid());
+                    letterTemplate.Organization.Value = billSendingTemplate.MembershipType.Value.Organization.Value;
+                    letterTemplate.Text.Value = billSendingTemplate.LetterLatex.Value;
+                    letterTemplate.Language.Value = billSendingTemplate.Language.Value;
+                    letterTemplate.Label.Value = billSendingTemplate.Name.Value;
+                    letterTemplate.AssignmentType.Value = TemplateAssignmentType.BillSendingTemplate;
+                    database.Save(letterTemplate);
+
+                    var letterTemplateAssignment = new LatexTemplateAssignment(Guid.NewGuid());
+                    letterTemplateAssignment.AssignedId.Value = billSendingTemplate.Id.Value;
+                    letterTemplateAssignment.FieldName.Value = BillSendingTemplate.BillSendingLetterFieldName;
+                    letterTemplateAssignment.AssignedType.Value = TemplateAssignmentType.BillSendingTemplate;
+                    letterTemplateAssignment.Template.Value = letterTemplate;
+                    database.Save(letterTemplateAssignment);
+
+                    billSendingTemplate.LetterLatex.Value = String.Empty;
+                    database.Save(billSendingTemplate);
+                }
+
+                if (!string.IsNullOrEmpty(billSendingTemplate.MailSubject.Value))
+                {
+                    var mailTemplate = new MailTemplate(Guid.NewGuid());
+                    mailTemplate.Organization.Value = billSendingTemplate.MembershipType.Value.Organization.Value;
+                    mailTemplate.Language.Value = billSendingTemplate.Language.Value;
+                    mailTemplate.Label.Value = billSendingTemplate.Name.Value;
+                    mailTemplate.AssignmentType.Value = TemplateAssignmentType.BillSendingTemplate;
+                    mailTemplate.Subject.Value = billSendingTemplate.MailSubject.Value;
+                    mailTemplate.HtmlText.Value = billSendingTemplate.MailHtmlText.Value;
+                    mailTemplate.PlainText.Value = billSendingTemplate.MailPlainText.Value;
+                    database.Save(mailTemplate);
+
+                    var mailTemplateAssignment = new MailTemplateAssignment(Guid.NewGuid());
+                    mailTemplateAssignment.AssignedId.Value = billSendingTemplate.Id.Value;
+                    mailTemplateAssignment.FieldName.Value = BillSendingTemplate.BillSendingMailFieldName;
+                    mailTemplateAssignment.AssignedType.Value = TemplateAssignmentType.BillSendingTemplate;
+                    mailTemplateAssignment.Template.Value = mailTemplate;
+                    database.Save(mailTemplateAssignment);
+
+                    billSendingTemplate.MailSubject.Value = String.Empty;
+                    billSendingTemplate.MailHtmlText.Value = String.Empty;
+                    billSendingTemplate.MailPlainText.Value = String.Empty;
+                    database.Save(billSendingTemplate);
+                }
             }
         }
 

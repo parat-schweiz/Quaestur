@@ -210,6 +210,11 @@ namespace Quaestur
             }
         }
 
+        public decimal CurrentPrepayment(IDatabase database)
+        {
+            return database.Query<Prepayment>(DC.Equal("personid", Id.Value)).Sum(p => p.Amount);
+        }
+
         public ServiceAddress PrimaryAddress(ServiceType type)
         {
             return ServiceAddresses
@@ -448,9 +453,14 @@ namespace Quaestur
                 session.Delete(database);
             }
 
-            foreach (var session in database.Query<LoginLink>(DC.Equal("personid", Id.Value)))
+            foreach (var loginLink in database.Query<LoginLink>(DC.Equal("personid", Id.Value)))
             {
-                session.Delete(database);
+                loginLink.Delete(database);
+            }
+
+            foreach (var prepayment in database.Query<Prepayment>(DC.Equal("personid", Id.Value)))
+            {
+                prepayment.Delete(database);
             }
 
             foreach (var settings in database.Query<SearchSettings>(DC.Equal("personid", Id.Value)))

@@ -21,24 +21,30 @@ namespace Quaestur
         private long _maxPoints;
         private long _consideredPoints;
         private decimal _portionOfDiscount;
+        private string _finalTableContent;
+        private string _explainations;
+        private decimal _prepayment;
+        private string _texTemplate;
 
         public Bill Bill { get; private set; }
+        public Prepayment Prepayment { get; private set; }
         public bool RequiresPersonalPaymentUpdate { get; private set; }
         public bool RequiresNewPointsTally { get; private set; }
 
-        public BillDocument(Translator translator, IDatabase database, Membership membership)
+        public BillDocument(Translator translator, IDatabase database, Membership membership, decimal? prepayment = null)
         {
             _translator = translator;
             _database = database;
             _membership = membership;
             _person = _membership.Person.Value;
             _organization = _membership.Organization.Value;
+            _prepayment = prepayment ?? _person.CurrentPrepayment(_database);
             _settings = _database.Query<SystemWideSettings>().Single();
         }
 
         private string CreateNumber()
         {
-            return Bill.CreatedDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
+            return Bill.FromDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
         }
 
         public bool Create()
@@ -145,7 +151,45 @@ namespace Quaestur
 
             RequiresPersonalPaymentUpdate = _allIncluded
                 .Any(m => m.Item2.RequireParameterUpdate(m.Item1));
-            return !RequiresPersonalPaymentUpdate;
+
+            if (RequiresPersonalPaymentUpdate)
+            {
+                return false; 
+            }
+
+            _explainations = CreateExplainations();
+            _finalTableContent = CreateFinalTableContent();
+
+            var latexTemplate =
+                _prepayment >= Bill.Amount.Value ?
+                _membership.Type.Value.GetSettlementDocument(_database, _translator.Language) :
+                _membership.Type.Value.GetBillDocument(_database, _translator.Language);
+
+            if (latexTemplate == null)
+            {
+                if (_prepayment >= Bill.Amount.Value)
+                {
+                    Global.Log.Error(
+                        "Missing settlement template for {0}, {1} of {2}", 
+                        _person.FullName, 
+                        _membership.Type.Value.ToString(),
+                        _membership.Organization.Value.ToString());
+                }
+                else
+                {
+                    Global.Log.Error(
+                        "Missing bill template for {0}, {1} of {2}",
+                        _person.FullName,
+                        _membership.Type.Value.ToString(),
+                        _membership.Organization.Value.ToString());
+                }
+
+                return false;
+            }
+
+            _texTemplate = latexTemplate.Text.Value;
+
+            return true;
         }
 
         private void IncludeChildren(Membership membership)
@@ -212,7 +256,10 @@ namespace Quaestur
 
         protected override string TexTemplate
         {
-            get { return _membership.Type.Value.GetBillDocument(_database, _translator.Language).Text.Value; } 
+            get
+            {
+                return _texTemplate;
+            }
         }
 
         private long MaxPoints(Membership membership)
@@ -349,6 +396,79 @@ namespace Quaestur
             {
                 Bill.Status.Value = BillStatus.Payed; 
             }
+            else if (_prepayment >= Bill.Amount.Value)
+            {
+                Prepayment = new Prepayment(Guid.NewGuid());
+                Prepayment.Person.Value = _person;
+                Prepayment.Moment.Value = DateTime.UtcNow;
+                Prepayment.Amount.Value = -Bill.Amount.Value;
+                Prepayment.Reason.Value = _translator.Get(
+                    "BillingReminderTask.Prepayment.SettledBill",
+                    "Settle bill with prepayment in billing remainder task",
+                    "Settled bill {0}",
+                    Bill.Number.Value);
+                Bill.Status.Value = BillStatus.Payed;
+
+                text.Append(@"~ & ~ & ~ \\");
+                text.AppendLine();
+
+                text.Append(_translator.Get(
+                    "Document.Bill.Prepayment",
+                    "Current prepayment in bill document",
+                    "Prepayment"));
+                text.Append(@" & ");
+                text.Append(_settings.Currency);
+                text.Append(@" & ");
+                text.Append(Currency.Format(_prepayment));
+                text.Append(@" \\");
+                text.AppendLine();
+
+                text.Append(@"~ & ~ & ~ \\");
+                text.AppendLine();
+
+                text.Append(@"\textbf{");
+                text.Append(_translator.Get(
+                    "Document.Bill.RemainingPrepayment",
+                    "Remaining prepayment in bill document",
+                    "Remaining prepayment"));
+                text.Append(@"} & ");
+                text.Append(_settings.Currency);
+                text.Append(@" & ");
+                text.Append(Currency.Format(_prepayment - Bill.Amount.Value));
+                text.Append(@" \\");
+                text.AppendLine();
+            }
+            else if (_prepayment > 0m)
+            {
+                text.Append(@"~ & ~ & ~ \\");
+                text.AppendLine();
+
+                text.Append(_translator.Get(
+                    "Document.Bill.Prepayment",
+                    "Current prepayment in bill document",
+                    "Prepayment"));
+                text.Append(@" & ");
+                text.Append(_settings.Currency);
+                text.Append(@" & ");
+                text.Append(Currency.Format(_prepayment));
+                text.Append(@" \\");
+                text.AppendLine();
+
+                text.Append(@"~ & ~ & ~ \\");
+                text.AppendLine();
+
+                text.Append(@"\textbf{");
+                text.Append(_translator.Get(
+                    "Document.Bill.RemainingBillAmount",
+                    "Remaining bill amount in bill document",
+                    "Remaing bill amount"));
+                text.Append(@"} & ");
+                text.Append(_settings.Currency);
+                text.Append(@" & ");
+                text.Append(Currency.Format(Bill.Amount.Value - _prepayment));
+                text.Append(@" \\");
+                text.AppendLine();
+            }
 
             return text.ToString();
         }
@@ -363,9 +483,9 @@ namespace Quaestur
             switch (variable)
             {
                 case "Bill.Explainations":
-                    return CreateExplainations();
+                    return _explainations;
                 case "Bill.FinalTableContent":
-                    return CreateFinalTableContent();
+                    return _finalTableContent;
                 case "Bill.Organization":
                     return _organization.Name.Value[_translator.Language];
                 case "Bill.FromDate":
