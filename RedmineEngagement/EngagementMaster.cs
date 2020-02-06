@@ -45,7 +45,7 @@ namespace RedmineEngagement
             while (true)
             {
                 Sync();
-                System.Threading.Thread.Sleep(60 * 1000);
+                System.Threading.Thread.Sleep(15 * 1000);
             }
         }
 
@@ -81,7 +81,7 @@ namespace RedmineEngagement
 
                 foreach (var user in users)
                 {
-                    var person = persons.SingleOrDefault(p => p.Username == user.Username);
+                    var person = persons.SingleOrDefault(p => p.Username.ToLowerInvariant() == user.Username.ToLowerInvariant());
 
                     if (person != null)
                     {
@@ -120,6 +120,7 @@ namespace RedmineEngagement
                     var dbIssue = _cache.GetIssue(apiIssue.Id);
 
                     if (dbIssue != null)
+
                     {
                         if (dbIssue.UpdatedOn.Value != apiIssue.UpdatedOn)
                         {
@@ -128,7 +129,10 @@ namespace RedmineEngagement
                             _logger.Info(
                                 "Updated issue {0}",
                                 apiIssue.Id);
-                            SyncIssue(dbIssue, apiIssue);
+                            if (SyncIssue(dbIssue, apiIssue))
+                            {
+                                return; 
+                            }
                         }
                     }
                     else
@@ -141,7 +145,10 @@ namespace RedmineEngagement
                         _logger.Info(
                             "New issue {0}",
                             apiIssue.Id);
-                        SyncIssue(dbIssue, apiIssue);
+                        if (SyncIssue(dbIssue, apiIssue))
+                        {
+                            return;
+                        }
                     }
                 }
 
@@ -149,14 +156,13 @@ namespace RedmineEngagement
             }
         }
 
-        private void SyncIssue(Issue dbIssue, RedmineApi.Issue apiIssue)
+        private bool SyncIssue(Issue dbIssue, RedmineApi.Issue apiIssue)
         {
             foreach (var assignmentConfig in _config.Assignments)
             {
                 if (CheckAssignment(dbIssue, apiIssue, assignmentConfig))
                 {
-                    dbIssue = _database.Query<Issue>(dbIssue.Id.Value);
-                    apiIssue = _redmine.GetIssue(apiIssue.Id);
+                    return true;
                 }
             }
 
@@ -164,10 +170,11 @@ namespace RedmineEngagement
             {
                 if (CheckStatusUpdate(dbIssue, apiIssue, statusUpdate))
                 {
-                    dbIssue = _database.Query<Issue>(dbIssue.Id.Value);
-                    apiIssue = _redmine.GetIssue(apiIssue.Id);
+                    return true;
                 }
             }
+
+            return false;
         }
 
         private bool CheckAssignment(Issue dbIssue, RedmineApi.Issue apiIssue, AssignmentConfig assignmentConfig)
@@ -185,14 +192,15 @@ namespace RedmineEngagement
             assign &= string.IsNullOrEmpty(assignmentConfig.Status) ||
                       assignmentConfig.Status == apiIssue.Status.Name;
             assign &= string.IsNullOrEmpty(assignmentConfig.Category) ||
-                      assignmentConfig.Category == apiIssue.Category.Name;
+                      (apiIssue.Category != null &&
+                      assignmentConfig.Category == apiIssue.Category.Name);
 
             if (!assign)
             {
                 return false;
             }
 
-            Person dbPerson = null;
+            IEnumerable<Person> dbPersons = null;
 
             switch (assignmentConfig.UserField)
             {
@@ -210,9 +218,9 @@ namespace RedmineEngagement
                         return false;
                     }
 
-                    dbPerson = _cache.GetPerson(apiIssue.Author.Id);
+                    dbPersons = new Person[] { _cache.GetPerson(apiIssue.Author.Id) };
 
-                    if (dbPerson == null)
+                    if (dbPersons == null)
                     {
                         _logger.Notice(
                             "Cannot find author user id {0} from issue {1}",
@@ -240,9 +248,9 @@ namespace RedmineEngagement
                         return false;
                     }
 
-                    dbPerson = _cache.GetPerson(apiIssue.AssignedTo.Id);
+                    dbPersons = new Person[] { _cache.GetPerson(apiIssue.AssignedTo.Id) };
 
-                    if (dbPerson == null)
+                    if (dbPersons == null)
                     {
                         _logger.Notice(
                             "Cannot find assignee user id {0} from issue {1}",
@@ -261,21 +269,60 @@ namespace RedmineEngagement
 
                     if (field != null)
                     {
-                        dbPerson =
-                            !string.IsNullOrEmpty(field.Value) ?
-                            _cache.GetPerson(field.Value) : null;
-
-                        if (dbPerson == null)
+                        if (field.Values != null)
                         {
-                            _logger.Notice(
-                                "Cannot find user '{0}' from issue {1}",
-                                field.Value,
+                            if (!field.Values.Any())
+                            {
+                                _logger.Notice(
+                                    "No user selected in field '{0}' from issue {1}",
+                                    field.Name,
+                                    apiIssue.Id);
+                                _redmine.AddNote(apiIssue.Id, "Kein Benutzer ausgewählt.");
+                                apiIssue = _redmine.GetIssue(apiIssue.Id);
+                                dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                                _database.Save(dbIssue);
+                                return true;
+                            }
+                            else if (field.Values.Any(string.IsNullOrEmpty))
+                            {
+                                _logger.Notice(
+                                    "Empty user selected in field '{0}' from issue {1}",
+                                    field.Name,
+                                    apiIssue.Id);
+                                _redmine.AddNote(apiIssue.Id, "Leerer Benutzer ausgewählt.");
+                                apiIssue = _redmine.GetIssue(apiIssue.Id);
+                                dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                                _database.Save(dbIssue);
+                                return true;
+                            }
+                            else
+                            {
+                                dbPersons = field.Values
+                                    .Select(_cache.GetPerson)
+                                    .ToList();
+
+                                if (dbPersons.Contains(null))
+                                {
+                                    _logger.Notice(
+                                        "Empty not found in field '{0}' from issue {1}",
+                                        field.Name,
+                                        apiIssue.Id);
+                                    _redmine.AddNote(apiIssue.Id, "Benutzer nicht gefunden.");
+                                    apiIssue = _redmine.GetIssue(apiIssue.Id);
+                                    dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
+                                    _database.Save(dbIssue);
+                                    return true;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger.Warning(
+                                "Username field '{0}' from assignment config '{1}' in issue {2} has null value",
+                                assignmentConfig.UserField,
+                                assignmentConfig.Id,
                                 apiIssue.Id);
-                            _redmine.AddNote(apiIssue.Id, "Benutzer nicht gefunden.");
-                            apiIssue = _redmine.GetIssue(apiIssue.Id);
-                            dbIssue.UpdatedOn.Value = apiIssue.UpdatedOn;
-                            _database.Save(dbIssue);
-                            return true;
+                            return false;
                         }
                     }
                     else
@@ -297,13 +344,15 @@ namespace RedmineEngagement
                 var field = apiIssue.CustomFields
                     .SingleOrDefault(f => f.Name == assignmentConfig.PointsField);
 
-                if (field != null)
+                if (field != null && 
+                    field.Values.Count() == 1 && 
+                    !string.IsNullOrEmpty(field.Values.Single()))
                 {
-                    if (!int.TryParse(field.Value, out points))
+                    if (!int.TryParse(field.Values.Single(), out points))
                     {
                         _logger.Notice(
                             "Invalid value in the points field '{0}' in issue {1}",
-                            field.Value,
+                            field.Values.Single(),
                             apiIssue.Id);
                         _redmine.AddNote(apiIssue.Id, "Kann Punktewert nicht parsen.");
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
@@ -315,7 +364,7 @@ namespace RedmineEngagement
                 else
                 {
                     _logger.Warning(
-                        "Cannot find username field '{0}' from assignment config '{1}' in issue {2}",
+                        "Cannot find points field '{0}' from assignment config '{1}' in issue {2}",
                         assignmentConfig.UserField,
                         assignmentConfig.Id,
                         apiIssue.Id);
@@ -335,16 +384,18 @@ namespace RedmineEngagement
                 var field = apiIssue.CustomFields
                     .SingleOrDefault(f => f.Name == assignmentConfig.PointsBudgetField);
 
-                if (field != null)
+                if (field != null &&
+                    field.Values.Count() == 1 &&
+                    !string.IsNullOrEmpty(field.Values.Single()))
                 {
                     budget = _quaestur.GetPointBudgetList()
-                        .SingleOrDefault(b => b.FullLabel.IsAny(field.Value));
+                        .SingleOrDefault(b => b.FullLabel.IsAny(field.Values.Single()));
 
                     if (budget == null)
                     {
                         _logger.Notice(
                             "Cannot find points budget '{0}' from issue {1}",
-                            field.Value,
+                            field.Values.Single(),
                             apiIssue.Id);
                         _redmine.AddNote(apiIssue.Id, "Punktebudget nicht gefunden.");
                         apiIssue = _redmine.GetIssue(apiIssue.Id);
@@ -404,38 +455,43 @@ namespace RedmineEngagement
 
             var reason = assignmentConfig.Reason
                 .Replace("$Subject", apiIssue.Subject);
+            var pointsPerPerson = (int)Math.Floor((double)points / dbPersons.Count());
 
-            var dbAssignment = new Assignment(Guid.NewGuid());
-            dbAssignment.Person.Value = dbPerson;
-            dbAssignment.ConfigId.Value = assignmentConfig.Id;
-            dbAssignment.Issue.Value = dbIssue;
-            dbAssignment.AwardedCalculation.Value = reason;
-            dbAssignment.AwardedPoints.Value = points;
+            foreach (var p in dbPersons)
+            {
+                var dbAssignment = new Assignment(Guid.NewGuid());
+                dbAssignment.Person.Value = p;
+                dbAssignment.ConfigId.Value = assignmentConfig.Id;
+                dbAssignment.Issue.Value = dbIssue;
+                dbAssignment.AwardedCalculation.Value = reason;
+                dbAssignment.AwardedPoints.Value = points;
 
-            var apiPoints = _quaestur.AddPoints(
-                dbPerson.Id,
-                budget.Id,
-                points,
-                reason,
-                _config.RedmineApi.ApiUrl + "/issues/" + apiIssue.Id.ToString(),
-                apiIssue.UpdatedOn,
-                PointsReferenceType.RedmineIssue,
-                dbAssignment.Id.Value,
-                null);
+                var apiPoints = _quaestur.AddPoints(
+                    p.Id,
+                    budget.Id,
+                    pointsPerPerson,
+                    reason,
+                    _config.RedmineApi.ApiUrl + "/issues/" + apiIssue.Id.ToString(),
+                    apiIssue.UpdatedOn,
+                    PointsReferenceType.RedmineIssue,
+                    dbAssignment.Id.Value,
+                    null);
 
-            dbAssignment.AwardedPointsId.Value = apiPoints.Id;
-            _database.Save(dbAssignment);
+                dbAssignment.AwardedPointsId.Value = apiPoints.Id;
+                _database.Save(dbAssignment);
 
-            _logger.Notice(
-                "Assigned {0} to {1} from budget {2}.",
-                points,
-                dbPerson.UserName,
-                budget.Label[QuaesturApi.Language.English]);
+                _logger.Notice(
+                    "Assigned {0} to {1} from budget {2}.",
+                    pointsPerPerson,
+                    p.UserName,
+                    budget.Label[QuaesturApi.Language.English]);
+            }
+
             var notes = string.Format(
-                "{0} Punkte an @{1} aus Budget {2}",
-                points,
-                dbPerson.UserName,
-                budget.Label[QuaesturApi.Language.German]);
+                "{0} Punkte an {1} aus Budget {2}",
+                pointsPerPerson,
+                string.Join(", ", dbPersons.Select(p => "@" + p.UserName.Value)),
+                budget.FullLabel[QuaesturApi.Language.German]);
 
             if (newStatus == null)
             {
@@ -461,7 +517,8 @@ namespace RedmineEngagement
             update &= string.IsNullOrEmpty(statusUpdate.Tracker) ||
                       statusUpdate.Tracker == apiIssue.Tracker.Name;
             update &= string.IsNullOrEmpty(statusUpdate.Category) ||
-                      statusUpdate.Category == apiIssue.Category.Name;
+                      (apiIssue.Category != null &&
+                      statusUpdate.Category == apiIssue.Category.Name);
 
             if (!update)
             {

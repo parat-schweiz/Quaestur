@@ -66,7 +66,8 @@ namespace RedmineApi
 
             do
             {
-                var response = Request<JObject>("/issues.json?status_id=*", HttpMethod.Get, null);
+                var request = string.Format("/issues.json?status_id=*&offset={0}&limit=100", count);
+                var response = Request<JObject>(request, HttpMethod.Get, null);
 
                 foreach (var issue in response.Value<JArray>("issues").Values<JObject>())
                 {
@@ -85,7 +86,8 @@ namespace RedmineApi
 
             do
             {
-                var response = Request<JObject>("/users.json", HttpMethod.Get, null);
+                var request = string.Format("/users.json?offset={0}&limit=100", count);
+                var response = Request<JObject>(request, HttpMethod.Get, null);
 
                 foreach (var user in response.Value<JArray>("users").Values<JObject>())
                 {

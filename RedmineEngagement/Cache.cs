@@ -28,12 +28,12 @@ namespace RedmineEngagement
 
             foreach (var person in _database.Query<Person>())
             {
-                Add(person); 
+                Add(person);
             }
 
             foreach (var issue in _database.Query<Issue>())
             {
-                Add(issue); 
+                Add(issue);
             }
         }
 
@@ -41,20 +41,32 @@ namespace RedmineEngagement
         {
             if (!_issueById.ContainsKey(issue.IssueId))
             {
-                _issueById.Add(issue.IssueId, issue); 
-            } 
+                _issueById.Add(issue.IssueId, issue);
+            }
+            else
+            {
+                _issueById[issue.IssueId] = issue; 
+            }
         }
 
         public void Add(Person person)
         {
             if (!_personByName.ContainsKey(person.UserName))
             {
-                _personByName.Add(person.UserName, person); 
+                _personByName.Add(person.UserName, person);
+            }
+            else
+            {
+                _personByName[person.UserName] = person;
             }
 
             if (!_personById.ContainsKey(person.UserId))
             {
                 _personById.Add(person.UserId, person);
+            }
+            else
+            {
+                _personById[person.UserId] = person;
             }
         }
 
@@ -66,8 +78,8 @@ namespace RedmineEngagement
             }
             else
             {
-                return null; 
-            } 
+                return null;
+            }
         }
 
         public Person GetPerson(string userName)
@@ -75,6 +87,11 @@ namespace RedmineEngagement
             if (_personByName.ContainsKey(userName))
             {
                 return _personByName[userName];
+            }
+            else if (int.TryParse(userName, out int id) &&
+                     _personById.ContainsKey(id))
+            {
+                return _personById[id];
             }
             else
             {
