@@ -1,4 +1,5 @@
 ﻿using System;
+using BaseLibrary;
 
 namespace SecureChannel
 {
@@ -6,8 +7,8 @@ namespace SecureChannel
     {
         private SecureServiceMock _server;
 
-        public SecureClientMock(byte[] preshareKey)
-            : base(preshareKey)
+        public SecureClientMock(byte[] preshareKey, Logger logger)
+            : base(preshareKey, logger)
         {
             _server = new SecureServiceMock(preshareKey);
         }

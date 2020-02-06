@@ -45,6 +45,7 @@
     <Compile Include="SecureClientMock.cs" />
     <Compile Include="SecureServiceMock.cs" />
     <Compile Include="SecureChannelException.cs" />
+    <Compile Include="BaseChannelException.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

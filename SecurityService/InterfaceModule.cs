@@ -8,6 +8,7 @@ using Nancy.Responses;
 using Nancy.Security;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using SecureChannel;
 
 namespace SecurityService
 {
@@ -17,11 +18,41 @@ namespace SecurityService
         {
             Post("/agree", parameters =>
             {
-                return Global.Service.Agree(ReadBody());
+                try
+                {
+                    return Global.Service.Agree(ReadBody());
+                }
+                catch (SecureChannelException)
+                {
+                    return new TextResponse(HttpStatusCode.BadRequest, "Malformed request");
+                }
+                catch (JsonException)
+                {
+                    return new TextResponse(HttpStatusCode.BadRequest, "Malformed request");
+                }
+                catch (Exception)
+                {
+                    return new TextResponse(HttpStatusCode.InternalServerError, "Internal error");
+                }
             });
             Post("/request", parameters =>
             {
-                return Global.Service.Request(ReadBody());
+                try
+                {
+                    return Global.Service.Request(ReadBody());
+                }
+                catch (SecureChannelException)
+                {
+                    return new TextResponse(HttpStatusCode.BadRequest, "Malformed request");
+                }
+                catch (JsonException)
+                {
+                    return new TextResponse(HttpStatusCode.BadRequest, "Malformed request");
+                }
+                catch (Exception)
+                {
+                    return new TextResponse(HttpStatusCode.InternalServerError, "Internal error");
+                }
             });
         }
 

@@ -52,12 +52,17 @@ namespace SecureChannel
                 catch (SecureChannelException exception)
                 {
                     Error("Request security error: {0}", exception.Message);
-                    return null;
+                    throw;
                 }
-                catch (Exception)
+                catch (JsonException exception)
                 {
-                    Error("Request security error: Malformed data");
-                    return null;
+                    Error("Request error: Malformed data; {0}", exception.Message);
+                    throw;
+                }
+                catch (Exception exception)
+                {
+                    Error("Request error: {0}", exception.Message);
+                    throw;
                 }
             }
         }
@@ -121,13 +126,18 @@ namespace SecureChannel
                 }
                 catch (SecureChannelException exception)
                 {
-                    Error("Key agreement error: {0}", exception.Message);
-                    return null;
+                    Error("Key agreement error: Channel failled; {0}", exception.Message);
+                    throw;
                 }
-                catch (Exception)
+                catch (JsonException exception)
                 {
-                    Error("Key agreement error: Malformed data");
-                    return null;
+                    Error("Key agreement error: Malformed data; {0}", exception.Message);
+                    throw;
+                }
+                catch (Exception exception)
+                {
+                    Error("Key agreement error: {0}", exception.Message);
+                    throw;
                 }
             }
         }

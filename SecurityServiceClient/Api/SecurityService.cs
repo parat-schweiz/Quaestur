@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
-using Newtonsoft.Json.Linq;
+using System.Threading;
 using BaseLibrary;
+using Newtonsoft.Json.Linq;
+using SecureChannel;
 
 namespace SecurityServiceClient
 {
@@ -11,10 +13,30 @@ namespace SecurityServiceClient
         private SecurityServiceChannel _channel;
         private readonly object _lock = new object();
 
-        public SecurityService(ConfigSectionSecurityServiceClient config)
+        public SecurityService(ConfigSectionSecurityServiceClient config, Logger logger)
         {
-            _channel = new SecurityServiceChannel(config.SecurityServiceUrl, config.SecurityServiceKey);
-            _channel.Agree();
+            _channel = new SecurityServiceChannel(config.SecurityServiceUrl, config.SecurityServiceKey, logger);
+
+            for (int i = 1; true; i++)
+            {
+                try
+                {
+                    _channel.Agree();
+                    break;
+                }
+                catch (BaseChannelException exception)
+                {
+                    if (i <= 1000)
+                    {
+                        logger.Warning("Initial security service key agreement failed (times: {0})", i);
+                        System.Threading.Thread.Sleep(i * 1000);
+                    }
+                    else
+                    {
+                        throw exception;
+                    }
+                }
+            }
         }
 
         private void CheckError(JObject reply)
@@ -131,13 +153,38 @@ namespace SecurityServiceClient
 
         private readonly string _apiUrl;
 
-        public SecurityServiceChannel(string apiUrl, byte[] presharedKey)
-            : base(presharedKey)
+        public SecurityServiceChannel(string apiUrl, byte[] presharedKey, Logger logger)
+            : base(presharedKey, logger)
         {
             _apiUrl = apiUrl;
         }
 
         private string Send(string endpoint, string text)
+        {
+            for (int i = 1; true; i++)
+            {
+                try
+                {
+                    return SendOnce(endpoint, text);
+                }
+                catch (BaseChannelException exception)
+                {
+                    if (i <= 5)
+                    {
+                        int msSleep = i * i * 100;
+                        Logger.Notice("Security client error: {0}; Backoff {1}ms", exception.Message, msSleep);
+                        Thread.Sleep(msSleep);
+                    }
+                    else
+                    {
+                        Logger.Notice("Security client error: {0}; Backoff exhausted", exception.Message);
+                        throw exception;
+                    }
+                }
+            }
+        }
+
+        private string SendOnce(string endpoint, string text)
         {
             var url = string.Join("/", _apiUrl, endpoint);
 
@@ -146,14 +193,26 @@ namespace SecurityServiceClient
             request.RequestUri = new Uri(url);
             request.Content = new StringContent(text);
 
-            var client = new HttpClient();
-            var waitResponse = client.SendAsync(request);
-            waitResponse.Wait();
-            var response = waitResponse.Result;
+            try
+            {
+                var client = new HttpClient();
+                var waitResponse = client.SendAsync(request);
+                waitResponse.Wait();
+                var response = waitResponse.Result;
 
-            var waitRead = response.Content.ReadAsStringAsync();
-            waitRead.Wait();
-            return waitRead.Result;
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    throw new BaseChannelException("Http error " + (int)response.StatusCode);
+                }
+
+                var waitRead = response.Content.ReadAsStringAsync();
+                waitRead.Wait();
+                return waitRead.Result;
+            }
+            catch (Exception exception)
+            {
+                throw new BaseChannelException(exception.Message);
+            }
         }
 
         protected override string SendAgree(string request)

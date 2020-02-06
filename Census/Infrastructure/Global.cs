@@ -65,7 +65,7 @@ namespace Census
             {
                 if (_security == null)
                 {
-                    _security = new SecurityService(Config.SecurityService);
+                    _security = new SecurityService(Config.SecurityService, Log);
                 }
 
                 return _security;

@@ -4,6 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sodium;
+using BaseLibrary;
 
 namespace SecureChannel
 {
@@ -14,9 +15,12 @@ namespace SecureChannel
         private byte[] _sessionKey;
         private long _counter;
 
-        protected SecureClient(byte[] presharedKey)
+        protected Logger Logger { get; private set; }
+
+        protected SecureClient(byte[] presharedKey, Logger logger)
         {
             _presharedKey = presharedKey;
+            Logger = logger;
         }
 
         protected abstract string SendAgree(string request);
@@ -29,6 +33,7 @@ namespace SecureChannel
             initRequest.Add(new JProperty(Protocol.Agree.CommandProperty, Protocol.Agree.InitCommand));
             var initResponse = SendAgree(initRequest);
             var publicKey = Convert.FromBase64String(initResponse.Value<string>(Protocol.Agree.PublicKeyProperty));
+            Logger.Info("Security Service: Key agreement initiated");
             _keyPair = PublicKeyBox.GenerateKeyPair();
             var commitRequest = new JObject();
             commitRequest.Add(new JProperty(Protocol.Agree.CommandProperty, Protocol.Agree.CommitCommand));
@@ -40,6 +45,7 @@ namespace SecureChannel
             var commitment = SecretBox.Open(encryptedCommitment, nonce, sessionKey);
             if (Encoding.UTF8.GetString(commitment) != Protocol.Agree.CommitmentValue) throw new InvalidOperationException();
             _sessionKey = sessionKey;
+            Logger.Info("Security Service: Key agreement committed");
             _counter = 0;
         }
 
@@ -67,6 +73,30 @@ namespace SecureChannel
         }
 
         public JObject Request(JObject request)
+        {
+            for (int i = 1; true; i++)
+            {
+                try
+                {
+                    return RequestInternal(request);
+                }
+                catch (BaseChannelException exception)
+                {
+                    if (i <= 1000)
+                    {
+                        System.Threading.Thread.Sleep(i * 1000);
+                        Logger.Warning("Retrying security service key agreement (times: {0})", i);
+                        Agree();
+                    }
+                    else
+                    {
+                        throw exception;
+                    }
+                }
+            }
+        }
+
+        private JObject RequestInternal(JObject request)
         {
             var token = SecretBox.GenerateNonce().ToHexString();
             var requestJson = new JObject();
