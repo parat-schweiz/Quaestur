@@ -34,16 +34,52 @@ namespace Quaestur
             {
                 _lastSending = DateTime.UtcNow;
                 Global.Log.Notice("Running mailing task");
+                var translation = new Translation(database);
 
                 foreach (var bill in database
                     .Query<Bill>()
                     .Where(b => b.Status.Value == BillStatus.New && !b.Membership.Value.Person.Value.Deleted.Value)
-                    .Where(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database))
                     .OrderByDescending(DaysSinceLastReminder))
                 {
-                    if (Global.MailCounter.Available)
+                    var currentPrepayment = bill.Membership.Value.Person.Value.CurrentPrepayment(database);
+
+                    if (currentPrepayment >= bill.Amount.Value)
                     {
-                        Send(database, bill);
+                        var translator = new Translator(translation, bill.Membership.Value.Person.Value.Language.Value);
+
+                        using (var transaction = database.BeginTransaction())
+                        {
+                            var prepayment = new Prepayment(Guid.NewGuid());
+                            prepayment.Person.Value = bill.Membership.Value.Person.Value;
+                            prepayment.Moment.Value = DateTime.UtcNow;
+                            prepayment.Amount.Value = -bill.Amount.Value;
+                            prepayment.Reason.Value = translator.Get(
+                                "BillingReminderTask.Prepayment.Reason.SettledBill",
+                                "Settle bill with prepayment in billing remainder task",
+                                "Settled bill {0}",
+                                bill.Number.Value);
+                            database.Save(prepayment);
+
+                            bill.Status.Value = BillStatus.Payed;
+                            bill.PayedDate.Value = prepayment.Moment.Value;
+                            database.Save(bill);
+
+                            Journal(database, bill,
+                                "BillingReminderTask.Journal.Prepayment.SettledBill",
+                                "Journal entry for settle bill from prepayment",
+                                "Settled bill {0} with amount {1} from prepayment",
+                                t => bill.Number.Value,
+                                t => bill.Amount.Value.FormatMoney());
+
+                            transaction.Commit();
+                        }
+                    }
+                    else if (DaysSinceLastReminder(bill) > bill.Membership.Value.Type.Value.GetReminderPeriod(database))
+                    {
+                        if (Global.MailCounter.Available)
+                        {
+                            Send(database, bill);
+                        }
                     }
                 }
 

@@ -44,7 +44,7 @@ namespace Quaestur
 
         private string CreateNumber()
         {
-            return Bill.CreatedDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
+            return Bill.FromDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
         }
 
         public bool Create()
@@ -402,6 +402,11 @@ namespace Quaestur
                 Prepayment.Person.Value = _person;
                 Prepayment.Moment.Value = DateTime.UtcNow;
                 Prepayment.Amount.Value = -Bill.Amount.Value;
+                Prepayment.Reason.Value = _translator.Get(
+                    "BillingReminderTask.Prepayment.SettledBill",
+                    "Settle bill with prepayment in billing remainder task",
+                    "Settled bill {0}",
+                    Bill.Number.Value);
                 Bill.Status.Value = BillStatus.Payed;
 
                 text.Append(@"~ & ~ & ~ \\");

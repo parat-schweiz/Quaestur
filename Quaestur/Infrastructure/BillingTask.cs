@@ -115,6 +115,7 @@ namespace Quaestur
                         t => billDocument.Bill.Number.Value,
                         t => billDocument.Bill.Membership.Value.Person.Value.ShortHand,
                         t => billDocument.Bill.Membership.Value.Organization.Value.Name.Value[t.Language]);
+
                     transaction.Commit();
                 }
 
