@@ -9,6 +9,7 @@ namespace Quaestur
     { 
         BallotTemplate = 0,
         MembershipType = 1,
+        BillSendingTemplate = 2,
     }
 
     public static class TemplateAssignmentTypeExtensions
@@ -21,6 +22,8 @@ namespace Quaestur
                     return translator.Get("Enum.TemplateAssignmentType.BallotTemplate", "Value 'Ballot template' in template assignment type enum", "Ballot template");
                 case TemplateAssignmentType.MembershipType:
                     return translator.Get("Enum.TemplateAssignmentType.MembershipType", "Value 'Membership type' in template assignment type enum", "Membership type");
+                case TemplateAssignmentType.BillSendingTemplate:
+                    return translator.Get("Enum.TemplateAssignmentType.BillSendingTemplate", "Value 'Bill sending template' in template assignment type enum", "Bill sending template type");
                 default:
                     throw new NotSupportedException();
             }
@@ -33,6 +36,7 @@ namespace Quaestur
                 case TemplateAssignmentType.BallotTemplate:
                     return PartAccess.Ballot;
                 case TemplateAssignmentType.MembershipType:
+                case TemplateAssignmentType.BillSendingTemplate:
                     return PartAccess.Structure;
                 default:
                     throw new NotSupportedException();

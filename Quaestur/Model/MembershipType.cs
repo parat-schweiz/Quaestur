@@ -135,7 +135,9 @@ namespace Quaestur
         }
 
         public const string PointsTallyMailFieldName = "PointsTallyMails";
+        public const string SettlementMailFieldName = "SettlementMails";
         public const string BillDocumentFieldName = "BillDocuments";
+        public const string SettlementDocumentFieldName = "SettlementDocuments";
         public const string PointsTallyDocumentFieldName = "PointsTallyDocuments";
         public const string PaymentParameterUpdateRequiredMailFieldName = "PaymentParameterUpdateRequiredMails";
         public const string PaymentParameterUpdateInvitationMailFieldName = "PaymentParameterUpdateInvitationMails";
@@ -145,9 +147,19 @@ namespace Quaestur
             get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyMailFieldName); }
         }
 
+        public TemplateField SettlementMail
+        {
+            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, SettlementMailFieldName); }
+        }
+
         public TemplateField BillDocument
         {
             get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, BillDocumentFieldName); }
+        }
+
+        public TemplateField SettlementDocument
+        {
+            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, SettlementDocumentFieldName); }
         }
 
         public TemplateField PointsTallyDocument
@@ -170,9 +182,19 @@ namespace Quaestur
             return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PointsTallyMailFieldName)));
         }
 
+        public IEnumerable<MailTemplateAssignment> SettlementMails(IDatabase database)
+        {
+            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", SettlementMailFieldName)));
+        }
+
         public IEnumerable<LatexTemplateAssignment> BillDocuments(IDatabase database)
         {
             return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillDocumentFieldName)));
+        }
+
+        public IEnumerable<LatexTemplateAssignment> SettlementDocuments(IDatabase database)
+        {
+            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", SettlementDocumentFieldName)));
         }
 
         public IEnumerable<LatexTemplateAssignment> PointsTallyDocuments(IDatabase database)
@@ -204,9 +226,37 @@ namespace Quaestur
             return null;
         }
 
+        public MailTemplate GetSettlementMail(IDatabase database, Language language)
+        {
+            var list = SettlementMails(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
+        }
+
         public LatexTemplate GetBillDocument(IDatabase database, Language language)
         {
             var list = BillDocuments(database);
+
+            foreach (var l in LanguageExtensions.PreferenceList(language))
+            {
+                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
+                if (assignment != null)
+                    return assignment.Template.Value;
+            }
+
+            return null;
+        }
+
+        public LatexTemplate GetSettlementDocument(IDatabase database, Language language)
+        {
+            var list = SettlementDocuments(database);
 
             foreach (var l in LanguageExtensions.PreferenceList(language))
             {

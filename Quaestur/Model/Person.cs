@@ -210,6 +210,11 @@ namespace Quaestur
             }
         }
 
+        public decimal CurrentPrepayment(IDatabase database)
+        {
+            return database.Query<Prepayment>(DC.Equal("personid", Id.Value)).Sum(p => p.Amount);
+        }
+
         public ServiceAddress PrimaryAddress(ServiceType type)
         {
             return ServiceAddresses

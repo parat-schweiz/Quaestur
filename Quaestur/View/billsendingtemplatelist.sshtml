@@ -9,9 +9,6 @@ $("#billSendingTemplateRowEdit1@Current.Id").click(function(){
 $("#billSendingTemplateRowEdit2@Current.Id").click(function(){
   window.location.href = "/billsendingtemplate/edit/@Current.Id";
 });
-$("#billSendingTemplateRowEdit3@Current.Id").click(function(){
-  window.location.href = "/billsendingtemplate/edit/@Current.Id";
-});
 $("#billSendingTemplateRowDelete@Current.Id").click(function(){
   $.confirm({
     title: "@Model.PhraseDeleteConfirmationTitle",
@@ -42,15 +39,14 @@ $("#billSendingTemplateRowCopy@Current.Id").click(function(){
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="20%" id="billSendingTemplateRowEdit1@Current.Id class="editable">@Current.Language</td>
-      <td width="50%" id="billSendingTemplateRowEdit2@Current.Id" class="editable">@Current.Name</td>
-      <td width="20%" id="billSendingTemplateRowEdit3@Current.Id" class="editable">@Current.ReminderLevel</td>
+      <td width="60%" id="billSendingTemplateRowEdit1@Current.Id" class="editable">@Current.Name</td>
+      <td width="30%" id="billSendingTemplateRowEdit2@Current.Id" class="editable">@Current.ReminderLevel</td>
       <td width="5%" id="billSendingTemplateRowCopy@Current.Id" class="editable"><span class="fas fa-copy"></span></td>
       <td width="5%" id="billSendingTemplateRowDelete@Current.Id" class="editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class='centering clickable-row'>
-      <td width="90%" colspan="3" id="billSendingTemplateRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="90%" colspan="2" id="billSendingTemplateRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
       <td width="10%"></td>
     </tr>
   </tbody>

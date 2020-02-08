@@ -79,14 +79,13 @@ namespace Quaestur
             var translator = new Translator(translation, person.Language.Value);
             var template = database
                 .Query<BillSendingTemplate>(DC.Equal("membershiptypeid", membershipType.Id.Value))
-                .FirstOrDefault(t => t.Language == person.Language.Value && level >= t.MinReminderLevel && level <= t.MaxReminderLevel);
+                .FirstOrDefault(t => level >= t.MinReminderLevel && level <= t.MaxReminderLevel);
 
             if (template == null)
             {
-                Global.Log.Notice("No bill sending template for {0} in {1} in {2} at level {3}",
+                Global.Log.Notice("No bill sending template for {0} in {1} at level {2}",
                     membershipType.Name.Value[person.Language.Value],
                     membershipType.Organization.Value.Name.Value[person.Language.Value],
-                    person.Language.Value.Translate(translator),
                     level);
                 bill.ReminderDate.Value = DateTime.UtcNow.AddDays(-7d);
                 bill.Membership.Value.UpdateVotingRight(database);
@@ -215,7 +214,8 @@ namespace Quaestur
                 return false;
             }
 
-            var letter = new UniversalDocument(translator, person, template.LetterLatex);
+            var latexTemplate = template.GetBillSendingLetter(database, person.Language.Value);
+            var letter = new UniversalDocument(translator, person, latexTemplate.Text.Value);
             var document = letter.Compile();
 
             if (document == null)
@@ -298,8 +298,9 @@ namespace Quaestur
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
             var templator = new Templator(new PersonContentProvider(translator, person));
-            var htmlText = templator.Apply(template.MailHtmlText);
-            var plainText = templator.Apply(template.MailPlainText);
+            var mailTemplate = template.GetBillSendingMail(database, person.Language.Value);
+            var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
+            var plainText = templator.Apply(mailTemplate.PlainText.Value);
             var alternative = new Multipart("alternative");
             var plainPart = new TextPart("plain") { Text = plainText };
             plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
@@ -320,7 +321,7 @@ namespace Quaestur
             try
             {
                 Global.MailCounter.Used();
-                Global.Mail.Send(from, to, senderKey, recipientKey, template.MailSubject, content);
+                Global.Mail.Send(from, to, senderKey, recipientKey, mailTemplate.Subject.Value, content);
 
                 if (level < 2)
                 {

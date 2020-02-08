@@ -14,26 +14,22 @@ namespace Quaestur
         public string Method;
         public string Id;
         public string ParentId;
-        public string Language;
         public string Name;
         public string MinReminderLevel;
         public string MaxReminderLevel;
-        public string MailSubject;
-        public string MailHtmlText;
-        public string MailSender;
-        public string LetterLatex;
+        public List<NamedIdViewModel> BillSendingMails;
+        public string[] BillSendingMailTemplates;
+        public List<NamedIdViewModel> BillSendingLetters;
+        public string[] BillSendingLetterTemplates;
         public string SendingMode;
-        public List<NamedIntViewModel> Languages;
         public List<NamedIdViewModel> MailSenders;
         public List<NamedIntViewModel> SendingModes;
-        public string PhraseFieldLanguage;
         public string PhraseFieldName;
         public string PhraseFieldMinReminderLevel;
         public string PhraseFieldMaxReminderLevel;
-        public string PhraseFieldMailSubject;
-        public string PhraseFieldMailHtmlText;
+        public string PhraseFieldBillSendingMailTemplates;
+        public string PhraseFieldBillSendingLetterTemplates;
         public string PhraseFieldMailSender;
-        public string PhraseFieldLetterLatex;
         public string PhraseFieldSendingMode;
         public string PhraseButtonCancel;
         public string PhraseButtonSave;
@@ -48,40 +44,28 @@ namespace Quaestur
             translator.Get("BillSendingTemplate.Edit.Title", "Title of the billSendingTemplate edit dialog", "Edit bill sending template"), 
             session)
         {
-            PhraseFieldLanguage = translator.Get("BillSendingTemplate.Edit.Field.Language", "Language field in the bill sending template edit page", "Language").EscapeHtml();
             PhraseFieldName = translator.Get("BillSendingTemplate.Edit.Field.Name", "Name field in the bill emplate edit page", "Name").EscapeHtml();
             PhraseFieldMinReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MinReminderLevel", "Min reminder level field in the bill template edit page", "Min reminder level").EscapeHtml();
             PhraseFieldMaxReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MaxReminderLevel", "Max reminder level field in the bill template edit page", "Max reminder level").EscapeHtml();
-            PhraseFieldMailSubject = translator.Get("BillSendingTemplate.Edit.Field.MailSubject", "Mail subject field in the bill template edit page", "Mail subject").EscapeHtml();
-            PhraseFieldMailHtmlText = translator.Get("BillSendingTemplate.Edit.Field.MailHtmlText", "Mail text field in the bill template edit page", "Mail text").EscapeHtml();
+            PhraseFieldBillSendingMailTemplates = translator.Get("BillSendingTemplate.Edit.Field.BillSendingMailTemplates", "Sending mail templates field in the bill template edit page", "Sending mails templates").EscapeHtml();
+            PhraseFieldBillSendingLetterTemplates = translator.Get("BillSendingTemplate.Edit.Field.BillSendingLetterTemplates", "Sending letter templates field in the bill template edit page", "Sending letters templates").EscapeHtml();
             PhraseFieldMailSender = translator.Get("BillSendingTemplate.Edit.Field.MailSender", "Mail sender field in the bill template edit page", "Mail sender group").EscapeHtml();
-            PhraseFieldLetterLatex = translator.Get("BillSendingTemplate.Edit.Field.LetterLatex", "Letter LaTeX field in the bill template edit page", "Letter LaTeX").EscapeHtml();
             PhraseFieldSendingMode = translator.Get("BillSendingTemplate.Edit.Field.SendingMode", "Sending mode field in the bill template edit page", "Sending mode").EscapeHtml();
             PhraseButtonCancel = translator.Get("BillSendingTemplate.Edit.Button.Cancel", "Cancel button in the bill template edit page", "Cancel").EscapeHtml();
             PhraseButtonSave = translator.Get("BillSendingTemplate.Edit.Button.Save", "Save button in the bill template edit page", "Save").EscapeHtml();
             HtmlEditorId = Guid.NewGuid().ToString();
         }
 
-        public BillSendingTemplateEditViewModel(Translator translator, IDatabase db, Session session, MembershipType membershipType)
+        public BillSendingTemplateEditViewModel(Translator translator, IDatabase database, Session session, MembershipType membershipType)
             : this(translator, session)
         {
             Method = "add";
             Id = membershipType.Id.Value.ToString();
             ParentId = membershipType.Id.Value.ToString();
-            Language = string.Empty;
             Name = string.Empty;
             MinReminderLevel = "1";
             MaxReminderLevel = "1";
-            MailSubject = string.Empty;
-            MailHtmlText = string.Empty;
-            MailSender = string.Empty;
-            LetterLatex = string.Empty;
             SendingMode = string.Empty;
-            Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, false));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, false));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, false));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, false));
             MailSenders = new List<NamedIdViewModel>(membershipType.Organization.Value.Groups
                 .Select(g => new NamedIdViewModel(translator, g, false))
                 .OrderBy(g => g.Name));
@@ -90,28 +74,28 @@ namespace Quaestur
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, false));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, false));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, false));
+            BillSendingLetters = new List<NamedIdViewModel>(database
+                .Query<LatexTemplate>()
+                .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
+            BillSendingMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
+                .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
         }
 
-        public BillSendingTemplateEditViewModel(Translator translator, IDatabase db, Session session, BillSendingTemplate billSendingTemplate)
+        public BillSendingTemplateEditViewModel(Translator translator, IDatabase database, Session session, BillSendingTemplate billSendingTemplate)
             : this(translator, session)
         {
             Method = "edit";
             Id = billSendingTemplate.Id.ToString();
             ParentId = billSendingTemplate.MembershipType.Value.Id.Value.ToString();
-            Language = string.Empty;
             Name = billSendingTemplate.Name.Value.EscapeHtml();
             MinReminderLevel = billSendingTemplate.MinReminderLevel.Value.ToString();
             MaxReminderLevel = billSendingTemplate.MaxReminderLevel.Value.ToString();
-            MailSubject = billSendingTemplate.MailSubject.Value;
-            MailHtmlText = billSendingTemplate.MailHtmlText.Value;
-            MailSender = string.Empty;
-            LetterLatex = billSendingTemplate.LetterLatex.Value;
             SendingMode = string.Empty;
-            Languages = new List<NamedIntViewModel>();
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.English, billSendingTemplate.Language.Value == SiteLibrary.Language.English));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.German, billSendingTemplate.Language.Value == SiteLibrary.Language.German));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, billSendingTemplate.Language.Value == SiteLibrary.Language.French));
-            Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, billSendingTemplate.Language.Value == SiteLibrary.Language.Italian));
             MailSenders = new List<NamedIdViewModel>(billSendingTemplate.MembershipType.Value.Organization.Value.Groups
                 .Select(g => new NamedIdViewModel(translator, g, billSendingTemplate.MailSender.Value == g))
                 .OrderBy(g => g.Name));
@@ -120,6 +104,16 @@ namespace Quaestur
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalOnly));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.MailPreferred));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalPrefrerred));
+            BillSendingLetters = new List<NamedIdViewModel>(database
+                .Query<LatexTemplate>()
+                .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingLetters(database).Any(x => x.Template.Value == t)))
+                .OrderBy(t => t.Name));
+            BillSendingMails = new List<NamedIdViewModel>(database
+                .Query<MailTemplate>()
+                .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingMails(database).Any(x => x.Template.Value == t)))
+                .OrderBy(t => t.Name));
         }
     }
 
@@ -139,7 +133,6 @@ namespace Quaestur
     public class BillSendingTemplateListItemViewModel
     {
         public string Id;
-        public string Language;
         public string Name;
         public string ReminderLevel;
         public string PhraseDeleteConfirmationQuestion;
@@ -147,7 +140,6 @@ namespace Quaestur
         public BillSendingTemplateListItemViewModel(Translator translator, Session session, BillSendingTemplate billSendingTemplate)
         {
             Id = billSendingTemplate.Id.Value.ToString();
-            Language = billSendingTemplate.Language.Value.Translate(translator);
             Name = billSendingTemplate.Name.Value.EscapeHtml();
             if (billSendingTemplate.MinReminderLevel.Value == billSendingTemplate.MaxReminderLevel.Value)
             {
@@ -166,7 +158,6 @@ namespace Quaestur
         public string OrganizationId;
         public string Id;
         public string Name;
-        public string PhraseHeaderLanguage;
         public string PhraseHeaderName;
         public string PhraseHeaderReminderLevel;
         public string PhraseDeleteConfirmationTitle;
@@ -179,7 +170,6 @@ namespace Quaestur
             OrganizationId = membershipType.Organization.Value.Id.Value.ToString();
             Id = membershipType.Id.Value.ToString();
             Name = membershipType.Organization.Value.Name.Value[translator.Language].EscapeHtml() + " / " + membershipType.Name.Value[translator.Language].EscapeHtml();
-            PhraseHeaderLanguage = translator.Get("BillSendingTemplate.List.Header.Language", "Header part 'Language' in the billSendingTemplate list", "Language").EscapeHtml();
             PhraseHeaderName = translator.Get("BillSendingTemplate.List.Header.Name", "Link 'Name' caption in the billSendingTemplate list", "Name").EscapeHtml();
             PhraseHeaderReminderLevel = translator.Get("BillSendingTemplate.List.Header.ReminderLevel", "Link 'ReminderLevel' caption in the billSendingTemplate list", "ReminderLevel").EscapeHtml();
             PhraseDeleteConfirmationTitle = translator.Get("BillSendingTemplate.List.Delete.Confirm.Title", "Delete bill sending template confirmation title", "Delete?").EscapeHtml();
@@ -286,22 +276,20 @@ namespace Quaestur
                 {
                     if (status.HasAccess(billSendingTemplate.MembershipType.Value.Organization.Value, PartAccess.Structure, AccessRight.Write))
                     {
-                        status.AssignEnumIntString("Language", billSendingTemplate.Language, model.Language);
                         status.AssignStringRequired("Name", billSendingTemplate.Name, model.Name);
                         status.AssignInt32String("MinReminderLevel", billSendingTemplate.MinReminderLevel, model.MinReminderLevel);
                         status.AssignInt32String("MaxReminderLevel", billSendingTemplate.MaxReminderLevel, model.MaxReminderLevel);
-                        status.AssignStringRequired("MailSubject", billSendingTemplate.MailSubject, model.MailSubject);
-                        status.AssignObjectIdString("MailSender", billSendingTemplate.MailSender, model.MailSender);
-                        status.AssignStringRequired("LetterLatex", billSendingTemplate.LetterLatex, model.LetterLatex);
                         status.AssignEnumIntString("SendingMode", billSendingTemplate.SendingMode, model.SendingMode);
-                        var worker = new HtmlWorker(model.MailHtmlText);
-                        billSendingTemplate.MailHtmlText.Value = worker.CleanHtml;
-                        billSendingTemplate.MailPlainText.Value = worker.PlainText;
 
                         if (status.IsSuccess)
                         {
-                            Database.Save(billSendingTemplate);
-                            Notice("{0} changed bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                Database.Save(billSendingTemplate);
+                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
+                                status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                Notice("{0} changed bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
+                            }
                         }
                     }
                 }
@@ -336,24 +324,27 @@ namespace Quaestur
                     {
                         var model = JsonConvert.DeserializeObject<BillSendingTemplateEditViewModel>(ReadBody());
                         var billSendingTemplate = new BillSendingTemplate(Guid.NewGuid());
-                        status.AssignEnumIntString("Language", billSendingTemplate.Language, model.Language);
+                        billSendingTemplate.Language.Value = Language.English;
+                        billSendingTemplate.MailSubject.Value = string.Empty;
+                        billSendingTemplate.MailHtmlText.Value = string.Empty;
+                        billSendingTemplate.MailPlainText.Value = string.Empty;
+                        billSendingTemplate.LetterLatex.Value = string.Empty;
                         status.AssignStringRequired("Name", billSendingTemplate.Name, model.Name);
                         status.AssignInt32String("MinReminderLevel", billSendingTemplate.MinReminderLevel, model.MinReminderLevel);
                         status.AssignInt32String("MaxReminderLevel", billSendingTemplate.MaxReminderLevel, model.MaxReminderLevel);
-                        status.AssignStringRequired("MailSubject", billSendingTemplate.MailSubject, model.MailSubject);
-                        status.AssignObjectIdString("MailSender", billSendingTemplate.MailSender, model.MailSender);
-                        status.AssignStringRequired("LetterLatex", billSendingTemplate.LetterLatex, model.LetterLatex);
                         status.AssignEnumIntString("SendingMode", billSendingTemplate.SendingMode, model.SendingMode);
-                        var worker = new HtmlWorker(model.MailHtmlText);
-                        billSendingTemplate.MailHtmlText.Value = worker.CleanHtml;
-                        billSendingTemplate.MailPlainText.Value = worker.PlainText;
 
                         billSendingTemplate.MembershipType.Value = membershipType;
 
                         if (status.IsSuccess)
                         {
-                            Database.Save(billSendingTemplate);
-                            Notice("{0} added bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
+                            using (var transaction = Database.BeginTransaction())
+                            {
+                                Database.Save(billSendingTemplate);
+                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
+                                status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                Notice("{0} added bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
+                            }
                         }
                     }
                 }
