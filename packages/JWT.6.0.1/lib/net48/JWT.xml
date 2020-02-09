@@ -386,7 +386,7 @@
             Adds well-known claim to the JWT.
             </summary>
         </member>
-        <member name="M:JWT.Builder.JwtBuilderExtensions.AddClaims(JWT.Builder.JwtBuilder,System.Collections.Generic.IDictionary{System.String,System.Object})">
+        <member name="M:JWT.Builder.JwtBuilderExtensions.AddClaims(JWT.Builder.JwtBuilder,System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.Object}})">
             <summary>
             Adds several claims to the JWT
             </summary>
