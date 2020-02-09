@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateSystemWideFileList(){
+      $.get("/systemwidefile/list", function(data, status){
+          if (data){
+              $("#systemWideFileList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateSystemWideFileList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="systemWideFileList">
+</div>
+@EndSection

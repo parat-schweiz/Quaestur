@@ -69,6 +69,7 @@ namespace Quaestur
             database.CreateTable<ApiPermission>();
             database.CreateTable<Sequence>();
             database.CreateTable<ReservedUserName>();
+            database.CreateTable<SystemWideFile>();
 
             Global.Log.Notice("Tables ok.");
         }

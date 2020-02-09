@@ -263,6 +263,8 @@
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\ReservedUserName.cs" />
     <Compile Include="Module\PersonDetailMasterPaymentModue.cs" />
+    <Compile Include="Model\SystemWideFile.cs" />
+    <Compile Include="Module\SystemWideFileModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -979,6 +981,15 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\persondetail_master_payment.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefile.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefileedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefilelist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

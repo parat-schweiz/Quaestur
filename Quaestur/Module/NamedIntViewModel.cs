@@ -56,6 +56,11 @@ namespace Quaestur
         {
         }
 
+        public NamedIntViewModel(Translator translator, SystemWideFileType type, bool selected)
+            : this((int)type, type.Translate(translator), selected)
+        {
+        }
+
         public NamedIntViewModel(Translator translator, TemplateAssignmentType assignmentType, bool selected)
             : this((int)assignmentType, assignmentType.Translate(translator), selected)
         {
