@@ -192,6 +192,9 @@
     <Compile Include="Model\SearchSettings.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
     <Compile Include="Module\DialogViewModel.cs" />
+    <Compile Include="Model\SystemWideFile.cs" />
+    <Compile Include="Module\SystemWideFileModule.cs" />
+    <Compile Include="Module\ResourceModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -717,6 +720,18 @@
     <None Include="Assets\waitdialog.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\systemwidefile.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefileedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefilelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\images\publicus.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -727,6 +742,7 @@
     <Folder Include="Assets\bootstrap-editor\js\" />
     <Folder Include="Assets\jquery-confirm\" />
     <Folder Include="Documents\" />
+    <Folder Include="Assets\images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

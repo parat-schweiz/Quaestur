@@ -263,6 +263,9 @@
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\ReservedUserName.cs" />
     <Compile Include="Module\PersonDetailMasterPaymentModue.cs" />
+    <Compile Include="Model\SystemWideFile.cs" />
+    <Compile Include="Module\SystemWideFileModule.cs" />
+    <Compile Include="Module\ResourceModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -981,6 +984,18 @@
     <None Include="View\persondetail_master_payment.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\systemwidefile.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefileedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\systemwidefilelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\images\quaestur.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -992,6 +1007,7 @@
     <Folder Include="Assets\jquery-confirm\" />
     <Folder Include="Documents\" />
     <Folder Include="Assets\filesaver\" />
+    <Folder Include="Assets\images\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\SecurityServiceClient\SecurityServiceClient.csproj">

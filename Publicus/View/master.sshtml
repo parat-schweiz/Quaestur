@@ -3,6 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <title>Publicus - @Model.Title</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
     <link rel="stylesheet" href="/Assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/Assets/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="/Assets/bootstrap-select/css/bootstrap-select.min.css">
@@ -29,7 +30,7 @@
       <div class="row header">
         <div class="col-12">
           <nav class="navbar navbar-expand-md navbar-light bg-light">
-            <a class="navbar-brand" href="#">Publicus</a>
+            <a class="navbar-brand" href="/"><img height="30px" src="/headerimage"/></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainNavBar" aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -81,7 +82,7 @@
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuSettings</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/">Example</a>
+                    <a class="dropdown-item" href="/systemwidefile">@Model.PhraseMenuSystemWideFiles</a>
                   </div>
                 </li>
                 @EndIf

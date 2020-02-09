@@ -60,6 +60,7 @@ namespace Publicus
         public string PhraseMenuMailingElement = string.Empty;
         public string PhraseMenuLogout = string.Empty;
         public string PhraseMenuSettings = string.Empty;
+        public string PhraseMenuSystemWideFiles = string.Empty;
 
         public MasterViewModel()
         { 
@@ -93,6 +94,7 @@ namespace Publicus
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
+            PhraseMenuSystemWideFiles = translator.Get("Master.Menu.Settings.SystemWideFiles", "Item 'System wide files' under settings in the main menu", "System wide files").EscapeHtml();
         }
     }
 
