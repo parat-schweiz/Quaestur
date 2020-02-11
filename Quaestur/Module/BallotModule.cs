@@ -66,7 +66,7 @@ namespace Quaestur
             Template = string.Empty;
             EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", ballot.AnnouncementText.Value);
-            Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value, EscapeMode.Latex);
+            Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value, EscapeMode.None);
             Templates = new List<NamedIdViewModel>(db
                 .Query<BallotTemplate>()
                 .Where(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
