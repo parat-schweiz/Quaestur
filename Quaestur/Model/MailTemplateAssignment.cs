@@ -36,6 +36,10 @@ namespace Quaestur
             {
                 return ((MembershipType)o).Organization.Value;
             }
+            else if (o is BillSendingTemplate)
+            {
+                return ((BillSendingTemplate)o).MembershipType.Value.Organization.Value;
+            }
             else
             {
                 throw new NotSupportedException();
