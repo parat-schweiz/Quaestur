@@ -110,6 +110,7 @@ namespace Quaestur
             {
                 var mainModel = membership.Type.Value.CreatePaymentModel(database);
                 var period = mainModel.GetBillingPeriod();
+                var advancePeriod = mainModel != null ? mainModel.GetBillAdvancePeriod() : 30;
                 var before = GetBefore(period);
                 var lastBill = GetLastBill(database, membership);
 
@@ -119,7 +120,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return lastBill.UntilDate.Value.AddDays(-before).Date;
+                    return lastBill.UntilDate.Value.AddDays(-(advancePeriod + before)).Date;
                 }
             }
         }
