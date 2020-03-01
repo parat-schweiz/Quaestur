@@ -288,6 +288,7 @@ namespace Quaestur
                                 Database.Save(billSendingTemplate);
                                 status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
                                 status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                transaction.Commit();
                                 Notice("{0} changed bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
                             }
                         }
@@ -343,6 +344,7 @@ namespace Quaestur
                                 Database.Save(billSendingTemplate);
                                 status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
                                 status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                transaction.Commit();
                                 Notice("{0} added bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
                             }
                         }
