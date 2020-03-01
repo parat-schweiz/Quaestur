@@ -109,7 +109,7 @@ namespace BaseLibrary
             versionPart.ContentType.MediaType = "application";
             versionPart.Headers.Add(new Header("Content-Description", "PGP/MIME version identification"));
             versionPart.Text = "Version: 1";
-            gpgMultipart.Add(input);
+            gpgMultipart.Add(versionPart);
 
             var multipartStream = new MemoryStream();
             input.WriteTo(multipartStream);
@@ -139,7 +139,7 @@ namespace BaseLibrary
             versionPart.ContentType.MediaType = "application";
             versionPart.Headers.Add(new Header("Content-Description", "PGP/MIME version identification"));
             versionPart.Text = "Version: 1";
-            gpgMultipart.Add(input);
+            gpgMultipart.Add(versionPart);
 
             var multipartStream = new MemoryStream();
             input.WriteTo(multipartStream);
