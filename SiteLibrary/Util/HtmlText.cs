@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Net;
 using System.IO;
 using AngleSharp.Dom;
-using AngleSharp.Dom.Html;
-using AngleSharp.Parser.Html;
+using AngleSharp.Html.Parser;
+using AngleSharp.Html.Dom;
 
 namespace SiteLibrary
 {
@@ -61,14 +61,14 @@ namespace SiteLibrary
         private void MakePlainText(string dirtyHtml)
         {
             var parser = new HtmlParser();
-            var document = parser.Parse(dirtyHtml);
+            var document = parser.ParseDocument(dirtyHtml);
             PlainText = document.DocumentElement.TextContent ?? string.Empty;
         }
 
         private void MakeCleanHtml(string dirtyHtml)
         {
             var parser = new HtmlParser();
-            var document = parser.Parse(dirtyHtml);
+            var document = parser.ParseDocument(dirtyHtml);
 
             foreach (IHtmlImageElement image in document.QuerySelectorAll("img"))
             {
@@ -104,11 +104,11 @@ namespace SiteLibrary
         public static string ConcatHtml(string a, string b)
         {
             var p1 = new HtmlParser();
-            var d1 = p1.Parse(a);
+            var d1 = p1.ParseDocument(a);
             var b1 = d1.QuerySelector("body");
 
             var p2 = new HtmlParser();
-            var d2 = p2.Parse(b);
+            var d2 = p2.ParseDocument(b);
             var b2 = d2.QuerySelector("body");
 
             foreach (var child in b2.Children)

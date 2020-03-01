@@ -370,7 +370,7 @@ namespace Quaestur
                                 .AddClaim("lastname", session.User.Value.LastName.Value);
                         }
 
-                        var idToken = builder.Build();
+                        var idToken = builder.Encode();
                         var response = new JObject(
                             new JProperty("access_token", session.Token.Value),
                             new JProperty("token_type", "Bearer"),
