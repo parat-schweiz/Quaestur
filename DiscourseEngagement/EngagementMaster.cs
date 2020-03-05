@@ -204,9 +204,11 @@ namespace DiscourseEngagement
             var patterns = new string[]
             {
                 "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) von Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
+                "^([0-9]+) Punkte für @([a-zA-Z0-9_\\-]+) aus dem Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
                 "^([0-9]+) points for @([a-zA-Z0-9_\\-]+) from budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
-                "^Je ([0-9]+) Punkte für @([a-zA-Z0-9_ ,\\-]+) von Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
-                "^([0-9]+) points for @([a-zA-Z0-9_ ,\\-]+) each from budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
+                "^Je ([0-9]+) Punkte für ((?:@[a-zA-Z0-9_\\\\-]+[ ,]*)+) von Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
+                "^Je ([0-9]+) Punkte für ((?:@[a-zA-Z0-9_\\\\-]+[ ,]*)+) aus dem Budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
+                "^([0-9]+) points for ((?:@[a-zA-Z0-9_\\\\-]+[ ,]*)+) each from budget “([a-zA-Z0-9 ßöäüéàèîôíÖÄÜÉÀÈÎÔÍ/]+)”$",
             };
 
             foreach (var pattern in patterns)
@@ -234,7 +236,7 @@ namespace DiscourseEngagement
                     var points = int.Parse(match.Groups[1].Value);
                     var usernames = match.Groups[2].Value
                         .Split(new string[] { "," }, StringSplitOptions.RemoveEmptyEntries)
-                        .Select(u => u.Trim())
+                        .Select(u => u.Trim().Replace("@", string.Empty))
                         .Where(u => !string.IsNullOrEmpty(u))
                         .ToList();
                     var budgetLabel = match.Groups[3].Value;
@@ -254,6 +256,11 @@ namespace DiscourseEngagement
 
                         if (person == null)
                         {
+                            _logger.Notice(
+                               "Cannot find user '{0}' at assignment in {1}.{2}",
+                               username,
+                               dbPost.Topic.Value.TopicId.Value,
+                               dbPost.PostId.Value);
                             usersNotFound.Add(username);
                         }
                         else
@@ -267,14 +274,10 @@ namespace DiscourseEngagement
                         var response = translator.Get(
                             "Award.Assign.Error.UsersUnknown",
                             "When users are unknown when assigning points through post",
-                            "Cannot determine mentioned users: ", 
+                            "Cannot determine mentioned users: {0}", 
                             string.Join(", ", usersNotFound.Select(u => "@" + u)));
                         var postText = quote + Environment.NewLine + Environment.NewLine + response;
                         _discourse.Post(apiPost.TopicId, postText);
-                        _logger.Notice(
-                           "Cannot find user at assignment in {0}.{1}",
-                           dbPost.Topic.Value.TopicId.Value,
-                           dbPost.PostId.Value);
                     }
                     else if (budget == null)
                     {
@@ -469,8 +472,10 @@ namespace DiscourseEngagement
                         }
                     }
 
-                    if (post.Person.Value != null)
+                    if (post.Person.Value != null && post.AwardDecision.Value == AwardDecision.Positive)
+                    {
                         latest[post.Person.Value.Id.Value] = post.Created.Value;
+                    }
                 }
 
                 foreach (var like in cache.Likes)
