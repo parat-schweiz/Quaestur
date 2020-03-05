@@ -562,7 +562,7 @@ namespace DiscourseEngagement
             var thread = new Queue<Post>(cache.Posts
                 .Where(p => p.Topic.Value == post.Topic.Value)
                 .Where(p => p.PostId.Value < post.PostId.Value)
-                .OrderByDescending(p => p.PostId.Value));
+                .OrderBy(p => p.PostId.Value));
             var participants = new List<Guid>();
             var addon = new Queue<double>(ConversationAddon);
             var factor = addon.Dequeue();
