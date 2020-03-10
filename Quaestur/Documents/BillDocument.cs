@@ -44,7 +44,19 @@ namespace Quaestur
 
         private string CreateNumber()
         {
-            return Bill.FromDate.Value.ToString("yyyyMMdd") + "M" + _person.Number.Value.PadInt(7);
+            const int segmentLength = 2;
+            const int segmentCount = 3;
+            const int byteCount = segmentCount * segmentLength;
+            var idBytes = Bill.Id.Value.ToByteArray();
+            var numberBytes = idBytes.Part(idBytes.Length - byteCount, byteCount);
+            var segments = new List<string>();
+
+            for (int i = 0; i < numberBytes.Length; i += segmentLength)
+            {
+                segments.Add(numberBytes.Part(i, segmentLength).ToHexString());
+            }
+
+            return string.Join("-", segments);
         }
 
         public bool Create()
