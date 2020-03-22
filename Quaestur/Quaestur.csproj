@@ -102,7 +102,7 @@
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
       <HintPath>..\packages\HtmlSanitizer.5.0.298\lib\net46\HtmlSanitizer.dll</HintPath>

@@ -60,7 +60,7 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
       <HintPath>..\packages\MimeKit.2.5.2\lib\net47\MimeKit.dll</HintPath>
