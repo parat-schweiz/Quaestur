@@ -86,10 +86,10 @@
       <HintPath>..\packages\JWT.6.1.0\lib\net46\JWT.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.5.1\lib\net47\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.5.2\lib\net47\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.5.1\lib\net47\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.5.2\lib\net47\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Memory">
@@ -102,7 +102,7 @@
       <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\BouncyCastle.1.8.5\lib\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\Portable.BouncyCastle.1.8.5\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
       <HintPath>..\packages\HtmlSanitizer.5.0.298\lib\net46\HtmlSanitizer.dll</HintPath>
