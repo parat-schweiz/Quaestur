@@ -44,20 +44,20 @@
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.5.2\lib\net47\MimeKit.dll</HintPath>
-    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Security" />
-    <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.5.2\lib\net47\MailKit.dll</HintPath>
-    </Reference>
     <Reference Include="Sodium">
       <HintPath>..\packages\libsodium-net.0.10.0\lib\Net40\Sodium.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="MailKit">
+      <HintPath>..\packages\MailKit.2.5.2\lib\net48\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.2.5.2\lib\net48\MimeKit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

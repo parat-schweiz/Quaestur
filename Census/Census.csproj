@@ -48,16 +48,16 @@
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
-    <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.5.2\lib\net47\MimeKit.dll</HintPath>
-    </Reference>
-    <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.5.2\lib\net47\MailKit.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="MailKit">
+      <HintPath>..\packages\MailKit.2.5.2\lib\net48\MailKit.dll</HintPath>
+    </Reference>
+    <Reference Include="MimeKit">
+      <HintPath>..\packages\MimeKit.2.5.2\lib\net48\MimeKit.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
