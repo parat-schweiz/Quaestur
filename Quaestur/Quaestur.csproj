@@ -111,7 +111,7 @@
       <HintPath>..\packages\MimeKit.2.5.2\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
-      <HintPath>..\packages\JWT.6.1.0\lib\net48\JWT.dll</HintPath>
+      <HintPath>..\packages\JWT.6.1.3\lib\net48\JWT.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
