@@ -20,6 +20,7 @@ namespace Publicus
         Journal = 12,
         Crypto = 13,
         Deleted = 15,
+        Petition = 16,
     }
 
     public static class PartAccessExtensions
@@ -56,6 +57,8 @@ namespace Publicus
                     return translator.Get("Enum.PartAccess.Crypto", "Value 'Crypto' in PartAccess enum", "Crypto");
                 case PartAccess.Deleted:
                     return translator.Get("Enum.PartAccess.Deleted", "Value 'Deleted' in PartAccess enum", "Deleted");
+                case PartAccess.Petition:
+                    return translator.Get("Enum.PartAccess.Petition", "Value 'Petition' in PartAccess enum", "Petition");
                 default:
                     throw new NotSupportedException();
             }

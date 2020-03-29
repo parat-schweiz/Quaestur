@@ -56,6 +56,11 @@ namespace Publicus
         {
         }
 
+        public NamedIntViewModel(Translator translator, TemplateAssignmentType templateAssignmentType, bool selected)
+            : this((int)templateAssignmentType, templateAssignmentType.Translate(translator), selected)
+        {
+        }
+
         public NamedIntViewModel(Translator translator, SystemWideFileType type, bool selected)
             : this((int)type, type.Translate(translator), selected)
         {

@@ -44,6 +44,11 @@ namespace Publicus
             database.CreateTable<SystemWideSettings>();
             database.CreateTable<SearchSettings>();
             database.CreateTable<SystemWideFile>();
+            database.CreateTable<Petition>();
+            database.CreateTable<MailTemplate>();
+            database.CreateTable<MailTemplateAssignment>();
+            database.CreateTable<LatexTemplate>();
+            database.CreateTable<LatexTemplateAssignment>();
         }
 
         private static void Migrate(IDatabase database)

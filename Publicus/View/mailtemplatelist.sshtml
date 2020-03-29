@@ -1,0 +1,55 @@
+﻿<script>
+$("#mailTemplateRowAdd").click(function(){
+  window.location.href = "/mailtemplate/add";
+});
+@Each.List
+$("#mailTemplateRowEdit1@Current.Id").click(function(){
+  window.location.href = "/mailtemplate/edit/@Current.Id";
+});
+$("#mailTemplateRowEdit2@Current.Id").click(function(){
+  window.location.href = "/mailtemplate/edit/@Current.Id";
+});
+$("#mailTemplateRowCopy@Current.Id").click(function(){
+  $.get("/mailtemplate/copy/@Current.Id", function(data, status){
+    updateMailTemplateList();
+  });
+});
+$("#mailTemplateRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/mailtemplate/delete/@Current.Id", function(data, status){
+          updateMailTemplateList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="40%">@Model.PhraseHeaderLabel</th>
+      <th width="55%">@Model.PhraseHeaderAssigned</th>
+      <th width="10%" colspan="2"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="40%" id="mailTemplateRowEdit1@Current.Id" class="@Current.Editable">@Current.Label</td>
+      <td width="50%" id="mailTemplateRowEdit2@Current.Id" class="@Current.Editable">@Current.Assigned</td>
+      <td width="5%" id="mailTemplateRowDelete@Current.Id" class="@Current.Editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="5%" id="mailTemplateRowCopy@Current.Id" class="@Current.Editable"><span class="fas fa-copy"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="95%" colspan="2" id="mailTemplateRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%" colspan="2"></td>
+    </tr>
+  </tbody>
+</table>

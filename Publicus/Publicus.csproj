@@ -201,6 +201,14 @@
     <Compile Include="Model\SystemWideFile.cs" />
     <Compile Include="Module\SystemWideFileModule.cs" />
     <Compile Include="Module\ResourceModule.cs" />
+    <Compile Include="Model\LatexTemplate.cs" />
+    <Compile Include="Model\LatexTemplateAssignment.cs" />
+    <Compile Include="Model\MailTemplate.cs" />
+    <Compile Include="Model\MailTemplateAssignment.cs" />
+    <Compile Include="Model\lTemplateAssignment.cs" />
+    <Compile Include="Model\Petition.cs" />
+    <Compile Include="Module\LatexTemplateModule.cs" />
+    <Compile Include="Module\MailTemplateModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -736,6 +744,24 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\images\publicus.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\latextemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\mailtemplatelist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

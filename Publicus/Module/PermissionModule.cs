@@ -59,6 +59,7 @@ namespace Publicus
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.TagAssignments, false));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Petition, false));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.Group, false));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.Feed, false));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.SubFeed, false));
@@ -88,6 +89,7 @@ namespace Publicus
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, permission.Part.Value == PartAccess.RoleAssignments));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, permission.Part.Value == PartAccess.Structure));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.TagAssignments, permission.Part.Value == PartAccess.TagAssignments));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Petition, permission.Part.Value == PartAccess.Petition));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.Group, permission.Subject.Value == SubjectAccess.Group));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.Feed, permission.Subject.Value == SubjectAccess.Feed));
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.SubFeed, permission.Subject.Value == SubjectAccess.SubFeed));

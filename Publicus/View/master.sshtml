@@ -72,6 +72,8 @@
                     <a class="dropdown-item" href="/country">@Model.PhraseMenuCountries</a>
                     <a class="dropdown-item" href="/state">@Model.PhraseMenuStates</a>
                     <a class="dropdown-item" href="/tag">@Model.PhraseMenuTags</a>
+                    <a class="dropdown-item" href="/mailtemplate">@Model.PhraseMenuMailTemplates</a>
+                    <a class="dropdown-item" href="/latextemplate">@Model.PhraseMenuLatexTemplates</a>
                     <a class="dropdown-item" href="/phrase">@Model.PhraseMenuPhrases</a>
                     @EndIf
                     @If.NavFeed
