@@ -44,7 +44,7 @@
       <HintPath>..\packages\Nancy.Hosting.Self.2.0.0\lib\net452\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\packages\Portable.BouncyCastle.1.8.6\lib\net40\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>..\packages\BouncyCastle.1.8.6.1\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
@@ -53,10 +53,10 @@
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.5.2\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.6.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.5.2\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.6.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
