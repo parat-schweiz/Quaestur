@@ -469,7 +469,7 @@ namespace Publicus
         {
             if (multiItems != null)
             {
-                var newValue = new MultiLanguageString();
+                var newValue = new MultiLanguageString(field.AllowType);
 
                 foreach (var item in multiItems)
                 {
@@ -512,7 +512,7 @@ namespace Publicus
         {
             if (multiItems != null)
             {
-                var newValue = new MultiLanguageString();
+                var newValue = new MultiLanguageString(field.AllowType);
 
                 foreach (var item in multiItems)
                 {
@@ -532,7 +532,7 @@ namespace Publicus
             }
             else
             {
-                field.Value = new MultiLanguageString();
+                field.Value = new MultiLanguageString(field.AllowType);
             }
         }
 
@@ -648,6 +648,148 @@ namespace Publicus
             }
 
             return false;
+        }
+
+        public void UpdateLatexTemplates(IDatabase database, TemplateField field, string[] stringValues)
+        {
+            if (stringValues == null ||
+                !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
+            {
+                Add(field.FieldName,
+                    "Validation.LatexTemplates.Invalid",
+                    "Validation message on invalid latex templates ids",
+                    "Invalid selection");
+                IsSuccess = false;
+                return;
+            }
+
+            var idValues = stringValues.Select(Guid.Parse).ToList();
+            var assignments = database
+                .Query<LatexTemplateAssignment>(DC.Equal("assignedid", field.AssignedId).And(DC.Equal("fieldname", field.FieldName)))
+                .ToList();
+
+            foreach (var removeAssignment in assignments
+                .Where(a => !idValues.Contains(a.Template.Value.Id.Value))
+                .ToList())
+            {
+                removeAssignment.Delete(database);
+                assignments.Remove(removeAssignment);
+            }
+
+            foreach (var newId in idValues
+                .Where(i => !assignments.Any(a => a.Template.Value.Id.Value.Equals(i))))
+            {
+                var template = database.Query<LatexTemplate>(newId);
+
+                if (template == null)
+                {
+                    Add(field.FieldName,
+                        "Validation.LatexTemplates.NoFound",
+                        "Validation message on latex template not found",
+                        "Invalid selection");
+                    IsSuccess = false;
+                    return;
+                }
+
+                var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
+                newAssignment.Template.Value = template;
+                newAssignment.AssignedType.Value = field.AssignedType;
+                newAssignment.AssignedId.Value = field.AssignedId;
+                newAssignment.FieldName.Value = field.FieldName;
+                database.Save(newAssignment);
+                assignments.Add(newAssignment);
+
+                if (template.Feed.Value != newAssignment.GetFeed(database))
+                {
+                    Add(field.FieldName,
+                        "Validation.LatexTemplates.WrongFeed",
+                        "Validation message on mail template wrong feed",
+                        "Wrong feed");
+                    IsSuccess = false;
+                }
+            }
+
+            if (assignments
+                .GroupBy(a => a.Template.Value.Language.Value)
+                .Any(g => g.Count() > 1))
+            {
+                Add(field.FieldName,
+                    "Validation.LatexTemplates.LanguageTwice",
+                    "Validation message on two latex templates with the same language",
+                    "Max one template per language");
+                IsSuccess = false;
+            }
+        }
+
+        public void UpdateMailTemplates(IDatabase database, TemplateField field, string[] stringValues)
+        {
+            if (stringValues == null ||
+                !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
+            {
+                Add(field.FieldName,
+                    "Validation.MailTemplates.Invalid",
+                    "Validation message on invalid mail templates ids",
+                    "Invalid selection");
+                IsSuccess = false;
+                return;
+            }
+
+            var idValues = stringValues.Select(Guid.Parse).ToList();
+            var assignments = database
+                .Query<MailTemplateAssignment>(DC.Equal("assignedid", field.AssignedId).And(DC.Equal("fieldname", field.FieldName)))
+                .ToList();
+
+            foreach (var removeAssignment in assignments
+                .Where(a => !idValues.Contains(a.Template.Value.Id.Value))
+                .ToList())
+            {
+                removeAssignment.Delete(database);
+                assignments.Remove(removeAssignment);
+            }
+
+            foreach (var newId in idValues
+                .Where(i => !assignments.Any(a => a.Template.Value.Id.Value.Equals(i))))
+            {
+                var template = database.Query<MailTemplate>(newId);
+
+                if (template == null)
+                {
+                    Add(field.FieldName,
+                        "Validation.MailTemplates.NoFound",
+                        "Validation message on mail template not found",
+                        "Invalid selection");
+                    IsSuccess = false;
+                    return;
+                }
+
+                var newAssignment = new MailTemplateAssignment(Guid.NewGuid());
+                newAssignment.Template.Value = template;
+                newAssignment.AssignedType.Value = field.AssignedType;
+                newAssignment.AssignedId.Value = field.AssignedId;
+                newAssignment.FieldName.Value = field.FieldName;
+                database.Save(newAssignment);
+                assignments.Add(newAssignment);
+
+                if (template.Feed.Value != newAssignment.GetFeed(database))
+                {
+                    Add(field.FieldName,
+                        "Validation.MailTemplates.WrongFeed",
+                        "Validation message on mail template wrong feed",
+                        "Wrong feed");
+                    IsSuccess = false;
+                }
+            }
+
+            if (assignments
+                .GroupBy(a => a.Template.Value.Language.Value)
+                .Any(g => g.Count() > 1))
+            {
+                Add(field.FieldName,
+                    "Validation.MailTemplates.LanguageTwice",
+                    "Validation message on two mail templates with the same language",
+                    "Max one template per language");
+                IsSuccess = false;
+            }
         }
     }
 }

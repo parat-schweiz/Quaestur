@@ -86,6 +86,11 @@ namespace Publicus
                 database.Save(child);
             }
 
+            foreach (var petition in database.Query<Petition>(DC.Equal("feedid", Id.Value)))
+            {
+                petition.Delete(database);
+            }
+
             database.Delete(this);
         }
 

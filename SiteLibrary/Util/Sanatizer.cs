@@ -22,6 +22,7 @@ namespace SiteLibrary
         {
             var sanitizer = new HtmlSanitizer();
             sanitizer.AllowedSchemes.Add("mailto");
+            sanitizer.AllowedCssProperties.Add("position");
             sanitizer.RemovingAttribute += (s, e) =>
                 {
                     e.Cancel = (e.Reason == RemoveReason.NotAllowedUrlValue) &&

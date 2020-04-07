@@ -19,49 +19,61 @@ namespace System
 
         public static long MaxOrDefault<T>(this IEnumerable<T> list, Func<T, long> selector, long defaultValue)
         {
-            if (list.Count() > 0)
+            if (list.Any())
             {
-                return defaultValue;
+                return list.Max(selector);
             }
             else
             {
-                return list.Max(selector);
+                return defaultValue;
             }
         }
 
         public static float MaxOrDefault<T>(this IEnumerable<T> list, Func<T, float> selector, float defaultValue)
         {
-            if (list.Count() > 0)
+            if (list.Any())
             {
-                return defaultValue;
+                return list.Max(selector);
             }
             else
             {
-                return list.Max(selector);
+                return defaultValue;
             }
         }
 
         public static double MaxOrDefault<T>(this IEnumerable<T> list, Func<T, double> selector, double defaultValue)
         {
-            if (list.Count() > 0)
+            if (list.Any())
             {
-                return defaultValue;
+                return list.Max(selector);
             }
             else
             {
-                return list.Max(selector);
+                return defaultValue;
             }
         }
 
         public static decimal MaxOrDefault<T>(this IEnumerable<T> list, Func<T, decimal> selector, decimal defaultValue)
         {
-            if (list.Count() > 0)
+            if (list.Any())
             {
-                return defaultValue;
+                return list.Max(selector);
             }
             else
             {
+                return defaultValue;
+            }
+        }
+
+        public static DateTime MaxOrDefault<T>(this IEnumerable<T> list, Func<T, DateTime> selector, DateTime defaultValue)
+        {
+            if (list.Any())
+            {
                 return list.Max(selector);
+            }
+            else
+            {
+                return defaultValue;
             }
         }
     }

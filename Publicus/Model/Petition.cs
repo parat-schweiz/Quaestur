@@ -7,9 +7,16 @@ namespace Publicus
 {
     public class Petition : DatabaseObject
     {
-        public ForeignKeyField<Feed, Petition> Feed { get; set; }
-        public MultiLanguageStringField Title { get; set; }
-        public MultiLanguageStringField Text { get; set; }
+        public ForeignKeyField<Group, Petition> Group { get; private set; }
+        public MultiLanguageStringField Label { get; private set; }
+        public MultiLanguageStringField Text { get; private set; }
+        public MultiLanguageStringField WebAddress { get; private set; }
+        public MultiLanguageStringField ShareText { get; private set; }
+        public ForeignKeyField<Tag, Petition> PetitionTag { get; private set; }
+        public ForeignKeyField<Tag, Petition> SpecialNewsletterTag { get; private set; }
+        public ForeignKeyField<Tag, Petition> GeneralNewsletterTag { get; private set; }
+        public ForeignKeyField<Tag, Petition> ShowPubliclyTag { get; private set; }
+        public ByteArrayField EmailKey { get; private set; }
 
         public Petition() : this(Guid.Empty)
         {
@@ -17,14 +24,21 @@ namespace Publicus
 
         public Petition(Guid id) : base(id)
         {
-            Feed = new ForeignKeyField<Feed, Petition>(this, "feedid", false, null);
-            Title = new MultiLanguageStringField(this, "title", AllowStringType.SimpleText);
+            Group = new ForeignKeyField<Group, Petition>(this, "groupid", false, null);
+            Label = new MultiLanguageStringField(this, "label", AllowStringType.SimpleText);
             Text = new MultiLanguageStringField(this, "text", AllowStringType.SafeHtml);
+            WebAddress = new MultiLanguageStringField(this, "webaddress", AllowStringType.SimpleText);
+            ShareText = new MultiLanguageStringField(this, "sharetext", AllowStringType.SimpleText);
+            PetitionTag = new ForeignKeyField<Tag, Petition>(this, "petitiontagid", false, null);
+            SpecialNewsletterTag = new ForeignKeyField<Tag, Petition>(this, "specialnewslettertagid", true, null);
+            GeneralNewsletterTag = new ForeignKeyField<Tag, Petition>(this, "generalnewslettertagid", true, null);
+            ShowPubliclyTag = new ForeignKeyField<Tag, Petition>(this, "showpubliclytag", true, null);
+            EmailKey = new ByteArrayField(this, "emailkey", false);
         }
 
         public override string ToString()
         {
-            return Title.Value.AnyValue;
+            return Label.Value.AnyValue;
         }
 
         public override void Delete(IDatabase database)
@@ -34,7 +48,7 @@ namespace Publicus
 
         public override string GetText(Translator translator)
         {
-            return Title.Value[translator.Language];
+            return Label.Value[translator.Language];
         }
 
         public static string GetFieldNameTranslation(Translator translator, string fieldName)

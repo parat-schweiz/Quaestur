@@ -30,7 +30,7 @@ namespace Publicus
 
             if (o is Petition)
             {
-                return ((Petition)o).Feed.Value;
+                return ((Petition)o).Group.Value.Feed.Value;
             }
             else
             {
@@ -107,7 +107,7 @@ namespace Publicus
             switch (AssignedType.Value)
             {
                 case TemplateAssignmentType.Petition:
-                    var feed1 = (AssignedTo(database) as Petition).Feed.Value;
+                    var feed1 = (AssignedTo(database) as Petition).Group.Value.Feed.Value;
                     return session.HasAccess(feed1, AssignedPartAccess, right);
                 default:
                     throw new NotSupportedException();

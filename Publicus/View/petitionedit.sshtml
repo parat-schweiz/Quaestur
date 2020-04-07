@@ -1,0 +1,240 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#petition' + field + key;
+  var feedbackId = '#petition' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#petition' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  console.log(resultData);
+  var result = JSON.parse(resultData);
+  @Each.Label
+  assignFieldMultiValidation("Label", "@Current.Key", result);
+  @EndEach
+  @Each.WebAddress
+  assignFieldMultiValidation("WebAddress", "@Current.Key", result);
+  @EndEach
+  @Each.ShareText
+  assignFieldMultiValidation("ShareText", "@Current.Key", result);
+  @EndEach
+  @Each.Text
+  assignFieldMultiValidation("Text", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("Group", result);
+  assignFieldValidation("PetitionTag", result);
+  assignFieldValidation("SpecialNewsletterTag", result);
+  assignFieldValidation("GeneralNewsletterTag", result);
+  assignFieldValidation("ShowPubliclyTag", result);
+  assignFieldValidation("ConfirmationMails", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#latexingCancelButton").click(function(event) {
+    window.location.href = "/petition";
+    event.preventDefault();  
+  });
+  $("#latexingSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Label = new Array();
+    @Each.Label
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#petitionLabel@Current.Key").val();
+    formData.Label.push(obj@Current.Key);
+    @EndEach
+    formData.WebAddress = new Array();
+    @Each.WebAddress
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#petitionWebAddress@Current.Key").val();
+    formData.WebAddress.push(obj@Current.Key);
+    @EndEach
+    formData.ShareText = new Array();
+    @Each.ShareText
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = $("#petitionShareText@Current.Key").val();
+    formData.ShareText.push(obj@Current.Key);
+    @EndEach
+    formData.Text = new Array();
+    @Each.Text
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = tinymce.get("petitionText@Current.Key").getContent();
+    formData.Text.push(obj@Current.Key);
+    @EndEach
+    formData.Group = $("#petitionGroup").val();
+    formData.PetitionTag = $("#petitionPetitionTag").val();
+    formData.SpecialNewsletterTag = $("#petitionSpecialNewsletterTag").val();
+    formData.GeneralNewsletterTag = $("#petitionGeneralNewsletterTag").val();
+    formData.ShowPubliclyTag = $("#petitionShowPubliclyTag").val();
+    formData.ConfirmationMailTemplates = $("#petitionConfirmationMails").val();
+    $.post("/petition/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/petition";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+  tinymce.init({
+    selector: '.tinymce',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionGroup">@Model.PhraseFieldGroup</label>
+        <select id="petitionGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.Groups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionGroupFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.Label
+      <div class="col-12 mb-3">
+        <label for="petitionLabel@Current.Key">@Current.Phrase</label>
+        <input type="text" id="petitionLabel@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="petitionLabelFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.WebAddress
+      <div class="col-12 mb-3">
+        <label for="petitionWebAddress@Current.Key">@Current.Phrase</label>
+        <input type="text" id="petitionWebAddress@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="petitionWebAddressFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.ShareText
+      <div class="col-12 mb-3">
+        <label for="petitionShareText@Current.Key">@Current.Phrase</label>
+        <textarea id="petitionShareText@Current.Key" class="form-control"/>@Current.Value</textarea>
+        <div id="petitionShareTextFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Text
+      <div class="col-12 mb-3">
+        <label for="petitionText@Current.Key">@Current.Phrase</label>
+        <textarea id="petitionText@Current.Key" class="form-control tinymce">@Current.Value</textarea>
+        <div id="petitionTextFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionPetitionTag">@Model.PhraseFieldPetitionTag</label>
+        <select id="petitionPetitionTag" class="selectpicker form-control" data-live-search="true">
+          @Each.PetitionTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionPetitionTagFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionSpecialNewsletterTag">@Model.PhraseFieldSpecialNewsletterTag</label>
+        <select id="petitionSpecialNewsletterTag" class="selectpicker form-control" data-live-search="true">
+          @Each.SpecialNewsletterTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionSpecialNewsletterTagFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionGeneralNewsletterTag">@Model.PhraseFieldGeneralNewsletterTag</label>
+        <select id="petitionGeneralNewsletterTag" class="selectpicker form-control" data-live-search="true">
+          @Each.GeneralNewsletterTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionGeneralNewsletterTagFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionShowPubliclyTag">@Model.PhraseFieldShowPubliclyTag</label>
+        <select id="petitionShowPubliclyTag" class="selectpicker form-control" data-live-search="true">
+          @Each.ShowPubliclyTags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionShowPubliclyTagFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="petitionConfirmationMails">@Model.PhraseFieldConfirmationMailTemplates</label>
+        <select id="petitionConfirmationMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.ConfirmationMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="petitionConfirmationMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="latexingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="latexingSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

@@ -1,0 +1,67 @@
+﻿@Master['View/petition_action.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#sign' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Mail", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#nextButton").click(function(event) {
+    showModalSpinner();
+    var formData = new Object();
+    formData.Mail = $("#signMail").val();
+    $.post("@Model.WebAddress/mail", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        hideModalSpinner();
+        window.location.href = "@Model.WebAddress/mail#inputrow";
+      }
+    });
+    event.preventDefault(); 
+  });
+});
+</script>
+@EndSection
+
+@Section['input']
+<div class="alert alert-@Model.AlertType" role="alert">
+    @Model.PhraseInfo
+</div>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-12 mb-12">
+        <label for="signMail">@Model.PhraseFieldMail</label>
+        <input type="text" class="form-control" id="signMail" value="">
+        <div id="signMailFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="nextButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonNext</button>
+  </form>
+</div>
+@EndSection

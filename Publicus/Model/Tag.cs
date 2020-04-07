@@ -58,9 +58,9 @@ namespace Publicus
 
     public class Tag : DatabaseObject
     {
-		public MultiLanguageStringField Name { get; set; }
-        public EnumField<TagMode> Mode { get; set; }
-        public EnumField<TagUsage> Usage { get; set; }
+		public MultiLanguageStringField Name { get; private set; }
+        public EnumField<TagMode> Mode { get; private set; }
+        public EnumField<TagUsage> Usage { get; private set; }
 
         public Tag() : this(Guid.Empty)
         {
@@ -84,6 +84,21 @@ namespace Publicus
             foreach (var tagAssignment in database.Query<TagAssignment>(DC.Equal("tagid", Id.Value)))
             {
                 tagAssignment.Delete(database);
+            }
+
+            foreach (var petition in database.Query<Petition>(DC.Equal("petitiontagid", Id.Value)))
+            {
+                petition.Delete(database);
+            }
+
+            foreach (var petition in database.Query<Petition>(DC.Equal("specialnewslettertagid", Id.Value)))
+            {
+                petition.Delete(database);
+            }
+
+            foreach (var petition in database.Query<Petition>(DC.Equal("generalnewslettertagid", Id.Value)))
+            {
+                petition.Delete(database);
             }
 
             database.Delete(this);

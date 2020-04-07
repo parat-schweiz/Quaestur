@@ -42,6 +42,7 @@ namespace Publicus
         public bool NavContactNew = false;
         public bool NavExport = false;
         public bool NavMailing = false;
+        public bool NavPetition = false;
         public bool NavFeed = false;
         public bool NavSettings = false;
         public string PhraseMenuContacts = string.Empty;
@@ -60,6 +61,8 @@ namespace Publicus
         public string PhraseMenuNewMailing = string.Empty;
         public string PhraseMenuListMailings = string.Empty;
         public string PhraseMenuMailingElement = string.Empty;
+        public string PhraseMenuPetitions = string.Empty;
+        public string PhraseMenuListPetitions = string.Empty;
         public string PhraseMenuLogout = string.Empty;
         public string PhraseMenuSettings = string.Empty;
         public string PhraseMenuSystemWideFiles = string.Empty;
@@ -77,7 +80,8 @@ namespace Publicus
             NavCustom = session != null && session.HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write);
             NavContactNew = session != null && session.HasContactNewAccess();
             NavExport = session != null && session.HasAnyFeedAccess(PartAccess.Contact, AccessRight.Read);
-            NavMailing = session != null && session.HasAnyFeedAccess(PartAccess.Contact, AccessRight.Write);
+            NavMailing = session != null && session.HasAnyFeedAccess(PartAccess.Mailings, AccessRight.Read);
+            NavPetition = session != null && session.HasAnyFeedAccess(PartAccess.Petition, AccessRight.Read);
             NavFeed = session != null && session.HasAnyFeedAccess(PartAccess.Structure, AccessRight.Read);
             NavSettings = session != null && session.HasAnyFeedAccess(PartAccess.Crypto, AccessRight.Read);
             PhraseMenuContacts = translator.Get("Master.Menu.Contacts", "Item 'Contacts' in the main menu", "Contacts").EscapeHtml();
@@ -96,6 +100,8 @@ namespace Publicus
             PhraseMenuNewMailing = translator.Get("Master.Menu.Mailings.New", "Item 'New mailing' under 'Mailings' in the main menu", "New mailing").EscapeHtml();
             PhraseMenuListMailings = translator.Get("Master.Menu.Mailings.List", "Item 'List mailings' under 'Mailings' in the main menu", "List").EscapeHtml();
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
+            PhraseMenuPetitions = translator.Get("Master.Menu.Petitions", "Item 'Petitions' in the main menu", "Petitions").EscapeHtml();
+            PhraseMenuListPetitions = translator.Get("Master.Menu.Petitions.List", "Item 'List mailings' under 'Petitions' in the main menu", "List").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuSystemWideFiles = translator.Get("Master.Menu.Settings.SystemWideFiles", "Item 'System wide files' under settings in the main menu", "System wide files").EscapeHtml();

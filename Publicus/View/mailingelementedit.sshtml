@@ -52,7 +52,7 @@ $(document).ready(function() {
     event.preventDefault();  
   });
   $('.selectpicker').selectpicker();
-    tinymce.init({
+  tinymce.init({
     selector: '#@Model.HtmlEditorId',
     theme: 'modern',
     height: 300,

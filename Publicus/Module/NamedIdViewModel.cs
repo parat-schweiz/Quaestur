@@ -51,6 +51,13 @@ namespace Publicus
             Selected = selected;
         }
 
+        public NamedIdViewModel(Translator translator, MailTemplate mailTemplate, bool selected)
+        {
+            Id = mailTemplate.Id.ToString();
+            Name = mailTemplate.Label.Value.EscapeHtml();
+            Selected = selected;
+        }
+
         public NamedIdViewModel(Translator translator, State state, bool selected)
         {
             Id = state.Id.ToString();
@@ -62,6 +69,13 @@ namespace Publicus
         {
             Id = feed.Id.ToString();
             Name = feed.Name.Value[translator.Language].EscapeHtml();
+            Selected = selected;
+        }
+
+        public NamedIdViewModel(Translator translator, Group group, bool selected)
+        {
+            Id = group.Id.ToString();
+            Name = group.Name.Value[translator.Language].EscapeHtml();
             Selected = selected;
         }
 
@@ -91,14 +105,6 @@ namespace Publicus
         {
             Id = subscription.Id.ToString();
             Name = subscription.Feed.Value.Name.Value[translator.Language].EscapeHtml();
-            Selected = selected;
-        }
-
-        public NamedIdViewModel(Translator translator, Group group, bool selected)
-        {
-            Id = group.Id.ToString();
-            Name = group.Feed.Value.Name.Value[translator.Language].EscapeHtml() + " / " +
-                   group.Name.Value[translator.Language].EscapeHtml();
             Selected = selected;
         }
 

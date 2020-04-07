@@ -62,6 +62,14 @@
                   </div>
                 </li>
                 @EndIf
+                @If.NavPetition
+                <li class="nav-item dropdown">
+                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuPetitions</a>
+                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="/petition">@Model.PhraseMenuListPetitions</a>
+                  </div>
+                </li>
+                @EndIf
                 @If.NavFeed
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuCustom</a>
