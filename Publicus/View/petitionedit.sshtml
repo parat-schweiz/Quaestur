@@ -56,6 +56,15 @@ function assignValidation(resultData){
   @Each.Text
   assignFieldMultiValidation("Text", "@Current.Key", result);
   @EndEach
+  @Each.Privacy
+  assignFieldMultiValidation("Privacy", "@Current.Key", result);
+  @EndEach
+  @Each.Faq
+  assignFieldMultiValidation("Faq", "@Current.Key", result);
+  @EndEach
+  @Each.Imprint
+  assignFieldMultiValidation("Imprint", "@Current.Key", result);
+  @EndEach
   assignFieldValidation("Group", result);
   assignFieldValidation("PetitionTag", result);
   assignFieldValidation("SpecialNewsletterTag", result);
@@ -99,6 +108,27 @@ $(document).ready(function() {
     obj@Current.Key['Key'] = "@Current.Key";
     obj@Current.Key['Value'] = tinymce.get("petitionText@Current.Key").getContent();
     formData.Text.push(obj@Current.Key);
+    @EndEach
+    formData.Privacy = new Array();
+    @Each.Privacy
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = tinymce.get("petitionPrivacy@Current.Key").getContent();
+    formData.Privacy.push(obj@Current.Key);
+    @EndEach
+    formData.Faq = new Array();
+    @Each.Faq
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = tinymce.get("petitionFaq@Current.Key").getContent();
+    formData.Faq.push(obj@Current.Key);
+    @EndEach
+    formData.Imprint = new Array();
+    @Each.Imprint
+    var obj@Current.Key = new Object();
+    obj@Current.Key['Key'] = "@Current.Key";
+    obj@Current.Key['Value'] = tinymce.get("petitionImprint@Current.Key").getContent();
+    formData.Imprint.push(obj@Current.Key);
     @EndEach
     formData.Group = $("#petitionGroup").val();
     formData.PetitionTag = $("#petitionPetitionTag").val();
@@ -175,6 +205,33 @@ $(document).ready(function() {
         <label for="petitionText@Current.Key">@Current.Phrase</label>
         <textarea id="petitionText@Current.Key" class="form-control tinymce">@Current.Value</textarea>
         <div id="petitionTextFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Privacy
+      <div class="col-12 mb-3">
+        <label for="petitionPrivacy@Current.Key">@Current.Phrase</label>
+        <textarea id="petitionPrivacy@Current.Key" class="form-control tinymce">@Current.Value</textarea>
+        <div id="petitionPrivacyFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Faq
+      <div class="col-12 mb-3">
+        <label for="petitionFaq@Current.Key">@Current.Phrase</label>
+        <textarea id="petitionFaq@Current.Key" class="form-control tinymce">@Current.Value</textarea>
+        <div id="petitionFaqFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Imprint
+      <div class="col-12 mb-3">
+        <label for="petitionImprint@Current.Key">@Current.Phrase</label>
+        <textarea id="petitionImprint@Current.Key" class="form-control tinymce">@Current.Value</textarea>
+        <div id="petitionImprintFeedback@Current.Key" class="valid-feedback"></div>
       </div>
       @EndEach
     </div>

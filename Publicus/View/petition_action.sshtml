@@ -69,6 +69,36 @@
           @Section['input'];
         </div>
       </div>
+      <div class="row links">
+        <div class="col-12">
+          <div class="container">
+            <div class="row">
+              <div class="col-12">
+                &nbsp;
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3 mb-3" style="text-align: center;">
+                <a href="@Model.WebAddress">@Model.PhrasePagePetition</a>
+              </div>
+              <div class="col-md-3 mb-3" style="text-align: center;">
+                <a href="@Model.WebAddress/privacy">@Model.PhrasePagePrivacy</a>
+              </div>
+              <div class="col-md-3 mb-3" style="text-align: center;">
+                <a href="@Model.WebAddress/faq">@Model.PhrasePageFaq</a>
+              </div>
+              <div class="col-md-3 mb-3" style="text-align: center;">
+                <a href="@Model.WebAddress/imprint">@Model.PhrasePageImprint</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-mb-12">
+                &nbsp;
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     
     <div id="modalspinner" class="modal fade" tabindex="-1" role="dialog">

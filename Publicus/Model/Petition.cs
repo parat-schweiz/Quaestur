@@ -10,6 +10,9 @@ namespace Publicus
         public ForeignKeyField<Group, Petition> Group { get; private set; }
         public MultiLanguageStringField Label { get; private set; }
         public MultiLanguageStringField Text { get; private set; }
+        public MultiLanguageStringField Privacy { get; private set; }
+        public MultiLanguageStringField Faq { get; private set; }
+        public MultiLanguageStringField Imprint { get; private set; }
         public MultiLanguageStringField WebAddress { get; private set; }
         public MultiLanguageStringField ShareText { get; private set; }
         public ForeignKeyField<Tag, Petition> PetitionTag { get; private set; }
@@ -27,6 +30,9 @@ namespace Publicus
             Group = new ForeignKeyField<Group, Petition>(this, "groupid", false, null);
             Label = new MultiLanguageStringField(this, "label", AllowStringType.SimpleText);
             Text = new MultiLanguageStringField(this, "text", AllowStringType.SafeHtml);
+            Privacy = new MultiLanguageStringField(this, "privacy", AllowStringType.SafeHtml);
+            Faq = new MultiLanguageStringField(this, "faq", AllowStringType.SafeHtml);
+            Imprint = new MultiLanguageStringField(this, "imprint", AllowStringType.SafeHtml);
             WebAddress = new MultiLanguageStringField(this, "webaddress", AllowStringType.SimpleText);
             ShareText = new MultiLanguageStringField(this, "sharetext", AllowStringType.SimpleText);
             PetitionTag = new ForeignKeyField<Tag, Petition>(this, "petitiontagid", false, null);

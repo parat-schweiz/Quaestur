@@ -71,6 +71,8 @@ namespace Publicus
                     return _contact.BirthDate.Value.FormatSwissDateDay();
                 case "Contact.Address.FiveLines":
                     return CreatePostalAddressFiveLines();
+                case "Contact.UnsubscribeLink":
+                    return UnsubcribeModule.CreateUnsubscribeLink(_contact.Id.Value);
                 default:
                     throw new NotSupportedException();
             }

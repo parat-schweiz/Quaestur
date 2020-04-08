@@ -18,6 +18,9 @@ namespace Publicus
         public string Group;
         public List<NamedIdViewModel> Groups;
         public List<MultiItemViewModel> Text;
+        public List<MultiItemViewModel> Privacy;
+        public List<MultiItemViewModel> Faq;
+        public List<MultiItemViewModel> Imprint;
         public List<MultiItemViewModel> WebAddress;
         public List<MultiItemViewModel> ShareText;
         public string PetitionTag;
@@ -63,6 +66,9 @@ namespace Publicus
             Id = "new";
             Label = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Label", "Label field in the petition edit dialog", "Label ({0})", new MultiLanguageString());
             Text = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Text", "Text field in the petition edit dialog", "Text ({0})", new MultiLanguageString());
+            Privacy = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Privacy", "Privacy field in the petition edit dialog", "Privacy ({0})", new MultiLanguageString());
+            Faq = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Faq", "FAQ field in the petition edit dialog", "FAQ ({0})", new MultiLanguageString());
+            Imprint = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Imprint", "Imprint field in the petition edit dialog", "Imprint ({0})", new MultiLanguageString());
             WebAddress = translator.CreateLanguagesMultiItem("Petition.Edit.Field.WebAddress", "Web address field in the petition edit dialog", "Web address ({0})", new MultiLanguageString());
             ShareText = translator.CreateLanguagesMultiItem("Petition.Edit.Field.ShareText", "Share text field in the petition edit dialog", "Share text ({0})", new MultiLanguageString());
             Groups = new List<NamedIdViewModel>(database
@@ -100,6 +106,9 @@ namespace Publicus
             Id = petition.Id.ToString();
             Label = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Label", "Label field in the petition edit dialog", "Label ({0})", petition.Label.Value);
             Text = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Text", "Text field in the petition edit dialog", "Text ({0})", petition.Text.Value);
+            Privacy = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Privacy", "Privacy field in the petition edit dialog", "Privacy ({0})", petition.Privacy);
+            Faq = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Faq", "FAQ field in the petition edit dialog", "FAQ ({0})", petition.Faq);
+            Imprint = translator.CreateLanguagesMultiItem("Petition.Edit.Field.Imprint", "Imprint field in the petition edit dialog", "Imprint ({0})", petition.Imprint);
             WebAddress = translator.CreateLanguagesMultiItem("Petition.Edit.Field.WebAddress", "Web address field in the petition edit dialog", "Web address ({0})", petition.WebAddress.Value);
             ShareText = translator.CreateLanguagesMultiItem("Petition.Edit.Field.ShareText", "Share text field in the petition edit dialog", "Share text ({0})", petition.ShareText.Value);
             Groups = new List<NamedIdViewModel>(database
@@ -236,6 +245,9 @@ namespace Publicus
                         status.AssignMultiLanguageRequired("Label", petition.Label, model.Label);
                         status.AssignObjectIdString("Group", petition.Group, model.Group);
                         status.AssignMultiLanguageFree("Text", petition.Text, model.Text);
+                        status.AssignMultiLanguageFree("Privacy", petition.Privacy, model.Privacy);
+                        status.AssignMultiLanguageFree("Faq", petition.Faq, model.Faq);
+                        status.AssignMultiLanguageFree("Imprint", petition.Imprint, model.Imprint);
                         status.AssignMultiLanguageFree("WebAddress", petition.WebAddress, model.WebAddress);
                         status.AssignMultiLanguageFree("ShareText", petition.ShareText, model.ShareText);
                         status.AssignObjectIdString("PetitionTag", petition.PetitionTag, model.PetitionTag);
@@ -284,6 +296,9 @@ namespace Publicus
                 status.AssignMultiLanguageRequired("Label", petition.Label, model.Label);
                 status.AssignObjectIdString("Group", petition.Group, model.Group);
                 status.AssignMultiLanguageFree("Text", petition.Text, model.Text);
+                status.AssignMultiLanguageFree("Privacy", petition.Privacy, model.Privacy);
+                status.AssignMultiLanguageFree("Faq", petition.Faq, model.Faq);
+                status.AssignMultiLanguageFree("Imprint", petition.Imprint, model.Imprint);
                 status.AssignMultiLanguageFree("WebAddress", petition.WebAddress, model.WebAddress);
                 status.AssignMultiLanguageFree("ShareText", petition.ShareText, model.ShareText);
                 status.AssignObjectIdString("PetitionTag", petition.PetitionTag, model.PetitionTag);

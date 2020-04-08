@@ -215,23 +215,41 @@ namespace Publicus
         }
     }
 
-    public class PetitionActionViewModel
+    public class PetitionPageViewModel : PetitionActionBaseViewModel
+    {
+        public string Text;
+
+        public PetitionPageViewModel(IDatabase database, Translator translator, Petition petition, MultiLanguageString text)
+            : base(database, translator, petition)
+        {
+            Text = text[translator.Language];
+        }
+    }
+
+    public class PetitionActionBaseViewModel
     {
         public string Id;
         public string Title;
-        public string Text;
         public string Language;
         public string WebAddress;
+        public string PhrasePagePetition;
+        public string PhrasePagePrivacy;
+        public string PhrasePageFaq;
+        public string PhrasePageImprint;
 
-        public PetitionActionViewModel()
-        { 
+        public PetitionActionBaseViewModel()
+        {
         }
 
-        public PetitionActionViewModel(IDatabase database, Translator translator, Petition petition)
+        public PetitionActionBaseViewModel(IDatabase database, Translator translator, Petition petition)
         {
+            PhrasePagePetition = translator.Get("Petition.Action.Page.Petition", "Page 'Petition' on the petition action page", "Petition").EscapeHtml();
+            PhrasePagePrivacy = translator.Get("Petition.Action.Page.Privacy", "Page 'Privacy statement' on the petition action page", "Privacy statement").EscapeHtml();
+            PhrasePageFaq = translator.Get("Petition.Action.Page.Faq", "Page 'FAQ' on the petition action page", "FAQ").EscapeHtml();
+            PhrasePageImprint = translator.Get("Petition.Action.Page.Imprint", "Page 'Imprint' on the petition action page", "Imprint").EscapeHtml();
+
             Id = petition.Id.Value.ToString();
             Title = petition.Label.Value[translator.Language].EscapeHtml();
-            Text = petition.Text.Value[translator.Language];
             WebAddress = petition.WebAddress.Value[translator.Language];
 
             switch (translator.Language)
@@ -250,6 +268,22 @@ namespace Publicus
                     Language = "de";
                     break;
             }
+        }
+    }
+
+    public class PetitionActionViewModel : PetitionActionBaseViewModel
+    {
+        public string Text;
+
+        public PetitionActionViewModel()
+            : base()
+        { 
+        }
+
+        public PetitionActionViewModel(IDatabase database, Translator translator, Petition petition)
+            : base(database, translator, petition)
+        {
+            Text = petition.Text.Value[translator.Language];
         }
     }
 
@@ -784,6 +818,69 @@ namespace Publicus
                         new JProperty("index", 0),
                         new JProperty("text", string.Empty));
                     return json.ToString();
+                }
+            });
+            Get("/petition/{id}/{lang}/privacy", parameters =>
+            {
+                string idString = parameters.id;
+                var petition = Database.Query<Petition>(idString);
+                string langString = parameters.lang;
+                var translator = CreateTranslator(langString);
+
+                if (petition != null)
+                {
+                    return View["View/petition_page.sshtml",
+                        new PetitionPageViewModel(Database, translator, petition, petition.Privacy.Value)];
+                }
+                else
+                {
+                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                        Translate("Petition.Sign.Error.Unknown.Title", "Error title when petition not known", "Not found"),
+                        Translate("Petition.Sign.Error.Unknown.Text", "Error text when petition not known", "The requested petition could not be found."),
+                        Translate("Petition.Sign.Error.Unknown.BackLink", "Back link when petition not known", "Back"),
+                        "/")];
+                }
+            });
+            Get("/petition/{id}/{lang}/faq", parameters =>
+            {
+                string idString = parameters.id;
+                var petition = Database.Query<Petition>(idString);
+                string langString = parameters.lang;
+                var translator = CreateTranslator(langString);
+
+                if (petition != null)
+                {
+                    return View["View/petition_page.sshtml",
+                        new PetitionPageViewModel(Database, translator, petition, petition.Faq.Value)];
+                }
+                else
+                {
+                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                        Translate("Petition.Sign.Error.Unknown.Title", "Error title when petition not known", "Not found"),
+                        Translate("Petition.Sign.Error.Unknown.Text", "Error text when petition not known", "The requested petition could not be found."),
+                        Translate("Petition.Sign.Error.Unknown.BackLink", "Back link when petition not known", "Back"),
+                        "/")];
+                }
+            });
+            Get("/petition/{id}/{lang}/imprint", parameters =>
+            {
+                string idString = parameters.id;
+                var petition = Database.Query<Petition>(idString);
+                string langString = parameters.lang;
+                var translator = CreateTranslator(langString);
+
+                if (petition != null)
+                {
+                    return View["View/petition_page.sshtml",
+                        new PetitionPageViewModel(Database, translator, petition, petition.Imprint.Value)];
+                }
+                else
+                {
+                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                        Translate("Petition.Sign.Error.Unknown.Title", "Error title when petition not known", "Not found"),
+                        Translate("Petition.Sign.Error.Unknown.Text", "Error text when petition not known", "The requested petition could not be found."),
+                        Translate("Petition.Sign.Error.Unknown.BackLink", "Back link when petition not known", "Back"),
+                        "/")];
                 }
             });
         }
