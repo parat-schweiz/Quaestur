@@ -766,14 +766,20 @@ namespace Publicus
                                         l => petition.Label.Value[l.Language]);
                             }
 
-                            UpdateTagAssignment(contact, petition.PetitionTag, true);
-                            UpdateTagAssignment(contact, petition.SpecialNewsletterTag, model.SpecialNewsletter);
-                            UpdateTagAssignment(contact, petition.GeneralNewsletterTag, model.GeneralNewsletter);
-                            UpdateTagAssignment(contact, petition.ShowPubliclyTag, model.ShowPublicly);
+                            if (status.IsSuccess)
+                            {
+                                UpdateTagAssignment(contact, petition.PetitionTag, true);
+                                UpdateTagAssignment(contact, petition.SpecialNewsletterTag, model.SpecialNewsletter);
+                                UpdateTagAssignment(contact, petition.GeneralNewsletterTag, model.GeneralNewsletter);
+                                UpdateTagAssignment(contact, petition.ShowPubliclyTag, model.ShowPublicly);
+                            }
 
-                            transaction.Commit();
+                            if (status.IsSuccess)
+                            {
+                                transaction.Commit();
 
-                            LastActivity.Instance.Add(Database, petition, Translation, contact.FullName, model.Place, model.ShowPublicly);
+                                LastActivity.Instance.Add(Database, petition, Translation, contact.FullName, model.Place, model.ShowPublicly);
+                            }
                         }
                     }
                     else
