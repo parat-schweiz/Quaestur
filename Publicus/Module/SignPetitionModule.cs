@@ -550,7 +550,7 @@ namespace Publicus
                 var petition = Database.Query<Petition>(idString);
                 string langString = parameters.lang;
                 var translator = CreateTranslator(langString);
-                var status = CreateStatus();
+                var status = CreateStatus(translator);
                 var model = JsonConvert.DeserializeObject<PetitionMailPostViewModel>(ReadBody());
 
                 if (status.ObjectNotNull(petition))
@@ -658,7 +658,7 @@ namespace Publicus
                 var translator = CreateTranslator(langString);
                 string encodedMailAddress = parameters.mail;
                 string code = parameters.code;
-                var status = CreateStatus();
+                var status = CreateStatus(translator);
                 var model = JsonConvert.DeserializeObject<PetitionConfirmViewModel>(ReadBody());
 
                 if (status.ObjectNotNull(petition))

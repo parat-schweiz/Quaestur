@@ -285,5 +285,10 @@ namespace Publicus
         {
             return new PostStatus(Database, Translator, CurrentSession);
         }
+
+        protected PostStatus CreateStatus(Translator translator)
+        {
+            return new PostStatus(Database, translator, CurrentSession);
+        }
     }
 }
