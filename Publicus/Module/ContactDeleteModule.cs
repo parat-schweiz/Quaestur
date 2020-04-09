@@ -30,9 +30,11 @@ namespace Publicus
                             "Mark a contact as delete",
                             "Marked as delete");
                     }
+
+                    return "/contact/detail/" + contact.Id.ToString();
                 }
 
-                return null;
+                return "/contact/list";
             });
             Get("/contact/delete/unmark/{id}", parameters =>
             {
@@ -51,9 +53,11 @@ namespace Publicus
                             "Unmark as deleted",
                             "Undeleted");
                     }
+
+                    return "/contact/detail/" + contact.Id.ToString();
                 }
 
-                return null;
+                return "/contact/list";
             });
             Get("/contact/delete/hard/{id}", parameters =>
             {
@@ -77,7 +81,7 @@ namespace Publicus
                     }
                 }
 
-                return null;
+                return "/contact/list";
             });
         }
     }

@@ -6,8 +6,12 @@ $("#@Current.RowId").click(function(){
     content: "@Current.PhraseConfirmationQuestion",
     buttons: {
       confirm: function () {
-        $.get("@Current.Path", function(dummyData){
-          location.reload();
+        $.get("@Current.Path", function(nextPage){
+          if (nextPage) {
+            window.location.href = nextPage;
+          } else {
+            window.location.href = "/";
+          }
         });
       },
       cancel: function () {},

@@ -102,7 +102,7 @@ namespace Publicus
                     }
                 }
 
-                return null;
+                return string.Empty;
             });
         }
     }
