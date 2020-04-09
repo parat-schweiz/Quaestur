@@ -18,6 +18,7 @@ namespace Publicus
         {
             _task = new List<ITask>();
             _task.Add(new MailingTask());
+            _task.Add(new ExpiryTask());
             _database = Global.CreateDatabase();
         }
 

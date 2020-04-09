@@ -23,6 +23,7 @@ namespace Publicus
         public List<TagAssignment> TagAssignments { get; private set; }
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
+        public FieldNull<DateTime> ExpiryDate { get; private set; }
 
         public Contact() : this(Guid.Empty)
         {
@@ -38,6 +39,7 @@ namespace Publicus
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
+            ExpiryDate = new FieldNull<DateTime>(this, "expirydate");
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();
             Subscriptions = new List<Subscription>();
@@ -278,11 +280,6 @@ namespace Publicus
             foreach (var subscription in database.Query<Subscription>(DC.Equal("contactid", Id.Value)))
             {
                 subscription.Delete(database);
-            }
-
-            foreach (var roleAssignment in database.Query<RoleAssignment>(DC.Equal("contactid", Id.Value)))
-            {
-                roleAssignment.Delete(database);
             }
 
             foreach (var tagAssignment in database.Query<TagAssignment>(DC.Equal("contactid", Id.Value)))

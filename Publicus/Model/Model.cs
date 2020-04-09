@@ -6,7 +6,7 @@ namespace Publicus
 {
     public static class Model
     {
-        public static int CurrentVersion = 2;
+        public static int CurrentVersion = 4;
 
         public static void Install(IDatabase database)
         {
@@ -80,6 +80,9 @@ namespace Publicus
                     break;
                 case 3:
                     EncryptGpgPassphrases(database);
+                    break;
+                case 4:
+                    database.AddColumn<Contact>(c => c.ExpiryDate);
                     break;
                 default:
                     throw new NotSupportedException();

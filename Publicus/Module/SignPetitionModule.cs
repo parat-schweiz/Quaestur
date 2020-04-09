@@ -680,8 +680,10 @@ namespace Publicus
                             {
                                 contact = new Contact(Guid.NewGuid());
                                 contact.Language.Value = translator.Language;
+                                contact.ExpiryDate.Value = model.GeneralNewsletter ?
+                                    DateTime.UtcNow.AddYears(3) : DateTime.UtcNow.AddYears(1);
                                 status.AssignStringRequired("FirstName", contact.FirstName, model.FirstName);
-                                status.AssignStringRequired("FirstName", contact.LastName, model.LastName);
+                                status.AssignStringRequired("LastName", contact.LastName, model.LastName);
                                 Database.Save(contact);
 
                                 var subscription = new Subscription(Guid.NewGuid());
@@ -715,8 +717,17 @@ namespace Publicus
                             else
                             {
                                 contact = oldAddress.Contact.Value;
+                                if (contact.ExpiryDate.Value.HasValue)
+                                {
+                                    var newExpiryDate = model.GeneralNewsletter ?
+                                        DateTime.UtcNow.AddYears(3) : DateTime.UtcNow.AddYears(1);
+                                    if (contact.ExpiryDate.Value.Value < newExpiryDate)
+                                    {
+                                        contact.ExpiryDate.Value = newExpiryDate;
+                                    }
+                                }
                                 status.AssignStringRequired("FirstName", contact.FirstName, model.FirstName);
-                                status.AssignStringRequired("FirstName", contact.LastName, model.LastName);
+                                status.AssignStringRequired("LastName", contact.LastName, model.LastName);
                                 Database.Save(contact);
 
                                 var postalAddress = contact.PostalAddresses

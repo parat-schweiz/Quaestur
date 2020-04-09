@@ -2,7 +2,7 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <title>Publicus - @Model.Title</title>
+    <title>@Model.Title</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
     <link rel="stylesheet" href="/Assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/Assets/fontawesome/css/all.min.css">
