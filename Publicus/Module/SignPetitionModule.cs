@@ -316,6 +316,13 @@ namespace Publicus
         public bool PhraseShare;
         public string PhraseShareInfo;
         public string PhraseShareText;
+        public string PhraseShareTitle;
+        public string PhraseShareLink;
+        public string PhraseShareFacebook;
+        public string PhraseShareTwitter;
+        public string PhraseSharePinterest;
+        public string PhraseShareReddit;
+        public string PhraseShareEmail;
 
         public PetitionInfoViewModel(IDatabase database, Translator translator, Petition petition, string info, string alertType, bool share)
             : base(database, translator, petition)
@@ -329,6 +336,30 @@ namespace Publicus
                 "Please share our petition on social media").EscapeHtml();
             PhraseShareText = Nancy.Helpers.HttpUtility
                 .UrlEncode(petition.ShareText.Value[translator.Language]);
+            PhraseShareTitle = Nancy.Helpers.HttpUtility
+                .UrlEncode(petition.Label.Value[translator.Language]);
+            PhraseShareLink = Nancy.Helpers.HttpUtility
+                .UrlEncode(petition.WebAddress.Value[translator.Language]);
+            PhraseShareFacebook = translator.Get(
+                "Petition.Action.Info.Share.Facebook",
+                "Share on facebook on the petition action page",
+                "Share on facebook").EscapeHtml();
+            PhraseShareTwitter = translator.Get(
+                "Petition.Action.Info.Share.Twitter",
+                "Share on twitter on the petition action page",
+                "Tweet").EscapeHtml();
+            PhraseSharePinterest = translator.Get(
+                "Petition.Action.Info.Share.Pinterest",
+                "Share on Pinterest on the petition action page",
+                "Pin it").EscapeHtml();
+            PhraseShareReddit = translator.Get(
+                "Petition.Action.Info.Share.Reddit",
+                "Share on Reddit on the petition action page",
+                "Post to Reddit").EscapeHtml();
+            PhraseShareEmail = translator.Get(
+                "Petition.Action.Info.Share.Email",
+                "Share by e-mail on the petition action page",
+                "Share by e-mail").EscapeHtml();
         }
     }
 
