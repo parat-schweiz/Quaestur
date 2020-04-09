@@ -38,9 +38,9 @@ $(document).ready(function() {
     formData.Mail = $("#signMail").val();
     $.post("@Model.WebAddress/mail", JSON.stringify(formData), function(resultData, status){
       if (assignValidation(resultData)) {
-        hideModalSpinner();
         window.location.href = "@Model.WebAddress/mail#inputrow";
       }
+      hideModalSpinner();
     });
     event.preventDefault(); 
   });

@@ -47,9 +47,9 @@ $(document).ready(function() {
     formData.ShowPublicly = $('#confirmShowPublicly').is(':checked');
     $.post("@Model.WebAddress/confirm/@Model.EncodedMailAddress/@Model.Code", JSON.stringify(formData), function(resultData, status){
       if (assignValidation(resultData)) {
-        hideModalSpinner();
         window.location.href = "@Model.WebAddress/thanks#inputrow";
       }
+      hideModalSpinner();
     });
     event.preventDefault(); 
   });
