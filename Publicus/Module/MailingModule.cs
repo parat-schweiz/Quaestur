@@ -616,8 +616,8 @@ namespace Publicus
 
                 var contact = Database
                     .Query<Contact>()
-                    .Where(p => HasAccess(p, PartAccess.Contact, AccessRight.Read))
-                    .FirstOrDefault();
+                    .FirstOrDefault(p => HasAccess(p, PartAccess.Contact, AccessRight.Read) &&
+                                         p.FullName.ToLowerInvariant().Contains("test"));
 
                 if (contact == null)
                 {
