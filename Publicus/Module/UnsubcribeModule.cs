@@ -47,10 +47,24 @@ namespace Publicus
                 Mac(time, id).ToHexString());
         }
 
+        private static bool TryParseTicks(string timeString, out DateTime value)
+        {
+            if (long.TryParse(timeString, out long ticks))
+            {
+                value = new DateTime(ticks);
+                return value > new DateTime(2020, 1, 1);
+            }
+            else
+            {
+                value = new DateTime(2020, 1, 1);
+                return false;
+            }
+        }
+
         public static bool ValidateUnsubscribeLink(string idString, string timeString, string code)
         {
             if (Guid.TryParse(idString, out Guid id) &&
-                DateTime.TryParse(timeString, out DateTime time) &&
+                TryParseTicks(timeString, out DateTime time) &&
                 DateTime.UtcNow.Subtract(time).TotalDays <= 30d)
             {
                 var expectedMac = Mac(time, id);
