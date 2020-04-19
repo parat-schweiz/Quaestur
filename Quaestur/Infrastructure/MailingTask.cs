@@ -40,7 +40,7 @@ namespace Quaestur
             }
         }
 
-        private IEnumerable<ServiceAddress> Targets(IDatabase database, Mailing mailing)
+        public static IEnumerable<ServiceAddress> Targets(IDatabase database, Mailing mailing)
         {
             return database
                 .Query<Membership>(DC.Equal("organizationid", mailing.RecipientOrganization.Value.Id.Value))
@@ -49,6 +49,8 @@ namespace Quaestur
                 .Where(p => !p.Deleted.Value)
                 .Where(p => (mailing.RecipientTag.Value == null) ||
                             (database.Query<TagAssignment>(DC.Equal("personid", p.Id.Value).And(DC.Equal("tagid", mailing.RecipientTag.Value.Id.Value)))).Any())
+                .Where(p => (mailing.RecipientLanguage.Value == null) ||
+                            (p.Language.Value == mailing.RecipientLanguage.Value))
                 .Select(a => a.PrimaryAddress(ServiceType.EMail))
                 .Where(a => a != null)
                 .ToList();

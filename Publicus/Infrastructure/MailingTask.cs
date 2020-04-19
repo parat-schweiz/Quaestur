@@ -42,7 +42,7 @@ namespace Publicus
             }
         }
 
-        private IEnumerable<ServiceAddress> Targets(IDatabase database, Mailing mailing)
+        public static IEnumerable<ServiceAddress> Targets(IDatabase database, Mailing mailing)
         {
             return database
                 .Query<Subscription>(DC.Equal("feedid", mailing.RecipientFeed.Value.Id.Value))
@@ -51,6 +51,8 @@ namespace Publicus
                 .Where(p => !p.Deleted.Value)
                 .Where(p => (mailing.RecipientTag.Value == null) ||
                             (database.Query<TagAssignment>(DC.Equal("contactid", p.Id.Value).And(DC.Equal("tagid", mailing.RecipientTag.Value.Id.Value)))).Any())
+                .Where(p => (mailing.RecipientLanguage.Value == null) ||
+                            (p.Language.Value == mailing.RecipientLanguage.Value))
                 .Select(a => a.PrimaryAddress(ServiceType.EMail))
                 .Where(a => a != null)
                 .ToList();

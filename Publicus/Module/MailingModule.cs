@@ -89,18 +89,15 @@ namespace Publicus
 
             if (mailing.RecipientTag.Value != null)
             {
-                Recipients = " / " + mailing.RecipientTag.Value.Name.Value[translator.Language];
+                Recipients += " / " + mailing.RecipientTag.Value.Name.Value[translator.Language];
             }
 
             if (mailing.RecipientLanguage.Value.HasValue)
             {
-                Recipients = " / " + mailing.RecipientLanguage.Value.Value.Translate(translator);
+                Recipients += " / " + mailing.RecipientLanguage.Value.Value.Translate(translator);
             }
 
-            var number = db
-                .Query<Contact>()
-                .Count(p => p.ActiveSubscriptions.Any(m => m.Feed == mailing.RecipientFeed.Value) &&
-                      (mailing.RecipientTag.Value == null || p.TagAssignments.Any(t => t.Tag == mailing.RecipientTag.Value)));
+            var number = MailingTask.Targets(db, mailing).Count();
 
             Recipients +=  " / " + translator.Get("Mailing.Scheduled.Fields.Recipients.Contacts", "Contacts in the recipients field on the scheduled mailing page", "circa {0} contacts", number);
 
@@ -198,11 +195,7 @@ namespace Publicus
                 RecipientTag = translator.Get("Mailing.Edit.Field.RecipientTags.None", "No selection in the recipient tag field of the edit mailing page", "None");
             }
 
-            RecipientNumber = "~" + db
-                .Query<Contact>()
-                .Where(p => p.ActiveSubscriptions.Any(m => m.Feed == mailing.RecipientFeed.Value) &&
-                      (mailing.RecipientTag.Value == null || p.TagAssignments.Any(t => t.Tag == mailing.RecipientTag.Value)))
-                .Count().ToString();
+            RecipientNumber = "~" + MailingTask.Targets(db, mailing).Count();
 
             Subject = mailing.Subject.Value.EscapeHtml();
             Date = DateTime.Now.FormatSwissDateDay();
