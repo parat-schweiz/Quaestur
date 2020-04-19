@@ -41,6 +41,7 @@ namespace DiscourseEngagement
         public void Run()
         {
             System.Threading.Thread.Sleep(2000);
+            SyncUsers(true);
 
             while (true)
             {
@@ -51,7 +52,7 @@ namespace DiscourseEngagement
 
         private void Sync()
         {
-            SyncUsers();
+            SyncUsers(false);
             SyncContent();
             DoAwards();
         }
@@ -71,7 +72,7 @@ namespace DiscourseEngagement
             } 
         }
 
-        private void SyncUsers()
+        private void SyncUsers(bool debug)
         {
             var databasePersons = _database.Query<Person>();
             var quaesturPersons = _quaestur.GetPersonList().ToList();
@@ -105,6 +106,10 @@ namespace DiscourseEngagement
                             _database.Save(person);
                             _logger.Notice("Updated user {0}, id {1}, {2}", user.Username, user.Auid.Value, user.Id);
                         }
+                        else if (debug)
+                        {
+                            _logger.Notice("No update for user {0}, id {1}, {2} nessecary", user.Username, user.Auid.Value, user.Id);
+                        }
                     }
                     else
                     {
@@ -115,11 +120,15 @@ namespace DiscourseEngagement
                             person.Delete(_database);
                             _logger.Notice("Dropping user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
                         }
-                        else
+                        else if (debug)
                         {
                             _logger.Notice("Not adding user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
                         }
                     }
+                }
+                else if (debug)
+                {
+                    _logger.Notice("User {0}, id {1} has no auid", user.Username, user.Id);
                 }
             }
         }
