@@ -81,10 +81,10 @@
       <HintPath>..\packages\AngleSharp.0.14.0\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp.Css">
-      <HintPath>..\packages\AngleSharp.Css.0.13.0\lib\net46\AngleSharp.Css.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.Css.0.14.1\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.5.0.304\lib\net46\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.5.0.319\lib\net46\HtmlSanitizer.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

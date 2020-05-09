@@ -4114,6 +4114,15 @@
         <member name="P:AngleSharp.Css.DefaultRenderDevice.ViewPortWidth">
             <inheritdoc />
         </member>
+        <member name="P:AngleSharp.Css.DefaultRenderDevice.RenderWidth">
+            <inheritdoc />
+        </member>
+        <member name="P:AngleSharp.Css.DefaultRenderDevice.RenderHeight">
+            <inheritdoc />
+        </member>
+        <member name="P:AngleSharp.Css.DefaultRenderDevice.FontSize">
+            <inheritdoc />
+        </member>
         <member name="T:AngleSharp.Css.DeviceCategory">
             <summary>
             All possible device kinds.
@@ -6111,9 +6120,14 @@
             Represents the @viewport rule.
             </summary>
         </member>
-        <member name="T:AngleSharp.Css.Dom.StyleCollection">
+        <member name="T:AngleSharp.Css.Dom.IStyleCollection">
             <summary>
             Represents a list of CSS stylesheets.
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.Dom.IStyleCollection.Device">
+            <summary>
+            Gets the associated render device.
             </summary>
         </member>
         <member name="T:AngleSharp.Css.Dom.LineStyle">
@@ -9957,11 +9971,13 @@
             <param name="value">The value to convert.</param>
             <returns>The resulting number.</returns>
         </member>
-        <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsPx(AngleSharp.Css.Dom.ICssValue)">
+        <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsPx(AngleSharp.Css.Dom.ICssValue,AngleSharp.Css.IRenderDimensions,AngleSharp.Css.RenderMode)">
             <summary>
             Tries to convert the value to a number of pixels.
             </summary>
             <param name="value">The value to convert.</param>
+            <param name="renderDimensions">the render device used to calculate relative units, can be null if units are absolute.</param>
+            <param name="mode">Signifies the axis the unit represents, use to calculate relative units where the axis matters.</param>
             <returns>The resulting number.</returns>
         </member>
         <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsMs(AngleSharp.Css.Dom.ICssValue)">
@@ -10001,16 +10017,17 @@
         </member>
         <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsUrl(AngleSharp.Css.Dom.ICssValue)">
             <summary>
-            Tries to convert the value to an RGBA integer.
+            Tries to convert the value to a URL.
             </summary>
             <param name="value">The value to convert.</param>
-            <returns>The resulting number.</returns>
+            <returns>The resulting URL.</returns>
         </member>
-        <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsMatrix(AngleSharp.Css.Dom.ICssValue)">
+        <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsMatrix(AngleSharp.Css.Dom.ICssValue,AngleSharp.Css.IRenderDimensions)">
             <summary>
             Tries to convert the value to a transformation matrix.
             </summary>
             <param name="value">The value to convert.</param>
+            <param name="renderDimensions">the render device used to calculate relative units, can be null if units are absolute.</param>
             <returns>The resulting matrix.</returns>
         </member>
         <member name="M:AngleSharp.Css.Dom.CssValueExtensions.AsInt32(AngleSharp.Css.Dom.ICssValue)">
@@ -10071,38 +10088,51 @@
             <param name="url">The URL to check for conformance.</param>
             <returns>True if the URL is matching, otherwise false.</returns>
         </member>
-        <member name="T:AngleSharp.Css.StyleCollectionExtensions">
+        <member name="T:AngleSharp.Css.RenderTree.RenderNodeExtensions">
             <summary>
-            A set of useful extension methods for the StyleCollection class.
+            Extensions for the rendering nodes
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.StyleCollectionExtensions.GetStyleCollection(AngleSharp.Dom.IWindow)">
-            <summary>
-            Generates the style collection for the given window object.
-            </summary>
-            <param name="window">The window to host the style collection.</param>
-            <returns>The device-bound style collection.</returns>
+        <member name="M:AngleSharp.Css.RenderTree.RenderNodeExtensions.DownloadResources(AngleSharp.Css.RenderTree.IRenderNode,System.Threading.CancellationToken)">
+             <summary>
+             Downloads the referenced resources from the node if visible.
+            
+             Included resources:
+             
+             - Background images
+             </summary>
+             <param name="node">The node to use as a starting base.</param>
+             <param name="cancellationToken">The cancellation token to use, if any.</param>
         </member>
-        <member name="M:AngleSharp.Css.StyleCollectionExtensions.ComputeDeclarations(AngleSharp.Css.Dom.StyleCollection,AngleSharp.Dom.IElement,System.String)">
+        <member name="M:AngleSharp.Css.RenderTree.RenderNodeExtensions.IsVisible(AngleSharp.Css.RenderTree.IRenderNode)">
             <summary>
-            Computes the declarations for the given element in the context of
-            the specified styling rules.
+            Checks if the provided render node is visible.
             </summary>
-            <param name="rules">The styles to use.</param>
-            <param name="element">The element that is questioned.</param>
-            <param name="pseudoSelector">The optional pseudo selector to use.</param>
-            <returns>The style declaration containing all the declarations.</returns>
+            <param name="node">The node to check for visibility.</param>
+            <returns>True if its visible, otherwise false.</returns>
         </member>
-        <member name="M:AngleSharp.Css.StyleCollectionExtensions.ComputeCascadedStyle(AngleSharp.Css.Dom.StyleCollection,AngleSharp.Dom.IElement,AngleSharp.Css.Dom.ICssStyleDeclaration)">
+        <member name="M:AngleSharp.Css.RenderTree.RenderNodeExtensions.Find(AngleSharp.Css.RenderTree.IRenderNode,AngleSharp.Dom.INode)">
             <summary>
-            Computes the cascaded style, i.e. resolves the cascade by ordering after specifity.
-            Two rules with the same specifity are ordered according to their appearance. The more
-            recent declaration wins. Inheritance is not taken into account.
+            Finds a particular render node based on the given reference node.
             </summary>
-            <param name="styleCollection">The style rules to apply.</param>
-            <param name="element">The element to compute the cascade for.</param>
-            <param name="parent">The potential parent for the cascade.</param>
-            <returns>Returns the cascaded read-only style declaration.</returns>
+            <param name="node">The render tree root.</param>
+            <param name="reference">The reference node.</param>
+            <returns>The related render tree node, if any.</returns>
+        </member>
+        <member name="T:AngleSharp.Css.RenderTree.IRenderNode">
+            <summary>
+            Represents a render node.
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.RenderTree.IRenderNode.Ref">
+            <summary>
+            References the original DOM node.
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.RenderTree.IRenderNode.Children">
+            <summary>
+            References the contained render children.
+            </summary>
         </member>
         <member name="T:AngleSharp.Css.StringExtensions">
             <summary>
@@ -10131,6 +10161,39 @@
             </summary>
             <param name="value">The value to serialize.</param>
             <returns>The CSS url representation.</returns>
+        </member>
+        <member name="T:AngleSharp.Css.StyleCollectionExtensions">
+            <summary>
+            A set of useful extension methods for the StyleCollection class.
+            </summary>
+        </member>
+        <member name="M:AngleSharp.Css.StyleCollectionExtensions.GetStyleCollection(AngleSharp.Dom.IWindow)">
+            <summary>
+            Generates the style collection for the given window object.
+            </summary>
+            <param name="window">The window to host the style collection.</param>
+            <returns>The device-bound style collection.</returns>
+        </member>
+        <member name="M:AngleSharp.Css.StyleCollectionExtensions.ComputeDeclarations(System.Collections.Generic.IEnumerable{AngleSharp.Css.Dom.ICssStyleRule},AngleSharp.Dom.IElement,System.String)">
+            <summary>
+            Computes the declarations for the given element in the context of
+            the specified styling rules.
+            </summary>
+            <param name="rules">The styles to use.</param>
+            <param name="element">The element that is questioned.</param>
+            <param name="pseudoSelector">The optional pseudo selector to use.</param>
+            <returns>The style declaration containing all the declarations.</returns>
+        </member>
+        <member name="M:AngleSharp.Css.StyleCollectionExtensions.ComputeCascadedStyle(System.Collections.Generic.IEnumerable{AngleSharp.Css.Dom.ICssStyleRule},AngleSharp.Dom.IElement,AngleSharp.Css.Dom.ICssStyleDeclaration)">
+            <summary>
+            Computes the cascaded style, i.e. resolves the cascade by ordering after specifity.
+            Two rules with the same specifity are ordered according to their appearance. The more
+            recent declaration wins. Inheritance is not taken into account.
+            </summary>
+            <param name="styleCollection">The style rules to apply.</param>
+            <param name="element">The element to compute the cascade for.</param>
+            <param name="parent">The potential parent for the cascade.</param>
+            <returns>Returns the cascaded read-only style declaration.</returns>
         </member>
         <member name="T:AngleSharp.Css.StyleFormatterExtensions">
             <summary>
@@ -10408,7 +10471,7 @@
             Validates the given media feature against the given device.
             </summary>
             <param name="feature">The feature to examine.</param>
-            <param name="device">The device to use as basis.</param>
+            <param name="renderDevice">The device to use as basis.</param>
             <returns>True if the feature is present, otherwise false.</returns>
         </member>
         <member name="T:AngleSharp.Css.IRenderDevice">
@@ -10475,6 +10538,26 @@
         <member name="P:AngleSharp.Css.IRenderDevice.Category">
             <summary>
             Gets the category of the device.
+            </summary>
+        </member>
+        <member name="T:AngleSharp.Css.IRenderDimensions">
+            <summary>
+            Represents the render settings for an element, used to calculate relative sizes (E.G. %, rem).
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.IRenderDimensions.RenderWidth">
+            <summary>
+            Gets Width of the render box.
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.IRenderDimensions.RenderHeight">
+            <summary>
+            Gets Height of the render box.
+            </summary>
+        </member>
+        <member name="P:AngleSharp.Css.IRenderDimensions.FontSize">
+            <summary>
+            Gets the default font size in px.
             </summary>
         </member>
         <member name="T:AngleSharp.Css.IValueAggregator">
@@ -11399,6 +11482,27 @@
         <member name="F:AngleSharp.Css.PropertyFlags.Unknown">
             <summary>
             The property is not known.
+            </summary>
+        </member>
+        <member name="T:AngleSharp.Css.RenderMode">
+            <summary>
+            Used by To/ToPixel. If known, defines the axis the unit is in.
+            This is use to calculate relative units such as %
+            </summary>
+        </member>
+        <member name="F:AngleSharp.Css.RenderMode.Undefined">
+            <summary>
+            Should be used if the unit is absolute, or the axis is unknown.
+            </summary>
+        </member>
+        <member name="F:AngleSharp.Css.RenderMode.Horizontal">
+            <summary>
+            The current axis is horizontal meaning percentage will refer to percentage of width
+            </summary>
+        </member>
+        <member name="F:AngleSharp.Css.RenderMode.Vertical">
+            <summary>
+            The current axis is vertical meaning percentage will refer to percentage of height
             </summary>
         </member>
         <member name="T:AngleSharp.Css.ValueConverters">
@@ -13197,7 +13301,7 @@
             <param name="index">The index to look for.</param>
             <returns>The value.</returns>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssMatrixValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssMatrixValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Returns the stored matrix.
             </summary>
@@ -13265,7 +13369,7 @@
             Gets the distance from the origin.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssPerspectiveValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssPerspectiveValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -13455,7 +13559,7 @@
             Gets the angle.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssRotateValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssRotateValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -13535,7 +13639,7 @@
             Gets the scaling in z-direction.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssScaleValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssScaleValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -13628,7 +13732,7 @@
             Gets the value of the second angle.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssSkewValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssSkewValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -13717,7 +13821,7 @@
             Gets the shift in z-direction.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.CssTranslateValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.CssTranslateValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -13886,7 +13990,7 @@
             Functionality for computing transformation.
             </summary>
         </member>
-        <member name="M:AngleSharp.Css.Values.ICssTransformFunctionValue.ComputeMatrix">
+        <member name="M:AngleSharp.Css.Values.ICssTransformFunctionValue.ComputeMatrix(AngleSharp.Css.IRenderDimensions)">
             <summary>
             Computes the matrix for the given transformation.
             </summary>
@@ -15060,19 +15164,23 @@
             <param name="s">The string to convert.</param>
             <returns>A valid CSS unit or None.</returns>
         </member>
-        <member name="M:AngleSharp.Css.Values.Length.ToPixel">
+        <member name="M:AngleSharp.Css.Values.Length.ToPixel(AngleSharp.Css.IRenderDimensions,AngleSharp.Css.RenderMode)">
             <summary>
             Converts the length to a number of pixels, if possible. If the
             current unit is relative, then an exception will be thrown.
             </summary>
+            <param name="renderDimensions">the render device used to calculate relative units, can be null if units are absolute.</param>
+            <param name="mode">Signifies the axis the unit represents, use to calculate relative units where the axis matters.</param>
             <returns>The number of pixels represented by the current length.</returns>
         </member>
-        <member name="M:AngleSharp.Css.Values.Length.To(AngleSharp.Css.Values.Length.Unit)">
+        <member name="M:AngleSharp.Css.Values.Length.To(AngleSharp.Css.Values.Length.Unit,AngleSharp.Css.IRenderDimensions,AngleSharp.Css.RenderMode)">
             <summary>
             Converts the length to the given unit, if possible. If the current
             or given unit is relative, then an exception will be thrown.
             </summary>
             <param name="unit">The unit to convert to.</param>
+            <param name="renderDimensions">the render device used to calculate relative units, can be null if units are absolute.</param>
+            <param name="mode">Signifies the axis the unit represents, use to calculate relative units where the axis matters.</param>
             <returns>The value in the given unit of the current length.</returns>
         </member>
         <member name="T:AngleSharp.Css.Values.Length.Unit">
@@ -16091,6 +16199,17 @@
             <param name="window">The window to extend with the functionality.</param>
             <param name="element">The element to compute the style for.</param>
             <returns>The style declaration describing the element.</returns>
+        </member>
+        <member name="M:AngleSharp.Dom.WindowExtensions.Render(AngleSharp.Dom.IWindow,AngleSharp.Css.IRenderDevice)">
+             <summary>
+             Renders the currently available document into a render tree rooted at the returned render node.
+             a render tree is essentially the combination of DOM nodes with their CSSOM computed style declarations.
+            
+             In case no render device is supplied the context's default render device is chosen.
+             </summary>
+             <param name="window">The window to extend.</param>
+             <param name="renderDevice">The device for rendering, if any. </param>
+             <returns>The created render node.</returns>
         </member>
     </members>
 </doc>
