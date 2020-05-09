@@ -129,7 +129,7 @@ namespace Quaestur
                         status.AssignStringFree("Url", points.Url, model.Url);
 
                         if (!string.IsNullOrEmpty(points.Url.Value) &&
-                            !Regex.IsMatch(points.Url.Value, "^https(s)?://([a-zA-Z0-9\\-\\_]{2,256}\\.)+[a-zA-Z0-9\\-\\_]{2,256}(/[a-zA-Z0-9\\-\\_\\.\\?\\&\\=\\+\\*\\(\\)\\[\\]/,;'#@$]*)?$"))
+                            !Uri.TryCreate(points.Url.Value, UriKind.Absolute, out Uri dummy))
                         {
                             status.SetValidationError("Url", "Points.Edit.Url.Invalid", "When the Url in the points edit dialog is not valid", "Invalid Url");
                         }
