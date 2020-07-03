@@ -136,7 +136,7 @@ namespace Quaestur
             text.Append(@"}");
             text.AppendLine();
 
-            text.Append(@"\begin{supertabular}{p{3cm} p{1cm} p{1cm} p{1.2cm} p{0.9cm} p{1.2cm} p{0.9cm} p{1.2cm}}");
+            text.Append(@"\begin{supertabular}{p{3.2cm} p{1cm} p{1cm} p{1.2cm} p{0.9cm} p{1.2cm} p{0.9cm} p{1.2cm}}");
             text.AppendLine();
             decimal runUp = 0M;
 

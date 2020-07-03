@@ -624,7 +624,7 @@ namespace Quaestur
                                 bills.Add(bill2);
 
                                 var content = new Multipart("mixed");
-                                var bodyText = Translate("MembershipType.TestCreateBill.Text", "Subject of the test create bill mail", "See attachements");
+                                var bodyText = Translate("MembershipType.TestCreateArrearsList.Text", "Subject of the test create arrears list mail", "See attachements");
                                 var bodyPart = new TextPart("plain") { Text = bodyText };
                                 bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
                                 content.Add(bodyPart);
@@ -637,6 +637,7 @@ namespace Quaestur
 
                                         if (documentTemplate != null)
                                         {
+                                            var filePrefix = language.ToString() + "." + template.MinReminderLevel + ".arrears";
                                             person.Language.Value = language;
                                             var arrearsDocument = new ArrearsDocument(Database, Translator, membership.Organization, person, bills, documentTemplate.Text.Value);
                                             var document = arrearsDocument.Compile();
@@ -646,24 +647,24 @@ namespace Quaestur
                                                 var documentStream = new MemoryStream(document);
                                                 var documentPart = new MimePart("application", "pdf");
                                                 documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
-                                                documentPart.ContentType.Name = language.ToString() + ".bill.pdf";
+                                                documentPart.ContentType.Name = filePrefix + ".pdf";
                                                 documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-                                                documentPart.ContentDisposition.FileName = language.ToString() + ".bill.pdf";
+                                                documentPart.ContentDisposition.FileName = filePrefix + ".pdf";
                                                 documentPart.ContentTransferEncoding = ContentEncoding.Base64;
                                                 content.Add(documentPart);
                                             }
 
                                             var latexPart = new TextPart("plain") { Text = arrearsDocument.TexDocument };
-                                            latexPart.ContentType.Name = language.ToString() + ".tex";
+                                            latexPart.ContentType.Name = filePrefix + ".tex";
                                             latexPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-                                            latexPart.ContentDisposition.FileName = language.ToString() + ".tex";
+                                            latexPart.ContentDisposition.FileName = filePrefix + ".tex";
                                             latexPart.ContentTransferEncoding = ContentEncoding.Base64;
                                             content.Add(latexPart);
 
                                             var errorPart = new TextPart("plain") { Text = arrearsDocument.ErrorText };
-                                            errorPart.ContentType.Name = language.ToString() + ".output.txt";
+                                            errorPart.ContentType.Name = filePrefix + ".output.txt";
                                             errorPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-                                            errorPart.ContentDisposition.FileName = language.ToString() + ".output.txt";
+                                            errorPart.ContentDisposition.FileName = filePrefix + ".output.txt";
                                             errorPart.ContentTransferEncoding = ContentEncoding.Base64;
                                             content.Add(errorPart);
                                         }
@@ -673,7 +674,7 @@ namespace Quaestur
                                 if (content.Count > 1)
                                 {
                                     var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
-                                    var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
+                                    var subject = Translate("MembershipType.TestCreateArrearsList.Subject", "Subject of the test create arrears list mail", "Test create arrears list");
                                     Global.MailCounter.Used();
                                     Global.Mail.Send(to, subject, content);
                                     status.SetSuccess("MembershipType.TestCreateBill.Success", "Success during test create bill", "Compilation finished. You will recieve the output via mail.");
@@ -817,7 +818,7 @@ namespace Quaestur
                             membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
                             var content = new Multipart("mixed");
-                            var bodyText = Translate("MembershipType.TestCreatePointsTally.Text", "Subject of the test create bill mail", "See attachements");
+                            var bodyText = Translate("MembershipType.TestCreatePointsTally.Text", "Subject of the test create points tally mail", "See attachements");
                             var bodyPart = new TextPart("plain") { Text = bodyText };
                             bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
                             content.Add(bodyPart);
@@ -871,7 +872,7 @@ namespace Quaestur
                             if (content.Count > 1)
                             {
                                 var to = new MailboxAddress(person.ShortHand, person.PrimaryMailAddress);
-                                var subject = Translate("MembershipType.TestCreatePointsTally.Subject", "Subject of the test create bill mail", "Test create points tally");
+                                var subject = Translate("MembershipType.TestCreatePointsTally.Subject", "Subject of the test create points tally mail", "Test create points tally");
                                 Global.MailCounter.Used();
                                 Global.Mail.Send(to, subject, content);
                                 status.SetSuccess("MembershipType.TestCreatePointsTally.Success", "Success during test create points tally", "Compilation finished. You will recieve the output via mail.");
@@ -968,7 +969,7 @@ namespace Quaestur
                             if (content.Count > 1)
                             {
                                 var to = new MailboxAddress(person.ShortHand, person.PrimaryMailAddress);
-                                var subject = Translate("MembershipType.TestCreateSettlement.Subject", "Subject of the test create bill mail", "Test create settlement");
+                                var subject = Translate("MembershipType.TestCreateSettlement.Subject", "Subject of the test create settlement mail", "Test create settlement");
                                 Global.MailCounter.Used();
                                 Global.Mail.Send(to, subject, content);
                                 status.SetSuccess("MembershipType.TestCreateSettlement.Success", "Success during test create points tally", "Compilation finished. You will recieve the output via mail.");
