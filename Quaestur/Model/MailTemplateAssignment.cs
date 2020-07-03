@@ -5,7 +5,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class MailTemplateAssignment : DatabaseObject
+    public class MailTemplateAssignment : DatabaseObject, ITemplateAssignment<MailTemplate>
     {
         public ForeignKeyField<MailTemplate, MailTemplateAssignment> Template { get; private set; }
         public EnumField<TemplateAssignmentType> AssignedType { get; private set; }
@@ -117,6 +117,14 @@ namespace Quaestur
                 }
             }
         }
+
+        MailTemplate ITemplateAssignment<MailTemplate>.Template => Template.Value;
+
+        TemplateAssignmentType ITemplateAssignment<MailTemplate>.AssignedType => AssignedType.Value;
+
+        Guid ITemplateAssignment<MailTemplate>.AssignedId => AssignedId.Value;
+
+        string ITemplateAssignment<MailTemplate>.FieldName => FieldName.Value;
 
         public bool HasAccess(IDatabase database, Session session, AccessRight right)
         {

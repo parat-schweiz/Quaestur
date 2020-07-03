@@ -71,44 +71,17 @@ namespace Quaestur
 
         public MailTemplate GetAnnouncementMail(IDatabase database, Language language)
         {
-            var list = AnnouncementMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, AnnouncementMails);
         }
 
         public MailTemplate GetInvitationMail(IDatabase database, Language language)
         {
-            var list = InvitationMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, InvitationMails);
         }
 
         public LatexTemplate GetBallotPaper(IDatabase database, Language language)
         {
-            var list = BallotPapers(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, BallotPapers);
         }
 
         public static string GetFieldNameTranslation(Translator translator, string fieldName)

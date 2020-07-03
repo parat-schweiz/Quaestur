@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Text;
 using BaseLibrary;
+using QRCoder;
 using SiteLibrary;
 
 namespace Quaestur
@@ -42,12 +46,12 @@ namespace Quaestur
             _settings = _database.Query<SystemWideSettings>().Single();
         }
 
-        private string CreateNumber()
+        public static string CreateNumber(Guid id)
         {
             const int segmentLength = 2;
             const int segmentCount = 3;
             const int byteCount = segmentCount * segmentLength;
-            var idBytes = Bill.Id.Value.ToByteArray();
+            var idBytes = id.ToByteArray();
             var numberBytes = idBytes.Part(idBytes.Length - byteCount, byteCount);
             var segments = new List<string>();
 
@@ -83,7 +87,7 @@ namespace Quaestur
             Bill.Membership.Value = _membership;
             Bill.CreatedDate.Value = DateTime.Now.Date;
             Bill.Status.Value = BillStatus.New;
-            Bill.Number.Value = CreateNumber();
+            Bill.Number.Value = CreateNumber(Bill.Id.Value);
 
             var lastBill = _database
                 .Query<Bill>(DC.Equal("membershipid", _membership.Id.Value))
@@ -518,6 +522,15 @@ namespace Quaestur
         protected override Templator GetTemplator()
         {
             return new Templator(new PersonContentProvider(_translator, _person), this);
+        }
+
+        public override IEnumerable<Tuple<string, byte[]>> Files
+        {
+            get
+            {
+                yield return new Tuple<string, byte[]>("qrcode.png", 
+                    SwissQrBill.Create(_database, _translator, Bill.Membership.Value.Organization.Value, _person, Bill.Amount.Value, Bill.Number.Value));
+            }
         }
     }
 }

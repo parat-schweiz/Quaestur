@@ -14,6 +14,8 @@ namespace Quaestur
         public string Method;
         public string Id;
         public List<MultiItemViewModel> Name;
+        public string Code;
+        public string PhraseFieldCode;
 
         public CountryEditViewModel()
         { 
@@ -22,6 +24,7 @@ namespace Quaestur
         public CountryEditViewModel(Translator translator)
             : base(translator, translator.Get("Country.Edit.Title", "Title of the country edit dialog", "Edit country"), "countryEditDialog")
         {
+            PhraseFieldCode = translator.Get("Country.Edit.Field.Code", "Code field in the county client edit dialog", "Code");
         }
 
         public CountryEditViewModel(Translator translator, IDatabase db)
@@ -30,6 +33,7 @@ namespace Quaestur
             Method = "add";
             Id = "new";
             Name = translator.CreateLanguagesMultiItem("Country.Edit.Field.Name", "Name field in the country edit dialog", "Name ({0})", new MultiLanguageString());
+            Code = string.Empty;
         }
 
         public CountryEditViewModel(Translator translator, IDatabase db, Country country)
@@ -38,6 +42,7 @@ namespace Quaestur
             Method = "edit";
             Id = country.Id.ToString();
             Name = translator.CreateLanguagesMultiItem("Country.Edit.Field.Name", "Name field in the country edit dialog", "Name ({0})", country.Name.Value);
+            Code = country.Code.Value;
         }
     }
 
@@ -135,6 +140,7 @@ namespace Quaestur
                     if (status.ObjectNotNull(country))
                     {
                         status.AssignMultiLanguageRequired("Name", country.Name, model.Name);
+                        status.AssignStringFree("Code", country.Code, model.Code);
 
                         if (status.IsSuccess)
                         {
@@ -165,6 +171,7 @@ namespace Quaestur
                     var model = JsonConvert.DeserializeObject<CountryEditViewModel>(ReadBody());
                     var country = new Country(Guid.NewGuid());
                     status.AssignMultiLanguageRequired("Name", country.Name, model.Name);
+                    status.AssignStringFree("Code", country.Code, model.Code);
 
                     if (status.IsSuccess)
                     {

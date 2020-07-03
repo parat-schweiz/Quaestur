@@ -5,7 +5,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class MailTemplate : DatabaseObject
+    public class MailTemplate : DatabaseObject, ITemplate
     {
         public ForeignKeyField<Organization, MailTemplate> Organization { get; private set; }
         public EnumField<TemplateAssignmentType> AssignmentType { get; private set; }
@@ -13,7 +13,15 @@ namespace Quaestur
         public StringField Label { get; private set; }
         public StringField Subject { get; private set; }
         public StringField HtmlText { get; private set; }
-        public StringField PlainText { get; private set; }  
+        public StringField PlainText { get; private set; }
+
+        Organization ITemplate.Organization => Organization.Value;
+
+        TemplateAssignmentType ITemplate.AssignmentType => AssignmentType.Value;
+
+        Language ITemplate.Language => Language.Value;
+
+        string ITemplate.Label => Label.Value;
 
         public MailTemplate() : this(Guid.Empty)
         {

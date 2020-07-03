@@ -48,13 +48,13 @@
     <Compile Include="BaseChannelException.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
       <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

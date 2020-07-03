@@ -9,6 +9,11 @@ namespace Quaestur
     {
 		public MultiLanguageStringField Name { get; private set; }
         public ForeignKeyField<Organization, Organization> Parent { get; private set; }
+        public MultiLanguageStringField BillName { get; private set; }
+        public MultiLanguageStringField BillStreet { get; private set; }
+        public MultiLanguageStringField BillLocation { get; private set; }
+        public ForeignKeyField<Country, Organization> BillCountry { get; private set; }
+        public StringField BillIban { get; private set; }
         public List<Organization> Children { get; private set; }
         public List<Group> Groups { get; private set; }
         public List<MembershipType> MembershipTypes { get; private set; }
@@ -21,6 +26,11 @@ namespace Quaestur
         {
             Name = new MultiLanguageStringField(this, "name");
             Parent = new ForeignKeyField<Organization, Organization>(this, "parentid", true, p => p.Children);
+            BillName = new MultiLanguageStringField(this, "billname", AllowStringType.SimpleText);
+            BillStreet = new MultiLanguageStringField(this, "billstreet", AllowStringType.SimpleText);
+            BillLocation = new MultiLanguageStringField(this, "billlocation", AllowStringType.SimpleText);
+            BillCountry = new ForeignKeyField<Country, Organization>(this, "billcountryid", true, null);
+            BillIban = new StringField(this, "billiban", 64, AllowStringType.SimpleText);
             Children = new List<Organization>();
             Groups = new List<Group>();
             MembershipTypes = new List<MembershipType>();

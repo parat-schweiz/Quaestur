@@ -46,6 +46,7 @@ function assignValidation(resultData){
   @Each.Name
   assignFieldMultiValidation("Name", "@Current.Key", result);
   @EndEach
+  assignFieldValidation("Code", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -58,6 +59,7 @@ $("#@Model.ButtonId").click(function() {
   obj@Current.Key['Value'] = $("#countryName@Current.Key").val()
   formData.Name.push(obj@Current.Key);
   @EndEach
+  formData.Code = $("#countryCode").val();
   $.post("/country/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -77,6 +79,13 @@ $("#@Model.ButtonId").click(function() {
         <div id="countryNameFeedback@Current.Key" class="valid-feedback"></div>
       </div>
       @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="countryCode">@Model.PhraseFieldCode</label>
+        <input type="text" id="countryCode" class="form-control" value="@Model.Code"/>
+        <div id="countryCodeFeedback" class="valid-feedback"></div>
+      </div>
     </div>
   </form>
 </div>

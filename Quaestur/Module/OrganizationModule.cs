@@ -17,6 +17,14 @@ namespace Quaestur
         public string Parent;
         public List<NamedIdViewModel> Parents;
         public string PhraseFieldParent;
+        public List<MultiItemViewModel> BillName;
+        public List<MultiItemViewModel> BillStreet;
+        public List<MultiItemViewModel> BillLocation;
+        public string BillCountry;
+        public List<NamedIdViewModel> BillCountries;
+        public string PhraseFieldBillCountry;
+        public string BillIban;
+        public string PhraseFieldBillIban;
 
         public OrganizationEditViewModel()
         { 
@@ -26,6 +34,8 @@ namespace Quaestur
             : base(translator, translator.Get("Organization.Edit.Title", "Title of the organization edit dialog", "Edit organization"), "organizationEditDialog")
         {
             PhraseFieldParent = translator.Get("Organization.Edit.Field.Parent", "Parent field in the organization edit dialog", "Parent").EscapeHtml();
+            PhraseFieldBillCountry = translator.Get("Organization.Edit.Field.BillCountry", "Bill country field in the organization edit dialog", "Bill country").EscapeHtml();
+            PhraseFieldBillIban = translator.Get("Organization.Edit.Field.BillIban", "Bill IBAN field in the organization edit dialog", "Bill IBAN").EscapeHtml();
         }
 
         public OrganizationEditViewModel(Translator translator, IDatabase db)
@@ -34,6 +44,11 @@ namespace Quaestur
             Method = "add";
             Id = "new";
             Name = translator.CreateLanguagesMultiItem("Organization.Edit.Field.Name", "Name field in the organization edit dialog", "Name ({0})", new MultiLanguageString());
+            BillName = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillName", "Bill name field in the organization edit dialog", "Bill name ({0})", new MultiLanguageString());
+            BillStreet = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillStreet", "Bill street address line field in the organization edit dialog", "Bill street address line ({0})", new MultiLanguageString());
+            BillLocation = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillLocation", "Bill location including postal code field in the organization edit dialog", "Bill location including postal code ({0})", new MultiLanguageString());
+            BillCountry = string.Empty;
+            BillIban = string.Empty;
             Parent = string.Empty;
             Parents = new List<NamedIdViewModel>(
                 db.Query<Organization>()
@@ -42,14 +57,25 @@ namespace Quaestur
             Parents.Add(new NamedIdViewModel(
                 translator.Get("Organization.Edit.Field.Parent.None", "No value in the field 'Parent' in the organization edit dialog", "<None>"),
                 false, true));
+            BillCountries = new List<NamedIdViewModel>(db
+                .Query<Country>()
+                .Select(c => new NamedIdViewModel(translator, c, false)));
         }
 
         public OrganizationEditViewModel(Translator translator, IDatabase db, Organization organization)
             : this(translator)
         {
             Method = "edit";
-            Id = organization.Id.ToString();
+            Id = organization.Id.Value.ToString();
             Name = translator.CreateLanguagesMultiItem("Organization.Edit.Field.Name", "Name field in the organization edit dialog", "Name ({0})", organization.Name.Value);
+            BillName = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillName", "Bill name field in the organization edit dialog", "Bill name ({0})", organization.BillName.Value);
+            BillStreet = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillStreet", "Bill street address line field in the organization edit dialog", "Bill street address line ({0})", organization.BillStreet.Value);
+            BillLocation = translator.CreateLanguagesMultiItem("Organization.Edit.Field.BillLocation", "Bill location including postal code field in the organization edit dialog", "Bill location including postal code ({0})", organization.BillLocation.Value);
+            BillCountry =
+                organization.BillCountry.Value != null ?
+                organization.BillCountry.Value.Id.Value.ToString() :
+                string.Empty;
+            BillIban = organization.BillIban.Value;
             Parent =
                 organization.Parent.Value != null ?
                 organization.Parent.Value.Id.Value.ToString() :
@@ -63,6 +89,9 @@ namespace Quaestur
             Parents.Add(new NamedIdViewModel(
                 translator.Get("Organization.Edit.Field.Parent.None", "No value in the field 'Parent' in the organization edit dialog", "<None>"),
                 false, organization.Parent.Value == null));
+            BillCountries = new List<NamedIdViewModel>(db
+                .Query<Country>()
+                .Select(c => new NamedIdViewModel(translator, c, organization.BillCountry.Value == c)));
         }
     }
 
@@ -188,6 +217,11 @@ namespace Quaestur
                     if (status.HasAccess(organization, PartAccess.Structure, AccessRight.Write))
                     {
                         status.AssignMultiLanguageRequired("Name", organization.Name, model.Name);
+                        status.AssignMultiLanguageRequired("BillName", organization.BillName, model.BillName);
+                        status.AssignMultiLanguageRequired("BillStreet", organization.BillStreet, model.BillStreet);
+                        status.AssignMultiLanguageRequired("BillLocation", organization.BillLocation, model.BillLocation);
+                        status.AssignObjectIdString("BillCountry", organization.BillCountry, model.BillCountry);
+                        status.AssignStringFree("BillIban", organization.BillIban, model.BillIban);
                         status.AssignObjectIdString("Parent", organization.Parent, model.Parent);
 
                         if (status.IsSuccess)
@@ -219,6 +253,11 @@ namespace Quaestur
                     string idString = parameters.id;
                     var organization = new Organization(Guid.NewGuid());
                     status.AssignMultiLanguageRequired("Name", organization.Name, model.Name);
+                    status.AssignMultiLanguageRequired("BillName", organization.BillName, model.BillName);
+                    status.AssignMultiLanguageRequired("BillStreet", organization.BillStreet, model.BillStreet);
+                    status.AssignMultiLanguageRequired("BillLocation", organization.BillLocation, model.BillLocation);
+                    status.AssignObjectIdString("BillCountry", organization.BillCountry, model.BillCountry);
+                    status.AssignStringFree("BillIban", organization.BillIban, model.BillIban);
                     status.AssignObjectIdString("Parent", organization.Parent, model.Parent);
 
                     if (status.IsSuccess)

@@ -214,100 +214,37 @@ namespace Quaestur
 
         public MailTemplate GetPointsTallyMail(IDatabase database, Language language)
         {
-            var list = PointsTallyMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, PointsTallyMails);
         }
 
         public MailTemplate GetSettlementMail(IDatabase database, Language language)
         {
-            var list = SettlementMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, SettlementMails);
         }
 
         public LatexTemplate GetBillDocument(IDatabase database, Language language)
         {
-            var list = BillDocuments(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, BillDocuments);
         }
 
         public LatexTemplate GetSettlementDocument(IDatabase database, Language language)
         {
-            var list = SettlementDocuments(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, SettlementDocuments);
         }
 
         public LatexTemplate GetPointsTallyDocument(IDatabase database, Language language)
         {
-            var list = PointsTallyDocuments(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, PointsTallyDocuments);
         }
 
         public MailTemplate GetPaymentParameterUpdateRequiredMail(IDatabase database, Language language)
         {
-            var list = PaymentParameterUpdateRequiredMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, PaymentParameterUpdateRequiredMails);
         }
 
         public MailTemplate GetPaymentParameterUpdateInvitationMail(IDatabase database, Language language)
         {
-            var list = PaymentParameterUpdateInvitationMails(database);
-
-            foreach (var l in LanguageExtensions.PreferenceList(language))
-            {
-                var assignment = list.FirstOrDefault(a => a.Template.Value.Language.Value == l);
-                if (assignment != null)
-                    return assignment.Template.Value;
-            }
-
-            return null;
+            return TemplateUtil.GetItem(database, language, PaymentParameterUpdateInvitationMails);
         }
 
         public static string GetFieldNameTranslation(Translator translator, string fieldName)

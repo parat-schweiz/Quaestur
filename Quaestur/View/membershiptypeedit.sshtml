@@ -101,6 +101,23 @@ $("#@Model.ButtonId").click(function() {
     }
   });
 });
+$("#membershipTypeTestArrearsListCreate").click(function(event) {
+  $("#membershipTypeTestArrearsListCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestArrearsListCreate...");
+  $("#membershipTypeTestArrearsListCreateFeedback").html('');
+  $.post("/membershiptype/testcreatearrearslist/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
+    var statusObject = JSON.parse(statusData);
+    if (statusObject.MessageType == "success"){
+      $("#membershipTypeTestArrearsListCreateFeedback").removeClass('markred');
+      $("#membershipTypeTestArrearsListCreateFeedback").addClass('markgreen');
+    }else{
+      $("#membershipTypeTestArrearsListCreateFeedback").addClass('markred');
+      $("#membershipTypeTestArrearsListCreateFeedback").removeClass('markgreen');
+    }
+    $("#membershipTypeTestArrearsListCreateFeedback").html(statusObject.MessageText);
+    $("#membershipTypeTestArrearsListCreate").html("@Model.PhraseTestArrearsListCreate");
+  });
+  event.preventDefault();
+});
 $("#membershipTypeTestBillCreate").click(function(event) {
   $("#membershipTypeTestBillCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestBillCreate...");
   $("#membershipTypeTestBillCreateFeedback").html('');
@@ -270,6 +287,16 @@ $('.selectpicker').selectpicker();
     <div class="form-row">
       <div class="col-12 mb-3">
         <div id="membershipTypeTestBillCreateFeedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <button id ="membershipTypeTestArrearsListCreate" type="button" class="btn btn-default">@Model.PhraseTestArrearsListCreate</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div id="membershipTypeTestArrearsListCreateFeedback"></div>
       </div>
     </div>
     <div class="form-row">

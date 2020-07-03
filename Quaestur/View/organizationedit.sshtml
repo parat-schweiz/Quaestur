@@ -46,6 +46,17 @@ function assignValidation(resultData){
   @Each.Name
   assignFieldMultiValidation("Name", "@Current.Key", result);
   @EndEach
+  @Each.BillName
+  assignFieldMultiValidation("BillName", "@Current.Key", result);
+  @EndEach
+  @Each.BillStreet
+  assignFieldMultiValidation("BillStreet", "@Current.Key", result);
+  @EndEach
+  @Each.BillLocation
+  assignFieldMultiValidation("BillLocation", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("BillCountry", result);
+  assignFieldValidation("BillIban", result);
   assignFieldValidation("Parent", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
@@ -59,6 +70,29 @@ $("#@Model.ButtonId").click(function() {
   obj@Current.Key['Value'] = $("#organizationName@Current.Key").val()
   formData.Name.push(obj@Current.Key);
   @EndEach
+  formData.BillName = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#organizationBillName@Current.Key").val()
+  formData.BillName.push(obj@Current.Key);
+  @EndEach
+  formData.BillStreet = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#organizationBillStreet@Current.Key").val()
+  formData.BillStreet.push(obj@Current.Key);
+  @EndEach
+  formData.BillLocation = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#organizationBillLocation@Current.Key").val()
+  formData.BillLocation.push(obj@Current.Key);
+  @EndEach
+  formData.BillCountry = $("#organizationBillCountry").val();
+  formData.BillIban = $("#organizationBillIban").val();
   formData.Parent = $("#organizationParent").val();
   $.post("/organization/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
@@ -90,6 +124,51 @@ $('.selectpicker').selectpicker();
           @EndEach
         </select>
         <div id="organizationParentFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      @Each.BillName
+      <div class="col-12 mb-3">
+        <label for="organizationBillName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="organizationBillName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="organizationBillNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.BillStreet
+      <div class="col-12 mb-3">
+        <label for="organizationBillStreet@Current.Key">@Current.Phrase</label>
+        <input type="text" id="organizationBillStreet@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="organizationBillStreetFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.BillLocation
+      <div class="col-12 mb-3">
+        <label for="organizationBillLocation@Current.Key">@Current.Phrase</label>
+        <input type="text" id="organizationBillLocation@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="organizationBillLocationFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="organizationBillCountry">@Model.PhraseFieldBillCountry</label>
+        <select id="organizationBillCountry" class="selectpicker form-control" data-live-search="true">
+          @Each.BillCountries
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="organizationBillCountryFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="organizationBillIban">@Model.PhraseFieldBillIban</label>
+        <input type="text" id="organizationBillIban" class="form-control" value="@Model.BillIban"/>
+        <div id="organizationBillIbanFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

@@ -5,7 +5,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class LatexTemplateAssignment : DatabaseObject
+    public class LatexTemplateAssignment : DatabaseObject, ITemplateAssignment<LatexTemplate>
     {
         public ForeignKeyField<LatexTemplate, LatexTemplateAssignment> Template { get; private set; }
         public EnumField<TemplateAssignmentType> AssignedType { get; private set; }
@@ -117,6 +117,14 @@ namespace Quaestur
                 }
             }
         }
+
+        LatexTemplate ITemplateAssignment<LatexTemplate>.Template => Template.Value;
+
+        TemplateAssignmentType ITemplateAssignment<LatexTemplate>.AssignedType => AssignedType.Value;
+
+        Guid ITemplateAssignment<LatexTemplate>.AssignedId => AssignedId.Value;
+
+        string ITemplateAssignment<LatexTemplate>.FieldName => FieldName.Value;
 
         public bool HasAccess(IDatabase database, Session session, AccessRight right)
         {

@@ -376,20 +376,20 @@ namespace Quaestur
                         Global.Mail.Send(to, subject, content);
 
                         result.MessageType = "succss";
-                        result.MessageText = Translate("BallotTemplate.Test.Success", "Success during test create bill", "Compilation finished. You will recieve the output via mail.");
+                        result.MessageText = Translate("BallotTemplate.Test.Success", "Success during test create ballot", "Compilation finished. You will recieve the output via mail.");
                         result.IsSuccess = true;
                     }
                     else
                     {
                         result.MessageType = "warning";
-                        result.MessageText = Translate("BallotTemplate.Test.Failed.Failed", "LaTeX failed during test create bill", "Compilation failed. No output was generated.");
+                        result.MessageText = Translate("BallotTemplate.Test.Failed.Failed", "LaTeX failed during test create ballot", "Compilation failed. No output was generated.");
                         result.IsSuccess = false;
                     }
                 }
                 else
                 {
                     result.MessageType = "warning";
-                    result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NotFound", "Object not found during test create bill", "Object not found");
+                    result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NotFound", "Object not found during test create ballot", "Object not found");
                     result.IsSuccess = false;
                 }
 

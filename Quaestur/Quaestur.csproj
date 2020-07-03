@@ -254,7 +254,7 @@
     <Compile Include="Model\MailTemplate.cs" />
     <Compile Include="Model\MailTemplateAssignment.cs" />
     <Compile Include="Module\MailTemplateModule.cs" />
-    <Compile Include="Model\lTemplateAssignment.cs" />
+    <Compile Include="Model\ITemplateAssignment.cs" />
     <Compile Include="Model\LatexTemplate.cs" />
     <Compile Include="Model\LatexTemplateAssignment.cs" />
     <Compile Include="Module\LatexTemplateModule.cs" />
@@ -277,6 +277,10 @@
     <Compile Include="Model\Prepayment.cs" />
     <Compile Include="Module\PersonDetailPrepaymentModule.cs" />
     <Compile Include="Module\PrepaymentModule.cs" />
+    <Compile Include="Model\ITemplate.cs" />
+    <Compile Include="Documents\ArrearsDocument.cs" />
+    <Compile Include="Documents\ArrearsContentProvider.cs" />
+    <Compile Include="Documents\SwissQrBill.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

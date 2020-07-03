@@ -21,6 +21,8 @@ namespace Quaestur
         public string[] BillSendingMailTemplates;
         public List<NamedIdViewModel> BillSendingLetters;
         public string[] BillSendingLetterTemplates;
+        public List<NamedIdViewModel> BillSendingArrearsLists;
+        public string[] BillSendingArrearsListTemplates;
         public string SendingMode;
         public List<NamedIdViewModel> MailSenders;
         public List<NamedIntViewModel> SendingModes;
@@ -29,6 +31,7 @@ namespace Quaestur
         public string PhraseFieldMaxReminderLevel;
         public string PhraseFieldBillSendingMailTemplates;
         public string PhraseFieldBillSendingLetterTemplates;
+        public string PhraseFieldBillSendingArrearsListTemplates;
         public string PhraseFieldMailSender;
         public string PhraseFieldSendingMode;
         public string PhraseButtonCancel;
@@ -49,6 +52,7 @@ namespace Quaestur
             PhraseFieldMaxReminderLevel = translator.Get("BillSendingTemplate.Edit.Field.MaxReminderLevel", "Max reminder level field in the bill template edit page", "Max reminder level").EscapeHtml();
             PhraseFieldBillSendingMailTemplates = translator.Get("BillSendingTemplate.Edit.Field.BillSendingMailTemplates", "Sending mail templates field in the bill template edit page", "Sending mails templates").EscapeHtml();
             PhraseFieldBillSendingLetterTemplates = translator.Get("BillSendingTemplate.Edit.Field.BillSendingLetterTemplates", "Sending letter templates field in the bill template edit page", "Sending letters templates").EscapeHtml();
+            PhraseFieldBillSendingArrearsListTemplates = translator.Get("BillSendingTemplate.Edit.Field.BillSendingArrearsListTemplates", "Sending replacement templates field in the bill template edit page", "Sending replacement bill templates").EscapeHtml();
             PhraseFieldMailSender = translator.Get("BillSendingTemplate.Edit.Field.MailSender", "Mail sender field in the bill template edit page", "Mail sender group").EscapeHtml();
             PhraseFieldSendingMode = translator.Get("BillSendingTemplate.Edit.Field.SendingMode", "Sending mode field in the bill template edit page", "Sending mode").EscapeHtml();
             PhraseButtonCancel = translator.Get("BillSendingTemplate.Edit.Button.Cancel", "Cancel button in the bill template edit page", "Cancel").EscapeHtml();
@@ -74,6 +78,11 @@ namespace Quaestur
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, false));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, false));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, false));
+            BillSendingArrearsLists = new List<NamedIdViewModel>(database
+                .Query<LatexTemplate>()
+                .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, false))
+                .OrderBy(t => t.Name));
             BillSendingLetters = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
@@ -104,6 +113,11 @@ namespace Quaestur
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalOnly));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.MailPreferred));
             SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalPrefrerred));
+            BillSendingArrearsLists = new List<NamedIdViewModel>(database
+                .Query<LatexTemplate>()
+                .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
+                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingArrearsLists(database).Any(x => x.Template.Value == t)))
+                .OrderBy(t => t.Name));
             BillSendingLetters = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
@@ -251,11 +265,7 @@ namespace Quaestur
                         newTemplate.Name.Value = billSendingTemplate.Name.Value +=
                             Translate("BillSendingTemplate.Copy.NameSuffix", "Suffix on copyied bill sending template", " (Copy)");
                         newTemplate.Language.Value = billSendingTemplate.Language.Value;
-                        newTemplate.LetterLatex.Value = billSendingTemplate.LetterLatex.Value;
-                        newTemplate.MailHtmlText.Value = billSendingTemplate.MailHtmlText.Value;
-                        newTemplate.MailPlainText.Value = billSendingTemplate.MailPlainText.Value;
                         newTemplate.MailSender.Value = billSendingTemplate.MailSender.Value;
-                        newTemplate.MailSubject.Value = billSendingTemplate.MailSubject.Value;
                         newTemplate.MaxReminderLevel.Value = billSendingTemplate.MaxReminderLevel.Value;
                         newTemplate.MinReminderLevel.Value = billSendingTemplate.MinReminderLevel.Value;
                         newTemplate.SendingMode.Value = billSendingTemplate.SendingMode.Value;
@@ -286,6 +296,7 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(billSendingTemplate);
+                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingArrearsList, model.BillSendingArrearsListTemplates);
                                 status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
                                 status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
                                 transaction.Commit();
@@ -326,10 +337,6 @@ namespace Quaestur
                         var model = JsonConvert.DeserializeObject<BillSendingTemplateEditViewModel>(ReadBody());
                         var billSendingTemplate = new BillSendingTemplate(Guid.NewGuid());
                         billSendingTemplate.Language.Value = Language.English;
-                        billSendingTemplate.MailSubject.Value = string.Empty;
-                        billSendingTemplate.MailHtmlText.Value = string.Empty;
-                        billSendingTemplate.MailPlainText.Value = string.Empty;
-                        billSendingTemplate.LetterLatex.Value = string.Empty;
                         status.AssignStringRequired("Name", billSendingTemplate.Name, model.Name);
                         status.AssignInt32String("MinReminderLevel", billSendingTemplate.MinReminderLevel, model.MinReminderLevel);
                         status.AssignInt32String("MaxReminderLevel", billSendingTemplate.MaxReminderLevel, model.MaxReminderLevel);
@@ -342,6 +349,7 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(billSendingTemplate);
+                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingArrearsList, model.BillSendingArrearsListTemplates);
                                 status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
                                 status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
                                 transaction.Commit();

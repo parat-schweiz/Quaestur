@@ -6,7 +6,8 @@ namespace Quaestur
 {
     public class Country : DatabaseObject
     {
-		public MultiLanguageStringField Name { get; set; }
+		public MultiLanguageStringField Name { get; private set; }
+        public StringField Code { get; private set; }
 
         public Country() : this(Guid.Empty)
         {
@@ -15,6 +16,7 @@ namespace Quaestur
         public Country(Guid id) : base(id)
         {
             Name = new MultiLanguageStringField(this, "name");
+            Code = new StringField(this, "Code", 16, AllowStringType.SimpleText);
         }
 
         public override string ToString()

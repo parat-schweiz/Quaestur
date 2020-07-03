@@ -47,6 +47,8 @@ namespace Quaestur
         {
             switch (variable)
             {
+                case "Person.Today":
+                    return DateTime.Now.FormatSwissDateDay();
                 case "Person.Number":
                     return _person.Number.Value.ToString();
                 case "Person.FirstName":

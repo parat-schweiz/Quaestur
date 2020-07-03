@@ -94,6 +94,7 @@ namespace Quaestur
         public string PhraseFieldSenderGroup;
         public string PhraseTestBillCreate;
         public string PhraseTestSettlementCreate;
+        public string PhraseTestArrearsListCreate;
         public string PhraseTestPointsTallyCreate;
         public string PhraseTestPaymentParameterUpdateCreate;
 
@@ -122,6 +123,7 @@ namespace Quaestur
             PhraseFieldSenderGroup = translator.Get("MembershipType.Edit.Field.SenderGroup", "Sender group field in the membership type edit dialog", "Sender group").EscapeHtml();
             PhraseTestBillCreate = translator.Get("MembershipType.Edit.Button.TestBillCreate", "Button to test creating bill", "Test creating bill").EscapeHtml();
             PhraseTestSettlementCreate = translator.Get("MembershipType.Edit.Button.TestSettlementCreate", "Button to test creating settlement", "Test creating settlement").EscapeHtml();
+            PhraseTestArrearsListCreate = translator.Get("MembershipType.Edit.Button.TestArrearsListCreate", "Button to test creating settlement", "Test creating arrears list").EscapeHtml();
             PhraseTestPointsTallyCreate = translator.Get("MembershipType.Edit.Button.TestPointsTallyCreate", "Button to test creating points tally", "Test creating points tally").EscapeHtml();
             PhraseTestPaymentParameterUpdateCreate = translator.Get("MembershipType.Edit.Button.TestPaymentParameterUpdateCreate", "Button to test creating payment parameter update mails", "Test creating payment parameter update mails").EscapeHtml();
         }
@@ -560,6 +562,138 @@ namespace Quaestur
 
                 return status.CreateJsonData();
             });
+            Post("/membershiptype/testcreatearrearslist/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var membershipType = Database.Query<MembershipType>(idString);
+                var model = JsonConvert.DeserializeObject<MembershipTypeEditViewModel>(ReadBody());
+                var status = CreateStatus();
+
+                if (status.ObjectNotNull(membershipType) &&
+                    status.HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
+                {
+                    if (membershipType.Payment.Value != PaymentModel.None &&
+                        membershipType.Collection.Value == CollectionModel.Direct)
+                    {
+                        using (var transaction = Database.BeginTransaction())
+                        {
+                            Updatefields(status, model, membershipType);
+                            UpdateTemplatesAndParameters(model, membershipType, status);
+
+                            if (status.IsSuccess)
+                            {
+                                var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                                var userLanguage = person.Language.Value;
+
+                                var membership = new Membership(Guid.NewGuid());
+                                membership.Organization.Value = membershipType.Organization.Value;
+                                membership.Type.Value = membershipType;
+                                membership.Person.Value = person;
+                                membership.StartDate.Value = DateTime.UtcNow.AddDays(-100).Date;
+
+                                var bills = new List<Bill>();
+
+                                var bill0 = new Bill(Guid.NewGuid());
+                                bill0.FromDate.Value = DateTime.UtcNow.AddDays(-100).Date;
+                                bill0.UntilDate.Value = DateTime.UtcNow.AddDays(-71).Date;
+                                bill0.CreatedDate.Value = DateTime.UtcNow.AddDays(-61).Date;
+                                bill0.Amount.Value = 113.50M;
+                                bill0.Number.Value = BillDocument.CreateNumber(bill0.Id.Value);
+                                bill0.Status.Value = BillStatus.New;
+                                bill0.Membership.Value = membership;
+                                bills.Add(bill0);
+
+                                var bill1 = new Bill(Guid.NewGuid());
+                                bill1.FromDate.Value = DateTime.UtcNow.AddDays(-70).Date;
+                                bill1.UntilDate.Value = DateTime.UtcNow.AddDays(-41).Date;
+                                bill1.CreatedDate.Value = DateTime.UtcNow.AddDays(-31).Date;
+                                bill1.Amount.Value = 2095.75M;
+                                bill1.Number.Value = BillDocument.CreateNumber(bill1.Id.Value);
+                                bill1.Status.Value = BillStatus.New;
+                                bill1.Membership.Value = membership;
+                                bills.Add(bill1);
+
+                                var bill2 = new Bill(Guid.NewGuid());
+                                bill2.FromDate.Value = DateTime.UtcNow.AddDays(-40).Date;
+                                bill2.UntilDate.Value = DateTime.UtcNow.AddDays(-11).Date;
+                                bill2.CreatedDate.Value = DateTime.UtcNow.AddDays(-1).Date;
+                                bill2.Amount.Value = 13.00M;
+                                bill2.Number.Value = BillDocument.CreateNumber(bill2.Id.Value);
+                                bill2.Status.Value = BillStatus.New;
+                                bill2.Membership.Value = membership;
+                                bills.Add(bill2);
+
+                                var content = new Multipart("mixed");
+                                var bodyText = Translate("MembershipType.TestCreateBill.Text", "Subject of the test create bill mail", "See attachements");
+                                var bodyPart = new TextPart("plain") { Text = bodyText };
+                                bodyPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                                content.Add(bodyPart);
+
+                                foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
+                                {
+                                    foreach (var template in Database.Query<BillSendingTemplate>(DC.Equal("membershiptypeid", membership.Type.Value.Id.Value)))
+                                    {
+                                        var documentTemplate = template.GetBillSendingArrearsList(Database, language);
+
+                                        if (documentTemplate != null)
+                                        {
+                                            person.Language.Value = language;
+                                            var arrearsDocument = new ArrearsDocument(Database, Translator, membership.Organization, person, bills, documentTemplate.Text.Value);
+                                            var document = arrearsDocument.Compile();
+
+                                            if (document != null)
+                                            {
+                                                var documentStream = new MemoryStream(document);
+                                                var documentPart = new MimePart("application", "pdf");
+                                                documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
+                                                documentPart.ContentType.Name = language.ToString() + ".bill.pdf";
+                                                documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                                                documentPart.ContentDisposition.FileName = language.ToString() + ".bill.pdf";
+                                                documentPart.ContentTransferEncoding = ContentEncoding.Base64;
+                                                content.Add(documentPart);
+                                            }
+
+                                            var latexPart = new TextPart("plain") { Text = arrearsDocument.TexDocument };
+                                            latexPart.ContentType.Name = language.ToString() + ".tex";
+                                            latexPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                                            latexPart.ContentDisposition.FileName = language.ToString() + ".tex";
+                                            latexPart.ContentTransferEncoding = ContentEncoding.Base64;
+                                            content.Add(latexPart);
+
+                                            var errorPart = new TextPart("plain") { Text = arrearsDocument.ErrorText };
+                                            errorPart.ContentType.Name = language.ToString() + ".output.txt";
+                                            errorPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
+                                            errorPart.ContentDisposition.FileName = language.ToString() + ".output.txt";
+                                            errorPart.ContentTransferEncoding = ContentEncoding.Base64;
+                                            content.Add(errorPart);
+                                        }
+                                    }
+                                }
+
+                                if (content.Count > 1)
+                                {
+                                    var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                    var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
+                                    Global.MailCounter.Used();
+                                    Global.Mail.Send(to, subject, content);
+                                    status.SetSuccess("MembershipType.TestCreateBill.Success", "Success during test create bill", "Compilation finished. You will recieve the output via mail.");
+                                }
+                                else
+                                {
+                                    status.SetError("MembershipType.TestCreateBill.Failed.Failed", "LaTeX failed during test create bill", "Compilation failed. No PDF/LaTeX output was generated.");
+                                }
+                                transaction.Rollback();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        status.SetError("MembershipType.TestCreateBill.Failed.NoPayment", "LaTeX failed during test create bill", "No payment or billing was selected. No output was generated.");
+                    }
+                }
+
+                return status.CreateJsonData();
+            });
             Post("/membershiptype/testcreatebill/{id}", parameters =>
             {
                 string idString = parameters.id;
@@ -580,12 +714,13 @@ namespace Quaestur
 
                             if (status.IsSuccess)
                             {
-                                var userLanguage = CurrentSession.User.Language.Value;
+                                var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                                var userLanguage = person.Language.Value;
 
                                 var membership = new Membership(Guid.NewGuid());
                                 membership.Organization.Value = membershipType.Organization.Value;
                                 membership.Type.Value = membershipType;
-                                membership.Person.Value = CurrentSession.User;
+                                membership.Person.Value = person;
                                 membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
                                 var content = new Multipart("mixed");
@@ -600,7 +735,7 @@ namespace Quaestur
 
                                     if (documentTemplate != null)
                                     {
-                                        CurrentSession.User.Language.Value = language;
+                                        person.Language.Value = language;
                                         var billDocument = new BillDocument(Translator, Database, membership, 0m);
 
                                         if (billDocument.Create())
@@ -633,7 +768,7 @@ namespace Quaestur
 
                                 if (content.Count > 1)
                                 {
-                                    var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                    var to = new MailboxAddress(person.ShortHand, person.PrimaryMailAddress);
                                     var subject = Translate("MembershipType.TestCreateBill.Subject", "Subject of the test create bill mail", "Test create bill");
                                     Global.MailCounter.Used();
                                     Global.Mail.Send(to, subject, content);
@@ -672,12 +807,13 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            var userLanguage = CurrentSession.User.Language.Value;
+                            var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                            var userLanguage = person.Language.Value;
 
                             var membership = new Membership(Guid.NewGuid());
                             membership.Organization.Value = membershipType.Organization.Value;
                             membership.Type.Value = membershipType;
-                            membership.Person.Value = CurrentSession.User;
+                            membership.Person.Value = person;
                             membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
                             var content = new Multipart("mixed");
@@ -701,7 +837,7 @@ namespace Quaestur
 
                                 if (documentTemplate != null)
                                 {
-                                    CurrentSession.User.Language.Value = language;
+                                    person.Language.Value = language;
                                     var tallyDocument = new PointsTallyDocument(Translator, Database, membership, CreateTestPoints(membership.Person.Value));
 
                                     if (tallyDocument.Create())
@@ -728,13 +864,13 @@ namespace Quaestur
                                     errorPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
                                     errorPart.ContentDisposition.FileName = language.ToString() + ".output.txt";
                                     errorPart.ContentTransferEncoding = ContentEncoding.Base64;
-                                       content.Add(errorPart);
+                                    content.Add(errorPart);
                                 }
                             }
 
                             if (content.Count > 1)
                             {
-                                var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                var to = new MailboxAddress(person.ShortHand, person.PrimaryMailAddress);
                                 var subject = Translate("MembershipType.TestCreatePointsTally.Subject", "Subject of the test create bill mail", "Test create points tally");
                                 Global.MailCounter.Used();
                                 Global.Mail.Send(to, subject, content);
@@ -768,12 +904,13 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            var userLanguage = CurrentSession.User.Language.Value;
+                            var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                            var userLanguage = person.Language.Value;
 
                             var membership = new Membership(Guid.NewGuid());
                             membership.Organization.Value = membershipType.Organization.Value;
                             membership.Type.Value = membershipType;
-                            membership.Person.Value = CurrentSession.User;
+                            membership.Person.Value = person;
                             membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
                             var content = new Multipart("mixed");
@@ -797,7 +934,7 @@ namespace Quaestur
 
                                 if (documentTemplate != null)
                                 {
-                                    CurrentSession.User.Language.Value = language;
+                                    person.Language.Value = language;
                                     var billDocument = new BillDocument(Translator, Database, membership, 13250m);
 
                                     if (billDocument.Create())
@@ -830,7 +967,7 @@ namespace Quaestur
 
                             if (content.Count > 1)
                             {
-                                var to = new MailboxAddress(CurrentSession.User.ShortHand, CurrentSession.User.PrimaryMailAddress);
+                                var to = new MailboxAddress(person.ShortHand, person.PrimaryMailAddress);
                                 var subject = Translate("MembershipType.TestCreateSettlement.Subject", "Subject of the test create bill mail", "Test create settlement");
                                 Global.MailCounter.Used();
                                 Global.Mail.Send(to, subject, content);
@@ -864,12 +1001,13 @@ namespace Quaestur
 
                         if (status.IsSuccess)
                         {
-                            var userLanguage = CurrentSession.User.Language.Value;
+                            var person = Database.Query<Person>(CurrentSession.User.Id.Value);
+                            var userLanguage = person.Language.Value;
 
                             var membership = new Membership(Guid.NewGuid());
                             membership.Organization.Value = membershipType.Organization.Value;
                             membership.Type.Value = membershipType;
-                            membership.Person.Value = CurrentSession.User;
+                            membership.Person.Value = person;
                             membership.StartDate.Value = DateTime.UtcNow.AddDays(-10).Date;
 
                             foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })

@@ -5,13 +5,21 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class LatexTemplate : DatabaseObject
+    public class LatexTemplate : DatabaseObject, ITemplate
     {
         public ForeignKeyField<Organization, LatexTemplate> Organization { get; private set; }
         public EnumField<TemplateAssignmentType> AssignmentType { get; private set; }
         public EnumField<Language> Language { get; private set; }
         public StringField Label { get; private set; }
         public StringField Text { get; private set; }
+
+        Organization ITemplate.Organization => Organization.Value;
+
+        TemplateAssignmentType ITemplate.AssignmentType => AssignmentType.Value;
+
+        Language ITemplate.Language => Language.Value;
+
+        string ITemplate.Label => Label.Value;
 
         public LatexTemplate() : this(Guid.Empty)
         {
