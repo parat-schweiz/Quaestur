@@ -97,35 +97,31 @@ namespace Quaestur
             var days = (int)_membershipType.PaymentParameters
                 .Single(p => p.Key == VotingRightGraceAfterBillKey).Value;
             var bills = _database
-                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
-                .OrderByDescending(m => m.UntilDate.Value);
-            var lastBill = bills.FirstOrDefault();
+                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value));
 
-            if (lastBill == null)
+            if (!bills.Any())
             {
                 return false;
             }
-            else if (lastBill.Status.Value == BillStatus.Payed)
-            {
-                return true;
-            }
-            else
-            {
-                var secondLastBill = bills.Skip(1).FirstOrDefault();
 
-                if (secondLastBill == null)
+            bool allBillsPayed = true;
+
+            foreach (var bill in bills)
+            {
+                switch (bill.Status.Value)
                 {
-                    return false;
-                }
-                else if (secondLastBill.Status.Value != BillStatus.Payed)
-                {
-                    return false;
-                }
-                else
-                {
-                    return DateTime.UtcNow.Date.Subtract(lastBill.CreatedDate.Value.Date).TotalDays <= days;
+                    case BillStatus.Canceled:
+                    case BillStatus.Payed:
+                        break;
+                    case BillStatus.New:
+                        allBillsPayed &= DateTime.UtcNow.Date.Subtract(bill.CreatedDate.Value.Date).TotalDays <= days;
+                        break;
+                    default:
+                        throw new NotSupportedException();
                 }
             }
+
+            return allBillsPayed;
         }
 
         public override int GetBillAdvancePeriod()
