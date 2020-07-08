@@ -153,89 +153,91 @@ namespace Quaestur
             var level = billing.Bills.Max(b => b.ReminderLevel.Value + 1);
             var template = SelectTemplate(database, billing.Person, billing.Bills, level);
 
-            if (template == null)
+            using (ITransaction transaction = database.BeginTransaction())
             {
-                Global.Log.Notice("No bill sending template for {0} at level {1}",
-                    billing.Person.ShortHand,
-                    level);
-                UpdateBills(database, billing, DateTime.UtcNow.AddDays(-7d), null);
-                return;
-            }
+                if (template == null)
+                {
+                    Global.Log.Notice("No bill sending template for {0} at level {1}",
+                        billing.Person.ShortHand,
+                        level);
+                    UpdateBills(database, billing, DateTime.UtcNow.AddDays(-7d), null);
+                    return;
+                }
 
-            switch (template.SendingMode.Value)
-            {
-                case SendingMode.MailOnly:
-                    if (SendMail(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else
-                    {
-                        SendingFailed(database, billing, template);
-                        UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
-                    }
-                    break;
-                case SendingMode.PostalOnly:
-                    if (SendPostal(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else
-                    {
-                        SendingFailed(database, billing, template);
-                        UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
-                    }
-                    break;
-                case SendingMode.MailPreferred:
-                    if (SendMail(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else if (SendPostal(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else
-                    {
-                        SendingFailed(database, billing, template);
-                        UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
-                    }
-                    break;
-                case SendingMode.PostalPrefrerred:
-                    if (SendPostal(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else if (SendMail(database, translator, billing, template))
-                    {
-                        UpdateBills(database, billing, DateTime.UtcNow, level);
-                    }
-                    else
-                    {
-                        SendingFailed(database, billing, template);
-                        UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
-                    }
-                    break;
-                default:
-                    throw new NotSupportedException();
+                switch (template.SendingMode.Value)
+                {
+                    case SendingMode.MailOnly:
+                        if (SendMail(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else
+                        {
+                            SendingFailed(database, billing, template);
+                            UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
+                        }
+                        break;
+                    case SendingMode.PostalOnly:
+                        if (SendPostal(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else
+                        {
+                            SendingFailed(database, billing, template);
+                            UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
+                        }
+                        break;
+                    case SendingMode.MailPreferred:
+                        if (SendMail(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else if (SendPostal(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else
+                        {
+                            SendingFailed(database, billing, template);
+                            UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
+                        }
+                        break;
+                    case SendingMode.PostalPrefrerred:
+                        if (SendPostal(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else if (SendMail(database, translator, billing, template))
+                        {
+                            UpdateBills(database, billing, DateTime.UtcNow, level);
+                        }
+                        else
+                        {
+                            SendingFailed(database, billing, template);
+                            UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
+                        }
+                        break;
+                    default:
+                        throw new NotSupportedException();
+                }
+
+                transaction.Commit();
             }
         }
 
         private static void UpdateBills(IDatabase database, Billing billing, DateTime date, int? level)
         {
-            using (ITransaction transaction = database.BeginTransaction())
+            foreach (var bill in billing.Bills)
             {
-                foreach (var bill in billing.Bills)
+                if (level.HasValue)
                 {
-                    if (level.HasValue)
-                    {
-                        bill.ReminderLevel.Value = level.Value;
-                    }
-
-                    bill.ReminderDate.Value = date;
-                    bill.Membership.Value.UpdateVotingRight(database);
-                    database.Save(bill);
+                    bill.ReminderLevel.Value = level.Value;
                 }
+
+                bill.ReminderDate.Value = date;
+                bill.Membership.Value.UpdateVotingRight(database);
+                database.Save(bill);
             }
         }
 
@@ -340,14 +342,30 @@ namespace Quaestur
         {
             var latexTemplate = template.GetBillSendingLetter(database, person.Language.Value);
             var letter = new UniversalDocument(translator, person, latexTemplate.Text.Value);
-            return letter.Compile();
+            var document = letter.Compile();
+
+            if (document == null)
+            {
+                Global.Log.Error("Compile of bill reminder postal letter failed:");
+                Global.Log.Error(letter.ErrorText);
+            }
+
+            return document;
         }
 
         private static byte[] CreateArrearsList(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
         {
             var latexTemplate = template.GetBillSendingArrearsList(database, billing.Person.Language.Value);
             var letter = new ArrearsDocument(database, translator, billing.Organization, billing.Person, billing.Bills, latexTemplate.Text.Value);
-            return letter.Compile();
+            var document = letter.Compile();
+
+            if (document == null)
+            {
+                Global.Log.Error("Compile of bill reminder arrears list failed:");
+                Global.Log.Error(letter.ErrorText);
+            }
+
+            return document;
         }
 
         private bool SendMail(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
