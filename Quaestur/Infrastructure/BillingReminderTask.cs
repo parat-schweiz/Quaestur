@@ -41,6 +41,21 @@ namespace Quaestur
                 Person = person;
                 Bills = new List<Bill>();
             }
+
+            public bool HasLevelZero
+            {
+                get
+                {
+                    return Bills.Any(b => b.ReminderLevel.Value < 1);
+                }
+            }
+
+            public Billing SelectLevelZero()
+            {
+                var newBilling = new Billing(Organization, Person);
+                newBilling.Bills.AddRange(Bills.Where(b => b.ReminderLevel.Value < 1));
+                return newBilling;
+            }
         }
 
         public void Run(IDatabase database)
@@ -150,8 +165,11 @@ namespace Quaestur
         {
             var translation = new Translation(database);
             var translator = new Translator(translation, billing.Person.Language.Value);
-            var level = billing.Bills.Max(b => b.ReminderLevel.Value + 1);
+            var level = 
+                billing.HasLevelZero ? 1 :
+                billing.Bills.Max(b => b.ReminderLevel.Value + 1);
             var template = SelectTemplate(database, billing.Person, billing.Bills, level);
+            var sendBilling = billing.HasLevelZero ? billing.SelectLevelZero() : billing;
 
             using (ITransaction transaction = database.BeginTransaction())
             {
@@ -167,54 +185,54 @@ namespace Quaestur
                 switch (template.SendingMode.Value)
                 {
                     case SendingMode.MailOnly:
-                        if (SendMail(database, translator, billing, template))
+                        if (SendMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
                         else
                         {
-                            SendingFailed(database, billing, template);
+                            SendingFailed(database, sendBilling, template);
                             UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
                         }
                         break;
                     case SendingMode.PostalOnly:
-                        if (SendPostal(database, translator, billing, template))
+                        if (SendPostal(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
                         else
                         {
-                            SendingFailed(database, billing, template);
+                            SendingFailed(database, sendBilling, template);
                             UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
                         }
                         break;
                     case SendingMode.MailPreferred:
-                        if (SendMail(database, translator, billing, template))
+                        if (SendMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
-                        else if (SendPostal(database, translator, billing, template))
+                        else if (SendPostal(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
                         else
                         {
-                            SendingFailed(database, billing, template);
+                            SendingFailed(database, sendBilling, template);
                             UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
                         }
                         break;
                     case SendingMode.PostalPrefrerred:
-                        if (SendPostal(database, translator, billing, template))
+                        if (SendPostal(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
-                        else if (SendMail(database, translator, billing, template))
+                        else if (SendMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
                         else
                         {
-                            SendingFailed(database, billing, template);
+                            SendingFailed(database, sendBilling, template);
                             UpdateBills(database, billing, DateTime.UtcNow.AddDays(-9), null);
                         }
                         break;
