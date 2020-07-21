@@ -513,7 +513,7 @@ namespace Publicus
             var from = new MailboxAddress(
                 group.MailName.Value[translator.Language],
                 group.MailAddress.Value[translator.Language]);
-            var to = new MailboxAddress(mailAddress);
+            var to = MailboxAddress.Parse(mailAddress);
             var senderKey = string.IsNullOrEmpty(group.GpgKeyId.Value) ? null :
                 new GpgPrivateKeyInfo(
                 group.GpgKeyId.Value,

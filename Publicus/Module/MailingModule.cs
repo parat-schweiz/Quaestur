@@ -628,7 +628,7 @@ namespace Publicus
                     var from = new MailboxAddress(
                         sender.MailName.Value[language],
                         sender.MailAddress.Value[language]);
-                    var to = new MailboxAddress(model.TestAddress);
+                    var to = MailboxAddress.Parse(model.TestAddress);
                     var senderKey = sender.GpgKeyId.Value == null ? null :
                         new GpgPrivateKeyInfo(
                         sender.GpgKeyId.Value,

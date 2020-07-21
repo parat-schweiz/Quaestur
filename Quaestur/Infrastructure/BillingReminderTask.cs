@@ -303,7 +303,7 @@ namespace Quaestur
                     if (arrearsListDocument != null)
                     {
                         pdfDocuments = PdfUnite.Work(pdfDocuments, arrearsListDocument);
-
+                            
                         foreach (var bill in billing.Bills)
                         {
                             pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);

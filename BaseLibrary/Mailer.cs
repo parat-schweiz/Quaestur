@@ -193,7 +193,7 @@ namespace BaseLibrary
 
         public void Send(InternetAddress to, GpgPrivateKeyInfo senderKey, GpgPublicKeyInfo recipientKey, string subject, Multipart content)
         {
-            Send(new MailboxAddress(_config.SystemMailAddress), to, senderKey, recipientKey, subject, content);
+            Send(MailboxAddress.Parse(_config.SystemMailAddress), to, senderKey, recipientKey, subject, content);
         }
 
         public void Send(InternetAddress from, InternetAddress to, GpgPrivateKeyInfo senderKey, GpgPublicKeyInfo recipientKey, string subject, Multipart content)
