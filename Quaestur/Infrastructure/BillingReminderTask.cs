@@ -291,8 +291,10 @@ namespace Quaestur
 
                 if (billing.Bills.Count() == 1)
                 {
-                    var bill = billing.Bills.Single();
-                    pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);
+                    foreach (var bill in billing.Bills)
+                    {
+                        pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);
+                    }
                 }
                 else
                 {
@@ -301,6 +303,11 @@ namespace Quaestur
                     if (arrearsListDocument != null)
                     {
                         pdfDocuments = PdfUnite.Work(pdfDocuments, arrearsListDocument);
+
+                        foreach (var bill in billing.Bills)
+                        {
+                            pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);
+                        }
                     }
                     else
                     {
@@ -406,8 +413,10 @@ namespace Quaestur
 
             if (billing.Bills.Count() == 1)
             {
-                var bill = billing.Bills.Single();
-                AddDocument(content, bill.DocumentData, bill.Number.Value);
+                foreach (var bill in billing.Bills)
+                {
+                    AddDocument(content, bill.DocumentData, bill.Number.Value);
+                }
             }
             else
             {
@@ -421,6 +430,11 @@ namespace Quaestur
                         "arrears");
 
                     AddDocument(content, document, arrearsListDocumentName);
+
+                    foreach (var bill in billing.Bills)
+                    {
+                        AddDocument(content, bill.DocumentData, bill.Number.Value);
+                    }
                 }
                 else
                 {
