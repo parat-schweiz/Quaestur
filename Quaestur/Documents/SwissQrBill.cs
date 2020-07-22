@@ -65,6 +65,14 @@ namespace Quaestur
             _message = message; 
         }
 
+        private string RemoveWhitespace(string text)
+        {
+            return text
+                .Replace(" ", string.Empty)
+                .Replace("\t", string.Empty)
+                .Replace("\n", string.Empty);
+        }
+
         private string Text
         {
             get
@@ -79,7 +87,7 @@ namespace Quaestur
                 text.Add("1", 1); //Coding
 
                 //QRCH.CdtrInf
-                text.Add(_organization.BillIban.Value, 21); //IBAN
+                text.Add(RemoveWhitespace(_organization.BillIban.Value), 21); //IBAN
 
                 //QRCH.CdtrInf.Cdtr
                 text.Add("K", 1); //AdrTp
