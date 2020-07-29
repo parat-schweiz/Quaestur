@@ -433,7 +433,8 @@ namespace Publicus
                 case "Petition.ConfirmationLink":
                     return ConfirmationLink;
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
 

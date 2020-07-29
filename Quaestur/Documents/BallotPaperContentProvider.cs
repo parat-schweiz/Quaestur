@@ -37,7 +37,8 @@ namespace Quaestur
                 case "BallotPaper.DownloadLink":
                     return string.Format("{0}/ballotpaper", Global.Config.WebSiteAddress);
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
     }

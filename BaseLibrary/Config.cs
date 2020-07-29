@@ -53,7 +53,10 @@ namespace BaseLibrary
         public string MailAccountName { get; set; }
         public string MailAccountPassword { get; set; }
         public string AdminMailAddress { get; private set; }
+        public string AdminMailName { get; private set; }
+        public string AdminMailKeyId { get; private set; }
         public string SystemMailAddress { get; private set; }
+        public string SystemMailName { get; private set; }
 
         public override IEnumerable<ConfigItem> ConfigItems
         {
@@ -64,7 +67,10 @@ namespace BaseLibrary
                 yield return new ConfigItemString("MailAccountName", v => MailAccountName = v);
                 yield return new ConfigItemString("MailAccountPassword", v => MailAccountPassword = v);
                 yield return new ConfigItemString("AdminMailAddress", v => AdminMailAddress = v);
+                yield return new ConfigItemString("AdminMailName", v => AdminMailName = v);
+                yield return new ConfigItemString("AdminMailKeyId", v => AdminMailKeyId = v);
                 yield return new ConfigItemString("SystemMailAddress", v => SystemMailAddress = v);
+                yield return new ConfigItemString("SystemMailName", v => SystemMailName = v);
             } 
         }
 

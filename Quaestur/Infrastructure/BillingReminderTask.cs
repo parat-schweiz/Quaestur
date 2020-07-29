@@ -16,7 +16,7 @@ namespace Quaestur
             _lastSending = DateTime.MinValue;
         }
 
-        private double DaysSinceLastReminder(Bill bill)
+        private static double DaysSinceLastReminder(Bill bill)
         {
             if (bill.ReminderDate.Value.HasValue)
             {
@@ -25,36 +25,6 @@ namespace Quaestur
             else
             {
                 return 9999999d;
-            }
-        }
-
-        private class Billing
-        {
-            public Organization Organization { get; private set; }
-            public Person Person { get; private set; }
-            public List<Bill> Bills { get; private set; }
-            public string Id { get { return Organization.Id.Value.ToString() + "-" + Person.Id.Value.ToString(); } }
-
-            public Billing(Organization organization, Person person)
-            {
-                Organization = organization;
-                Person = person;
-                Bills = new List<Bill>();
-            }
-
-            public bool HasLevelZero
-            {
-                get
-                {
-                    return Bills.Any(b => b.ReminderLevel.Value < 1);
-                }
-            }
-
-            public Billing SelectLevelZero()
-            {
-                var newBilling = new Billing(Organization, Person);
-                newBilling.Bills.AddRange(Bills.Where(b => b.ReminderLevel.Value < 1));
-                return newBilling;
             }
         }
 
@@ -74,66 +44,91 @@ namespace Quaestur
                 {
                     var currentPrepayment = bill.Membership.Value.Person.Value.CurrentPrepayment(database);
 
-                    if (currentPrepayment >= bill.Amount.Value)
+                    var billing = new Billing(
+                        bill.Membership.Value.Organization.Value,
+                        bill.Membership.Value.Person.Value);
+
+                    if (!remindPersons.ContainsKey(billing.Id))
                     {
-                        var translator = new Translator(translation, bill.Membership.Value.Person.Value.Language.Value);
-
-                        using (var transaction = database.BeginTransaction())
-                        {
-                            var prepayment = new Prepayment(Guid.NewGuid());
-                            prepayment.Person.Value = bill.Membership.Value.Person.Value;
-                            prepayment.Moment.Value = DateTime.UtcNow;
-                            prepayment.Amount.Value = -bill.Amount.Value;
-                            prepayment.Reason.Value = translator.Get(
-                                "BillingReminderTask.Prepayment.Reason.SettledBill",
-                                "Settle bill with prepayment in billing remainder task",
-                                "Settled bill {0}",
-                                bill.Number.Value);
-                            database.Save(prepayment);
-
-                            bill.Status.Value = BillStatus.Payed;
-                            bill.PayedDate.Value = prepayment.Moment.Value;
-                            database.Save(bill);
-
-                            Journal(database, bill.Membership.Value.Person.Value,
-                                "BillingReminderTask.Journal.Prepayment.SettledBill",
-                                "Journal entry for settle bill from prepayment",
-                                "Settled bill {0} with amount {1} from prepayment",
-                                t => bill.Number.Value,
-                                t => bill.Amount.Value.FormatMoney());
-
-                            transaction.Commit();
-                        }
+                        remindPersons.Add(billing.Id, billing);
                     }
-                    else
-                    {
-                        var billing = new Billing(
-                            bill.Membership.Value.Organization.Value, 
-                            bill.Membership.Value.Person.Value);
 
-                        if (!remindPersons.ContainsKey(billing.Id))
-                        {
-                            remindPersons.Add(billing.Id, billing);
-                        }
-
-                        remindPersons[billing.Id].Bills.Add(bill);
-                    }
+                    remindPersons[billing.Id].Bills.Add(bill);
                 }
 
                 foreach (var billing in remindPersons.Values)
                 {
-                    if (billing.Bills.Any(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database)) &&
-                        Global.MailCounter.Available)
-                    {
-                        Send(database, billing);
-                    }
+                    RemindOrSettleInternal(database, translation, billing, false);
                 }
 
                 Global.Log.Notice("Mailing task complete");
             }
         }
 
-        private void Journal(IDatabase db, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
+        public static void RemindOrSettle(IDatabase database, Translation translation, Membership membership, bool forceSend)
+        {
+            var billing = new Billing(membership.Organization.Value, membership.Person.Value);
+            billing.Bills.AddRange(database
+                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
+                .Where(b => b.Status.Value == BillStatus.New)
+                .OrderByDescending(DaysSinceLastReminder));
+            RemindOrSettleInternal(database, translation, billing, forceSend);
+        }
+
+        private static void RemindOrSettleInternal(IDatabase database, Translation translation, Billing billing, bool forceReminder)
+        {
+            var prepayment = billing.Person.CurrentPrepayment(database);
+            var outstanding = billing.Bills.Sum(b => b.Amount) - prepayment;
+            var forceSend = billing.Bills.Any(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database));
+
+            if (outstanding <= 0m)
+            {
+                SettleBills(database, translation, billing);
+            }
+            else if ((forceReminder && Global.MailCounter.Available) || forceSend)
+            {
+                SendReminder(database, billing);
+            }
+        }
+
+        private static void SettleBills(IDatabase database, Translation translation, Billing billing)
+        {
+            var translator = new Translator(translation, billing.Person.Language.Value);
+
+            SentSettlementMail(database, billing);
+
+            foreach (var bill in billing.Bills)
+            {
+                using (var transaction = database.BeginTransaction())
+                {
+                    var prepayment = new Prepayment(Guid.NewGuid());
+                    prepayment.Person.Value = bill.Membership.Value.Person.Value;
+                    prepayment.Moment.Value = DateTime.UtcNow;
+                    prepayment.Amount.Value = -bill.Amount.Value;
+                    prepayment.Reason.Value = translator.Get(
+                        "BillingReminderTask.Prepayment.Reason.SettledBill",
+                        "Settle bill with prepayment in billing remainder task",
+                        "Settled bill {0}",
+                        bill.Number.Value);
+                    database.Save(prepayment);
+
+                    bill.Status.Value = BillStatus.Payed;
+                    bill.PayedDate.Value = prepayment.Moment.Value;
+                    database.Save(bill);
+
+                    Journal(database, bill.Membership.Value.Person.Value,
+                        "BillingReminderTask.Journal.Prepayment.SettledBill",
+                        "Journal entry for settle bill from prepayment",
+                        "Settled bill {0} with amount {1} from prepayment",
+                        t => bill.Number.Value,
+                        t => bill.Amount.Value.FormatMoney());
+
+                    transaction.Commit();
+                }
+            }
+        }
+
+        private static void Journal(IDatabase db, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
         {
             var translation = new Translation(db);
             var translator = new Translator(translation, person.Language.Value);
@@ -151,7 +146,7 @@ namespace Quaestur
                 technicalTranslator.Get(key, hint, technical, parameters.Select(p => p(technicalTranslator))));
         }
 
-        private BillSendingTemplate SelectTemplate(IDatabase database, Person person, IEnumerable<Bill> bills, int level)
+        private static BillSendingTemplate SelectTemplate(IDatabase database, Person person, IEnumerable<Bill> bills, int level)
         {
             var allTemplates = database.Query<BillSendingTemplate>();
             return allTemplates
@@ -161,7 +156,7 @@ namespace Quaestur
                 .FirstOrDefault();
         }
 
-        private void Send(IDatabase database, Billing billing)
+        private static void SendReminder(IDatabase database, Billing billing)
         {
             var translation = new Translation(database);
             var translator = new Translator(translation, billing.Person.Language.Value);
@@ -175,9 +170,12 @@ namespace Quaestur
             {
                 if (template == null)
                 {
-                    Global.Log.Notice("No bill sending template for {0} at level {1}",
-                        billing.Person.ShortHand,
-                        level);
+                    Journal(database, billing.Person,
+                        "Document.BillingReminder.NoTemplate",
+                        "Whenn a billing reminder cannot be send because no template is configured",
+                        "Sending bill(s) failed for lack of a template",
+                        t => ComputeBillText(t, billing.Bills),
+                        t => template.Name.Value);
                     UpdateBills(database, billing, DateTime.UtcNow.AddDays(-7d), null);
                     return;
                 }
@@ -185,7 +183,7 @@ namespace Quaestur
                 switch (template.SendingMode.Value)
                 {
                     case SendingMode.MailOnly:
-                        if (SendMail(database, translator, sendBilling, template))
+                        if (SendReminderMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
@@ -196,7 +194,7 @@ namespace Quaestur
                         }
                         break;
                     case SendingMode.PostalOnly:
-                        if (SendPostal(database, translator, sendBilling, template))
+                        if (SendPostalReminder(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
@@ -207,11 +205,11 @@ namespace Quaestur
                         }
                         break;
                     case SendingMode.MailPreferred:
-                        if (SendMail(database, translator, sendBilling, template))
+                        if (SendReminderMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
-                        else if (SendPostal(database, translator, sendBilling, template))
+                        else if (SendPostalReminder(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
@@ -222,11 +220,11 @@ namespace Quaestur
                         }
                         break;
                     case SendingMode.PostalPrefrerred:
-                        if (SendPostal(database, translator, sendBilling, template))
+                        if (SendPostalReminder(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
-                        else if (SendMail(database, translator, sendBilling, template))
+                        else if (SendReminderMail(database, translator, sendBilling, template))
                         {
                             UpdateBills(database, billing, DateTime.UtcNow, level);
                         }
@@ -259,7 +257,7 @@ namespace Quaestur
             }
         }
 
-        private string ComputeBillText(Translator translator, IEnumerable<Bill> bills)
+        private static string ComputeBillText(Translator translator, IEnumerable<Bill> bills)
         { 
             return string.Join(", ", bills
                 .Select(b => translator.Get(
@@ -270,7 +268,7 @@ namespace Quaestur
                     b.ReminderLevel.Value)));
         }
 
-        private void SendingFailed(IDatabase database, Billing billing, BillSendingTemplate template)
+        private static void SendingFailed(IDatabase database, Billing billing, BillSendingTemplate template)
         {
             Journal(database, billing.Person,
                 "Document.BillingReminder.Failed",
@@ -280,7 +278,7 @@ namespace Quaestur
                 t => template.Name.Value);
         }
 
-        private bool SendPostal(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
+        private static bool SendPostalReminder(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
         {
             if ((billing.Person.PrimaryPostalAddress == null) ||
                 (!billing.Person.PrimaryPostalAddress.IsValid))
@@ -307,8 +305,12 @@ namespace Quaestur
             {
                 var pdfDocuments = document;
 
-                if (billing.Bills.Count() == 1)
+                var settlementDocument = CreateSettlement(database, translator, billing);
+
+                if (settlementDocument != null)
                 {
+                    pdfDocuments = PdfUnite.Work(pdfDocuments, settlementDocument);
+
                     foreach (var bill in billing.Bills)
                     {
                         pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);
@@ -316,27 +318,13 @@ namespace Quaestur
                 }
                 else
                 {
-                    var arrearsListDocument = CreateArrearsList(database, translator, billing, template);
-
-                    if (arrearsListDocument != null)
-                    {
-                        pdfDocuments = PdfUnite.Work(pdfDocuments, arrearsListDocument);
-                            
-                        foreach (var bill in billing.Bills)
-                        {
-                            pdfDocuments = PdfUnite.Work(pdfDocuments, bill.DocumentData);
-                        }
-                    }
-                    else
-                    {
-                        Journal(database, billing.Person,
-                            "Document.BillingReminder.ArrearsList.CannotCompile",
-                            "ArrearsList document cloud not be compiled when sending bill",
-                            "Clould not create arrears document for bill(s) {0} using template {1}",
-                            t => ComputeBillText(translator, billing.Bills),
-                            t => template.Name.Value);
-                        return false;
-                    }
+                    Journal(database, billing.Person,
+                        "Document.BillingReminder.Settlement.CannotCompile",
+                        "Settlement document cloud not be compiled when sending bill",
+                        "Clould not create settlement document for bill(s) {0} using template {1}",
+                        t => ComputeBillText(translator, billing.Bills),
+                        t => template.Name.Value);
+                    return false;
                 }
 
                 var pingen = new Pingen(Global.Config.PingenApiToken);
@@ -371,29 +359,43 @@ namespace Quaestur
 
             if (document == null)
             {
-                Global.Log.Error("Compile of bill reminder postal letter failed:");
-                Global.Log.Error(letter.ErrorText);
+                var texDocument = new TextAttachement(letter.TexDocument, "document.tex");
+                var errorDocument = new TextAttachement(letter.ErrorText, "error.txt");
+                Global.Mail.SendAdminEncrypted(
+                    "LaTeX Error", "Could not compile bill sending letter",
+                    texDocument, errorDocument);
             }
 
             return document;
         }
 
-        private static byte[] CreateArrearsList(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
+        private static byte[] CreateSettlement(IDatabase database, Translator translator, Billing billing)
         {
-            var latexTemplate = template.GetBillSendingArrearsList(database, billing.Person.Language.Value);
-            var letter = new ArrearsDocument(database, translator, billing.Organization, billing.Person, billing.Bills, latexTemplate.Text.Value);
-            var document = letter.Compile();
+            var membership = billing.Person.Memberships.First(m => m.Organization.Value == billing.Organization);
+            var latexTemplate = membership.Type.Value.GetSettlementDocument(database, translator.Language);
+            var settlement = new SettlementDocument(database, translator, billing.Organization, billing.Person, billing.Bills, latexTemplate.Text.Value);
+            var document = settlement.Compile();
 
             if (document == null)
             {
-                Global.Log.Error("Compile of bill reminder arrears list failed:");
-                Global.Log.Error(letter.ErrorText);
+                Journal(database, billing.Person,
+                    "Document.BillingReminder.Settlement.CannotCompile",
+                    "Settlement document cloud not be compiled when sending bill",
+                    "Clould not create settlement document for bill(s) {0} using template {1}",
+                    t => ComputeBillText(translator, billing.Bills),
+                    t => latexTemplate.Label.Value);
+
+                var texDocument = new TextAttachement(settlement.TexDocument, "document.tex");
+                var errorDocument = new TextAttachement(settlement.ErrorText, "error.txt");
+                Global.Mail.SendAdminEncrypted(
+                    "LaTeX Error", "Could not compile bill settlement document",
+                    texDocument, errorDocument);
             }
 
             return document;
         }
 
-        private bool SendMail(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
+        private static bool SendReminderMail(IDatabase database, Translator translator, Billing billing, BillSendingTemplate template)
         {
             if (string.IsNullOrEmpty(billing.Person.PrimaryMailAddress))
             {
@@ -429,41 +431,22 @@ namespace Quaestur
             alternative.Add(htmlPart);
             content.Add(alternative);
 
-            if (billing.Bills.Count() == 1)
+            var settlementDocument = CreateSettlement(database, translator, billing);
+
+            if (settlementDocument != null)
             {
+                string settlementDocumentName = GetSettlementDocumentName(translator);
+
+                content.AddDocument(new PdfAttachement(settlementDocument, settlementDocumentName));
+
                 foreach (var bill in billing.Bills)
                 {
-                    AddDocument(content, bill.DocumentData, bill.Number.Value);
+                    content.AddDocument(new PdfAttachement(bill.DocumentData, bill.Number.Value));
                 }
             }
             else
             {
-                var document = CreateArrearsList(database, translator, billing, template);
-
-                if (document != null)
-                {
-                    var arrearsListDocumentName = translator.Get(
-                        "Document.BillingReminder.ArrearsList.DocumentName",
-                        "Name of the arrears list document when sending bill",
-                        "arrears");
-
-                    AddDocument(content, document, arrearsListDocumentName);
-
-                    foreach (var bill in billing.Bills)
-                    {
-                        AddDocument(content, bill.DocumentData, bill.Number.Value);
-                    }
-                }
-                else
-                {
-                    Journal(database, billing.Person,
-                        "Document.BillingReminder.ArrearsList.CannotCompile",
-                        "ArrearsList document cloud not be compiled when sending bill",
-                        "Clould not create arrears document for bill(s) {0} using template {1}",
-                        t => ComputeBillText(translator, billing.Bills),
-                        t => template.Name.Value);
-                    return false; 
-                }
+                return false;
             }
 
             try
@@ -492,16 +475,137 @@ namespace Quaestur
             }
         }
 
-        private static void AddDocument(Multipart content, byte[] documentData, string documentName)
+        private static string GetSettlementDocumentName(Translator translator)
         {
-            var documentStream = new System.IO.MemoryStream(documentData);
-            var documentPart = new MimePart("application", "pdf");
-            documentPart.Content = new MimeContent(documentStream, ContentEncoding.Binary);
-            documentPart.ContentType.Name = documentName + ".pdf";
-            documentPart.ContentDisposition = new ContentDisposition(ContentDisposition.Attachment);
-            documentPart.ContentDisposition.FileName = documentName + ".pdf";
-            documentPart.ContentTransferEncoding = ContentEncoding.Base64;
-            content.Add(documentPart);
+            return translator.Get(
+                "Document.BillingReminder.Settlement.DocumentName",
+                "Name of the settlement document when sending bill",
+                "Settlement");
+        }
+
+        private static bool SentSettlementMail(IDatabase database, Billing billing)
+        {
+            var membership = billing.Person.Memberships.First(m => m.Organization.Value == billing.Organization);
+            var mailSender = membership.Type.Value.SenderGroup.Value;
+
+            if (string.IsNullOrEmpty(billing.Person.PrimaryMailAddress))
+            {
+                Journal(database, billing.Person,
+                    "BillingReminderTask.Settlement.NoMailAddress",
+                    "When no mail address is available in settlement",
+                    "No mail address available to send settlement");
+                return false;
+            }
+
+            var message = CreateSettlementMail(database, billing, membership);
+
+            if (message == null)
+                return false;
+
+            try
+            {
+                Global.MailCounter.Used();
+                Global.Mail.Send(message);
+
+                Journal(database, membership.Person.Value,
+                    "BillingReminderTask.Settlement.SentMail",
+                    "Successfully sent settlement mail",
+                    "Sent settlement by e-mail to {1}",
+                    t => billing.Person.PrimaryMailAddress);
+
+                return true;
+            }
+            catch (Exception exception)
+            {
+                Journal(database, membership.Person.Value,
+                    "BillingReminderTask.Settlement.MailFailed",
+                    "Failed to sent settlment mail",
+                    "Sending settlement e-mail to {0} failed",
+                    t => billing.Person.PrimaryMailAddress);
+                Global.Log.Error(exception.ToString());
+                return false;
+            }
+        }
+
+        public static MimeMessage CreateSettlementMail(IDatabase database, Billing billing, Membership membership)
+        {
+            var person = membership.Person.Value;
+            var group = membership.Type.Value.SenderGroup.Value;
+            var from = new MailboxAddress(
+                group.MailName.Value[person.Language.Value],
+                group.MailAddress.Value[person.Language.Value]);
+            var to = new MailboxAddress(
+                person.ShortHand,
+                person.PrimaryMailAddress);
+            var senderKey = string.IsNullOrEmpty(group.GpgKeyId.Value) ? null :
+                new GpgPrivateKeyInfo(
+                group.GpgKeyId.Value,
+                group.GpgKeyPassphrase.Value);
+            var recipientKey = person.GetPublicKey();
+            var translation = new Translation(database);
+            var translator = new Translator(translation, person.Language.Value);
+            var templator = new Templator(new PersonContentProvider(translator, person));
+            var mailTemplate = membership.Type.Value.GetSettlementMail(database, person.Language.Value);
+            var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
+            var plainText = templator.Apply(mailTemplate.PlainText.Value);
+            var alternative = new Multipart("alternative");
+            var plainPart = new TextPart("plain") { Text = plainText };
+            plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(plainPart);
+            var htmlPart = new TextPart("html") { Text = htmlText };
+            htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(htmlPart);
+
+            var content = new Multipart("mixed");
+            content.Add(alternative);
+
+            var settlementDocument = CreateSettlement(database, translator, billing);
+
+            if (settlementDocument != null)
+            {
+                content.AddDocument(new PdfAttachement(settlementDocument, GetSettlementDocumentName(translator)));
+            }
+            else
+            {
+                return null; 
+            }
+
+            foreach (var bill in billing.Bills)
+            {
+                content.AddDocument(new PdfAttachement(bill.DocumentData, bill.Number.Value));
+            }
+
+            return Global.Mail.Create(from, to, senderKey, recipientKey, mailTemplate.Subject.Value, content);
+        }
+    }
+
+    public class Billing
+    {
+        public Organization Organization { get; private set; }
+        public Person Person { get; private set; }
+        public List<Bill> Bills { get; private set; }
+        public string Id { get { return Organization.Id.Value.ToString() + "-" + Person.Id.Value.ToString(); } }
+
+        public Billing(Organization organization, Person person)
+        {
+            Organization = organization;
+            Person = person;
+            Bills = new List<Bill>();
+        }
+
+        public bool HasLevelZero
+        {
+            get
+            {
+                return Bills.Any(b => b.ReminderLevel.Value < 1);
+            }
+        }
+
+        public Billing SelectLevelZero()
+        {
+            var newBilling = new Billing(Organization, Person);
+            newBilling.Bills.AddRange(Bills.Where(b => b.ReminderLevel.Value < 1));
+            return newBilling;
         }
     }
 }

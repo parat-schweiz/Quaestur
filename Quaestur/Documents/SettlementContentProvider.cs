@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Quaestur
 {
-    public class ArrearsContentProvider : IContentProvider
+    public class SettlementContentProvider : IContentProvider
     {
         private readonly IDatabase _database;
         private readonly Translator _translator;
@@ -15,7 +15,7 @@ namespace Quaestur
         private readonly IEnumerable<Bill> _bills;
         private readonly SystemWideSettings _settings;
 
-        public ArrearsContentProvider(IDatabase database, Translator translator, Person person, IEnumerable<Bill> bills)
+        public SettlementContentProvider(IDatabase database, Translator translator, Person person, IEnumerable<Bill> bills)
         {
             _database = database;
             _translator = translator;
@@ -24,43 +24,38 @@ namespace Quaestur
             _settings = _database.Query<SystemWideSettings>().Single();
         }
 
-        public string Prefix
-        {
-            get { return "Arrears"; }
-        }
-
-        private string CreateArrearsTable()
+        private string CreateSettlementTable()
         {
             var tableHead = _translator.Get("" +
-                "Arrears.Document.Table.Head",
+                "Settlement.Document.Table.Head",
                 "Head of the arrears table",
-                "Arrears");
+                "Settlement");
             var tableColumnNumber = _translator.Get("" +
-                "Arrears.Document.Table.Column.Number",
+                "Settlement.Document.Table.Column.Number",
                 "Number column in the arrears table",
                 "Number");
             var tableColumnFrom = _translator.Get("" +
-                "Arrears.Document.Table.Column.FromDate",
+                "Settlement.Document.Table.Column.FromDate",
                 "From date column in the arrears table",
                 "From");
             var tableColumnUntil = _translator.Get("" +
-                "Arrears.Document.Table.Column.UntilDate",
+                "Settlement.Document.Table.Column.UntilDate",
                 "Until date column in the arrears table",
                 "Until");
             var tableColumnAmount = _translator.Get("" +
-                "Arrears.Document.Table.Column.Amount",
+                "Settlement.Document.Table.Column.Amount",
                 "Amount date column in the arrears table",
                 "Amount");
             var tableColumnRunUp = _translator.Get("" +
-                "Arrears.Document.Table.Column.RunUp",
-                "RunUp date column in the arrears table",
-                "RunUp");
+                "Settlement.Document.Table.Column.Balance",
+                "Balance date column in the arrears table",
+                "Balance");
             var tableRowPrepayment = _translator.Get("" +
-                "Arrears.Document.Table.Row.Prepayment",
+                "Settlement.Document.Table.Row.Prepayment",
                 "Prepayment row in the arrears table",
                 "Prepayment");
             var tableRowOutstanding = _translator.Get("" +
-                "Arrears.Document.Table.Row.Outstanding",
+                "Settlement.Document.Table.Row.Outstanding",
                 "Outstanding row in the arrears table",
                 "Outstanding amount");
             var currentPrepayment = _person.CurrentPrepayment(_database);
@@ -167,31 +162,30 @@ namespace Quaestur
             return text.ToString();
         }
 
-        private string BackDays(Bill bill)
+        public string Prefix
         {
-            var daysSince = (int)Math.Floor(DateTime.UtcNow.Subtract(bill.FromDate).TotalDays);
-            if (daysSince >= 1)
-            {
-                return _translator.Get(
-                    "Arrears.Document.BackDays",
-                    "Days a bill is overdue",
-                    "{0} days",
-                    daysSince);
-            }
-            else
-            {
-                return string.Empty; 
-            }
+            get { return "Settlement"; }
         }
 
         public string GetContent(string variable)
         {
             switch (variable)
             {
-                case "Arrears.Table":
-                    return CreateArrearsTable();
+                case "Settlement.Table":
+                    return CreateSettlementTable();
+                case "Settlement.MaxReminderLevel":
+                    return _bills.Max(b => b.ReminderLevel.Value).ToString();
+                case "Settlement.MinReminderLevel":
+                    return _bills.Min(b => b.ReminderLevel.Value).ToString();
+                case "Settlement.BillCount":
+                    return _bills.Count().ToString();
+                case "Settlement.PaymentRequired":
+                    var currentPrepayment = _person.CurrentPrepayment(_database);
+                    var outstandingAmount = _bills.Sum(b => b.Amount.Value) - currentPrepayment;
+                    return outstandingAmount > 0m ? "yes" : "no";
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
     }

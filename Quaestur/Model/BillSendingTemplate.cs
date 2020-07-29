@@ -43,7 +43,6 @@ namespace Quaestur
         public ForeignKeyField<Group, BillSendingTemplate> MailSender { get; private set; }
         public EnumField<SendingMode> SendingMode { get; private set; }
 
-        public const string BillSendingArrearsListFieldName = "BillSendingArrearsLists";
         public const string BillSendingLetterFieldName = "BillSendingLetters";
         public const string BillSendingMailFieldName = "BillSendingMails";
 
@@ -62,11 +61,6 @@ namespace Quaestur
             SendingMode = new EnumField<SendingMode>(this, "sendingmode", Quaestur.SendingMode.MailOnly, SendingModeExtensions.Translate);
         }
 
-        public TemplateField BillSendingArrearsList
-        {
-            get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingArrearsListFieldName); }
-        }
-
         public TemplateField BillSendingLetter
         {
             get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingLetterFieldName); }
@@ -77,11 +71,6 @@ namespace Quaestur
             get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingMailFieldName); }
         }
 
-        public IEnumerable<LatexTemplateAssignment> BillSendingArrearsLists(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingArrearsListFieldName)));
-        }
-
         public IEnumerable<LatexTemplateAssignment> BillSendingLetters(IDatabase database)
         {
             return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingLetterFieldName)));
@@ -90,11 +79,6 @@ namespace Quaestur
         public IEnumerable<MailTemplateAssignment> BillSendingMails(IDatabase database)
         {
             return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingMailFieldName)));
-        }
-
-        public LatexTemplate GetBillSendingArrearsList(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, BillSendingArrearsLists);
         }
 
         public LatexTemplate GetBillSendingLetter(IDatabase database, Language language)

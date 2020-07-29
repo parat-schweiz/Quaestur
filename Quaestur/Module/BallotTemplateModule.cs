@@ -483,7 +483,7 @@ namespace Quaestur
                 else
                 {
                     result.MessageType = "warning";
-                    result.MessageText = Translate("MembershipType.TestCreateBill.Failed.NotFound", "Object not found during test create ballot", "Object not found");
+                    result.MessageText = Translate("BallotTemplate.Test.Failed.NotFound", "Object not found during test create ballot", "Object not found");
                     result.IsSuccess = false;
                 }
 

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 namespace SiteLibrary
 {
@@ -27,7 +28,9 @@ namespace SiteLibrary
 
             if (provider == null)
             {
-                return string.Empty;
+                throw new InvalidOperationException(
+                    "No provider for variable " + variable +
+                    "; providers: " + string.Join(", ", _contentProviders.Select(p => p.Prefix)));
             }
             else
             {

@@ -74,7 +74,8 @@ namespace Publicus
                 case "Contact.UnsubscribeLink":
                     return UnsubcribeModule.CreateUnsubscribeLink(_contact.Id.Value);
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
     }

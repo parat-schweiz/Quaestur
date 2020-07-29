@@ -8,7 +8,7 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class ArrearsDocument : TemplateDocument
+    public class SettlementDocument : TemplateDocument
     {
         private readonly IDatabase _database;
         private readonly Translator _translator;
@@ -17,7 +17,7 @@ namespace Quaestur
         private readonly IEnumerable<Bill> _bills;
         private readonly string _texTemplate;
 
-        public ArrearsDocument(IDatabase database, Translator translator, Organization organization, Person person, IEnumerable<Bill> bills, string texTemplate)
+        public SettlementDocument(IDatabase database, Translator translator, Organization organization, Person person, IEnumerable<Bill> bills, string texTemplate)
         {
             _database = database;
             _translator = translator;
@@ -36,7 +36,7 @@ namespace Quaestur
         {
             return new Templator(
                 new PersonContentProvider(_translator, _person),
-                new ArrearsContentProvider(_database, _translator, _person, _bills));
+                new SettlementContentProvider(_database, _translator, _person, _bills));
         }
 
         public override IEnumerable<Tuple<string, byte[]>> Files
@@ -44,9 +44,9 @@ namespace Quaestur
             get
             {
                 var message = _translator.Get(
-                    "Arrears.Document.QrBill.Message",
+                    "Settlement.Document.QrBill.Message",
                     "QR bill message on the arrears document",
-                    "Arrears");
+                    "Settlement");
                 var amount = _bills.Sum(b => b.Amount) - _person.CurrentPrepayment(_database);
                 yield return new Tuple<string, byte[]>("qrcode.png",
                     SwissQrBill.Create(_database, _translator, _organization, _person, amount, message));

@@ -278,9 +278,10 @@
     <Compile Include="Module\PersonDetailPrepaymentModule.cs" />
     <Compile Include="Module\PrepaymentModule.cs" />
     <Compile Include="Model\ITemplate.cs" />
-    <Compile Include="Documents\ArrearsDocument.cs" />
-    <Compile Include="Documents\ArrearsContentProvider.cs" />
+    <Compile Include="Documents\SettlementDocument.cs" />
+    <Compile Include="Documents\SettlementContentProvider.cs" />
     <Compile Include="Documents\SwissQrBill.cs" />
+    <Compile Include="Module\PersonDetailActionsModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1015,6 +1016,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\prepaymentedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\persondetail_actions.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

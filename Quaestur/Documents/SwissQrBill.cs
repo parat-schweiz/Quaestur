@@ -77,6 +77,9 @@ namespace Quaestur
         {
             get
             {
+                if (_person.PrimaryPostalAddress == null)
+                    throw new InvalidOperationException("Cannot create QR bill for lack of primary postal address of " + _person.ShortHand);
+
                 var settings = _database.Query<SystemWideSettings>().Single();
 
                 var text = new SwissQrBillBuilder();

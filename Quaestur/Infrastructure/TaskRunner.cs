@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using SiteLibrary;
 
 namespace Quaestur
@@ -30,6 +31,11 @@ namespace Quaestur
 
         public void Run()
         {
+            for (int i = 0; i < Global.Config.StartTaskWaitSeconds; i++)
+            {
+                Thread.Sleep(1000);
+            }
+
             foreach (var task in _task)
             {
                 task.Run(_database);

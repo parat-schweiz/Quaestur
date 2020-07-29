@@ -40,6 +40,7 @@ namespace Quaestur
         public byte[] LinkKey { get; private set; }
         public string LogFilePrefix { get; private set; }
         public List<string> MatrixDomains { get; private set; }
+        public int StartTaskWaitSeconds { get; private set; }
 
         public override IEnumerable<ConfigItem> ConfigItems
         {
@@ -51,6 +52,7 @@ namespace Quaestur
                 yield return new ConfigItemBytes("LinkKey", v => LinkKey = v);
                 yield return new ConfigItemString("LogFilePrefix", v => LogFilePrefix = v);
                 yield return new ConfigMultiItemString("MatrixDomain", v => MatrixDomains.Add(v));
+                yield return new ConfigItemInt32("StartTaskWaitSeconds", v => StartTaskWaitSeconds = v);
             }
         }
 

@@ -67,7 +67,8 @@ namespace Quaestur
                 case "BallotPaperDocument.VerificationLink":
                     return CreateVerificationLink();
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
 

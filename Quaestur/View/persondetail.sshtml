@@ -17,6 +17,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -35,6 +36,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -53,6 +55,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -71,6 +74,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -89,6 +93,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -107,6 +112,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -125,6 +131,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -143,6 +150,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -161,6 +169,7 @@
               $("#menuSecurity").addClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -179,6 +188,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").addClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -197,9 +207,30 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").addClass('active');
+              $("#menuActions").removeClass('active');
           }
       });
-  }  function updatepersonhead(){
+  }
+    function showActions(){
+      $.get("/person/detail/actions/@Model.Id", function(data, status){
+          if (data){
+              $("#persondata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuMemberships").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuRoleAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
+              $("#menuJournal").removeClass('active');
+              $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
+              $("#menuActions").addClass('active');
+          }
+      });
+  }
+  function updatepersonhead(){
       $.get("/person/detail/head/@Model.Id", function(personHeadData, status){
           if (personHeadData){
               $("#personhead").html(personHeadData);
@@ -271,6 +302,11 @@
       @If.SecurityReadable
       <li class="nav-item">
         <a id="menuSecurity" class="nav-link" onclick="showSecurity()" href="javascript:void(0);">@Model.PhraseTabSecurity</a>
+      </li>
+      @EndIf
+      @If.ActionsReadable
+      <li class="nav-item">
+        <a id="menuActions" class="nav-link" onclick="showActions()" href="javascript:void(0);">@Model.PhraseTabActions</a>
       </li>
       @EndIf
     </ul>

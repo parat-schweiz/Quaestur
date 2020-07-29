@@ -35,7 +35,7 @@ namespace Quaestur
                         (!person.PaymentParameterUpdateReminderDate.Value.HasValue ||
                         DateTime.Now.Subtract(person.PaymentParameterUpdateReminderDate.Value.Value).TotalDays >= 7d))
                     {
-                        Send(database, person);
+                        Send(database, person, false);
                     }
                 }
 
@@ -43,7 +43,7 @@ namespace Quaestur
             }
         }
 
-        private void Journal(IDatabase db, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
+        private static void Journal(IDatabase db, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
         {
             var translation = new Translation(db);
             var translator = new Translator(translation, person.Language.Value);
@@ -61,7 +61,7 @@ namespace Quaestur
                 technicalTranslator.Get(key, hint, technical, parameters.Select(p => p(technicalTranslator))));
         }
 
-        private void Send(IDatabase database, Person person)
+        public static void Send(IDatabase database, Person person, bool forceSend)
         {
             var parametersRequested = new List<string>();
 
@@ -70,8 +70,9 @@ namespace Quaestur
                 .OrderByDescending(m => m.Organization.Value.Subordinates.Count()))
             {
                 var model = membership.Type.Value.CreatePaymentModel(database);
+                var requestParamemterUpdate = model.InviteForParameterUpdate(membership);
 
-                if (model.InviteForParameterUpdate(membership) &&
+                if ((requestParamemterUpdate || forceSend) &&
                     model.PersonalParameterTypes.Any(p => !parametersRequested.Contains(p.Key)))
                 {
                     parametersRequested.AddRange(model.PersonalParameterTypes.Select(p => p.Key));
@@ -100,7 +101,7 @@ namespace Quaestur
             }
         }
 
-        private bool SendMail(IDatabase database, Membership membership, bool requireUpdate)
+        private static bool SendMail(IDatabase database, Membership membership, bool requireUpdate)
         {
             var person = membership.Person.Value;
             var senderGroup = membership.Type.Value.SenderGroup.Value;

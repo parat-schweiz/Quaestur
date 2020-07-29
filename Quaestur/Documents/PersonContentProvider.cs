@@ -78,7 +78,8 @@ namespace Quaestur
                 case "Person.Parameter.Income.Url":
                     return string.Format("{0}/income", Global.Config.WebSiteAddress);
                 default:
-                    throw new NotSupportedException();
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
     }

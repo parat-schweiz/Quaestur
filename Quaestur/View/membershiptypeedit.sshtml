@@ -101,92 +101,6 @@ $("#@Model.ButtonId").click(function() {
     }
   });
 });
-$("#membershipTypeTestArrearsListCreate").click(function(event) {
-  $("#membershipTypeTestArrearsListCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestArrearsListCreate...");
-  $("#membershipTypeTestArrearsListCreateFeedback").html('');
-  $.post("/membershiptype/testcreatearrearslist/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
-    var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "success"){
-      $("#membershipTypeTestArrearsListCreateFeedback").removeClass('markred');
-      $("#membershipTypeTestArrearsListCreateFeedback").addClass('markgreen');
-    }else{
-      $("#membershipTypeTestArrearsListCreateFeedback").addClass('markred');
-      $("#membershipTypeTestArrearsListCreateFeedback").removeClass('markgreen');
-    }
-    $("#membershipTypeTestArrearsListCreateFeedback").html(statusObject.MessageText);
-    $("#membershipTypeTestArrearsListCreate").html("@Model.PhraseTestArrearsListCreate");
-  });
-  event.preventDefault();
-});
-$("#membershipTypeTestBillCreate").click(function(event) {
-  $("#membershipTypeTestBillCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestBillCreate...");
-  $("#membershipTypeTestBillCreateFeedback").html('');
-  $.post("/membershiptype/testcreatebill/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
-    var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "success"){
-      $("#membershipTypeTestBillCreateFeedback").removeClass('markred');
-      $("#membershipTypeTestBillCreateFeedback").addClass('markgreen');
-    }else{
-      $("#membershipTypeTestBillCreateFeedback").addClass('markred');
-      $("#membershipTypeTestBillCreateFeedback").removeClass('markgreen');
-    }
-    $("#membershipTypeTestBillCreateFeedback").html(statusObject.MessageText);
-    $("#membershipTypeTestBillCreate").html("@Model.PhraseTestBillCreate");
-  });
-  event.preventDefault();
-});
-$("#membershipTypeTestSettlementCreate").click(function(event) {
-  $("#membershipTypeTestSettlementCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestSettlementCreate...");
-  $("#membershipTypeTestSettlementCreateFeedback").html('');
-  $.post("/membershiptype/testcreatesettlement/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
-    var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "success"){
-      $("#membershipTypeTestSettlementCreateFeedback").removeClass('markred');
-      $("#membershipTypeTestSettlementCreateFeedback").addClass('markgreen');
-    }else{
-      $("#membershipTypeTestSettlementCreateFeedback").addClass('markred');
-      $("#membershipTypeTestSettlementCreateFeedback").removeClass('markgreen');
-    }
-    $("#membershipTypeTestSettlementCreateFeedback").html(statusObject.MessageText);
-    $("#membershipTypeTestSettlementCreate").html("@Model.PhraseTestSettlementCreate");
-  });
-  event.preventDefault();
-});
-$("#membershipTypeTestPointsTallyCreate").click(function(event) {
-  $("#membershipTypeTestPointsTallyCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestPointsTallyCreate...");
-  $("#membershipTypeTestPointsTallyCreateFeedback").html('');
-  $.post("/membershiptype/testcreatepointstally/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
-    var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "success"){
-      $("#membershipTypeTestPointsTallyCreateFeedback").removeClass(    'markred');
-      $("#membershipTypeTestPointsTallyCreateFeedback").addClass('markgreen');
-    }else{
-      $("#membershipTypeTestPointsTallyCreateFeedback").addClass('markred');
-      $("#membershipTypeTestPointsTallyCreateFeedback").removeClass('markgreen');
-    }
-    $("#membershipTypeTestPointsTallyCreateFeedback").html(statusObject.MessageText);
-    $("#membershipTypeTestPointsTallyCreate").html("@Model.PhraseTestPointsTallyCreate");
-  });
-  event.preventDefault();
-});
-$("#membershipTypeTestPaymentParameterUpdateCreate").click(function(event) {
-  inputData = new Object();
-  $("#membershipTypeTestPaymentParameterUpdateCreate").html("<i class='fa fa-spinner fa-spin'></i> @Model.PhraseTestPointsTallyCreate...");
-  $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").html('');
-  $.post("/membershiptype/testcreatepaymentparameterupdate/@Model.Id", JSON.stringify(getFormData()), function(statusData, status){
-    var statusObject = JSON.parse(statusData);
-    if (statusObject.MessageType == "success"){
-      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").removeClass('markred');
-      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").addClass('markgreen');
-    }else{
-      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").addClass('markred');
-      $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").removeClass('markgreen');
-    }
-    $("#membershipTypeTestPaymentParameterUpdateCreateFeedback").html(statusObject.MessageText);
-    $("#membershipTypeTestPaymentParameterUpdateCreate").html("@Model.PhraseTestPointsTallyCreate");
-  });
-  event.preventDefault();
-});
 $('.selectpicker').selectpicker();
 </script>
 <div class="container">
@@ -280,26 +194,6 @@ $('.selectpicker').selectpicker();
       </div>
     </div>
     <div class="form-row">
-      <div class="col-12 mb-3">
-        <button id ="membershipTypeTestBillCreate" type="button" class="btn btn-default">@Model.PhraseTestBillCreate</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <div id="membershipTypeTestBillCreateFeedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <button id ="membershipTypeTestArrearsListCreate" type="button" class="btn btn-default">@Model.PhraseTestArrearsListCreate</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <div id="membershipTypeTestArrearsListCreateFeedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
       <div class="col-md-12 mb-3">
         <label for="membershipTypeSettlementDocuments">@Model.PhraseFieldSettlementDocumentTemplates</label>
         <select id="membershipTypeSettlementDocuments" class="selectpicker form-control" data-live-search="true" multiple>
@@ -319,16 +213,6 @@ $('.selectpicker').selectpicker();
           @EndEach
         </select>
         <div id="membershipTypeSettlementMailsFeedback" class="valid-feedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <button id ="membershipTypeTestSettlementCreate" type="button" class="btn btn-default">@Model.PhraseTestSettlementCreate</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <div id="membershipTypeTestSettlementCreateFeedback"></div>
       </div>
     </div>
     <div class="form-row">
@@ -365,16 +249,6 @@ $('.selectpicker').selectpicker();
       </div>
     </div>
     <div class="form-row">
-      <div class="col-12 mb-3">
-        <button id ="membershipTypeTestPointsTallyCreate" type="button" class="btn btn-default">@Model.PhraseTestPointsTallyCreate</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <div id="membershipTypeTestPointsTallyCreateFeedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
       <div class="col-md-12 mb-3">
         <label for="membershipTypePaymentParameterUpdateRequiredMails">@Model.PhraseFieldPaymentParameterUpdateRequiredMailTemplates</label>
         <select id="membershipTypePaymentParameterUpdateRequiredMails" class="selectpicker form-control" data-live-search="true" multiple>
@@ -394,16 +268,6 @@ $('.selectpicker').selectpicker();
           @EndEach
         </select>
         <div id="membershipTypePaymentParameterUpdateInvitationMailsFeedback" class="valid-feedback"></div>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <button id ="membershipTypeTestPaymentParameterUpdateCreate" type="button" class="btn btn-default">@Model.PhraseTestPaymentParameterUpdateCreate</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="col-12 mb-3">
-        <div id="membershipTypeTestPaymentParameterUpdateCreateFeedback"></div>
       </div>
     </div>
   </form>

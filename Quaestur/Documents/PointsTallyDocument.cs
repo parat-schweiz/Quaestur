@@ -40,6 +40,14 @@ namespace Quaestur
                     PointsTally.DocumentData.Value = document;
                     return true;
                 }
+                else
+                {
+                    var texDocument = new TextAttachement(TexDocument, "document.tex");
+                    var errorDocument = new TextAttachement(ErrorText, "error.txt");
+                    Global.Mail.SendAdminEncrypted(
+                        "LaTeX Error", "Could not compile points tally document",
+                        texDocument, errorDocument);
+                }
             }
 
             return false;
@@ -317,7 +325,8 @@ namespace Quaestur
                 case "PointsTally.CreatedDate":
                     return PointsTally.CreatedDate.Value.FormatSwissDateDay();
                 default:
-                    throw new NotSupportedException(); 
+                    throw new InvalidOperationException(
+                        "Variable " + variable + " not known in provider " + Prefix);
             }
         }
 

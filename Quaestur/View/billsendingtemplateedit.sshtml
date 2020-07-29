@@ -33,7 +33,6 @@ function assignValidation(resultData){
   assignFieldValidation("MailSender", result);
   assignFieldValidation("BillSendingMails", result);
   assignFieldValidation("BillSendingLetters", result);
-  assignFieldValidation("BillSendingArrearsLists", result);
   assignFieldValidation("SendingMode", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
@@ -52,7 +51,6 @@ $(document).ready(function() {
     formData.MailSender = $("#billSendingTemplateMailSender").val();
     formData.BillSendingMailTemplates = $("#billSendingTemplateBillSendingMails").val();
     formData.BillSendingLetterTemplates = $("#billSendingTemplateBillSendingLetters").val();
-    formData.BillSendingArrearsListTemplates = $("#billSendingTemplateBillSendingArrearsLists").val();
     formData.SendingMode = $("#billSendingTemplateSendingMode").val();
     $.post("/billSendingTemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
       if (assignValidation(resultData)) {
@@ -136,15 +134,6 @@ $(document).ready(function() {
           @EndEach
         </select>
         <div id="billSendingTemplateBillSendingLettersFeedback" class="valid-feedback"></div>
-      </div>
-      <div class="col-md-6 mb-3">
-        <label for="billSendingTemplateBillSendingArrearsLists">@Model.PhraseFieldBillSendingArrearsListTemplates</label>
-        <select id="billSendingTemplateBillSendingArrearsLists" class="selectpicker form-control" data-live-search="true" multiple>
-          @Each.BillSendingArrearsLists
-          <option value="@Current.Id" @Current.Options>@Current.Name</option>
-          @EndEach
-        </select>
-        <div id="billSendingTemplateBillSendingArrearsListsFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>

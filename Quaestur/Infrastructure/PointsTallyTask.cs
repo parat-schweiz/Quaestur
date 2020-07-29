@@ -9,7 +9,6 @@ namespace Quaestur
     public class PointsTallyTask : ITask
     {
         private DateTime _lastSending;
-        private int _maxMailsCount;
 
         public PointsTallyTask()
         {
@@ -21,7 +20,6 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                _maxMailsCount = 500;
                 Global.Log.Notice("Running points tally task");
 
                 RunAll(database);
@@ -30,7 +28,7 @@ namespace Quaestur
             }
         }
 
-        private void Journal(IDatabase db, Membership membership, string key, string hint, string technical, params Func<Translator, string>[] parameters)
+        private static void Journal(IDatabase db, Membership membership, string key, string hint, string technical, params Func<Translator, string>[] parameters)
         {
             var translation = new Translation(db);
             var translator = new Translator(translation, membership.Person.Value.Language.Value);
@@ -82,20 +80,24 @@ namespace Quaestur
                         if (DateTime.UtcNow.Date > untilDate.Date &&
                             untilDate.Date > lastTallyUntilDate.Date)
                         {
-                            var tally = CreatePointsTally(database, translation, membership);
-
-                            if (tally != null)
-                            {
-                                SendTally(database, membership, tally);
-                                _maxMailsCount--;
-                            }
+                            CreatePointsTallyAndSend(database, translation, membership);
                         }
                     }
                 }
             }
         }
 
-        private void SendTally(IDatabase database, Membership membership, PointsTally tally)
+        public static void CreatePointsTallyAndSend(IDatabase database, Translation translation, Membership membership)
+        {
+            var tally = CreatePointsTallyInternal(database, translation, membership);
+
+            if (tally != null)
+            {
+                SendTally(database, membership, tally);
+            }
+        }
+
+        private static void SendTally(IDatabase database, Membership membership, PointsTally tally)
         {
             var pointsTallyMailTemplate = membership.Type.Value.GetPointsTallyMail(database, membership.Person.Value.Language.Value);
             var message = CreateMail(database, membership, pointsTallyMailTemplate, tally);
@@ -103,7 +105,7 @@ namespace Quaestur
             Global.Mail.Send(message);
         }
 
-        private PointsTally CreatePointsTally(IDatabase database, Translation translation, Membership membership)
+        private static PointsTally CreatePointsTallyInternal(IDatabase database, Translation translation, Membership membership)
         {
             Translator translator = new Translator(translation, membership.Person.Value.Language.Value);
             var pointsTallyDocument = new PointsTallyDocument(translator, database, membership);

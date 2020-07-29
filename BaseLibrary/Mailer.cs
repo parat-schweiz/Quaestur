@@ -100,6 +100,38 @@ namespace BaseLibrary
             }
         }
 
+        private MailboxAddress AdminMailAddress
+        {
+            get { return new MailboxAddress(_config.AdminMailName, _config.AdminMailAddress); }
+        }
+
+        private MailboxAddress SystemMailAddress
+        {
+            get { return new MailboxAddress(_config.SystemMailName, _config.SystemMailAddress); }
+        }
+
+        private GpgPublicKeyInfo AdminKeyInfo
+        {
+            get { return string.IsNullOrEmpty(_config.AdminMailKeyId) ? null : new GpgPublicKeyInfo(_config.AdminMailKeyId); } 
+        }
+
+        public void SendAdminEncrypted(string subject, string plainBody, params Attachement[] attachements)
+        {
+            var content = new Multipart("mixed");
+            var alternative = new Multipart("alternative");
+            var plainPart = new TextPart("plain") { Text = plainBody };
+            plainPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+            alternative.Add(plainPart);
+            content.Add(alternative);
+
+            foreach (var attachement in attachements)
+            {
+                content.AddDocument(attachement); 
+            }
+
+            Send(SystemMailAddress, AdminMailAddress, null, AdminKeyInfo, subject, content);
+        }
+
         private Multipart Encrypt(Multipart input, GpgPublicKeyInfo recipientKey)
         {
             var gpgMultipart = new Multipart("encrypted");

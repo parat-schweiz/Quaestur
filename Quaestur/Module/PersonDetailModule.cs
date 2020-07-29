@@ -18,6 +18,7 @@ namespace Quaestur
         public bool PointsReadable;
         public bool JournalReadable;
         public bool SecurityReadable;
+        public bool ActionsReadable;
         public string PhraseTabMaster;
         public string PhraseTabMemberships;
         public string PhraseTabTags;
@@ -29,6 +30,7 @@ namespace Quaestur
         public string PhraseTabPoints;
         public string PhraseTabJournal;
         public string PhraseTabSecurity;
+        public string PhraseTabActions;
 
         public PersonDetailViewModel(Translator translator, Session session, Person person)
             : base(translator, 
@@ -47,6 +49,7 @@ namespace Quaestur
             PhraseTabPoints = translator.Get("Person.Detail.Tab.Points", "Tab 'Points' in the person detail page", "Points");
             PhraseTabJournal = translator.Get("Person.Detail.Tab.Journal", "Tab 'Journal' in the person detail page", "Journal");
             PhraseTabSecurity = translator.Get("Person.Detail.Tab.Security", "Tab 'Security' in the person detail page", "Security");
+            PhraseTabActions = translator.Get("Person.Detail.Tab.Actions", "Tab 'Actions' in the person detail page", "Actions");
             MasterReadable = session.HasAccess(person, PartAccess.Demography, AccessRight.Read) ||
                              session.HasAccess(person, PartAccess.Contact, AccessRight.Read);
             MembershipsReadable = session.HasAccess(person, PartAccess.Membership, AccessRight.Read);
@@ -57,6 +60,8 @@ namespace Quaestur
             PointsReadable = session.HasAccess(person, PartAccess.Points, AccessRight.Read);
             JournalReadable = session.HasAccess(person, PartAccess.Journal, AccessRight.Read);
             SecurityReadable = session.HasAccess(person, PartAccess.Security, AccessRight.Read);
+            ActionsReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Write) &&
+                person.Memberships.All(m => session.HasAccess(m.Organization.Value, PartAccess.Billing, AccessRight.Write));
         }
     }
 
