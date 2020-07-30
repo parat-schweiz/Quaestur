@@ -9,6 +9,15 @@ $("#billRowEdit1@Current.Id").click(function(){
 $("#billRowEdit2@Current.Id").click(function(){
   showBillEditDialog("edit", "@Current.Id");
 });
+$("#billRowEdit3@Current.Id").click(function(){
+  showBillEditDialog("edit", "@Current.Id");
+});
+$("#billRowEdit4@Current.Id").click(function(){
+  showBillEditDialog("edit", "@Current.Id");
+});
+$("#billRowEdit5@Current.Id").click(function(){
+  showBillEditDialog("edit", "@Current.Id");
+});
 $("#billRowDelete@Current.Id").click(function(){
   $.confirm({
     title: "@Model.PhraseDeleteConfirmationTitle",
@@ -36,19 +45,25 @@ function showBillEditDialog(method, id){
 <table class="table table-hover table-fixed">
   <thead>
     <tr class='centering clickable-row'>
-      <th width="30%">@Model.PhraseHeaderNumber</th>
-      <th width="30%">@Model.PhraseHeaderCreatedDate</th>
-      <th width="30%">@Model.PhraseHeaderStatus</th>
-      <th width="10%"></th>
+      <th width="20%">@Model.PhraseHeaderNumber</th>
+      <th width="12%">@Model.PhraseHeaderFromDate</th>
+      <th width="12%">@Model.PhraseHeaderUntilDate</th>
+      <th width="12%">@Model.PhraseHeaderAmount</th>
+      <th width="12%">@Model.PhraseHeaderCreatedDate</th>
+      <th width="27%">@Model.PhraseHeaderStatus</th>
+      <th width="5%"></th>
     </tr>
   </thead>
   <tbody>
     @Each.List
     <tr class='clickable-row'>
-      <td width="30%"><a href="/bill/download/@Current.Id">@Current.Number</a></td>
-      <td width="30%" id="billRowEdit1@Current.Id" class="@Model.Editable">@Current.CreatedDate</td>
-      <td width="30%" id="billRowEdit2@Current.Id" class="@Model.Editable">@Current.Status</td>
-      <td width="10%" id="billRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+      <td width="20%"><a href="/bill/download/@Current.Id">@Current.Number</a></td>
+      <td width="12%" id="billRowEdit1@Current.Id" class="@Model.Editable">@Current.FromDate</td>
+      <td width="12%" id="billRowEdit2@Current.Id" class="@Model.Editable">@Current.UntilDate</td>
+      <td width="12%" id="billRowEdit3@Current.Id" class="@Model.Editable">@Current.Amount</td>
+      <td width="12%" id="billRowEdit4@Current.Id" class="@Model.Editable">@Current.CreatedDate</td>
+      <td width="27%" id="billRowEdit5@Current.Id" class="@Model.Editable">@Current.Status</td>
+      <td width="5%" id="billRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
     <tr class='centering clickable-row'>
