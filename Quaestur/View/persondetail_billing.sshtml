@@ -60,7 +60,7 @@ function showBillEditDialog(method, id){
       <td width="20%"><a href="/bill/download/@Current.Id">@Current.Number</a></td>
       <td width="12%" id="billRowEdit1@Current.Id" class="@Model.Editable">@Current.FromDate</td>
       <td width="12%" id="billRowEdit2@Current.Id" class="@Model.Editable">@Current.UntilDate</td>
-      <td width="12%" id="billRowEdit3@Current.Id" class="@Model.Editable">@Current.Amount</td>
+      <td width="12%" id="billRowEdit3@Current.Id" class="@Model.Editable alignright">@Current.Amount</td>
       <td width="12%" id="billRowEdit4@Current.Id" class="@Model.Editable">@Current.CreatedDate</td>
       <td width="27%" id="billRowEdit5@Current.Id" class="@Model.Editable">@Current.Status</td>
       <td width="5%" id="billRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>

@@ -25,7 +25,7 @@ namespace Quaestur
         Ballot = 16,
         PointBudget = 17,
         Points = 18,
-    }
+s    }
 
     public static class PartAccessExtensions
     {
@@ -113,6 +113,7 @@ namespace Quaestur
         None = 0,
         Read = 1,
         Write = 2,
+        Extended = 3,
     }
 
     public static class AccessRightExtensions
@@ -127,6 +128,8 @@ namespace Quaestur
                     return translator.Get("Enum.AccessRight.Read", "Value 'Read' in AccessRight enum", "Read");
                 case AccessRight.Write:
                     return translator.Get("Enum.AccessRight.Write", "Value 'Write' in AccessRight enum", "Write");
+                case AccessRight.Extended:
+                    return translator.Get("Enum.AccessRight.Extended", "Value 'Extended' in AccessRight enum", "Extended");
                 default:
                     throw new NotSupportedException();
             }

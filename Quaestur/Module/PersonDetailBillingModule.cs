@@ -26,6 +26,12 @@ namespace Quaestur
             UntilDate = bill.UntilDate.Value.FormatSwissDateDay();
             Amount = bill.Amount.Value.FormatMoney();
             Status = bill.Status.Value.Translate(translator).EscapeHtml();
+
+            if (bill.Status.Value == BillStatus.New)
+            {
+                Status += string.Format(" ({0})", bill.ReminderLevel.Value);
+            }
+
             CreatedDate = bill.CreatedDate.Value.FormatSwissDateDay();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Bills.Delete.Confirm.Question", "Delete bill confirmation question", "Do you really wish to delete bill {0}?", bill.GetText(translator)).EscapeHtml();
         }

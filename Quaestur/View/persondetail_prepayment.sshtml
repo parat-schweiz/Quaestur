@@ -54,8 +54,8 @@ function showPrepaymentEditDialog(method, id){
     <tr class='clickable-row'>
       <td width="15%" id="prepaymentRowEdit1@Current.Id" class="@Model.Editable">@Current.Moment</td>
       <td width="50%" id="prepaymentRowEdit2@Current.Id" class="@Model.Editable">@Current.Reason</td>
-      <td width="15%" id="prepaymentRowEdit3@Current.Id" class="@Model.Editable">@Current.Amount</td>
-      <td width="15%" id="prepaymentRowEdit4@Current.Id" class="@Model.Editable">@Current.Balance</td>
+      <td width="15%" id="prepaymentRowEdit3@Current.Id" class="@Model.Editable alignright">@Current.Amount</td>
+      <td width="15%" id="prepaymentRowEdit4@Current.Id" class="@Model.Editable alignright">@Current.Balance</td>
       <td width="5%" id="prepaymentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach

@@ -24,6 +24,8 @@ namespace Quaestur
         public string Amount;
         public string CreatedDate;
         public string PayedDate;
+        public string ReminderLevel;
+        public string ReminderDate;
         public string FileName;
         public string FileSize;
         public string FileData;
@@ -37,6 +39,8 @@ namespace Quaestur
         public string PhraseFieldFromDate;
         public string PhraseFieldUntilDate;
         public string PhraseFieldPayedDate;
+        public string PhraseFieldReminderLevel;
+        public string PhraseFieldReminderDate;
         public string PhraseFieldDocument;
 
         public BillEditViewModel()
@@ -57,6 +61,8 @@ namespace Quaestur
             PhraseFieldPayedDate = translator.Get("Bill.Edit.Field.PayedDate", "Field 'Payed date' in the edit bill dialog", "Payed date").EscapeHtml();
             PhraseFieldDocument = translator.Get("Bill.Edit.Field.Document", "Field 'Document' in the edit bill dialog", "Document").EscapeHtml();
             PhraseFieldAmount = translator.Get("Bill.Edit.Field.Amount", "Field 'Amount' in the edit bill dialog", "Amount").EscapeHtml();
+            PhraseFieldReminderLevel = translator.Get("Bill.Edit.Field.ReminderLevel", "Field 'Reminder level' in the edit bill dialog", "Reminder level").EscapeHtml();
+            PhraseFieldReminderDate = translator.Get("Bill.Edit.Field.ReminderDate", "Field 'Reminder date' in the edit bill dialog", "Reminder date").EscapeHtml();
         }
 
         public BillEditViewModel(Translator translator, IDatabase db, Session session, Person person)
@@ -72,6 +78,8 @@ namespace Quaestur
             Amount = string.Empty;
             CreatedDate = string.Empty;
             PayedDate = string.Empty;
+            ReminderLevel = string.Empty;
+            ReminderDate = string.Empty;
             FileName = string.Empty;
             FileSize = string.Empty;
             Statuses = new List<NamedIntViewModel>();
@@ -105,6 +113,10 @@ namespace Quaestur
             Memberships = new List<NamedIdViewModel>(bill.Membership.Value.Person.Value.Memberships
                 .Select(m => new NamedIdViewModel(translator, m, bill.Membership.Value == m))
                 .OrderBy(m => m.Name));
+            var extendedAccess = session.HasAccess(bill.Membership.Value.Person.Value, PartAccess.Billing, AccessRight.Extended);
+            ReminderLevel = extendedAccess ? bill.ReminderLevel.Value.ToString() : string.Empty;
+            ReminderDate = extendedAccess && bill.ReminderDate.Value.HasValue ? 
+                bill.ReminderDate.Value.Value.FormatSwissDateDay() : string.Empty;
         }
     }
 
@@ -150,6 +162,13 @@ namespace Quaestur
                         status.AssingDataUrlString("DocumentData", bill.DocumentData, null, model.FileData, false);
                         status.AssignDecimalString("Amount", bill.Amount, model.Amount);
                         status.AssignObjectIdString("Membership", bill.Membership, model.Membership);
+
+                        if (status.IsSuccess && 
+                            HasAccess(bill.Membership.Value.Person.Value, PartAccess.Billing, AccessRight.Extended))
+                        {
+                            status.AssignInt32String("ReminderLevel", bill.ReminderLevel, model.ReminderLevel);
+                            status.AssignDateString("ReminderDate", bill.ReminderDate, model.ReminderDate); 
+                        }
 
                         if (status.IsSuccess)
                         {
@@ -203,6 +222,13 @@ namespace Quaestur
                         status.AssingDataUrlString("Document", bill.DocumentData, null, model.FileData, true);
                         status.AssignDecimalString("Amount", bill.Amount, model.Amount);
                         status.AssignObjectIdString("Membership", bill.Membership, model.Membership);
+
+                        if (status.IsSuccess &&
+                            HasAccess(bill.Membership.Value.Person.Value, PartAccess.Billing, AccessRight.Extended))
+                        {
+                            status.AssignInt32String("ReminderLevel", bill.ReminderLevel, model.ReminderLevel);
+                            status.AssignDateString("ReminderDate", bill.ReminderDate, model.ReminderDate);
+                        }
 
                         if (status.IsSuccess)
                         {

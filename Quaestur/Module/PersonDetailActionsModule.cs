@@ -41,8 +41,7 @@ namespace Quaestur
 
         private bool HasAccess(Person person)
         {
-            return HasAccess(person, PartAccess.Billing, AccessRight.Write) &&
-                   person.Memberships.All(m => HasAccess(m.Organization.Value, PartAccess.Billing, AccessRight.Write));
+            return HasAccess(person, PartAccess.Billing, AccessRight.Extended);
         }
 
         public PersonDetailActionsModule()

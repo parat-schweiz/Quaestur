@@ -35,6 +35,8 @@ function assignValidation(resultData){
   assignFieldValidation("CreatedDate", result);
   assignFieldValidation("Status", result);
   assignFieldValidation("PayedDate", result);
+  assignFieldValidation("ReminderLevel", result);
+  assignFieldValidation("ReminderDate", result);
   assignFieldValidation("Document", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
@@ -62,6 +64,8 @@ $("#@Model.ButtonId").click(function() {
   formData.CreatedDate = $("#billCreatedDate").val();
   formData.Status = $("#billStatus").val();
   formData.PayedDate = $("#billPayedDate").val();
+  formData.ReminderLevel = $("#billReminderLevel").val();
+  formData.ReminderDate = $("#billReminderDate").val();
   readFile(function(name, size, data){
     formData.FileName = name;
     formData.FileSize = size;
@@ -146,6 +150,20 @@ $('.selectpicker').selectpicker();
         <label for="billPayedDate">@Model.PhraseFieldPayedDate</label>
         <input type="text" id="billPayedDate" class="form-control datepicker" value="@Model.PayedDate"/>
         <div id="billPayedDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billReminderLevel">@Model.PhraseFieldReminderLevel</label>
+        <input type="text" id="billReminderLevel" class="form-control" value="@Model.ReminderLevel"/>
+        <div id="billReminderLevelFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billReminderDate">@Model.PhraseFieldReminderDate</label>
+        <input type="text" id="billReminderDate" class="form-control datepicker" value="@Model.ReminderDate"/>
+        <div id="billReminderDateFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

@@ -163,7 +163,11 @@ namespace Quaestur
                     case PartAccess.Anonymous:
                     case PartAccess.Contact:
                     case PartAccess.Security:
-                        return true;
+                        if (right <= AccessRight.Write)
+                        {
+                            return true;
+                        }
+                        break;
                     case PartAccess.Billing:
                     case PartAccess.Demography:
                     case PartAccess.Documents:
@@ -172,7 +176,7 @@ namespace Quaestur
                     case PartAccess.TagAssignments:
                     case PartAccess.Journal:
                     case PartAccess.Points:
-                        if (right == AccessRight.Read)
+                        if (right <= AccessRight.Read)
                         {
                             return true;
                         }

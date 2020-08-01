@@ -67,6 +67,7 @@ namespace Quaestur
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.SystemWide, false));
             Rights.Add(new NamedIntViewModel(translator, AccessRight.Read, false));
             Rights.Add(new NamedIntViewModel(translator, AccessRight.Write, false));
+            Rights.Add(new NamedIntViewModel(translator, AccessRight.Extended, false));
         }
 
         public PermissionEditViewModel(Translator translator, IDatabase db, Permission permission)
@@ -101,6 +102,7 @@ namespace Quaestur
             Subjects.Add(new NamedIntViewModel(translator, SubjectAccess.SystemWide, permission.Subject.Value == SubjectAccess.SystemWide));
             Rights.Add(new NamedIntViewModel(translator, AccessRight.Read, permission.Right.Value == AccessRight.Read));
             Rights.Add(new NamedIntViewModel(translator, AccessRight.Write, permission.Right.Value == AccessRight.Write));
+            Rights.Add(new NamedIntViewModel(translator, AccessRight.Extended, permission.Right.Value == AccessRight.Extended));
         }
     }
 

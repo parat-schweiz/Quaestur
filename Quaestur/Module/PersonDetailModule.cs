@@ -60,8 +60,7 @@ namespace Quaestur
             PointsReadable = session.HasAccess(person, PartAccess.Points, AccessRight.Read);
             JournalReadable = session.HasAccess(person, PartAccess.Journal, AccessRight.Read);
             SecurityReadable = session.HasAccess(person, PartAccess.Security, AccessRight.Read);
-            ActionsReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Write) &&
-                person.Memberships.All(m => session.HasAccess(m.Organization.Value, PartAccess.Billing, AccessRight.Write));
+            ActionsReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Extended);
         }
     }
 
