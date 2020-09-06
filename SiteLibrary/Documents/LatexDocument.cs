@@ -57,11 +57,13 @@ namespace SiteLibrary
 
                 var process = Process.Start(start);
                 var startTime = DateTime.Now;
+                ErrorText = string.Format("Compiling document {0}", documentName);
 
                 while (!process.HasExited)
                 {
-                    if (DateTime.Now.Subtract(startTime).TotalSeconds > 10d)
+                    if (DateTime.Now.Subtract(startTime).TotalSeconds > 30d)
                     {
+                        ErrorText += string.Format("Timout exeeded: {0:0.000}s", DateTime.Now.Subtract(startTime).TotalSeconds);
                         break;
                     }
                     else
@@ -73,25 +75,32 @@ namespace SiteLibrary
                 if (!process.HasExited)
                 {
                     process.Kill();
-                    ErrorText = process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
+                    ErrorText += "Process killed";
+                    ErrorText += process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
                     return null;
                 }
 
                 if (process.ExitCode != 0)
                 {
-                    ErrorText = process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
+                    ErrorText += process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
                     return null;
                 }
 
-                ErrorText = process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
+                ErrorText += process.StandardOutput.ReadToEnd() + "\n" + process.StandardError.ReadToEnd();
                 var pdfPath = Path.Combine(tempFolder, pdfName);
 
                 if (!File.Exists(pdfPath))
                 {
-                    throw new Exception("PDF not created");
+                    ErrorText += "PDF not created";
+                    return null;
                 }
 
                 return File.ReadAllBytes(pdfPath);
+            }
+            catch (Exception exception)
+            {
+                ErrorText += string.Format("{0} when creating PDF\n{1}", exception.GetType().FullName, exception.ToString());
+                return null;
             }
             finally
             {
