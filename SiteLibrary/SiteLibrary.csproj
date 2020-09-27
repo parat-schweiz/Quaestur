@@ -54,13 +54,13 @@
       <HintPath>..\packages\AngleSharp.Css.0.14.2\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.5.0.331\lib\net46\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.5.0.343\lib\net46\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.6.7\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.9.1\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.9.2\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
