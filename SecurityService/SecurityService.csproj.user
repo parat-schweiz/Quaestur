@@ -6,10 +6,10 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'for Quaestur' ">
     <StartAction>Project</StartAction>
-    <StartArguments>/Security/Test/securityservice.quaestur.xml</StartArguments>
+    <StartArguments>/home/user/Test/securityservice.quaestur.xml</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'for Publicus' ">
     <StartAction>Project</StartAction>
-    <StartArguments>/Security/Test/securityservice.publicus.xml</StartArguments>
+    <StartArguments>/home/user/Test/securityservice.publicus.xml</StartArguments>
   </PropertyGroup>
 </Project>

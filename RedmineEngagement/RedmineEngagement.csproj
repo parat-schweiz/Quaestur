@@ -64,6 +64,7 @@
       <Project>{AD639BDE-0987-4B05-B995-800EE5589815}</Project>
       <Name>QuaesturApi</Name>
     </ProjectReference>
+    <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />
