@@ -367,6 +367,7 @@ namespace Publicus
     {
         public string FirstName;
         public string LastName;
+        public string Position;
         public string Place;
         public string PostalCode;
         public bool SpecialNewsletter;
@@ -376,6 +377,7 @@ namespace Publicus
         public string Code;
         public string PhraseFieldFirstName;
         public string PhraseFieldLastName;
+        public string PhraseFieldPosition;
         public string PhraseFieldPlace;
         public string PhraseFieldPostalCode;
         public string PhraseFieldSpecialNewsletter;
@@ -402,6 +404,7 @@ namespace Publicus
             Code = code;
             PhraseFieldFirstName = translator.Get("Petition.Action.Field.FirstName", "Field 'First name' on the petition action page", "First name").EscapeHtml();
             PhraseFieldLastName = translator.Get("Petition.Action.Field.LastName", "Field 'Last name' on the petition action page", "Last name").EscapeHtml();
+            PhraseFieldPosition = translator.Get("Petition.Action.Field.Position", "Field 'Position' on the petition action page", "Position").EscapeHtml();
             PhraseFieldPlace = translator.Get("Petition.Action.Field.Place", "Field 'Place' on the petition action page", "Place").EscapeHtml();
             PhraseFieldPostalCode = translator.Get("Petition.Action.Field.PostalCode", "Field 'Postal code' on the petition action page", "Postal code").EscapeHtml();
             PhraseFieldSpecialNewsletter = translator.Get("Petition.Action.Field.SpecialNewsletter", "Field 'Special newsletter' on the petition action page", "Keep me informed about further development with this petition").EscapeHtml();
@@ -716,6 +719,7 @@ namespace Publicus
                                     DateTime.UtcNow.AddYears(3) : DateTime.UtcNow.AddYears(1);
                                 status.AssignStringRequired("FirstName", contact.FirstName, model.FirstName);
                                 status.AssignStringRequired("LastName", contact.LastName, model.LastName);
+                                status.AssignStringFree("Position", contact.Position, model.Position);
                                 Database.Save(contact);
 
                                 var subscription = new Subscription(Guid.NewGuid());
@@ -760,6 +764,7 @@ namespace Publicus
                                 }
                                 status.AssignStringRequired("FirstName", contact.FirstName, model.FirstName);
                                 status.AssignStringRequired("LastName", contact.LastName, model.LastName);
+                                status.AssignStringFree("Position", contact.Position, model.Position);
                                 Database.Save(contact);
 
                                 var postalAddress = contact.PostalAddresses

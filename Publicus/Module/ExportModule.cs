@@ -393,6 +393,7 @@ namespace Publicus
             Add("FirstName", "First name", p => p.FirstName.Value, PartAccess.Demography);
             Add("MiddleNames", "Middle names", p => p.MiddleNames.Value, PartAccess.Demography);
             Add("FirstNames", "First names", p => p.FullFirstNames, PartAccess.Demography);
+            Add("Position", "Position", p => p.Position.Value, PartAccess.Demography);
             Add("ShortHand", "Shorthand", p => p.ShortHand, PartAccess.Demography);
             Add("ShortTitleAndNames", "Short title and names", p => p.ShortTitleAndNames, PartAccess.Contact);
             Add("MailAddress", "E-Mail address", p => p.PrimaryMailAddress, PartAccess.Contact);

@@ -29,6 +29,7 @@ function assignValidation(resultData){
   var result = JSON.parse(resultData);
   assignFieldValidation("FirstName", result);
   assignFieldValidation("LastName", result);
+  assignFieldValidation("Position", result);
   assignFieldValidation("Place", result);
   assignFieldValidation("PostalCode", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
@@ -40,6 +41,7 @@ $(document).ready(function() {
     var formData = new Object();
     formData.FirstName = $("#confirmFirstName").val();
     formData.LastName = $("#confirmLastName").val();
+    formData.Position = $("#confirmPosition").val();
     formData.Place = $("#confirmPlace").val();
     formData.PostalCode = $("#confirmPostalCode").val();
     formData.SpecialNewsletter = $('#confirmSpecialNewsletter').is(':checked');
@@ -73,6 +75,11 @@ $(document).ready(function() {
         <label for="confirmLastName">@Model.PhraseFieldLastName</label>
         <input type="text" class="form-control" id="confirmLastName" value="">
         <div id="confirmLastNameFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-6">
+        <label for="confirmPosition">@Model.PhraseFieldPosition</label>
+        <input type="text" class="form-control" id="confirmPosition" value="">
+        <div id="confirmPositionFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

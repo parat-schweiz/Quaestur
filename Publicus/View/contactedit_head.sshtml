@@ -32,6 +32,7 @@ function assignValidation(resultData){
   assignFieldValidation("FirstName", result);
   assignFieldValidation("MiddleNames", result);
   assignFieldValidation("LastName", result);
+  assignFieldValidation("Position", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -42,6 +43,7 @@ $("#@Model.ButtonId").click(function() {
   formData.FirstName = $("#contactFirstName").val();
   formData.MiddleNames = $("#contactMiddleNames").val();
   formData.LastName = $("#contactLastName").val();
+  formData.Position = $("#contactPosition").val();
   $.post("/contact/edit/head/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
@@ -86,6 +88,13 @@ $("#@Model.ButtonId").click(function() {
         <label for="contactLastName">@Model.PhraseFieldLastName</label>
         <input type="text" id="contactLastName" class="form-control" value="@Model.LastName"/>
         <div id="contactLastNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="contactPosition">@Model.PhraseFieldPosition</label>
+        <input type="text" id="contactPosition" class="form-control" value="@Model.Position"/>
+        <div id="contactPositionFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

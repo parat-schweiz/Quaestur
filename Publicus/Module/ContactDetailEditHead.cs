@@ -15,6 +15,7 @@ namespace Publicus
         public string FirstName = string.Empty;
         public string MiddleNames = string.Empty;
         public string LastName = string.Empty;
+        public string Position = string.Empty;
 
         public string PhraseFieldOrganization;
         public string PhraseFieldTitle;
@@ -42,6 +43,7 @@ namespace Publicus
             FirstName = contact.FirstName.Value.EscapeHtml();
             MiddleNames = contact.MiddleNames.Value.EscapeHtml();
             LastName = contact.LastName.Value.EscapeHtml();
+            Position = contact.Position.Value.EscapeHtml();
         }
     }
 
@@ -82,6 +84,7 @@ namespace Publicus
                         status.AssignStringFree("FirstName", contact.FirstName, model.FirstName);
                         status.AssignStringFree("MiddleNames", contact.MiddleNames, model.MiddleNames);
                         status.AssignStringFree("LastName", contact.LastName, model.LastName);
+                        status.AssignStringFree("LastName", contact.Position, model.Position);
 
                         if (status.IsSuccess)
                         {

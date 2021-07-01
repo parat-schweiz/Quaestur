@@ -15,6 +15,7 @@ namespace Publicus
         public StringField FirstName { get; private set; }
         public StringField MiddleNames { get; private set; }
         public StringField LastName { get; private set; }
+        public StringField Position { get; private set; }
         public Field<DateTime> BirthDate { get; private set; }
         public EnumField<Language> Language { get; private set; }
         public List<PostalAddress> PostalAddresses { get; private set; }
@@ -36,6 +37,7 @@ namespace Publicus
             FirstName = new StringField(this, "firstname", 256);
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
+            Position = new StringField(this, "position", 256);
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);

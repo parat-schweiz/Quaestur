@@ -6,7 +6,7 @@ namespace Publicus
 {
     public static class Model
     {
-        public static int CurrentVersion = 4;
+        public static int CurrentVersion = 5;
 
         public static void Install(IDatabase database)
         {
@@ -83,6 +83,9 @@ namespace Publicus
                     break;
                 case 4:
                     database.AddColumn<Contact>(c => c.ExpiryDate);
+                    break;
+                case 5:
+                    database.AddColumn<Contact>(c => c.Position);
                     break;
                 default:
                     throw new NotSupportedException();
