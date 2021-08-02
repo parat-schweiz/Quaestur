@@ -13,7 +13,7 @@ using Newtonsoft.Json.Linq;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class Oauth2AuthViewModel : MasterViewModel
     {

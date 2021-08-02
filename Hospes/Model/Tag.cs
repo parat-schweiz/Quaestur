@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     [Flags]
     public enum TagMode

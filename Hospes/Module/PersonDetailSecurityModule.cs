@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PersonDetailSecurityItemViewModel
     {

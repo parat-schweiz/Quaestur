@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public interface ITask
     {

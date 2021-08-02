@@ -9,7 +9,7 @@ using Nancy.Responses;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class ExportEditViewModel : DialogViewModel
     {

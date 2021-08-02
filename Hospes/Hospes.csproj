@@ -5,8 +5,8 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{EAD5ADB9-0A24-A255-0877-B0E21E13FDC8}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>Quaestur</RootNamespace>
-    <AssemblyName>Quaestur</AssemblyName>
+    <RootNamespace>Hospes</RootNamespace>
+    <AssemblyName>Hospes</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

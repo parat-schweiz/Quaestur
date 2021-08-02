@@ -7,7 +7,7 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BillSendingTemplateEditViewModel : MasterViewModel
     {
@@ -70,10 +70,10 @@ namespace Quaestur
                 .Select(g => new NamedIdViewModel(translator, g, false))
                 .OrderBy(g => g.Name));
             SendingModes = new List<NamedIntViewModel>();
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailOnly, false));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, false));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, false));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, false));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.MailOnly, false));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.PostalOnly, false));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.MailPreferred, false));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.PostalPrefrerred, false));
             BillSendingLetters = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
@@ -100,10 +100,10 @@ namespace Quaestur
                 .Select(g => new NamedIdViewModel(translator, g, billSendingTemplate.MailSender.Value == g))
                 .OrderBy(g => g.Name));
             SendingModes = new List<NamedIntViewModel>();
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailOnly, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.MailOnly));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalOnly, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalOnly));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.MailPreferred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.MailPreferred));
-            SendingModes.Add(new NamedIntViewModel(translator, Quaestur.SendingMode.PostalPrefrerred, billSendingTemplate.SendingMode.Value == Quaestur.SendingMode.PostalPrefrerred));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.MailOnly, billSendingTemplate.SendingMode.Value == Hospes.SendingMode.MailOnly));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.PostalOnly, billSendingTemplate.SendingMode.Value == Hospes.SendingMode.PostalOnly));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.MailPreferred, billSendingTemplate.SendingMode.Value == Hospes.SendingMode.MailPreferred));
+            SendingModes.Add(new NamedIntViewModel(translator, Hospes.SendingMode.PostalPrefrerred, billSendingTemplate.SendingMode.Value == Hospes.SendingMode.PostalPrefrerred));
             BillSendingLetters = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)

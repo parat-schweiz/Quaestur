@@ -11,7 +11,7 @@ using SiteLibrary;
 using System.Security.Principal;
 using System.Security.Claims;
 
-namespace Quaestur
+namespace Hospes
 {
     public enum LoginResult
     {

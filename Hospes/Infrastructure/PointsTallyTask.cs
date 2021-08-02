@@ -4,7 +4,7 @@ using SiteLibrary;
 using BaseLibrary;
 using MimeKit;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PointsTallyTask : ITask
     {

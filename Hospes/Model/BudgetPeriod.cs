@@ -4,7 +4,7 @@ using System.Linq;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BudgetPeriod : DatabaseObject
     {

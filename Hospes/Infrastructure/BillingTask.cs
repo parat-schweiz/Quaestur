@@ -5,7 +5,7 @@ using BaseLibrary;
 using SiteLibrary;
 using MimeKit;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BillingTask : ITask
     {

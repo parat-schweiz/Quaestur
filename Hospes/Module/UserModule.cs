@@ -9,7 +9,7 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class UserStatusEditViewModel : DialogViewModel
     {
@@ -30,8 +30,8 @@ namespace Quaestur
             Id = person.Id.Value.ToString();
             UserStatus = string.Empty;
             UserStatuses = new List<NamedIntViewModel>();
-            UserStatuses.Add(new NamedIntViewModel(translator, Quaestur.UserStatus.Active, person.UserStatus.Value == Quaestur.UserStatus.Active));
-            UserStatuses.Add(new NamedIntViewModel(translator, Quaestur.UserStatus.Locked, person.UserStatus.Value == Quaestur.UserStatus.Locked));
+            UserStatuses.Add(new NamedIntViewModel(translator, Hospes.UserStatus.Active, person.UserStatus.Value == Hospes.UserStatus.Active));
+            UserStatuses.Add(new NamedIntViewModel(translator, Hospes.UserStatus.Locked, person.UserStatus.Value == Hospes.UserStatus.Locked));
             PhraseFieldUserStatus = translator.Get("User.Status.Edit.Field.UserStatus", "Field 'User status' in the edit user status dialog", "User status").EscapeHtml();
         }
     }

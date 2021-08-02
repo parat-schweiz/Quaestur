@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Quaestur
+namespace Hospes
 {
     public class SecurityThrottle
     {

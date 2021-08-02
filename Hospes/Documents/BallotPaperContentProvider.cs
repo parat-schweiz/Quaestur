@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BallotPaperContentProvider : IContentProvider
     {

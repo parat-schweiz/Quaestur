@@ -9,7 +9,7 @@ using MimeKit;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class MailingSendingViewModel
     {

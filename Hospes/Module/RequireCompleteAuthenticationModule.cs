@@ -3,7 +3,7 @@ using Nancy;
 using Nancy.Helpers;
 using Nancy.Responses;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class RequireCompleteAuthenticationModule
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class DialogViewModel
     {

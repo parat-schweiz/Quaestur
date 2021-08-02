@@ -6,7 +6,7 @@ using MailKit;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PointsTask : ITask
     {

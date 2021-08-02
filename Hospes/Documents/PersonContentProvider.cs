@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using SiteLibrary;
 using BaseLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PersonContentProvider : IContentProvider
     {

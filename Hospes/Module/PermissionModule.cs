@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PermissionEditViewModel : DialogViewModel
     {

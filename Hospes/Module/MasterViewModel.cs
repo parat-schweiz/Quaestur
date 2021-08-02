@@ -5,7 +5,7 @@ using Nancy;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PostResult
     {

@@ -5,7 +5,7 @@ using SiteLibrary;
 using BaseLibrary;
 using System.Text;
 
-namespace Quaestur
+namespace Hospes
 {
     public class SettlementContentProvider : IContentProvider
     {

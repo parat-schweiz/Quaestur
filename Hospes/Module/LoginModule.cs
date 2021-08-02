@@ -9,7 +9,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class LoginViewModel : MasterViewModel
     {

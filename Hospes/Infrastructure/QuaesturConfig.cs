@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using BaseLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class QuaesturConfig : Config
     {

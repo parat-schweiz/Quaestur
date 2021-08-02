@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PointsTallyEditViewModel : DialogViewModel
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class MailTemplate : DatabaseObject, ITemplate
     {

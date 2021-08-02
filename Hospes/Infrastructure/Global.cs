@@ -6,7 +6,7 @@ using SecurityServiceClient;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class Global
     {

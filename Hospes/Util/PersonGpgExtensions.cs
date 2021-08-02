@@ -2,7 +2,7 @@
 using System.Linq;
 using BaseLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class PersonGpgExtensions
     {

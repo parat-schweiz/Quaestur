@@ -3,7 +3,7 @@ using System.Text;
 using System.Collections.Generic;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public enum PublicKeyType
     { 

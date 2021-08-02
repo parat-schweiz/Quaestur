@@ -2,7 +2,7 @@
 using System.Linq;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class Model
     {

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 using SiteLibrary;
 using BaseLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class ResourceModule : QuaesturModule
     {

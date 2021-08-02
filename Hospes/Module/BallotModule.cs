@@ -10,7 +10,7 @@ using BaseLibrary;
 using MimeKit;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BallotEditViewModel : MasterViewModel
     {

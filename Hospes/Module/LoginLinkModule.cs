@@ -16,7 +16,7 @@ using BaseLibrary;
 using QRCoder;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class LoginLinkViewModel : MasterViewModel
     {

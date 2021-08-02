@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class Organization : DatabaseObject
     {

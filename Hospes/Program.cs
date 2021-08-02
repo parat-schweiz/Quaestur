@@ -2,7 +2,7 @@
 using System.IO;
 using Nancy.Hosting.Self;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class MainClass
     {

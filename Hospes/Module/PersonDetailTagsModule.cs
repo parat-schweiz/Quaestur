@@ -4,7 +4,7 @@ using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PersonDetailTagsViewModel
     {

@@ -5,7 +5,7 @@ using Nancy.ErrorHandling;
 using Nancy.ViewEngines;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class CustomStatusPage : IStatusCodeHandler
     {

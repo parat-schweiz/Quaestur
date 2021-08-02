@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public enum SendingMode
     { 
@@ -58,7 +58,7 @@ namespace Quaestur
             MaxReminderLevel = new Field<int>(this, "maxreminderlevel", 1);
             Name = new StringField(this, "name", 256);
             MailSender = new ForeignKeyField<Group, BillSendingTemplate>(this, "mailsenderid", false, null);
-            SendingMode = new EnumField<SendingMode>(this, "sendingmode", Quaestur.SendingMode.MailOnly, SendingModeExtensions.Translate);
+            SendingMode = new EnumField<SendingMode>(this, "sendingmode", Hospes.SendingMode.MailOnly, SendingModeExtensions.Translate);
         }
 
         public TemplateField BillSendingLetter

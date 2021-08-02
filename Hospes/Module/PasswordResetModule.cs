@@ -18,7 +18,7 @@ using System.Security.Cryptography;
 using BaseLibrary;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PasswordResetRequestViewModel : MasterViewModel
     {

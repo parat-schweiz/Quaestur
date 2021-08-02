@@ -5,7 +5,7 @@ using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
 using Nancy.Conventions;
 
-namespace Quaestur
+namespace Hospes
 {
     public class CustomBoostrapper : DefaultNancyBootstrapper
     {

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PersonListItemViewModel
     {

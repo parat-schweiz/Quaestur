@@ -11,7 +11,7 @@ using Newtonsoft.Json.Linq;
 using Nancy.Security;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class QuaesturModule : NancyModule, IDisposable
     {

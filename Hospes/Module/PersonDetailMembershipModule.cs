@@ -7,7 +7,7 @@ using Nancy.Security;
 using Newtonsoft.Json;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class PersonDetailMembershipItemViewModel
     {

@@ -6,7 +6,7 @@ using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public enum PasswordType
     {
@@ -88,14 +88,14 @@ namespace Quaestur
         {
             Number = new Field<int>(this, "number", 0);
             UserName = new StringField(this, "username", 32);
-            PasswordType = new EnumField<PasswordType>(this, "passwordtype", Quaestur.PasswordType.None, PasswordTypeExtensions.Translate);
+            PasswordType = new EnumField<PasswordType>(this, "passwordtype", Hospes.PasswordType.None, PasswordTypeExtensions.Translate);
             PasswordHash = new ByteArrayField(this, "passwordhash", true);
             Title = new StringField(this, "title", 256);
             FirstName = new StringField(this, "firstname", 256);
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
             BirthDate = new Field<DateTime>(this, "birthdate", new DateTime(1850, 1, 1));
-            UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtensions.Translate);
+            UserStatus = new EnumField<UserStatus>(this, "userstatus", Hospes.UserStatus.Locked, UserStatusExtensions.Translate);
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);

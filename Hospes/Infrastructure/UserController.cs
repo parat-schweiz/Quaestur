@@ -9,7 +9,7 @@ using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public static class UserController
     {

@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 using QRCoder;
 using SiteLibrary;
 
-namespace Quaestur
+namespace Hospes
 {
     public class BallotPaperDocument : TemplateDocument, IContentProvider
     {
