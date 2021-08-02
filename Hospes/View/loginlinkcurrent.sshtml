@@ -1,0 +1,34 @@
+﻿<script>
+  status = "@Model.Status";
+  timerSeconds = @Model.Expiry;
+  $("#acceptButton").click(function(event){
+    $.get("/loginlink/accept/@Model.Id", function(data, status){
+      if (data){
+        $.notify({ message: data },{ type: "success", element: "form" });
+        updateCurrent();
+      }
+    });
+    event.preventDefault();
+  });
+  $("#rejectButton").click(function(event){
+    $.get("/loginlink/reject/@Model.Id", function(data, status){
+      if (data){
+        $.notify({ message: data },{ type: "success", element: "form" });
+        updateCurrent();
+      }
+    });
+    event.preventDefault();
+  });
+  updateTimer();
+  updateCurrent();
+</script>
+<p><img width="500em" src="@Model.QrcodeUrl"/></p>
+<p>@Model.PhraseAuthLevel</p>
+<p>@Model.PhraseExpires <span id="timer"></span></p>
+@If.CanVerify
+<p><b>@Model.PhraseVerification @Model.Verification</b></p>
+<form>
+  <button id="acceptButton" class="btn btn-primary mb-2">@Model.PhraseButtonAccept</button>
+  <button id="rejectButton" class="btn btn-primary mb-2">@Model.PhraseButtonReject</button>
+</form>
+@EndIf

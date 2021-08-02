@@ -1,0 +1,61 @@
+﻿\documentclass[ppsletter,fontsize=11pt,foldmarks=false ]{scrlttr2}
+\usepackage{ppszs}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\usepackage{float}
+\usepackage{hyperref}
+
+\makeatletter
+\@setplength{toaddrvpos}{4.5cm}
+\@setplength{toaddrhpos}{12cm}
+\KOMAoptions{foldmarks=off}
+
+%\setkomavar{memberid}{}
+%\setkomavar{membernick}{}
+%\setkomavar{memberemail}{}
+
+\setkomavar{partei}{Stefan Thöni}
+\setkomavar{departement}{Präsident}
+\setkomavar{fromname}{}
+\setkomavar{fromstreet}{Piratenpartei Zentralschweiz}
+\setkomavar{fromcity}{6300 Zug}
+\setkomavar{fromemail}{finance@ppzs.ch}
+\setkomavar{fromurl}{www.ppzs.ch}
+\setkomavar{backaddress}{}
+
+\begin{document}
+
+\setkomavar{date}{§§§Bill.CreatedDate§§§}
+\setkomavar{subject}{Rechnung §§§Bill.Number§§§}
+
+\selectlanguage{ngerman}
+
+\begin{letter}{%
+    §§§Bill.Address.FiveLines§§§
+}
+
+\enlargethispage{10cm}
+
+\opening{Hallo §§§Bill.Address.FirstName§§§}
+
+§§§Bill.Explainations§§§
+
+\begin{tabular}{ l r r l }
+§§§Bill.FinalTableContent§§§
+\end{tabular}
+
+Die Piratenpartei Zentralschweiz dankt Dir für deine Unterstützung!
+
+\vspace{1cm}
+Betrag überweisen an:
+
+Piratenpartei Zentralschweiz \\
+6300 Zug
+
+Konto: 85-621416-2 \\
+IBAN: CH29 0900 0000 8562 1416 2 \\
+BIC/SWIFT: POFICHBEXXX \\
+Vermerk: §§§Bill.Number§§§
+
+\end{letter}%
+
+\end{document}

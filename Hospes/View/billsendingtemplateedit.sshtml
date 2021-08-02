@@ -1,0 +1,143 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#billSendingTemplate' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Name", result);
+  assignFieldValidation("MinReminderLevel", result);
+  assignFieldValidation("MaxReminderLevel", result);
+  assignFieldValidation("MailSender", result);
+  assignFieldValidation("BillSendingMails", result);
+  assignFieldValidation("BillSendingLetters", result);
+  assignFieldValidation("SendingMode", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$('.selectpicker').selectpicker();
+$(document).ready(function() {
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "/billsendingtemplate/@Model.ParentId";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Name = $("#billSendingTemplateName").val();
+    formData.MinReminderLevel = $("#billSendingTemplateMinReminderLevel").val();
+    formData.MaxReminderLevel = $("#billSendingTemplateMaxReminderLevel").val();
+    formData.MailSender = $("#billSendingTemplateMailSender").val();
+    formData.BillSendingMailTemplates = $("#billSendingTemplateBillSendingMails").val();
+    formData.BillSendingLetterTemplates = $("#billSendingTemplateBillSendingLetters").val();
+    formData.SendingMode = $("#billSendingTemplateSendingMode").val();
+    $.post("/billSendingTemplate/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/billsendingtemplate/@Model.ParentId";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+  tinymce.init({
+    selector: '#@Model.HtmlEditorId',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billSendingTemplateName">@Model.PhraseFieldName</label>
+        <input type="text" id="billSendingTemplateName" class="form-control" value="@Model.Name"/>
+        <div id="billSendingTemplateNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <label for="billSendingTemplateMinReminderLevel">@Model.PhraseFieldMinReminderLevel</label>
+        <input type="text" id="billSendingTemplateMinReminderLevel" class="form-control" value="@Model.MinReminderLevel"/>
+        <div id="billSendingTemplateMinReminderLevelFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-6 mb-3">
+        <label for="billSendingTemplateMaxReminderLevel">@Model.PhraseFieldMaxReminderLevel</label>
+        <input type="text" id="billSendingTemplateMaxReminderLevel" class="form-control" value="@Model.MaxReminderLevel"/>
+        <div id="billSendingTemplateMaxReminderLevelFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="billSendingTemplateSendingMode">@Model.PhraseFieldSendingMode</label>
+        <select id="billSendingTemplateSendingMode" class="selectpicker form-control" data-live-search="true">
+          @Each.SendingModes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billSendingTemplateSendingModeFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="billSendingTemplateMailSender">@Model.PhraseFieldMailSender</label>
+        <select id="billSendingTemplateMailSender" class="selectpicker form-control" data-live-search="true">
+          @Each.MailSenders
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billSendingTemplateMailSenderFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-3">
+        <label for="billSendingTemplateBillSendingMails">@Model.PhraseFieldBillSendingMailTemplates</label>
+        <select id="billSendingTemplateBillSendingMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.BillSendingMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billSendingTemplateBillSendingMailsFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="billSendingTemplateBillSendingLetters">@Model.PhraseFieldBillSendingLetterTemplates</label>
+        <select id="billSendingTemplateBillSendingLetters" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.BillSendingLetters
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billSendingTemplateBillSendingLettersFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

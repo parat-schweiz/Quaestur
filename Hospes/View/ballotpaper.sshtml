@@ -1,0 +1,53 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function downloadUrlWait(url){
+  waitingDialog.show("@Model.PhraseDownloadWait", undefined, function(){
+    $.get(url, function(resultData, status){
+        var result = JSON.parse(resultData);
+        if (result.IsSuccess){
+          const byteString = atob(result.Data);
+          var arrayBuffer = new ArrayBuffer(byteString.length);
+          var uint8Array = new Uint8Array(arrayBuffer);
+          for (var i = 0; i < byteString.length; i++) {
+            uint8Array[i] = byteString.charCodeAt(i);
+          }
+          var blob = new Blob([arrayBuffer], {type: "application/pdf"});
+          waitingDialog.hide();
+          saveAs(blob, result.FileName);
+        }else{
+          waitingDialog.hide();
+          $.notify({ message: result.MessageText },{ type: result.MessageType });
+        }
+    });
+  });
+}
+</script>
+@EndSection
+
+@Section['data']
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='clickable-row'>
+      <td width="25%">@Model.PhraseHeaderOrganization</td>
+      <td width="15%">@Model.PhraseHeaderAnnouncementDate</td>
+      <td width="15%">@Model.PhraseHeaderStartDate</td>
+      <td width="15%">@Model.PhraseHeaderEndDate</td>
+      <td width="15%">@Model.PhraseHeaderStatus</td>
+      <td width="15%"></td>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="25%">@Current.Organization</td>
+      <td width="15%">@Current.AnnouncementDate</td>
+      <td width="15%">@Current.StartDate</td>
+      <td width="15%">@Current.EndDate</td>
+      <td width="15%">@Current.Status</td>
+      <td width="15%">@Current.BallotPaperText</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>@EndSection

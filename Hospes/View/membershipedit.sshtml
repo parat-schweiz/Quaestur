@@ -1,0 +1,101 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#membership' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Organization", result);
+  assignFieldValidation("MembershipType", result);
+  assignFieldValidation("StartDate", result);
+  assignFieldValidation("EndDate", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Organization = $("#membershipOrganization").val();
+  formData.MembershipType = $("#membershipMembershipType").val();
+  formData.StartDate = $("#membershipStartDate").val();
+  formData.EndDate = $("#membershipEndDate").val();
+  $.post("/membership/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      showMemberships();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d',
+    language: 'de'
+});
+$('.selectpicker').selectpicker();
+$('#membershipOrganization').on('change', function() {
+  updateMembershipTypesDiv();
+});
+function updateMembershipTypesDiv(){
+  var organization = $("#membershipOrganization").val();
+  $.get("/membership/edit/@Model.Id/types/" + organization, function(data, status){
+    $('#membershipMembershipTypeDiv').html(data);
+  });
+}
+updateMembershipTypesDiv();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipOrganization">@Model.PhraseFieldOrganization</label>
+        <select id="membershipOrganization" class="selectpicker form-control" data-live-search="true">
+          @Each.Organizations
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipOrganizationFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div id="membershipMembershipTypeDiv" class="col-12 mb-3">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipStartDate">@Model.PhraseFieldStartDate</label>
+        <input type="text" id="membershipStartDate" class="form-control datepicker" value="@Model.StartDate"/>
+        <div id="membershipStartDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipEndDate">@Model.PhraseFieldEndDate</label>
+        <input type="text" id="membershipEndDate" class="form-control datepicker" value="@Model.EndDate"/>
+        <div id="membershipEndDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

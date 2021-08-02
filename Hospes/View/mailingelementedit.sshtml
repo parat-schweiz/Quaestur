@@ -1,0 +1,111 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#mailingElement' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Owner", result);
+  assignFieldValidation("Name", result);
+  assignFieldValidation("Type", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#mailingCancelButton").click(function(event) {
+    window.location.href = "/mailingelement";
+    event.preventDefault();  
+  });
+  $("#mailingSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.Owner = $("#mailingElementOwner").val();
+    formData.Name = $("#mailingElementName").val();
+    formData.Type = $("#mailingElementType").val();
+    formData.HtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
+    $.post("/mailingelement/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "/mailingelement";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+    tinymce.init({
+    selector: '#@Model.HtmlEditorId',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailingElementOwner">@Model.PhraseFieldOwner</label>
+        <select id="mailingElementOwner" class="selectpicker form-control" data-live-search="true">
+          @Each.Owners
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailingElementOwnerFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailingElementName">@Model.PhraseFieldName</label>
+        <input type="text" id="mailingElementName" class="form-control" value="@Model.Name"/>
+        <div id="mailingElementNameFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="mailingElementType">@Model.PhraseFieldType</label>
+        <select id="mailingElementType" class="selectpicker form-control" data-live-search="true">
+          @Each.Types
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="mailingElementTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="@Model.HtmlEditorId">@Model.PhraseFieldHtmlText</label>
+        <textarea id="@Model.HtmlEditorId">@Model.HtmlText</textarea>
+      </div>
+    </div>
+    <button id="mailingCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="mailingSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

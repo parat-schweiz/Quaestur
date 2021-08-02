@@ -1,0 +1,32 @@
+﻿@Master['View/master.sshtml']
+
+@Section['input']
+<div class="container">
+  <form action="/login" method="post">
+    <input type="hidden" name="ReturnUrl" value="@Model.ReturnUrl"/>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <label for="loginUsername">@Model.PhraseFieldUsername</label>
+        <input type="text" class="form-control" id="loginUsername" name="UserName" autofocus/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <label for="loginPassword">@Model.PhraseFieldPassword</label>
+        <input type="password" class="form-control @Model.Valid" id="loginPassword" name="Password"/>
+        <div id="loginPasswordFeedbak" class="invalid-feedback">@Model.Problems</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <input type="submit" class="btn btn-primary" value="@Model.PhraseButtonLogin"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <a href="/password/reset/request">@Model.PhrasePasswordReset</a>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

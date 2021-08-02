@@ -1,0 +1,48 @@
+﻿\documentclass[paratletter,fontsize=11pt,foldmarks=false]{scrlttr2}
+\usepackage[margin=10pt,font=small,labelfont=bf]{caption}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{supertabular}
+
+\makeatletter
+\@setplength{toaddrvpos}{4.7cm}
+\@setplength{toaddrhpos}{12cm}
+\KOMAoptions{foldmarks=off}
+\newcommand{\headerwidth}{7.5cm}
+
+\setkomavar{fromname}{Stefan Thöni}
+\setkomavar{fromstreet}{Parkstrasse 7}
+\setkomavar{fromcity}{6312 Steinhausen}
+\setkomavar{fromemail}{stefan.thoeni@parat.top}
+\setkomavar{departement}{Präsident}
+\setkomavar{signature}{Stefan Thöni}
+\setkomavar{backaddress}{}
+
+\begin{document}
+
+\setkomavar{date}{§§§PointsTally.CreatedDate§§§}
+\setkomavar{subject}{Punkteabrechnung}
+
+\selectlanguage{ngerman}
+
+\begin{letter}{%
+    §§§Person.Address.FiveLines§§§
+}
+
+\enlargethispage{10cm}
+
+\opening{Hallo §§§Person.FirstName§§§}
+
+Im Zeitraum vom §§§PointsTally.CreatedDate§§§ bis §§§PointsTally.UntilDate§§§ hast du durch dein Engagement für PARAT folgende Punkte verdient:
+
+\vspace{0.2cm}
+
+§§§PointsTally.TableContent§§§
+
+\vspace{0.2cm}
+
+Die PARAT dankt Dir für deine Unterstützung!
+
+\end{letter}%
+
+\end{document}

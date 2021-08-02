@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateLatexTemplateList(){
+      $.get("/latextemplate/list", function(data, status){
+          if (data){
+              $("#latexTemplateList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateLatexTemplateList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="latexTemplateList">
+</div>
+@EndSection

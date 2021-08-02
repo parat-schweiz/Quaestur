@@ -1,0 +1,26 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+$(document).ready(function() {
+  $("#authorizeButton").click(function(event) {
+    $.post("/oauth2/callback/@Model.Id", "@Model.State", function(resultData, status){
+      window.location.href = resultData;
+    });
+    event.preventDefault();
+  });
+  $("#rejectButton").click(function(event) {
+    window.location.href = "/";
+    event.preventDefault();  
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <p>@Model.Message</p>
+  <button id="authorizeButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonAuthorize</button>
+  <button id="rejectButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonReject</button>
+</div>
+@EndSection

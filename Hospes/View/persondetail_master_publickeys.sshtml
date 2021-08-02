@@ -1,0 +1,58 @@
+﻿<script>
+$("#publicKeyRowAdd").click(function(){
+  showPublicKeyEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#publicKeyRowEdit1@Current.Id").click(function(){
+  showPublicKeyEditDialog("edit", "@Current.Id");
+});
+$("#publicKeyRowEdit2@Current.Id").click(function(){
+  showPublicKeyEditDialog("edit", "@Current.Id");
+});
+$("#publicKeyRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/publickey/delete/@Current.Id", function(data, status){
+          updateMasterDataPublicKeys();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+function showPublicKeyEditDialog(method, id){
+  $.get("/publickey/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#publicKeyEditDialog').replaceWith(data);
+      $('#publicKeyEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<div class="card">
+  <div class="card-header">
+    @Model.Title
+  </div>
+  <div class="card-body">
+    <table class="table table-hover table-fixed">
+      <tbody class="person-master-card">
+        @Each.List
+        <tr class="clickable-row">
+          <td width="40%" id="publicKeyRowEdit1@Current.Id" class="@Model.Editable">@Current.Type</td>
+          <td width="50%" id="publicKeyRowEdit2@Current.Id" class="@Model.Editable">@Current.KeyId</td>
+          <td width="10%" id="publicKeyRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+        </tr>
+        @EndEach
+        <tr class="centering clickable-row">
+          <td width="90%" colspan="2" id="publicKeyRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+          <td width="10%"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div id="publicKeyEditDialog"/>

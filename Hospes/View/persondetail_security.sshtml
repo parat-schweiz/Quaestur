@@ -1,0 +1,26 @@
+﻿<script>
+function showEditDialog(path, id){
+  $.get(path + id, function(data, status){
+    if (data){
+      $('#editDialog').replaceWith(data);
+      $('#editDialog').modal('show');
+    }
+  });
+}
+@Each.List
+$("#@Current.RowId").click(function(){
+  showEditDialog("@Current.Path", "@Model.Id");
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="50%">@Current.Phrase</td>
+      <td width="50%" id="@Current.RowId" class="@Current.Editable">@Current.Value</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>
+<div id="editDialog"/>

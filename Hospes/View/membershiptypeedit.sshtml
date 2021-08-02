@@ -1,0 +1,275 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#membershipType' + field + key;
+  var feedbackId = '#membershipType' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#membershipType' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("Right", result);
+  assignFieldValidation("Payment", result);
+  assignFieldValidation("Collection", result);
+  assignFieldValidation("MaximumPoints", result);
+  assignFieldValidation("MaximumBalanceForward", result);
+  assignFieldValidation("MaximumDiscount", result);
+  assignFieldValidation("TriplePoints", result);
+  assignFieldValidation("DoublePoints", result);
+  assignFieldValidation("PointsTallyMails", result);
+  assignFieldValidation("PointsTallyDocuments", result);
+  assignFieldValidation("BillDocuments", result);
+  assignFieldValidation("SettlementDocuments", result);
+  assignFieldValidation("SettlementMails", result);
+  assignFieldValidation("PaymentParameterUpdateRequiredMails", result);
+  assignFieldValidation("PaymentParameterUpdateInvitationMails", result);
+  assignFieldValidation("SenderGroup", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function getFormData(){
+  var formData = new Object();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#membershipTypeName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  formData.Right = $("#membershipTypeRight").val();
+  formData.Payment = $("#membershipTypePayment").val();
+  formData.Collection = $("#membershipTypeCollection").val();
+  formData.MaximumPoints = $("#membershipTypeMaximumPoints").val();
+  formData.MaximumBalanceForward = $("#membershipTypeMaximumBalanceForward").val();
+  formData.MaximumDiscount = $("#membershipTypeMaximumDiscount").val();
+  formData.TriplePoints = $("#membershipTypeTriplePoints").val();
+  formData.DoublePoints = $("#membershipTypeDoublePoints").val();
+  formData.PointsTallyMailTemplates = $("#membershipTypePointsTallyMails").val();
+  formData.PointsTallyDocumentTemplates = $("#membershipTypePointsTallyDocuments").val();
+  formData.SettlementMailTemplates = $("#membershipTypeSettlementMails").val();
+  formData.SettlementDocumentTemplates = $("#membershipTypeSettlementDocuments").val();
+  formData.PaymentParameterUpdateRequiredMailTemplates = $("#membershipTypePaymentParameterUpdateRequiredMails").val();
+  formData.PaymentParameterUpdateInvitationMailTemplates = $("#membershipTypePaymentParameterUpdateInvitationMails").val();
+  formData.BillDocumentTemplates = $("#membershipTypeBillDocuments").val();
+  formData.SenderGroup = $("#membershipTypeSenderGroup").val();
+  return formData;
+}
+$("#@Model.ButtonId").click(function() {
+  $.post("/membershiptype/@Model.Method/@Model.Id", JSON.stringify(getFormData()), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateMembershipTypeList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="membershipTypeName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="membershipTypeName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="membershipTypeNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeRight">@Model.PhraseFieldRight</label>
+        <select id="membershipTypeRight" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.Rights
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeRightFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypePayment">@Model.PhraseFieldPayment</label>
+        <select id="membershipTypePayment" class="selectpicker form-control" data-live-search="true">
+          @Each.Payments
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePaymentFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeCollection">@Model.PhraseFieldCollection</label>
+        <select id="membershipTypeCollection" class="selectpicker form-control" data-live-search="true">
+          @Each.Collections
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeCollectionFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeMaximumPoints">@Model.PhraseFieldMaximumPoints</label>
+        <input type="text" id="membershipTypeMaximumPoints" class="form-control" value="@Model.MaximumPoints"/>
+        <div id="membershipTypeMaximumPointsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeMaximumBalanceForward">@Model.PhraseFieldMaximumBalanceForward</label>
+        <input type="text" id="membershipTypeMaximumBalanceForward" class="form-control" value="@Model.MaximumBalanceForward"/>
+        <div id="membershipTypeMaximumBalanceForwardFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeMaximumDiscount">@Model.PhraseFieldMaximumDiscount</label>
+        <input type="text" id="membershipTypeMaximumDiscount" class="form-control" value="@Model.MaximumDiscount"/>
+        <div id="membershipTypeMaximumDiscountFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeTriplePoints">@Model.PhraseFieldTriplePoints</label>
+        <input type="text" id="membershipTypeTriplePoints" class="form-control" value="@Model.TriplePoints"/>
+        <div id="membershipTypeTriplePointsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="membershipTypeDoublePoints">@Model.PhraseFieldDoublePoints</label>
+        <input type="text" id="membershipTypeDoublePoints" class="form-control" value="@Model.DoublePoints"/>
+        <div id="membershipTypeDoublePointsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeBillDocuments">@Model.PhraseFieldBillDocumentTemplates</label>
+        <select id="membershipTypeBillDocuments" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.BillDocuments
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeBillDocumentsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeSettlementDocuments">@Model.PhraseFieldSettlementDocumentTemplates</label>
+        <select id="membershipTypeSettlementDocuments" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SettlementDocuments
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSettlementDocumentsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeSettlementMails">@Model.PhraseFieldSettlementMailTemplates</label>
+        <select id="membershipTypeSettlementMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SettlementMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSettlementMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeSenderGroup">@Model.PhraseFieldSenderGroup</label>
+        <select id="membershipTypeSenderGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.Groups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeSenderGroupFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePointsTallyDocuments">@Model.PhraseFieldPointsTallyDocumentTemplates</label>
+        <select id="membershipTypePointsTallyDocuments" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PointsTallyDocuments
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePointsTallyDocumentsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePointsTallyMails">@Model.PhraseFieldPointsTallyMailTemplates</label>
+        <select id="membershipTypePointsTallyMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PointsTallyMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePointsTallyMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePaymentParameterUpdateRequiredMails">@Model.PhraseFieldPaymentParameterUpdateRequiredMailTemplates</label>
+        <select id="membershipTypePaymentParameterUpdateRequiredMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PaymentParameterUpdateRequiredMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePaymentParameterUpdateRequiredMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypePaymentParameterUpdateInvitationMails">@Model.PhraseFieldPaymentParameterUpdateInvitationMailTemplates</label>
+        <select id="membershipTypePaymentParameterUpdateInvitationMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PaymentParameterUpdateInvitationMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypePaymentParameterUpdateInvitationMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

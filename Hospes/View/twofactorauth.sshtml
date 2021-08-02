@@ -1,0 +1,20 @@
+﻿@Master['View/master.sshtml']
+
+@Section['input']
+<div class="container">
+  <form action="/twofactor/auth" method="post">
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <label for="twoFactorCode">@Model.PhraseFieldCode</label>
+        <input type="input" class="form-control @Model.Valid" id="twoFactorCode" name="Code" autofocus/>
+        <div id="twoFactorCodeFeedback" class="invalid-feedback">@Model.Problems</div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-6 mb-3">
+        <input type="submit" class="btn btn-primary" value="@Model.PhraseButtonLogin"/>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

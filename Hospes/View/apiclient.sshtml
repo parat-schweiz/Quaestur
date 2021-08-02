@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateApiClientList(){
+      $.get("/apiclient/list", function(data, status){
+          if (data){
+              $("#apiClientList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateApiClientList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="apiClientList">
+</div>
+@EndSection

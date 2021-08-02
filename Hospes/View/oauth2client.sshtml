@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateOauth2ClientList(){
+      $.get("/oauth2client/list", function(data, status){
+          if (data){
+              $("#clientList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateOauth2ClientList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="clientList">
+</div>
+@EndSection

@@ -1,0 +1,98 @@
+﻿\documentclass[11pt, a4paper]{scrartcl}
+\usepackage{geometry}
+\usepackage{fontspec}
+\usepackage{xltxtra}
+\usepackage{xunicode}
+\usepackage{textpos}
+\usepackage{eso-pic}
+\usepackage{framed}
+\usepackage[german=swiss]{csquotes}
+\usepackage[english,french,italian,ngerman]{babel}
+\usepackage{setspace}
+\usepackage{array}
+\usepackage[normalem]{ulem}
+\usepackage{enumitem}
+
+\geometry{margin=1cm}
+
+\setromanfont[BoldFont=Aller Bold]{Aller Light}
+\setsansfont[BoldFont=Aller Bold]{Aller Light}
+
+\newcommand{\ja}{\enquote{\textit{Ja}}}
+\newcommand{\nein}{\enquote{\textit{Nein}}}
+\newcommand{\enthaltung}{\enquote{\textit{Enthaltung}}}
+
+\begin{document}
+
+\setlength{\parindent}{0cm}
+
+\selectlanguage{ngerman}
+
+\begin{textblock}{9}(8.1,2.6)
+Piratenpartei Zentralschweiz \\
+6300 Zug \\
+\end{textblock}
+
+\begin{textblock}{6}(8.7,0)
+\includegraphics[width=7.5cm]{logo/sec/zs/st.pdf}
+\end{textblock}
+
+{\LARGE\textbf{Stimmrechtsausweis}} \\
+für die Urabstimmung vom §§§BallotPaper.Ballot.Date.Long§§§ \\
+
+\vspace{1cm}
+
+\begin{textblock}{6}(0,1.8)
+\raggedright
+Verifikation: \\
+~ \\
+§§§BallotPaperDocument.Code§§§ \\
+~ \\
+\includegraphics[width=7cm]{qrcode.png}
+\end{textblock}
+
+\begin{textblock}{6.5}(0,10.5)
+\begin{framed}
+Unterschrift des Stimmberechtigten \\
+\vspace{2.5cm} ~ \\
+\end{framed}
+\end{textblock}
+
+\begin{textblock}{6.5}(8,10.5)
+\begin{framed}
+Auszählung \hfill Leer lassen! \\
+\vspace{2.5cm} ~ \\
+\end{framed}
+\end{textblock}
+
+Mitglied Nr. \textbf{§§§Person.Number§§§}   \\
+~ \\
+§§§Person.Address.FiveLines§§§
+
+\vspace{10cm}
+
+\textbf{Zum Abstimmen wie folgt vorgehen:}
+\begin{enumerate}
+\setlength{\parskip}{0pt}
+\setlength{\itemsep}{1pt}
+\item Stimmrechtsausweis unterschreiben.
+\item Stimmzettel gemäss deinen Präferenzen ausfüllen.
+\item Stimmzettel in ein kleines Couvert legen und dieses sicher verschliessen.
+\item Das verschlossene Stimmcouvert und den Stimmrechtsausweis zusammen in ein zweites (grösseres) Couvert geben und ebenfalls sicher verschliessen.
+\item Das vollständige Couvert bitte bis am \textbf{§§§BallotPaper.Ballot.Date.Long§§§} an die aufgedruckte Adresse senden.
+\end{enumerate}
+
+\newpage
+
+\begin{textblock}{6}(8.7,0)
+\includegraphics[width=7.5cm]{logo/sec/zs/st.pdf}
+\end{textblock}
+
+{\LARGE\textbf{Stimmzettel}} \\
+für die Urabstimmung vom §§§BallotPaper.Ballot.Date.Long§§§ \\
+
+\vspace{2cm}
+
+§§§BallotPaperDocument.Questions§§§
+
+\end{document}

@@ -1,0 +1,178 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  var searchSettings = null;
+  var settingsList = null;
+  var getting = false;
+  function setItemsPerPage(n){
+    searchSettings.ItemsPerPage = n;
+    searchSettings.CurrentPage = 0;
+    waitingDialog.show(undefined, undefined, function(){
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      });
+    });
+  }
+  function setCurrentPage(n){
+    searchSettings.CurrentPage = n;
+    waitingDialog.show(undefined, undefined, function(){
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      });
+    });
+  }
+  function listSettings(callback){
+    $.get("/person/list/settings/list", function(resultData){
+      if (resultData){
+        settingsList = JSON.parse(resultData);
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  function getSettings(id, callback){
+    $.get("/person/list/settings/get/" + id, function(resultData){
+      if (resultData){
+        searchSettings = JSON.parse(resultData);
+        getting = true;
+        $("#filtertext").val(searchSettings.FilterText);
+        $("#filterMembership").val(searchSettings.FilterMembershipId);
+        $("#filterTag").val(searchSettings.FilterTagId);
+        $("#columns").val(searchSettings.Columns);
+        $("#itemsPerPage").val(searchSettings.ItemsPerPage);
+        $("#currentPage").val(searchSettings.CurrentPage);
+        $("#filterMembership").change();
+        $("#filterTag").change();
+        $("#columns").change();
+        getting = false;
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  function setSettings(callback){
+    searchSettings.FilterText = $("#filtertext").val();
+    searchSettings.FilterMembershipId = $("#filterMembership").val();
+    searchSettings.FilterTagId = $("#filterTag").val();
+    searchSettings.Columns = $("#columns").val();
+    searchSettings.ItemsPerPage = $("#itemsPerPage").val();
+    searchSettings.CurrentPage = $("#currentPage").val();
+    $.post("/person/list/settings/set/" + searchSettings.Id, JSON.stringify(searchSettings), function(resultData){
+      if (callback) callback();
+    });
+  }
+  function set(){
+    if (!getting){
+      waitingDialog.show();
+      setSettings(function(){
+        updatePersonList(function(success){
+          if (success){
+            waitingDialog.hide();
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      });
+    }
+  }
+  $(document).ready(function(){
+    $('.selectpicker').selectpicker();
+    $('#filtertext').keypress(function (e) {
+      if (e.which == 13) {
+        set();
+        return false;
+      }
+    });
+    $("#filtertext").on('focusout', set);
+    $("#filterMembership").change(set);
+    $("#columns").change(set);
+    $("#filterTag").change(set);
+    waitingDialog.show();
+    listSettings(function(success){
+      if (success){
+        getSettings(settingsList[0].Id, function(success){
+          if (success){
+            updatePersonList(function(success){
+              if (success){
+                waitingDialog.hide();
+              }else{
+                waitingDialog.hide();
+              }
+            });
+          }else{
+            waitingDialog.hide();
+          }
+        });
+      }else{
+        waitingDialog.hide();
+      }
+    });
+  });
+  function updatePersonList(callback){
+    $.get("/person/list/pages/" + searchSettings.Id, function(personPagesData, status){
+      if (personPagesData){
+        $(".personpage").remove();
+        $("#personListNavBar").append(personPagesData);
+        activatePages();
+        $.get("/person/list/data/" + searchSettings.Id, function(personListData, status){
+          if (personListData){
+            $("#personlist").html(personListData);
+            if (callback) callback(true);
+          }else{
+            if (callback) callback(false);
+          }
+        });
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  </script>
+@EndSection
+    
+@Section['input']
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <form class="form-inline">
+    <input class="form-control mr-sm-2 navbar-field-margin" type="text" placeholder="@Model.PhraseSearch" aria-label="@Model.PhraseShowSearch" id="filtertext"/>
+  </form>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#personListNavBar" aria-controls="personListNavBar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="personListNavBar">
+    <select id="filterMembership" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Memberships
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="filterTag" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Tags
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="columns" class="selectpicker form-control mr-sm-2" data-live-search="true" multiple>
+      @Each.Columns
+      <option value="@Current.Value" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+  </div>
+</nav>
+@EndSection
+
+@Section['data']
+<div id="personlist" class="container"/>
+@EndSection

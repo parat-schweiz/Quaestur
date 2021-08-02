@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateRoleList(){
+      $.get("/role/list/@Model.Id", function(data, status){
+          if (data){
+              $("#roleList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateRoleList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="roleList">
+</div>
+@EndSection

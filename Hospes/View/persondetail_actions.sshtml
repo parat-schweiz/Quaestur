@@ -1,0 +1,61 @@
+﻿<script>
+$("#actionSendParameterUpdate").click(function(event) {
+  waitingDialog.show(undefined, undefined, function(){
+    var membershipId = $("#actionMembership").val();
+    $.get("/person/detail/actions/sendparameterupdate/" + membershipId, function(statusData, status){
+      waitingDialog.hide();
+    });
+  });
+  event.preventDefault();
+});
+$("#actionCreatePointTally").click(function(event) {
+  waitingDialog.show(undefined, undefined, function(){
+    var membershipId = $("#actionMembership").val();
+    $.get("/person/detail/actions/createpointtally/" + membershipId, function(statusData, status){
+      waitingDialog.hide();
+    });
+  });
+  event.preventDefault();
+});
+$("#actionCreateBill").click(function(event) {
+  waitingDialog.show(undefined, undefined, function(){
+    var membershipId = $("#actionMembership").val();
+    $.get("/person/detail/actions/createbill/" + membershipId, function(statusData, status){
+      waitingDialog.hide();
+    });
+  });
+  event.preventDefault();
+});
+$("#actionSendSettlementOrReminder").click(function(event) {
+  waitingDialog.show(undefined, undefined, function(){
+    var membershipId = $("#actionMembership").val();
+    $.get("/person/detail/actions/sendsettlementorreminder/" + membershipId, function(statusData, status){
+      waitingDialog.hide();
+    });
+  });
+  event.preventDefault();
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="actionMembership">@Model.PhraseFieldMembership</label>
+        <select id="actionMembership" class="selectpicker form-control" data-live-search="true">
+          @Each.Memberships
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <button id ="actionSendParameterUpdate" type="button" class="btn btn-default">@Model.PhraseButtonSendParameterUpdate</button>
+        <button id ="actionCreatePointTally" type="button" class="btn btn-default">@Model.PhraseButtonCreatePointTally</button>
+        <button id ="actionCreateBill" type="button" class="btn btn-default">@Model.PhraseButtonCreateBill</button>
+        <button id ="actionSendSettlementOrReminder" type="button" class="btn btn-default">@Model.PhraseButtonSendSettlementOrReminder</button>
+      </div>
+    </div>
+  </form>
+</div>

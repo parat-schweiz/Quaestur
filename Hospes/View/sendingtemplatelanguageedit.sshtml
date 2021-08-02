@@ -1,0 +1,99 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#sendingTemplateLanguage' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("MailSubject", result);
+  assignFieldValidation("LetterLatex", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#templateCancelButton").click(function(event) {
+    window.location.href = "@Model.ParentLink";
+    event.preventDefault();  
+  });
+  $("#templateSaveButton").click(function(event) {
+    var formData = new Object();
+    formData.MailSubject = $("#sendingTemplateLanguageMailSubject").val();
+    formData.MailHtmlText = tinymce.get("@Model.HtmlEditorId").getContent();
+    formData.LetterLatex = $("#sendingTemplateLanguageLetterLatex").val();
+    $.post("/sendingtemplatelanguage/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "@Model.ParentLink";
+      }
+    });
+    event.preventDefault();  
+  });
+  $('.selectpicker').selectpicker();
+  tinymce.init({
+    selector: '#@Model.HtmlEditorId',
+    theme: 'modern',
+    height: 300,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <h2>@Model.Name</h2>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sendingTemplateLanguageMailSubject">@Model.PhraseFieldMailSubject</label>
+        <input type="text" id="sendingTemplateLanguageMailSubject" class="form-control" value="@Model.MailSubject"/>
+        <div id="sendingTemplateLanguageMailSubjectFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="@Model.HtmlEditorId">@Model.PhraseFieldMailHtmlText</label>
+        <textarea id="@Model.HtmlEditorId">@Model.MailHtmlText</textarea>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="sendingTemplateLanguageLetterLatex">@Model.PhraseFieldLetterLatex</label>
+        <textarea id="sendingTemplateLanguageLetterLatex" class="form-control">@Model.LetterLatex</textarea>
+        <div id="sendingTemplateLanguageLetterLatexFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <button id="templateCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="templateSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

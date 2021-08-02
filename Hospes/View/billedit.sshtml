@@ -1,0 +1,179 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#bill' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Number", result);
+  assignFieldValidation("Membership", result);
+  assignFieldValidation("FromDate", result);
+  assignFieldValidation("UntilDate", result);
+  assignFieldValidation("Amount", result);
+  assignFieldValidation("CreatedDate", result);
+  assignFieldValidation("Status", result);
+  assignFieldValidation("PayedDate", result);
+  assignFieldValidation("ReminderLevel", result);
+  assignFieldValidation("ReminderDate", result);
+  assignFieldValidation("Document", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function readFile(callback){
+  var input = $('#billDocument')[0];
+  var file = input.files[0];
+  if (file){
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      callback(file.name, file.size, reader.result);
+    }
+    reader.readAsDataURL(file);
+  }else{
+    callback("", 0, null);
+  }
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Number = $("#billNumber").val();
+  formData.Membership = $("#billMembership").val();
+  formData.FromDate = $("#billFromDate").val();
+  formData.UntilDate = $("#billUntilDate").val();
+  formData.Amount = $("#billAmount").val();
+  formData.CreatedDate = $("#billCreatedDate").val();
+  formData.Status = $("#billStatus").val();
+  formData.PayedDate = $("#billPayedDate").val();
+  formData.ReminderLevel = $("#billReminderLevel").val();
+  formData.ReminderDate = $("#billReminderDate").val();
+  readFile(function(name, size, data){
+    formData.FileName = name;
+    formData.FileSize = size;
+    formData.FileData = data;
+    $.post("/bill/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        $('#@Model.DialogId').modal('hide');
+        showBilling();
+        $('.modal-backdrop').remove();
+      }
+    });
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d',
+    language: 'de'
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billNumber">@Model.PhraseFieldNumber</label>
+        <input type="text" id="billNumber" class="form-control" value="@Model.Number"/>
+        <div id="billNumberFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billMembership">@Model.PhraseFieldMembership</label>
+        <select id="billMembership" class="selectpicker form-control" data-live-search="true">
+          @Each.Memberships
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billMembershipFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billFromDate">@Model.PhraseFieldFromDate</label>
+        <input type="text" id="billFromDate" class="form-control datepicker" value="@Model.FromDate"/>
+        <div id="billFromDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billUntilDate">@Model.PhraseFieldUntilDate</label>
+        <input type="text" id="billUntilDate" class="form-control datepicker" value="@Model.UntilDate"/>
+        <div id="billUntilDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billAmount">@Model.PhraseFieldAmount</label>
+        <input type="text" id="billAmount" class="form-control" value="@Model.Amount"/>
+        <div id="billAmountFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billCreatedDate">@Model.PhraseFieldCreatedDate</label>
+        <input type="text" id="billCreatedDate" class="form-control datepicker" value="@Model.CreatedDate"/>
+        <div id="billCreatedDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billStatus">@Model.PhraseFieldStatus</label>
+        <select id="billStatus" class="selectpicker form-control" data-live-search="true">
+          @Each.Statuses
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="billStatusFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billPayedDate">@Model.PhraseFieldPayedDate</label>
+        <input type="text" id="billPayedDate" class="form-control datepicker" value="@Model.PayedDate"/>
+        <div id="billPayedDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billReminderLevel">@Model.PhraseFieldReminderLevel</label>
+        <input type="text" id="billReminderLevel" class="form-control" value="@Model.ReminderLevel"/>
+        <div id="billReminderLevelFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billReminderDate">@Model.PhraseFieldReminderDate</label>
+        <input type="text" id="billReminderDate" class="form-control datepicker" value="@Model.ReminderDate"/>
+        <div id="billReminderDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="billDocument">@Model.PhraseFieldDocument</label>
+        <input type="file" id="billDocument" class="form-control-file"/>
+        <div id="billDocumentFeedback" class="valid-feedback"></div>
+        <a href="/bill/download/@Model.Id">@Model.FileName</a> @Model.FileSize
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

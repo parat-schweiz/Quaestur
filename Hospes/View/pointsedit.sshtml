@@ -1,0 +1,115 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#points' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Budget", result);
+  assignFieldValidation("MomentDate", result);
+  assignFieldValidation("MomentTime", result);
+  assignFieldValidation("Amount", result);
+  assignFieldValidation("Reason", result);
+  assignFieldValidation("Url", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Budget = $("#pointsBudget").val();
+  formData.MomentDate = $("#pointsMomentDate").val();
+  formData.MomentTime = $("#pointsMomentTime").val();
+  formData.Amount = $("#pointsAmount").val();
+  formData.Reason = $("#pointsReason").val();
+  formData.Url = $("#pointsUrl").val();
+  $.post("/points/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      showPoints();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d',
+    language: 'de'
+});
+$('.selectpicker').selectpicker();
+$('#pointsOrganization').on('change', function() {
+  updatePointsTypesDiv();
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsBudget">@Model.PhraseFieldBudget</label>
+        <select id="pointsBudget" class="selectpicker form-control" data-live-search="true">
+          @Each.Budgets
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="pointsBudgetFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsMomentDate">@Model.PhraseFieldMomentDate</label>
+        <input type="text" id="pointsMomentDate" class="form-control datepicker" value="@Model.MomentDate"/>
+        <div id="pointsMomentDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsMomentTime">@Model.PhraseFieldMomentTime</label>
+        <input type="text" id="pointsMomentTime" class="form-control" value="@Model.MomentTime"/>
+        <div id="pointsMomentTimeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsAmount">@Model.PhraseFieldAmount</label>
+        <input type="text" id="pointsAmount" class="form-control" value="@Model.Amount"/>
+        <div id="pointsAmountFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsReason">@Model.PhraseFieldReason</label>
+        <input type="text" id="pointsReason" class="form-control" value="@Model.Reason"/>
+        <div id="pointsReasonFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="pointsUrl">@Model.PhraseFieldUrl</label>
+        <input type="text" id="pointsUrl" class="form-control" value="@Model.Url"/>
+        <div id="pointsUrlFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection
