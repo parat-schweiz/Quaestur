@@ -105,13 +105,13 @@
       <HintPath>..\packages\AngleSharp.Css.0.15.0\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.13.0\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.14.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.13.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.14.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
-      <HintPath>..\packages\JWT.8.2.2\lib\net46\JWT.dll</HintPath>
+      <HintPath>..\packages\JWT.8.2.3\lib\net46\JWT.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
