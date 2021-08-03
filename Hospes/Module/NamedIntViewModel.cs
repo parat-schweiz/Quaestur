@@ -76,11 +76,6 @@ namespace Hospes
         {
         }
 
-        public NamedIntViewModel(Translator translator, DocumentType type, bool selected)
-            : this((int)type, type.Translate(translator), selected)
-        {
-        }
-
         public NamedIntViewModel(Translator translator, PartAccess part, bool selected)
             : this((int)part, part.Translate(translator), selected)
         {
@@ -107,31 +102,6 @@ namespace Hospes
         }
 
         public NamedIntViewModel(Translator translator, TagMode mode, bool selected)
-        : this((int)mode, mode.Translate(translator), selected)
-        {
-        }
-
-        public NamedIntViewModel(Translator translator, BillStatus status, bool selected)
-        : this((int)status, status.Translate(translator), selected)
-        {
-        }
-
-        public NamedIntViewModel(Translator translator, MembershipRight right, bool selected)
-        : this((int)right, right.Translate(translator), selected)
-        {
-        }
-
-        public NamedIntViewModel(Translator translator, CollectionModel model, bool selected)
-        : this((int)model, model.Translate(translator), selected)
-        {
-        }
-
-        public NamedIntViewModel(Translator translator, PaymentModel model, bool selected)
-        : this((int)model, model.Translate(translator), selected)
-        {
-        }
-
-        public NamedIntViewModel(Translator translator, SendingMode mode, bool selected)
         : this((int)mode, mode.Translate(translator), selected)
         {
         }

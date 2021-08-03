@@ -17,7 +17,6 @@ function showPersonEditHeadDialog(){
       <th class="fit">@Model.PhraseHeadNumber</th>
       <th class="fit">@Model.PhraseHeadUserName</th>
       <th class="fit">@Model.PhraseHeadFullName</th>
-      <th class="fit">@Model.PhraseHeadVotingRight</th>
       <th></th>
     </tr>
   </thead>
@@ -26,7 +25,6 @@ function showPersonEditHeadDialog(){
       <td class="fit">@Model.Number</td>
       <td class="fit">@Model.UserName</td>
       <td class="fit">@Model.FullName</td>
-      <td class="fit">@Model.VotingRight</td>
       <td></td>
     </tr>
   </tbody>

@@ -6,13 +6,12 @@ namespace Hospes
 {
     public static class Model
     {
-        public static int CurrentVersion = 31;
+        public static int CurrentVersion = 1;
 
         public static void Install(IDatabase database)
         {
             CreateAllTables(database);
             Migrate(database);
-            CheckPaymentParameters(database);
         }
 
         private static void CreateAllTables(IDatabase database)
@@ -32,17 +31,12 @@ namespace Hospes
             database.CreateTable<Permission>();
             database.CreateTable<RoleAssignment>();
             database.CreateTable<MembershipType>();
-            database.CreateTable<PaymentParameter>();
             database.CreateTable<Membership>();
             database.CreateTable<Tag>();
             database.CreateTable<TagAssignment>();
             database.CreateTable<MailingElement>();
             database.CreateTable<Mailing>();
             database.CreateTable<Sending>();
-            database.CreateTable<Document>();
-            database.CreateTable<Bill>();
-            database.CreateTable<Prepayment>();
-            database.CreateTable<BillSendingTemplate>();
             database.CreateTable<Export>();
             database.CreateTable<JournalEntry>();
             database.CreateTable<Phrase>();
@@ -52,20 +46,11 @@ namespace Hospes
             database.CreateTable<Oauth2Session>();
             database.CreateTable<Oauth2Authorization>();
             database.CreateTable<SearchSettings>();
-            database.CreateTable<BallotTemplate>();
-            database.CreateTable<Ballot>();
-            database.CreateTable<BallotPaper>();
             database.CreateTable<LoginLink>();
-            database.CreateTable<PersonalPaymentParameter>();
-            database.CreateTable<BudgetPeriod>();
-            database.CreateTable<PointBudget>();
-            database.CreateTable<Points>();
-            database.CreateTable<PointsTally>();
             database.CreateTable<MailTemplate>();
             database.CreateTable<MailTemplateAssignment>();
             database.CreateTable<LatexTemplate>();
             database.CreateTable<LatexTemplateAssignment>();
-            database.CreateTable<PointTransfer>();
             database.CreateTable<ApiClient>();
             database.CreateTable<ApiPermission>();
             database.CreateTable<Sequence>();
@@ -109,21 +94,8 @@ namespace Hospes
         {
             switch (version)
             {
-                case 29:
-                    database.DropColumn<BillSendingTemplate>("mailsubject");
-                    database.DropColumn<BillSendingTemplate>("mailhtmltext");
-                    database.DropColumn<BillSendingTemplate>("mailplaintext");
-                    database.DropColumn<BillSendingTemplate>("letterlatex");
-                    break;
-                case 30:
-                    database.AddColumn<Country>(c => c.Code);
-                    break;
-                case 31:
+                case 0:
                     database.AddColumn<Organization>(o => o.BillName);
-                    database.AddColumn<Organization>(o => o.BillStreet);
-                    database.AddColumn<Organization>(o => o.BillLocation);
-                    database.AddColumn<Organization>(o => o.BillCountry);
-                    database.AddColumn<Organization>(o => o.BillIban);
                     break;
                 default:
                     throw new NotSupportedException();
@@ -140,39 +112,6 @@ namespace Hospes
                 sequence.NextPersonNumber.Value =
                     database.Query<Person>().Max(p => p.Number.Value) + 1;
                 database.Save(sequence);
-            }
-        }
-
-        private static void CheckPaymentParameters(IDatabase database)
-        {
-            foreach (var membershipType in database.Query<MembershipType>())
-            {
-                var model = membershipType.CreatePaymentModel(database);
-
-                if (model != null)
-                {
-                    foreach (var parameterType in model.ParameterTypes)
-                    {
-                        if (!membershipType.PaymentParameters
-                            .Any(p => p.Key.Value == parameterType.Key))
-                        {
-                            var newParameter = new PaymentParameter(Guid.NewGuid());
-                            newParameter.Key.Value = parameterType.Key;
-                            newParameter.Value.Value = parameterType.DefaultValue;
-                            newParameter.Type.Value = membershipType;
-                            database.Save(newParameter);
-                        }
-                    }
-
-                    foreach (var parameter in membershipType.PaymentParameters)
-                    {
-                        if (!model.ParameterTypes.Any(
-                            pt => pt.Key == parameter.Key))
-                        {
-                            parameter.Delete(database); 
-                        } 
-                    }
-                }
             }
         }
     }

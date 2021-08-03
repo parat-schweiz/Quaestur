@@ -78,7 +78,6 @@ namespace Hospes
         public ByteArrayField TwoFactorSecret { get; private set; }
         public FieldNull<DateTime> PaymentParameterUpdateReminderDate { get; private set; }
         public FieldNull<int> PaymentParameterUpdateReminderLevel { get; private set; }
-        public List<PersonalPaymentParameter> PaymentParameters { get; private set; }
 
         public Person() : this(Guid.Empty)
         {
@@ -107,7 +106,6 @@ namespace Hospes
             RoleAssignments = new List<RoleAssignment>();
             TagAssignments = new List<TagAssignment>();
             PublicKeys = new List<PublicKey>();
-            PaymentParameters = new List<PersonalPaymentParameter>();
         }
 
         public override IEnumerable<MultiCascade> Cascades
@@ -120,7 +118,6 @@ namespace Hospes
                 yield return new MultiCascade<RoleAssignment>("personid", Id.Value, () => RoleAssignments);
                 yield return new MultiCascade<TagAssignment>("personid", Id.Value, () => TagAssignments);
                 yield return new MultiCascade<PublicKey>("personid", Id.Value, () => PublicKeys);
-                yield return new MultiCascade<PersonalPaymentParameter>("personid", Id.Value, () => PaymentParameters);
             }
         }
 
@@ -129,40 +126,6 @@ namespace Hospes
             get
             {
                 return Memberships.Where(m => m.IsActive); 
-            }
-        }
-
-        public string HasVotingRight(IDatabase database, Translator translator)
-        {
-            UpdateAllVotingRights(database);
-
-            if (Memberships.Count < 1)
-            {
-                return translator.Get("Person.VotingRight.NotApplicable", "When voting right is not applicable because there is no membership", "N/A");
-            }
-            else if (Memberships.All(m => m.HasVotingRight.Value.Value))
-            {
-                return translator.Get("Person.VotingRight.Yes", "When the person has voting right in all of her memberships", "Yes");
-            }
-            else if (Memberships.Any(m => m.HasVotingRight.Value.Value))
-            {
-                return translator.Get("Person.VotingRight.Partial", "When the person has voting right in some but not all of her memberships", "Partial");
-            }
-            else
-            {
-                return translator.Get("Person.VotingRight.No", "When the person has voting right in none of her memberships", "No");
-            }
-        }
-
-        public void UpdateAllVotingRights(IDatabase database)
-        {
-            foreach (var membership in Memberships)
-            {
-                if (!membership.HasVotingRight.Value.HasValue)
-                {
-                    membership.UpdateVotingRight(database);
-                    database.Save(membership);
-                }
             }
         }
 
@@ -208,11 +171,6 @@ namespace Hospes
             {
                 return address.Text(translator);
             }
-        }
-
-        public decimal CurrentPrepayment(IDatabase database)
-        {
-            return database.Query<Prepayment>(DC.Equal("personid", Id.Value)).Sum(p => p.Amount);
         }
 
         public ServiceAddress PrimaryAddress(ServiceType type)
@@ -418,29 +376,9 @@ namespace Hospes
                 tagAssignment.Delete(database);
             }
 
-            foreach (var document in database.Query<Document>(DC.Equal("personid", Id.Value)))
-            {
-                document.Delete(database);
-            }
-
             foreach (var entry in database.Query<JournalEntry>(DC.Equal("personid", Id.Value)))
             {
                 entry.Delete(database);
-            }
-
-            foreach (var parameter in database.Query<PersonalPaymentParameter>(DC.Equal("personid", Id.Value)))
-            {
-                parameter.Delete(database);
-            }
-
-            foreach (var pointsTally in database.Query<PointsTally>(DC.Equal("personid", Id.Value)))
-            {
-                pointsTally.Delete(database);
-            }
-
-            foreach (var points in database.Query<Points>(DC.Equal("ownerid", Id.Value)))
-            {
-                points.Delete(database);
             }
 
             foreach (var authorization in database.Query<Oauth2Authorization>(DC.Equal("userid", Id.Value)))
@@ -456,11 +394,6 @@ namespace Hospes
             foreach (var loginLink in database.Query<LoginLink>(DC.Equal("personid", Id.Value)))
             {
                 loginLink.Delete(database);
-            }
-
-            foreach (var prepayment in database.Query<Prepayment>(DC.Equal("personid", Id.Value)))
-            {
-                prepayment.Delete(database);
             }
 
             foreach (var settings in database.Query<SearchSettings>(DC.Equal("personid", Id.Value)))

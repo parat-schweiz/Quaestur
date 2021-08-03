@@ -74,11 +74,6 @@ namespace Hospes
                                 mailing.Creator.Value = CurrentSession.User;
                             }
 
-                            foreach (var document in Database.Query<Document>(DC.Equal("verifierid", person.Id.Value)))
-                            {
-                                document.Verifier.Value = CurrentSession.User;
-                            }
-
                             person.Delete(Database);
                             transaction.Commit();
                             Global.Log.Notice(

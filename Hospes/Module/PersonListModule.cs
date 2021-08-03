@@ -20,7 +20,6 @@ namespace Hospes
         public bool ShowMail;
         public bool ShowPhone;
         public bool ShowMemberships;
-        public bool ShowVotingRight;
         public bool ShowRoles;
         public bool ShowTags;
 
@@ -35,7 +34,6 @@ namespace Hospes
         public string Place;
         public string State;
         public string Memberships;
-        public string VotingRight;
         public string Roles;
         public string Tags;
         public string Option;
@@ -51,7 +49,6 @@ namespace Hospes
             ShowMail = settings.Columns.Value.HasFlag(PersonColumns.Mail);
             ShowPhone = settings.Columns.Value.HasFlag(PersonColumns.Phone);
             ShowMemberships = settings.Columns.Value.HasFlag(PersonColumns.Memberships);
-            ShowVotingRight = settings.Columns.Value.HasFlag(PersonColumns.VotingRight);
             ShowRoles = settings.Columns.Value.HasFlag(PersonColumns.Roles);
             ShowTags = settings.Columns.Value.HasFlag(PersonColumns.Tags);
 
@@ -101,9 +98,6 @@ namespace Hospes
                 .Select(m => m.Organization.Value.GetText(translator) + " / " + m.Type.Value.GetText(translator))
                 .OrderBy(m => m)) :
                 string.Empty;
-            VotingRight = membershipsAccess ?
-                person.HasVotingRight(database, translator) :
-                string.Empty;
             Roles = rolesAccess ?
                 string.Join(", ",
                 person.RoleAssignments
@@ -133,7 +127,6 @@ namespace Hospes
         public bool ShowMail;
         public bool ShowPhone;
         public bool ShowMemberships;
-        public bool ShowVotingRight;
         public bool ShowRoles;
         public bool ShowTags;
         public List<PersonListItemViewModel> List;
@@ -148,7 +141,6 @@ namespace Hospes
         public string PhraseHeaderMail = string.Empty;
         public string PhraseHeaderPhone = string.Empty;
         public string PhraseHeaderMemberships = string.Empty;
-        public string PhraseHeaderVotingRight = string.Empty;
         public string PhraseHeaderRoles = string.Empty;
         public string PhraseHeaderTags = string.Empty;
 
@@ -163,7 +155,6 @@ namespace Hospes
             ShowMail = settings.Columns.Value.HasFlag(PersonColumns.Mail);
             ShowPhone = settings.Columns.Value.HasFlag(PersonColumns.Phone);
             ShowMemberships = settings.Columns.Value.HasFlag(PersonColumns.Memberships);
-            ShowVotingRight = settings.Columns.Value.HasFlag(PersonColumns.VotingRight);
             ShowRoles = settings.Columns.Value.HasFlag(PersonColumns.Roles);
             ShowTags = settings.Columns.Value.HasFlag(PersonColumns.Tags);
             List = new List<PersonListItemViewModel>(persons.Select(p => new PersonListItemViewModel(database, translator, session, p, settings)));
@@ -178,7 +169,6 @@ namespace Hospes
             PhraseHeaderMail = translator.Get("Person.List.Header.Mail", "Column 'E-Mail' in the person list page", "E-Mail").EscapeHtml();
             PhraseHeaderPhone = translator.Get("Person.List.Header.Phone", "Column 'Phone' in the person list page", "Phone").EscapeHtml();
             PhraseHeaderMemberships = translator.Get("Person.List.Header.Memberships", "Column 'Memberships' in the person list page", "Memberships").EscapeHtml();
-            PhraseHeaderVotingRight = translator.Get("Person.List.Header.VotingRight", "Column 'Voting right' in the person list page", "Voting right").EscapeHtml();
             PhraseHeaderRoles = translator.Get("Person.List.Header.Roles", "Column 'Roles' in the person list page", "Roles").EscapeHtml();
             PhraseHeaderTags = translator.Get("Person.List.Header.Tags", "Column 'Tags' in the person list page", "Tags").EscapeHtml();
         }

@@ -19,7 +19,6 @@ namespace Hospes
         Memberships = 256,
         Roles = 512,
         Tags = 1024,
-        VotingRight = 2048,
         Default = User | Name | Place | State,
     }
 
@@ -41,7 +40,6 @@ namespace Hospes
                 flags.Add(PersonColumns.Memberships);
                 flags.Add(PersonColumns.Roles);
                 flags.Add(PersonColumns.Tags);
-                flags.Add(PersonColumns.VotingRight);
                 return flags;
             }
         }
@@ -94,8 +92,6 @@ namespace Hospes
                     return translator.Get("Enum.PersonColumns.Roles", "Value 'Roles' in PersonColumns enum", "Roles");
                 case PersonColumns.Tags:
                     return translator.Get("Enum.PersonColumns.Tags", "Value 'Tags' in PersonColumns enum", "Tags");
-                case PersonColumns.VotingRight:
-                    return translator.Get("Enum.PersonColumns.VotingRight", "Value 'Voting right' in PersonColumns enum", "Voting right");
                 default:
                     throw new NotSupportedException();
             } 

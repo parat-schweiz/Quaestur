@@ -41,18 +41,8 @@ namespace Hospes
                 .Where(m => !m.Person.Value.Deleted)
                 .ToList();
             ValueOne = members.Count().ToString();
-            ValueTwo = members.Count(m => m.Type.Value.Rights.Value.HasFlag(MembershipRight.Voting)).ToString();
-
-            foreach (var m in members)
-            {
-                if (!m.HasVotingRight.Value.HasValue)
-                {
-                    m.UpdateVotingRight(db);
-                    db.Save(m); 
-                }
-            }
-
-            ValueThree = members.Count(m => m.HasVotingRight.Value.Value).ToString();
+            ValueTwo = string.Empty;
+            ValueThree = string.Empty;
         }
     }
 
@@ -78,8 +68,8 @@ namespace Hospes
             List = new List<DashboardItemViewModel>();
             List.Add(new DashboardItemViewModel(
                 translator.Get("Dashboard.Members.Row.All", "All members row in the dashbaord", "All persons"),
-                translator.Get("Dashboard.Members.Row.Full", "Full members row in the dashbaord", "Full members"),
-                translator.Get("Dashboard.Members.Row.Voting", "Voting members row in the dashbaord", "Voting rights")));
+                string.Empty,
+                string.Empty));
 
             foreach (var o in db
                 .Query<Organization>()

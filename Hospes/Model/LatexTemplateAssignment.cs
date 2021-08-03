@@ -19,7 +19,7 @@ namespace Hospes
         public LatexTemplateAssignment(Guid id) : base(id)
         {
             Template = new ForeignKeyField<LatexTemplate, LatexTemplateAssignment>(this, "templateid", false, null);
-            AssignedType = new EnumField<TemplateAssignmentType>(this, "assignedtype", TemplateAssignmentType.BallotTemplate, TemplateAssignmentTypeExtensions.Translate);
+            AssignedType = new EnumField<TemplateAssignmentType>(this, "assignedtype", TemplateAssignmentType.MembershipType, TemplateAssignmentTypeExtensions.Translate);
             AssignedId = new Field<Guid>(this, "assignedid", Guid.Empty);
             FieldName = new StringField(this, "fieldname", 256, AllowStringType.SimpleText);
         }
@@ -28,17 +28,9 @@ namespace Hospes
         {
             var o = AssignedTo(database);
 
-            if (o is BallotTemplate)
-            {
-                return ((BallotTemplate)o).Organizer.Value.Organization.Value;
-            }
-            else if (o is MembershipType)
+            if (o is MembershipType)
             {
                 return ((MembershipType)o).Organization.Value;
-            }
-            else if (o is BillSendingTemplate)
-            {
-                return ((BillSendingTemplate)o).MembershipType.Value.Organization.Value;
             }
             else
             {
@@ -78,12 +70,8 @@ namespace Hospes
         {
             switch (AssignedType.Value)
             {
-                case TemplateAssignmentType.BallotTemplate:
-                    return database.Query<BallotTemplate>(AssignedId.Value);
                 case TemplateAssignmentType.MembershipType:
                     return database.Query<MembershipType>(AssignedId.Value);
-                case TemplateAssignmentType.BillSendingTemplate:
-                    return database.Query<BillSendingTemplate>(AssignedId.Value);
                 default:
                     throw new NotSupportedException();
             }
@@ -93,8 +81,6 @@ namespace Hospes
         {
             switch (AssignedType.Value)
             {
-                case TemplateAssignmentType.BallotTemplate:
-                    return BallotTemplate.GetFieldNameTranslation(translator, FieldName.Value);
                 case TemplateAssignmentType.MembershipType:
                     return MembershipType.GetFieldNameTranslation(translator, FieldName.Value);
                 default:
@@ -108,8 +94,6 @@ namespace Hospes
             {
                 switch (AssignedType.Value)
                 {
-                    case TemplateAssignmentType.BallotTemplate:
-                        return PartAccess.Ballot;
                     case TemplateAssignmentType.MembershipType:
                         return PartAccess.Structure;
                     default:
@@ -130,9 +114,6 @@ namespace Hospes
         {
             switch (AssignedType.Value)
             {
-                case TemplateAssignmentType.BallotTemplate:
-                    var organization1 = (AssignedTo(database) as BallotTemplate).Organizer.Value.Organization.Value;
-                    return session.HasAccess(organization1, AssignedPartAccess, right);
                 case TemplateAssignmentType.MembershipType:
                     var organization2 = (AssignedTo(database) as MembershipType).Organization.Value;
                     return session.HasAccess(organization2, AssignedPartAccess, right);

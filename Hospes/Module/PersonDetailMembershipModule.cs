@@ -15,7 +15,6 @@ namespace Hospes
         public string Organization;
         public string Type;
         public string Status;
-        public string VotingRight;
         public string PhraseDeleteConfirmationQuestion;
 
         public PersonDetailMembershipItemViewModel(IDatabase database, Translator translator, Membership membership)
@@ -41,16 +40,6 @@ namespace Hospes
                 Status = translator.Get("Person.Detail.Membership.Status.Ended", "Status 'Ended' on the membership tab in the person detail page", "Ended").EscapeHtml();
             }
 
-            if (!membership.HasVotingRight.Value.HasValue)
-            {
-                membership.UpdateVotingRight(database);
-                database.Save(membership); 
-            }
-
-            VotingRight = membership.HasVotingRight.Value.Value ?
-                translator.Get("Person.Detail.VotingRight.Yes", "Voting right 'Yes' on the membership tab in the person detail page", "Yes").EscapeHtml() :
-                translator.Get("Person.Detail.VotingRight.No", "Voting right 'No' on the membership tab in the person detail page", "No").EscapeHtml();
-
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Membership.Delete.Confirm.Question", "Delete latex template confirmation question", "Do you really wish to delete membership {0}?", membership.GetText(translator));
         }
     }
@@ -63,7 +52,6 @@ namespace Hospes
         public string PhraseHeaderOrganization;
         public string PhraseHeaderType;
         public string PhraseHeaderStatus;
-        public string PhraseHeaderVotingRight;
         public string PhraseDeleteConfirmationTitle;
         public string PhraseDeleteConfirmationInfo;
 
@@ -80,7 +68,6 @@ namespace Hospes
             PhraseHeaderOrganization = translator.Get("Person.Detail.Membership.Header.Organization", "Column 'Organization' on the membership tab of the person detail page", "Organization");
             PhraseHeaderType = translator.Get("Person.Detail.Membership.Header.Type", "Column 'Type' on the membership tab of the person detail page", "Type");
             PhraseHeaderStatus = translator.Get("Person.Detail.Membership.Header.Status", "Column 'Status' on the membership tab of the person detail page", "Status");
-            PhraseHeaderVotingRight = translator.Get("Person.Detail.Membership.Header.VotingRight", "Column 'Voting right' on the membership tab of the person detail page", "Voting right");
             PhraseDeleteConfirmationTitle = translator.Get("Person.Detail.Membership.Delete.Confirm.Title", "Delete membership confirmation title", "Delete?").EscapeHtml();
             PhraseDeleteConfirmationInfo = translator.Get("Person.Detail.Membership.Delete.Confirm.Info", "Delete membership confirmation info", "This will also delete all bills and ballot papers associated with this membership.").EscapeHtml();
         }

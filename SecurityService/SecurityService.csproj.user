@@ -12,4 +12,8 @@
     <StartAction>Project</StartAction>
     <StartArguments>/home/user/Test/securityservice.publicus.xml</StartArguments>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'for Hospes' ">
+    <StartAction>Project</StartAction>
+    <StartArguments>/home/user/dev/config/development/quaestur/securityservice.hospes.xml</StartArguments>
+  </PropertyGroup>
 </Project>

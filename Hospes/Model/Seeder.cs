@@ -29,11 +29,6 @@ namespace Hospes
                 CreatePerson(count + 1);
                 count++;
             }
-
-            foreach (var o in _db.Query<Organization>())
-            {
-                AssignOrgans(o);
-            }
         }
 
         public void MinimalSeed()
@@ -68,37 +63,14 @@ namespace Hospes
                 user.UserStatus.Value = UserStatus.Active;
                 _db.Save(user);
 
-                var ppzs = GetOrganization("Piratenpartei Zentralschweiz", null);
-                var sgdi = GetGroup(ppzs, "SGDI");
-                var sysadmin = GetRole(sgdi, "SysAdmin", RoleProfile.SysAdmin);
+                var shop = GetOrganization("Shop", null);
+                var shopAdmins = GetGroup(shop, "ShopAdmins");
+                var sysAdminRole = GetRole(shopAdmins, "SysAdmin", RoleProfile.SysAdmin);
                 var roleAssingment = new RoleAssignment(Guid.NewGuid());
-                roleAssingment.Role.Value = sysadmin;
+                roleAssingment.Role.Value = sysAdminRole;
                 roleAssingment.Person.Value = user;
                 _db.Save(roleAssingment);
             }
-        }
-
-        private void AssignOrgans(Organization organization)
-        {
-            var vorstand = GetGroup(organization, "Vorstand");
-            var president = GetRole(vorstand, "Präsident", RoleProfile.BoardAdmin);
-            AssignRole(president, 1);
-            var vizepresident = GetRole(vorstand, "Vizepräsident", RoleProfile.BoardAdmin);
-            AssignRole(vizepresident, 1);
-            var schatzmeister = GetRole(vorstand, "Schatzmeister", RoleProfile.BoardAdmin);
-            AssignRole(schatzmeister, 1);
-            var assessor = GetRole(vorstand, "Beisitzer", RoleProfile.BoardMember);
-            AssignRole(assessor, 4);
-
-            var ppv = GetGroup(organization, "PPV");
-            var ppv1 = GetRole(ppv, "Präsident", RoleProfile.BoardAdmin);
-            AssignRole(ppv1, 1);
-
-            var agppp = GetGroup(organization, "AGPPP");
-            var agppp1 = GetRole(agppp, "Präsident", RoleProfile.GroupAdmin);
-            AssignRole(agppp1, 1);
-            var agpppm = GetRole(agppp, "Mitglied", RoleProfile.GroupMember);
-            AssignRole(agpppm, 6);
         }
 
         private void AssignRole(Role role, int count)
@@ -124,10 +96,6 @@ namespace Hospes
         private enum RoleProfile
         {
             SysAdmin,
-            BoardAdmin,
-            BoardMember,
-            GroupAdmin,
-            GroupMember,
         }
 
         private void AddPermission(Role role, SubjectAccess subject, PartAccess part, AccessRight right)
@@ -161,60 +129,12 @@ namespace Hospes
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.RoleAssignments, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.TagAssignments, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Demography, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SystemWide, PartAccess.Documents, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SystemWide, PartAccess.Billing, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Mailings, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Anonymous, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Journal, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Crypto, AccessRight.Write);
                         AddPermission(role, SubjectAccess.SystemWide, PartAccess.Security, AccessRight.Write);
-                        break;
-                    case RoleProfile.BoardAdmin:
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.CustomDefinitions, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Structure, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Contact, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Membership, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.RoleAssignments, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.TagAssignments, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Demography, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Documents, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Billing, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Mailings, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Anonymous, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Journal, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Crypto, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Security, AccessRight.Write);
-                        break;
-                    case RoleProfile.BoardMember:
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.CustomDefinitions, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Structure, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Membership, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.RoleAssignments, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Contact, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.TagAssignments, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Demography, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Documents, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Billing, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Mailings, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Anonymous, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.SubOrganization, PartAccess.Journal, AccessRight.Read);
-                        break;
-                    case RoleProfile.GroupAdmin:
-                        AddPermission(role, SubjectAccess.Group, PartAccess.CustomDefinitions, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Structure, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Membership, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.RoleAssignments, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Contact, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.TagAssignments, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Demography, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Documents, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Billing, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Mailings, AccessRight.Write);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Anonymous, AccessRight.Read);
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Journal, AccessRight.Read);
-                        break;
-                    case RoleProfile.GroupMember:
-                        AddPermission(role, SubjectAccess.Group, PartAccess.Anonymous, AccessRight.Read);
+                        AddPermission(role, SubjectAccess.SystemWide, PartAccess.Deleted, AccessRight.Write);
                         break;
                 }
             }
@@ -453,9 +373,6 @@ namespace Hospes
 
                 var membershipType = new MembershipType(Guid.NewGuid());
                 membershipType.Name.Value[Language.German] = "Mitglied";
-                membershipType.Rights.Value = MembershipRight.Voting;
-                membershipType.Payment.Value = PaymentModel.None;
-                membershipType.Collection.Value = CollectionModel.None;
                 membershipType.Organization.Value = organization;
                 _db.Save(membershipType);
             }

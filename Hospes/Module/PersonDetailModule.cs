@@ -13,24 +13,14 @@ namespace Hospes
         public bool MembershipsReadable;
         public bool TagAssignmentReadable;
         public bool RoleAssignmentReadable;
-        public bool DocumentReadable;
-        public bool BillingReadable;
-        public bool PointsReadable;
         public bool JournalReadable;
         public bool SecurityReadable;
-        public bool ActionsReadable;
         public string PhraseTabMaster;
         public string PhraseTabMemberships;
         public string PhraseTabTags;
         public string PhraseTabRoles;
-        public string PhraseTabDocuments;
-        public string PhraseTabBilling;
-        public string PhraseTabPrepayment;
-        public string PhraseTabPointsTally;
-        public string PhraseTabPoints;
         public string PhraseTabJournal;
         public string PhraseTabSecurity;
-        public string PhraseTabActions;
 
         public PersonDetailViewModel(Translator translator, Session session, Person person)
             : base(translator, 
@@ -42,25 +32,15 @@ namespace Hospes
             PhraseTabMemberships = translator.Get("Person.Detail.Tab.Memberships", "Tab 'Memberships' in the person detail page", "Memberships");
             PhraseTabTags = translator.Get("Person.Detail.Tab.Tags", "Tab 'Tags' in the person detail page", "Tags");
             PhraseTabRoles = translator.Get("Person.Detail.Tab.Roles", "Tab 'Roles' in the person detail page", "Roles");
-            PhraseTabDocuments = translator.Get("Person.Detail.Tab.Documents", "Tab 'Documents' in the person detail page", "Documents");
-            PhraseTabBilling = translator.Get("Person.Detail.Tab.Billing", "Tab 'Billing' in the person detail page", "Billing");
-            PhraseTabPrepayment = translator.Get("Person.Detail.Tab.Prepayment", "Tab 'Prepayment' in the person detail page", "Prepayment");
-            PhraseTabPointsTally = translator.Get("Person.Detail.Tab.PointsTally", "Tab 'Points tally' in the person detail page", "Points tally");
-            PhraseTabPoints = translator.Get("Person.Detail.Tab.Points", "Tab 'Points' in the person detail page", "Points");
             PhraseTabJournal = translator.Get("Person.Detail.Tab.Journal", "Tab 'Journal' in the person detail page", "Journal");
             PhraseTabSecurity = translator.Get("Person.Detail.Tab.Security", "Tab 'Security' in the person detail page", "Security");
-            PhraseTabActions = translator.Get("Person.Detail.Tab.Actions", "Tab 'Actions' in the person detail page", "Actions");
             MasterReadable = session.HasAccess(person, PartAccess.Demography, AccessRight.Read) ||
                              session.HasAccess(person, PartAccess.Contact, AccessRight.Read);
             MembershipsReadable = session.HasAccess(person, PartAccess.Membership, AccessRight.Read);
             TagAssignmentReadable = session.HasAccess(person, PartAccess.TagAssignments, AccessRight.Read);
             RoleAssignmentReadable = session.HasAccess(person, PartAccess.RoleAssignments, AccessRight.Read);
-            DocumentReadable = session.HasAccess(person, PartAccess.Documents, AccessRight.Read);
-            BillingReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Read);
-            PointsReadable = session.HasAccess(person, PartAccess.Points, AccessRight.Read);
             JournalReadable = session.HasAccess(person, PartAccess.Journal, AccessRight.Read);
             SecurityReadable = session.HasAccess(person, PartAccess.Security, AccessRight.Read);
-            ActionsReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Extended);
         }
     }
 
@@ -70,13 +50,11 @@ namespace Hospes
         public string Number;
         public string UserName;
         public string FullName;
-        public string VotingRight;
         public string Editable;
 
         public string PhraseHeadNumber;
         public string PhraseHeadUserName;
         public string PhraseHeadFullName;
-        public string PhraseHeadVotingRight;
 
         public PersonDetailHeadViewModel(IDatabase database, Translator translator, Session session, Person person)
         {
@@ -105,12 +83,9 @@ namespace Hospes
                 Editable = "accessdenied";
             }
 
-            VotingRight = person.HasVotingRight(database, translator);
-
             PhraseHeadNumber = translator.Get("Person.Detail.Head.Header.Number", "Column 'Number' in the head of the person detail page", "#").EscapeHtml();
             PhraseHeadUserName = translator.Get("Person.Detail.Head.Header.UserName", "Column 'Username' in the head of the person detail page", "Username").EscapeHtml();
             PhraseHeadFullName = translator.Get("Person.Detail.Head.Header.FullName", "Column 'Full name' in the head of the person detail page", "Full name").EscapeHtml();
-            PhraseHeadVotingRight = translator.Get("Person.Detail.Head.Header.VotingRight", "Column 'Voting right' in the head of the person detail page", "Voting right").EscapeHtml();
         }
     }
 
@@ -145,7 +120,6 @@ namespace Hospes
                         var membership = new Membership(Guid.NewGuid());
                         membership.Organization.Value = organization;
                         membership.Type.Value = organization.MembershipTypes
-                            .OrderBy(Value)
                             .FirstOrDefault();
                         membership.Person.Value = person;
 
@@ -208,14 +182,6 @@ namespace Hospes
 
                 return string.Empty;
             });
-        }
-
-        private static long Value(MembershipType type)
-        {
-            var value = 0L;
-            value += type.Rights.Value.HasFlag(MembershipRight.Voting) ? (1 << 60) : 0;
-            value += type.Payment.Value != PaymentModel.None ? (1 << 30) : 0;
-            return value; 
         }
     }
 }

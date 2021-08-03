@@ -65,9 +65,7 @@ namespace Hospes
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, false));
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, false));
             AssignmentTypes = new List<NamedIntViewModel>();
-            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, false));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, false));
-            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, false));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, false))
@@ -89,9 +87,7 @@ namespace Hospes
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.French, mailTemplate.Language.Value == SiteLibrary.Language.French));
             Languages.Add(new NamedIntViewModel(translator, SiteLibrary.Language.Italian, mailTemplate.Language.Value == SiteLibrary.Language.Italian));
             AssignmentTypes = new List<NamedIntViewModel>();
-            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, TemplateAssignmentType.BallotTemplate == mailTemplate.AssignmentType.Value));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, TemplateAssignmentType.MembershipType == mailTemplate.AssignmentType.Value));
-            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, TemplateAssignmentType.BillSendingTemplate == mailTemplate.AssignmentType.Value));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, mailTemplate.Organization.Value == o))
@@ -340,7 +336,7 @@ namespace Hospes
 
         public bool SomeAccess(AccessRight right)
         {
-            return HasAnyOrganizationAccess(PartAccess.Ballot, right);
+            return HasAnyOrganizationAccess(PartAccess.Structure, right);
         }
     }
 }

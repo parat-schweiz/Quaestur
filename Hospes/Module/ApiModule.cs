@@ -292,31 +292,6 @@ namespace Hospes
             {
                 json.Add(Property("name", group.Name));
             }
-            else if (dbObj is Points points)
-            {
-                json.Add(Property("ownerid", points.Owner.Value.Id));
-                json.Add(Property("budgetid", points.Budget.Value.Id));
-                json.Add(Property("amount", points.Amount));
-                json.Add(Property("reason", points.Reason));
-                json.Add(Property("url", points.Url));
-                json.Add(Property("referencetype", points.ReferenceType));
-                json.Add(Property("referenceid", points.ReferenceId));
-            }
-            else if (dbObj is PointBudget budget)
-            {
-                json.Add(Property("label", budget.Label));
-                json.Add(Property("periodid", budget.Period.Value.Id));
-                json.Add(Property("ownerid", budget.Owner.Value.Id));
-                json.Add(Property("currentpoints", budget.CurrentPoints));
-                json.Add(Property("share", budget.Share));
-                json.Add(Property("fulllabel", "/", budget.Owner.Value.Organization.Value.Name, budget.Owner.Value.Name, budget.Label));
-            }
-            else if (dbObj is BudgetPeriod period)
-            {
-                json.Add(Property("startdate", period.StartDate));
-                json.Add(Property("enddate", period.EndDate));
-                json.Add(Property("organizationid", period.Organization.Value.Id));
-            }
 
             return json;
         }
@@ -614,104 +589,6 @@ namespace Hospes
                         .Where(p => response.Context.HasApiAccess(p, PartAccess.Anonymous, AccessRight.Read))
                         .OrderBy(p => p.UserName.Value);
                     response.SetList(persons, response.Context);
-                }
-
-                return Response.AsText(response.ToJson(), "application/json");
-            });
-            Get("/api/v2/pointbudget/list", parameters =>
-            {
-                var response = CreateResponse();
-
-                if (response.CheckLogin(Request))
-                {
-                    var budgets = Database
-                        .Query<PointBudget>()
-                        .Where(b => b.Period.Value.StartDate.Value.Date <= DateTime.UtcNow.Date)
-                        .Where(b => b.Period.Value.EndDate.Value.Date >= DateTime.UtcNow.Date)
-                        .Where(b => response.Context.HasApiAccess(b.Owner.Value, PartAccess.PointBudget, AccessRight.Read))
-                        .OrderBy(b => b.Label.Value.AnyValue);
-                    response.SetList(budgets, response.Context);
-                }
-
-                return Response.AsText(response.ToJson(), "application/json");
-            });
-            Get("/api/v2/budgetperiods/list", parameters =>
-            {
-                var response = CreateResponse();
-
-                if (response.CheckLogin(Request))
-                {
-                    var periods = Database
-                        .Query<BudgetPeriod>()
-                        .Where(b => response.Context.HasApiAccess(b.Organization.Value, PartAccess.PointBudget, AccessRight.Read))
-                        .OrderBy(b => b.ToString());
-                    response.SetList(periods, response.Context);
-                }
-
-                return Response.AsText(response.ToJson(), "application/json");
-            });
-            Post("/api/v2/points/add", parameters =>
-            {
-                var response = CreateResponse();
-
-                if (response.CheckLogin(Request) &&
-                    response.TryParseJson(ReadBody(), out JObject request) &&
-                    response.TryReadObjectField(request, "ownerid", out Person person) &&
-                    response.TryReadObjectField(request, "budgetid", out PointBudget budget) &&
-                    response.TryValueInt32(request, "amount", out int amount) &&
-                    response.TryValueString(request, "reason", out string reason) &&
-                    response.TryValueString(request, "url", out string url) &&
-                    response.TryValueDateTime(request, "moment", out DateTime moment) &&
-                    response.TryValueEnum(request, "referencetype", out PointsReferenceType referenceType) &&
-                    response.TryValueGuid(request, "referenceid", out Guid referenceId) &&
-                    response.HasAccess(person, PartAccess.Points, AccessRight.Write) &&
-                    response.HasAccess(budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
-                {
-                    var points = new Points(Guid.NewGuid());
-                    points.Owner.Value = person;
-                    points.Budget.Value = budget;
-                    points.Amount.Value = amount;
-                    points.Moment.Value = moment;
-                    points.Reason.Value = reason;
-                    points.Url.Value = url;
-                    points.ReferenceType.Value = referenceType;
-                    points.ReferenceId.Value = referenceId;
-
-                    var success = true;
-
-                    if (request.TryValueGuid("impersonateid", out Guid id))
-                    {
-                        var impersonate = Database.Query<Person>(id);
-
-                        if (impersonate == null)
-                        {
-                            response.SetErrorAccessDenied();
-                            success = false;
-                        }
-                        else if (!HasAccess(impersonate, person, PartAccess.Points, AccessRight.Write) ||
-                                 !HasAccess(impersonate, budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
-                        {
-                            response.SetErrorAccessDenied();
-                            success = false;
-                        }
-                    }
-
-                    if (success)
-                    {
-                        using (var transaction = Database.BeginTransaction())
-                        {
-                            Database.Save(points);
-                            Journal("API",
-                                    person,
-                                    "Journal.API.Points.Add",
-                                    "Added points through the API",
-                                    "Added points {0}.",
-                                    t => points.GetText(t));
-                            transaction.Commit();
-                        }
-
-                        response.SetObject(points, response.Context);
-                    }
                 }
 
                 return Response.AsText(response.ToJson(), "application/json");

@@ -39,11 +39,6 @@ namespace Hospes
 
         public override void Delete(IDatabase database)
         {
-            foreach (var ballotTemplate in database.Query<BallotTemplate>(DC.Equal("organizerid", Id.Value)))
-            {
-                ballotTemplate.Delete(database);
-            }
-
             foreach (var role in Roles)
             {
                 role.Delete(database);

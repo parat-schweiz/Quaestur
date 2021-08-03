@@ -19,13 +19,6 @@ namespace Hospes
         {
             _task = new List<ITask>();
             _task.Add(new MailingTask());
-            _task.Add(new PointsTallyTask());
-            _task.Add(new BillingTask());
-            _task.Add(new BillingReminderTask());
-            _task.Add(new VotingRightsUpdateTask());
-            _task.Add(new BallotTask());
-            _task.Add(new PointsTask());
-            _task.Add(new PaymentParameterUpdateReminderTask());
             _database = Global.CreateDatabase();
         }
 

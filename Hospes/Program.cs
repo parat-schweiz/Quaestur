@@ -23,8 +23,8 @@ namespace Hospes
                 seeder.MinimalSeed();
             }
 
-            var uri = "http://localhost:8888";
-            Global.Log.Notice("Starting Quaestur on " + uri);
+            var uri = "http://localhost:8894";
+            Global.Log.Notice("Starting Hospes on " + uri);
 
             // initialize an instance of NancyHost
             var host = new NancyHost(new Uri(uri));

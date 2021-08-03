@@ -10,7 +10,7 @@ namespace Hospes
 {
     public static class Global
     {
-		private static QuaesturConfig _config;
+		private static HospesConfig _config;
 		private static Logger _logger;
 		private static Mailer _mailer;
         private static SessionManager _login;
@@ -84,13 +84,13 @@ namespace Hospes
             } 
         }
 
-        public static QuaesturConfig Config
+        public static HospesConfig Config
 		{
 			get
 			{
 				if (_config == null)
 				{
-					_config = new QuaesturConfig();
+					_config = new HospesConfig();
 				}
 
 				return _config;

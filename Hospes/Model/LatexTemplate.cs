@@ -28,7 +28,7 @@ namespace Hospes
         public LatexTemplate(Guid id) : base(id)
         {
             Organization = new ForeignKeyField<Organization, LatexTemplate>(this, "organizationid", false, null);
-            AssignmentType = new EnumField<TemplateAssignmentType>(this, "assignmenttype", TemplateAssignmentType.BallotTemplate, TemplateAssignmentTypeExtensions.Translate);
+            AssignmentType = new EnumField<TemplateAssignmentType>(this, "assignmenttype", TemplateAssignmentType.MembershipType, TemplateAssignmentTypeExtensions.Translate);
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Label = new StringField(this, "label", 256, AllowStringType.SimpleText);
             Text = new StringField(this, "text", 262144, AllowStringType.SafeLatex);

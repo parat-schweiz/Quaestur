@@ -141,7 +141,6 @@ namespace Hospes
 
                         if (status.IsSuccess)
                         {
-                            membership.UpdateVotingRight(Database);
                             Database.Save(membership);
                             Journal(membership.Person.Value,
                                 "Membership.Journal.Edit",
@@ -190,7 +189,6 @@ namespace Hospes
 
                         if (status.IsSuccess)
                         {
-                            membership.UpdateVotingRight(Database);
                             Database.Save(membership);
                             Journal(membership.Person.Value,
                                 "Membership.Journal.Add",

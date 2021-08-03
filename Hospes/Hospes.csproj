@@ -121,7 +121,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Infrastructure\Bootstrapper.cs" />
-    <Compile Include="Infrastructure\QuaesturConfig.cs" />
+    <Compile Include="Infrastructure\HospesConfig.cs" />
     <Compile Include="Infrastructure\Global.cs" />
     <Compile Include="Model\Person.cs" />
     <Compile Include="Model\PostalAddress.cs" />
@@ -173,9 +173,6 @@
     <Compile Include="Infrastructure\MailingTask.cs" />
     <Compile Include="Module\PersonDetailMasterDemographyModule.cs" />
     <Compile Include="Module\DemographyModule.cs" />
-    <Compile Include="Model\Document.cs" />
-    <Compile Include="Module\DocumentModule.cs" />
-    <Compile Include="Module\PersonDetailDocumentsModule.cs" />
     <Compile Include="Module\DashboardModule.cs" />
     <Compile Include="Model\JournalEntry.cs" />
     <Compile Include="Module\NamedIntViewModel.cs" />
@@ -187,20 +184,9 @@
     <Compile Include="Module\ExportModule.cs" />
     <Compile Include="Model\Export.cs" />
     <Compile Include="Module\NamedStringViewModel.cs" />
-    <Compile Include="Model\Bill.cs" />
-    <Compile Include="Module\PersonDetailBillingModule.cs" />
-    <Compile Include="Module\BillModule.cs" />
     <Compile Include="Model\MembershipType.cs" />
-    <Compile Include="Model\PersonalPaymentParameter.cs" />
-    <Compile Include="Model\PaymentModelFixed.cs" />
-    <Compile Include="Model\IPaymentModel.cs" />
     <Compile Include="Model\SystemWideSettings.cs" />
     <Compile Include="Module\MembershipTypeEditModule.cs" />
-    <Compile Include="Documents\BillDocument.cs" />
-    <Compile Include="Infrastructure\BillingTask.cs" />
-    <Compile Include="Model\BillSendingTemplate.cs" />
-    <Compile Include="Module\BillSendingTemplateModule.cs" />
-    <Compile Include="Infrastructure\BillingReminderTask.cs" />
     <Compile Include="Model\Meta.cs" />
     <Compile Include="Documents\PersonContentProvider.cs" />
     <Compile Include="Module\PersonDetailSecurityModule.cs" />
@@ -219,39 +205,13 @@
     <Compile Include="Model\Oauth2Authorization.cs" />
     <Compile Include="Model\SearchSettings.cs" />
     <Compile Include="Module\DialogViewModel.cs" />
-    <Compile Include="Infrastructure\VotingRightsUpdateTask.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
-    <Compile Include="Model\Ballot.cs" />
-    <Compile Include="Model\BallotTemplate.cs" />
-    <Compile Include="Module\BallotTemplateModule.cs" />
-    <Compile Include="Module\IncomeModule.cs" />
-    <Compile Include="Module\BallotPaperModule.cs" />
-    <Compile Include="Model\BallotPaper.cs" />
-    <Compile Include="Infrastructure\BallotTask.cs" />
-    <Compile Include="Documents\BallotPaperContentProvider.cs" />
-    <Compile Include="Documents\BallotPaperDocument.cs" />
     <Compile Include="Module\LoginLinkModule.cs" />
     <Compile Include="Model\LoginLink.cs" />
     <Compile Include="Module\LinkLoginModule.cs" />
     <Compile Include="Infrastructure\TaskRunner.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
     <Compile Include="Module\PostStatus.cs" />
-    <Compile Include="Model\Points.cs" />
-    <Compile Include="Model\PointBudget.cs" />
-    <Compile Include="Model\BudgetPeriod.cs" />
-    <Compile Include="Model\PaymentModelProRataTemporis.cs" />
-    <Compile Include="Model\PaymentParameter.cs" />
-    <Compile Include="Module\BallotModule.cs" />
-    <Compile Include="Module\PointBudgetModule.cs" />
-    <Compile Include="Infrastructure\PointsTask.cs" />
-    <Compile Include="Module\PersonDetailPointsModule.cs" />
-    <Compile Include="Module\PointsEditModule.cs" />
-    <Compile Include="Model\PointsTally.cs" />
-    <Compile Include="Module\PointsTallyEditModule.cs" />
-    <Compile Include="Module\PersonDetailPointsTallyModule.cs" />
-    <Compile Include="Documents\PointsTallyDocument.cs" />
-    <Compile Include="Module\MatrixAuthModule.cs" />
-    <Compile Include="Infrastructure\PointsTallyTask.cs" />
     <Compile Include="Model\MailTemplate.cs" />
     <Compile Include="Model\MailTemplateAssignment.cs" />
     <Compile Include="Module\MailTemplateModule.cs" />
@@ -259,10 +219,6 @@
     <Compile Include="Model\LatexTemplate.cs" />
     <Compile Include="Model\LatexTemplateAssignment.cs" />
     <Compile Include="Module\LatexTemplateModule.cs" />
-    <Compile Include="Model\PaymentModelFederalTax.cs" />
-    <Compile Include="Model\PaymentModelFlat.cs" />
-    <Compile Include="Model\PointTransfer.cs" />
-    <Compile Include="Infrastructure\PaymentParameterUpdateReminderTask.cs" />
     <Compile Include="Module\ApiModule.cs" />
     <Compile Include="Model\ApiClient.cs" />
     <Compile Include="Model\ApiPermission.cs" />
@@ -271,18 +227,10 @@
     <Compile Include="Module\RequireCompleteAuthenticationModule.cs" />
     <Compile Include="Model\Sequence.cs" />
     <Compile Include="Model\ReservedUserName.cs" />
-    <Compile Include="Module\PersonDetailMasterPaymentModue.cs" />
     <Compile Include="Model\SystemWideFile.cs" />
     <Compile Include="Module\SystemWideFileModule.cs" />
     <Compile Include="Module\ResourceModule.cs" />
-    <Compile Include="Model\Prepayment.cs" />
-    <Compile Include="Module\PersonDetailPrepaymentModule.cs" />
-    <Compile Include="Module\PrepaymentModule.cs" />
     <Compile Include="Model\ITemplate.cs" />
-    <Compile Include="Documents\SettlementDocument.cs" />
-    <Compile Include="Documents\SettlementContentProvider.cs" />
-    <Compile Include="Documents\SwissQrBill.cs" />
-    <Compile Include="Module\PersonDetailActionsModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -392,9 +340,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\persondetail_master.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\persondetail_billing.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\persondetail_master_email.sshtml">
@@ -777,9 +722,6 @@
     <None Include="View\documentedit.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\persondetail_documents.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\dashboard.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -807,9 +749,6 @@
     <None Include="View\exportlist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\billedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\membershiptypeedit.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -822,19 +761,7 @@
     <None Include="View\membershipedit_types.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\membershipedit_parameters.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Documents\bill_de.tex">
-    </None>
-    <None Include="View\billsendingtemplate.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\billsendingtemplateedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\billsendingtemplatelist.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Documents\letter_de.tex" />
     <None Include="View\persondetail_security.sshtml">
@@ -888,34 +815,10 @@
     <None Include="Assets\waitdialog.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\ballottemplate.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\ballotlist.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\ballotedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\sendingtemplatelanguageedit.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\ballot.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\ballottemplateedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\ballottemplatelist.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\ballotpaper.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Documents\ballotpaper_de.tex" />
-    <None Include="View\ballotpaperverify.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\loginlink.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -929,33 +832,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\filesaver\FileSaver.min.js.map">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\income.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\income_membershipfee.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\pointbudgetlist.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\pointbudgetedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\pointbudget.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\persondetail_points.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\pointsedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\pointstallyedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\persondetail_pointstally.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\mailtemplate.sshtml">
@@ -977,9 +853,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Documents\pointstally_de.tex" />
-    <None Include="View\pointtransferedit.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\apiclient.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -998,9 +871,6 @@
     <None Include="View\apipermissionlist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="View\persondetail_master_payment.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="View\systemwidefile.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -1011,12 +881,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\images\quaestur.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\persondetail_prepayment.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\prepaymentedit.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\persondetail_actions.sshtml">
@@ -1047,6 +911,10 @@
     <ProjectReference Include="..\SiteLibrary\SiteLibrary.csproj">
       <Project>{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}</Project>
       <Name>SiteLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SecureChannel\SecureChannel.csproj">
+      <Project>{EFCF9083-8C1C-43A2-8A93-9C48A05F3D4D}</Project>
+      <Name>SecureChannel</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -30,7 +30,7 @@ namespace Hospes
         public MailTemplate(Guid id) : base(id)
         {
             Organization = new ForeignKeyField<Organization, MailTemplate>(this, "organizationid", false, null);
-            AssignmentType = new EnumField<TemplateAssignmentType>(this, "assignmenttype", TemplateAssignmentType.BallotTemplate, TemplateAssignmentTypeExtensions.Translate);
+            AssignmentType = new EnumField<TemplateAssignmentType>(this, "assignmenttype", TemplateAssignmentType.MembershipType, TemplateAssignmentTypeExtensions.Translate);
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Label = new StringField(this, "label", 256, AllowStringType.SimpleText);
             Subject = new StringField(this, "subject", 256, AllowStringType.SimpleText);

@@ -168,14 +168,11 @@ namespace Hospes
                             return true;
                         }
                         break;
-                    case PartAccess.Billing:
                     case PartAccess.Demography:
-                    case PartAccess.Documents:
                     case PartAccess.Membership:
                     case PartAccess.RoleAssignments:
                     case PartAccess.TagAssignments:
                     case PartAccess.Journal:
-                    case PartAccess.Points:
                         if (right <= AccessRight.Read)
                         {
                             return true;

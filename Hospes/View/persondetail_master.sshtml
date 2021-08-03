@@ -74,9 +74,5 @@
     <div class="col-lg-4" id="masterDataDelete">
     </div>
     @EndIf
-    @If.BillingRead
-    <div class="col-lg-4" id="masterDataPayment">
-    </div>
-    @EndIf
   </div>
 </div>

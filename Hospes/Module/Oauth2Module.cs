@@ -51,7 +51,7 @@ namespace Hospes
                     switch (access)
                     {
                         case Oauth2ClientAccess.Membership:
-                            list.Add(translator.Get("OAuth2.Message.Access.Membership", "Membership access in OAuth2 authorization message", "membership and voting rights"));
+                            list.Add(translator.Get("OAuth2.Message.Access.Membership", "Membership access in OAuth2 authorization message", "membership"));
                             break;
                         case Oauth2ClientAccess.Email:
                             list.Add(translator.Get("OAuth2.Message.Access.Email", "Email access in OAuth2 authorization message", "e-mail address"));
@@ -481,7 +481,6 @@ namespace Hospes
                     session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Membership))
                 {
                     var response = new JObject(
-                        new JProperty("type", GetUserType(session.User.Value)),
                         new JProperty("verified", false),
                         new JProperty("nested_groups", GetUserGroups(session.User.Value)),
                         new JProperty("all_nested_groups", GetUserGroups(session.User.Value)));
@@ -509,30 +508,6 @@ namespace Hospes
         private JArray GetUserGroups(Person person)
         {
             return new JArray(person.Memberships.Select(m => m.Organization.Value.Name.Value[Language.English]));
-        }
-
-        private string GetUserType(Person person)
-        {
-            foreach (var membership in person.Memberships)
-            {
-                if (!membership.HasVotingRight.Value.HasValue)
-                {
-                    membership.UpdateVotingRight(Database); 
-                }
-            }
-
-            if (person.Memberships.Any(m => m.HasVotingRight.Value.Value))
-            {
-                return "eligible member";
-            }
-            else if (person.Memberships.Any(m => m.Type.Value.Rights.Value.HasFlag(MembershipRight.Voting)))
-            {
-                return "plain member";
-            }
-            else
-            {
-                return "guest"; 
-            }
         }
     }
 }

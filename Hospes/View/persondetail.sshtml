@@ -10,14 +10,8 @@
               $("#menuMemberships").removeClass('active');
               $("#menuTagAssignments").removeClass('active');
               $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -29,52 +23,8 @@
               $("#menuMemberships").addClass('active');
               $("#menuTagAssignments").removeClass('active');
               $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
-          }
-      });
-  }
-  function showBilling(){
-      $.get("/person/detail/billing/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").addClass('active');
-              $("#menuPrepayment").removeClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
-          }
-      });
-  }
-  function showPrepayment(){
-      $.get("/person/detail/prepayment/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").addClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -86,14 +36,8 @@
               $("#menuMemberships").removeClass('active');
               $("#menuTagAssignments").addClass('active');
               $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -105,33 +49,8 @@
               $("#menuMemberships").removeClass('active');
               $("#menuTagAssignments").removeClass('active');
               $("#menuRoleAssignments").addClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
-          }
-      });
-  }
-  function showDocuments(){
-      $.get("/person/detail/documents/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").addClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -143,14 +62,8 @@
               $("#menuMemberships").removeClass('active');
               $("#menuTagAssignments").removeClass('active');
               $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").addClass('active');
               $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
           }
       });
   }
@@ -162,71 +75,9 @@
               $("#menuMemberships").removeClass('active');
               $("#menuTagAssignments").removeClass('active');
               $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
               $("#menuJournal").removeClass('active');
               $("#menuSecurity").addClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
               $("#menuActions").removeClass('active');
-          }
-      });
-  }
-  function showPoints(){
-      $.get("/person/detail/points/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").addClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").removeClass('active');
-          }
-      });
-  }
-  function showPointsTally(){
-      $.get("/person/detail/pointstally/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").addClass('active');
-              $("#menuActions").removeClass('active');
-          }
-      });
-  }
-    function showActions(){
-      $.get("/person/detail/actions/@Model.Id", function(data, status){
-          if (data){
-              $("#persondata").html(data);
-              $("#menuMasterData").removeClass('active');
-              $("#menuMemberships").removeClass('active');
-              $("#menuTagAssignments").removeClass('active');
-              $("#menuRoleAssignments").removeClass('active');
-              $("#menuDocuments").removeClass('active');
-              $("#menuBilling").removeClass('active');
-              $("#menuPrepayment").removeClass('active');
-              $("#menuJournal").removeClass('active');
-              $("#menuSecurity").removeClass('active');
-              $("#menuPoints").removeClass('active');
-              $("#menuPointsTally").removeClass('active');
-              $("#menuActions").addClass('active');
           }
       });
   }

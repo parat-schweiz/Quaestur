@@ -14,17 +14,12 @@ namespace Hospes
         Structure = 5,
         CustomDefinitions = 6,
         Demography = 7,
-        Documents = 8,
-        Mailings = 9,
-        Billing = 10,
-        Anonymous = 11,
-        Journal = 12,
-        Crypto = 13,
-        Security = 14,
-        Deleted = 15,
-        Ballot = 16,
-        PointBudget = 17,
-        Points = 18,
+        Mailings = 8,
+        Anonymous = 9,
+        Journal = 10,
+        Crypto = 11,
+        Security = 12,
+        Deleted = 13,
 s    }
 
     public static class PartAccessExtensions
@@ -49,12 +44,8 @@ s    }
                     return translator.Get("Enum.PartAccess.CustomDefinitions", "Value 'Custom definitions' in PartAccess enum", "Custom definitions");
                 case PartAccess.Demography:
                     return translator.Get("Enum.PartAccess.Demography", "Value 'Demography' in PartAccess enum", "Demography");
-                case PartAccess.Documents:
-                    return translator.Get("Enum.PartAccess.Documents", "Value 'Documents' in PartAccess enum", "Documents");
                 case PartAccess.Mailings:
                     return translator.Get("Enum.PartAccess.Mailings", "Value 'Mailings' in PartAccess enum", "Mailings");
-                case PartAccess.Billing:
-                    return translator.Get("Enum.PartAccess.Billing", "Value 'Billing' in PartAccess enum", "Billing");
                 case PartAccess.Anonymous:
                     return translator.Get("Enum.PartAccess.Anonymous", "Value 'Anonymous' in PartAccess enum", "Anonymous");
                 case PartAccess.Journal:
@@ -65,12 +56,6 @@ s    }
                     return translator.Get("Enum.PartAccess.Security", "Value 'Security' in PartAccess enum", "Security");
                 case PartAccess.Deleted:
                     return translator.Get("Enum.PartAccess.Deleted", "Value 'Deleted' in PartAccess enum", "Deleted");
-                case PartAccess.Ballot:
-                    return translator.Get("Enum.PartAccess.Ballot", "Value 'Ballot' in PartAccess enum", "Ballot");
-                case PartAccess.PointBudget:
-                    return translator.Get("Enum.PartAccess.PointBudget", "Value 'Point budget' in PartAccess enum", "Point budget");
-                case PartAccess.Points:
-                    return translator.Get("Enum.PartAccess.Points", "Value 'Points' in PartAccess enum", "Points");
                 default:
                     throw new NotSupportedException();
             }

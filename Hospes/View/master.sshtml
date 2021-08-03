@@ -63,23 +63,6 @@
                   </div>
                 </li>
                 @EndIf
-                @If.NavPoints
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuPoints</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/points/budget">@Model.PhraseMenuPointsBudget</a>
-                  </div>
-                </li>
-                @EndIf
-                @If.NavBallot
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuBallot</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/ballot">@Model.PhraseMenuBallotList</a>
-                    <a class="dropdown-item" href="/ballottemplate">@Model.PhraseMenuBallotTemplates</a>
-                  </div>
-                </li>
-                @EndIf
                 @If.NavOrganization
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuCustom</a>
@@ -116,11 +99,7 @@
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/person/detail/@Model.UserId">@Model.PhraseMenuProfile</a>
                     @EndIf
-                    @If.NavBallotPaper
-                    <a class="dropdown-item" href="/ballotpaper">@Model.PhraseMenuBallotPaper</a>
-                    @EndIf
                     @If.NavBar
-                    <a class="dropdown-item" href="/income">@Model.PhraseMenuIncome</a>
                     <a class="dropdown-item" href="/password">@Model.PhraseMenuChangePassword</a>
                     <a class="dropdown-item" href="/loginlink">@Model.PhraseMenuLoginLink</a>
                     <a class="dropdown-item" href="/logout">@Model.PhraseMenuLogout</a>

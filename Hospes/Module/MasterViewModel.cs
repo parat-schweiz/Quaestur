@@ -42,11 +42,8 @@ namespace Hospes
         public bool NavPersonNew = false;
         public bool NavExport = false;
         public bool NavMailing = false;
-        public bool NavBallot = false;
         public bool NavOrganization = false;
         public bool NavSettings = false;
-        public bool NavBallotPaper = false;
-        public bool NavPoints = false;
         public string PhraseMenuPersons = string.Empty;
         public string PhraseMenuPersonsList = string.Empty;
         public string PhraseMenuPersonNew = string.Empty;
@@ -70,11 +67,6 @@ namespace Hospes
         public string PhraseMenuOAuth2Clients = string.Empty;
         public string PhraseMenuApiClients = string.Empty;
         public string PhraseMenuSystemWideFiles = string.Empty;
-        public string PhraseMenuBallot = string.Empty;
-        public string PhraseMenuBallotList = string.Empty;
-        public string PhraseMenuBallotTemplates = string.Empty;
-        public string PhraseMenuBallotPaper = string.Empty;
-        public string PhraseMenuIncome = string.Empty;
         public string PhraseMenuLoginLink = string.Empty;
         public string PhraseMenuPoints = string.Empty;
         public string PhraseMenuPointsBudget = string.Empty;
@@ -85,8 +77,7 @@ namespace Hospes
 
         public bool SomeCustomAccess(Session session)
         {
-            return session.HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Read) ||
-                   session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
+            return session.HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Read);
         }
 
         public MasterViewModel(Translator translator, string title, Session session)
@@ -99,11 +90,8 @@ namespace Hospes
             NavPersonNew = session != null && session.HasPersonNewAccess();
             NavExport = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Read);
             NavMailing = session != null && session.HasAnyOrganizationAccess(PartAccess.Contact, AccessRight.Write);
-            NavBallot = session != null && session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
             NavOrganization = session != null && session.HasAnyOrganizationAccess(PartAccess.Structure, AccessRight.Read);
             NavSettings = session != null && session.HasAnyOrganizationAccess(PartAccess.Crypto, AccessRight.Read);
-            NavPoints = session != null && session.HasAnyOrganizationAccess(PartAccess.PointBudget, AccessRight.Read);
-            NavBallotPaper = session != null && session.CompleteAuth && session.User.Memberships.Any(m => m.HasVotingRight.Value ?? false);
             PhraseMenuPersons = translator.Get("Master.Menu.Persons", "Item 'Persons' in the main menu", "Persons").EscapeHtml();
             PhraseMenuPersonsList = translator.Get("Master.Menu.Persons.List", "Item 'List' under 'Persons' in the main menu", "List").EscapeHtml();
             PhraseMenuPersonNew = translator.Get("Master.Menu.Persons.New", "Item 'New' under 'Persons' in the main menu", "New").EscapeHtml();
@@ -121,7 +109,6 @@ namespace Hospes
             PhraseMenuListMailings = translator.Get("Master.Menu.Mailings.List", "Item 'List mailings' under 'Mailings' in the main menu", "List").EscapeHtml();
             PhraseMenuMailingElement = translator.Get("Master.Menu.Mailings.Elements", "Item 'Elements' under 'Mailings' in the main menu", "Elements").EscapeHtml();
             PhraseMenuProfile = translator.Get("Master.Menu.User.Profile", "Item 'Profile' under user in the main menu", "Profile").EscapeHtml();
-            PhraseMenuBallotPaper = translator.Get("Master.Menu.User.BallotPaper", "Item 'Ballots' under user in the main menu", "Ballots").EscapeHtml();
             PhraseMenuLoginLink = translator.Get("Master.Menu.User.LoginLink", "Item 'Login link' under user in the main menu", "Login device").EscapeHtml();
             PhraseMenuChangePassword = translator.Get("Master.Menu.User.ChangePassword", "Item 'Change password' under user in the main menu", "Change password").EscapeHtml();
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
@@ -129,10 +116,6 @@ namespace Hospes
             PhraseMenuSystemWideFiles = translator.Get("Master.Menu.Settings.SystemWideFiles", "Item 'System wide files' under settings in the main menu", "System wide files").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
             PhraseMenuApiClients = translator.Get("Master.Menu.Settings.ApiClients", "Item 'API Clients' under settings in the main menu", "API Clients").EscapeHtml();
-            PhraseMenuBallot = translator.Get("Master.Menu.Ballots", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
-            PhraseMenuBallotList = translator.Get("Master.Menu.Ballots.BallotList", "Item 'List' under ballots in the main menu", "List").EscapeHtml();
-            PhraseMenuBallotTemplates = translator.Get("Master.Menu.Ballots.BallotTemplates", "Item 'Templates' under ballots in the main menu", "Templates").EscapeHtml();
-            PhraseMenuIncome = translator.Get("Master.Menu.User.Income", "Item 'Report income' under user in the main menu", "Report income").EscapeHtml();
             PhraseMenuPoints = translator.Get("Master.Menu.Points", "Menu 'Points' in the main menu", "Points").EscapeHtml();
             PhraseMenuPointsBudget = translator.Get("Master.Menu.Points.PointsBudget", "Item 'Points budget' under points in the main menu", "Points budget").EscapeHtml();
         }
