@@ -1,0 +1,103 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#export' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("Name", result);
+  assignFieldValidation("SelectFeed", result);
+  assignFieldValidation("SelectTag", result);
+  assignFieldValidation("SelectLanguage", result);
+  assignFieldValidation("ExportColumns", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.Name = $("#exportName").val();
+  formData.SelectFeed = $("#exportSelectFeed").val();
+  formData.SelectTag = $("#exportSelectTag").val();
+  formData.SelectLanguage = $("#exportSelectLanguage").val();
+  formData.ExportColumns = $("#exportExportColumns").val();
+  $.post("/export/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateExportList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<form class="fullwidth">
+  <table class="fullwidth form-table">
+    <tr>
+      <td>@Model.PhraseFieldName</td>
+      <td><input type="text" id="exportName" class="form-control" value="@Model.Name"/></td>
+    </tr>
+    <tr>
+      <td>@Model.PhraseFieldSelectFeed</td>
+      <td>
+        <select id="exportSelectFeed" class="selectpicker form-control" data-live-search="true">
+          @Each.Feeds
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>@Model.PhraseFieldSelectTag</td>
+      <td>
+        <select id="exportSelectTag" class="selectpicker form-control" data-live-search="true">
+          @Each.Tags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>@Model.PhraseFieldSelectLanguage</td>
+      <td>
+        <select id="exportSelectLanguage" class="selectpicker form-control" data-live-search="true">
+          @Each.Languages
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+      </td>
+    </tr>
+    <tr>
+      <td>@Model.PhraseFieldExportColumns</td>
+      <td>
+        <select id="exportExportColumns" class="selectpicker form-control" multiple data-live-search="true">
+          @Each.Columns
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+      </td>
+    </tr>
+  </table>
+</form>
+@EndSection

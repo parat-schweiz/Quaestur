@@ -1,0 +1,124 @@
+﻿@Master['View/petition_action.sshtml']
+
+@Section['script']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#confirm' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("FirstName", result);
+  assignFieldValidation("LastName", result);
+  assignFieldValidation("Position", result);
+  assignFieldValidation("Place", result);
+  assignFieldValidation("PostalCode", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  $("#confirmButton").click(function(event) {
+    showModalSpinner();
+    var formData = new Object();
+    formData.FirstName = $("#confirmFirstName").val();
+    formData.LastName = $("#confirmLastName").val();
+    formData.Position = $("#confirmPosition").val();
+    formData.Place = $("#confirmPlace").val();
+    formData.PostalCode = $("#confirmPostalCode").val();
+    formData.SpecialNewsletter = $('#confirmSpecialNewsletter').is(':checked');
+    formData.GeneralNewsletter = $('#confirmGeneralNewsletter').is(':checked');
+    formData.ShowPublicly = $('#confirmShowPublicly').is(':checked');
+    $.post("@Model.WebAddress/confirm/@Model.EncodedMailAddress/@Model.Code", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        window.location.href = "@Model.WebAddress/thanks#inputrow";
+      }
+      hideModalSpinner();
+    });
+    event.preventDefault(); 
+  });
+});
+</script>
+@EndSection
+
+@Section['input']
+<div class="alert alert-@Model.AlertType" role="alert">
+    @Model.PhraseInfo
+</div>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-md-6 mb-6">
+        <label for="confirmFirstName">@Model.PhraseFieldFirstName</label>
+        <input type="text" class="form-control" id="confirmFirstName" value="">
+        <div id="confirmFirstNameFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-6">
+        <label for="confirmLastName">@Model.PhraseFieldLastName</label>
+        <input type="text" class="form-control" id="confirmLastName" value="">
+        <div id="confirmLastNameFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-6">
+        <label for="confirmPosition">@Model.PhraseFieldPosition</label>
+        <input type="text" class="form-control" id="confirmPosition" value="">
+        <div id="confirmPositionFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-6 mb-6">
+        <label for="confirmPlace">@Model.PhraseFieldPlace</label>
+        <input type="text" class="form-control" id="confirmPlace" value="">
+        <div id="confirmPlaceFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-6">
+        <label for="confirmPostalCode">@Model.PhraseFieldPostalCode</label>
+        <input type="text" class="form-control" id="confirmPostalCode" value="">
+        <div id="confirmPostalCodeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="confirmSpecialNewsletter" checked>
+          <label class="form-check-label" for="confirmSpecialNewsletter">@Model.PhraseFieldSpecialNewsletter</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="confirmGeneralNewsletter">
+          <label class="form-check-label" for="confirmGeneralNewsletter">@Model.PhraseFieldGeneralNewsletter</label>
+        </div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <div class="form-check">
+          <input type="checkbox" class="form-check-input" id="confirmShowPublicly">
+          <label class="form-check-label" for="confirmShowPublicly">@Model.PhraseFieldShowPublicly</label>
+        </div>
+      </div>
+    </div>
+    <button id="confirmButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonConfirm</button>
+  </form>
+</div>
+@EndSection

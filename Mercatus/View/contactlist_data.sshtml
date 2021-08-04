@@ -1,0 +1,73 @@
+﻿<script>
+    $(".clickable-row").click(function() {
+        window.location = $(this).data("href");
+    });
+</script>
+<table class="table table-fixed table-hover table-sm table-responsive vertmargin">
+  <thead>
+    <tr>
+      @If.ShowOrganization
+      <th>@Model.PhraseHeaderOrganization</th>
+      @EndIf
+      @If.ShowName
+      <th>@Model.PhraseHeaderLastName</th>
+      <th>@Model.PhraseHeaderFirstNames</th>
+      @EndIf
+      @If.ShowStreet
+      <th>@Model.PhraseHeaderStreet</th>
+      @EndIf
+      @If.ShowPlace
+      <th>@Model.PhraseHeaderPlace</th>
+      @EndIf
+      @If.ShowState
+      <th>@Model.PhraseHeaderState</th>
+      @EndIf
+      @If.ShowMail
+      <th>@Model.PhraseHeaderMail</th>
+      @EndIf
+      @If.ShowPhone
+      <th>@Model.PhraseHeaderPhone</th>
+      @EndIf
+      @If.ShowSubscriptions
+      <th>@Model.PhraseHeaderSubscriptions</th>
+      @EndIf
+      @If.ShowTags
+      <th>@Model.PhraseHeaderTags</th>
+      @EndIf
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row editable @Current.Option' data-href='/contact/detail/@Current.Id'>
+      @If.ShowOrganization
+      <td>@Current.Organization</td>
+      @EndIf
+      @If.ShowName
+      <td>@Current.LastName</td>
+      <td>@Current.FirstNames</td>
+      @EndIf
+      @If.ShowStreet
+      <td>@Current.Street</td>
+      @EndIf
+      @If.ShowPlace
+      <td>@Current.Place</td>
+      @EndIf
+      @If.ShowState
+      <td>@Current.State</td>
+      @EndIf
+      @If.ShowMail
+      <td>@Current.MailAddress</td>
+      @EndIf
+      @If.ShowPhone
+      <td>@Current.PhoneNumber</td>
+      @EndIf
+      @If.ShowSubscriptions
+      <td>@Current.Subscriptions</td>
+      @EndIf
+      @If.ShowTags
+      <td>@Current.Tags</td>
+      @EndIf
+    </tr>
+    @EndEach
+  </tbody>
+</table>

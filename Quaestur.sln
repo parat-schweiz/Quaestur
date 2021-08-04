@@ -29,6 +29,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Census", "Census\Census.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hospes", "Hospes\Hospes.csproj", "{EAD5ADB9-0A24-A255-0877-B0E21E13FDC8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mercatus", "Mercatus\Mercatus.csproj", "{2BE8D68B-C2B9-2748-2466-B692A5A34B54}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -91,6 +93,10 @@ Global
 		{EAD5ADB9-0A24-A255-0877-B0E21E13FDC8}.Debug|x86.Build.0 = Debug|x86
 		{EAD5ADB9-0A24-A255-0877-B0E21E13FDC8}.Release|x86.ActiveCfg = Release|x86
 		{EAD5ADB9-0A24-A255-0877-B0E21E13FDC8}.Release|x86.Build.0 = Release|x86
+		{2BE8D68B-C2B9-2748-2466-B692A5A34B54}.Debug|x86.ActiveCfg = Debug|x86
+		{2BE8D68B-C2B9-2748-2466-B692A5A34B54}.Debug|x86.Build.0 = Debug|x86
+		{2BE8D68B-C2B9-2748-2466-B692A5A34B54}.Release|x86.ActiveCfg = Release|x86
+		{2BE8D68B-C2B9-2748-2466-B692A5A34B54}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

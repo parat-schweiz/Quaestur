@@ -1,0 +1,151 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  var searchSettings = null;
+  var settingsList = null;
+  var getting = false;
+  function listSettings(callback){
+    $.get("/contact/list/settings/list", function(resultData){
+      if (resultData){
+        settingsList = JSON.parse(resultData);
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  function getSettings(id, callback){
+    $.get("/contact/list/settings/get/" + id, function(resultData){
+      if (resultData){
+        searchSettings = JSON.parse(resultData);
+        getting = true;
+        $("#filtertext").val(searchSettings.FilterText);
+        $("#filterSubscription").val(searchSettings.FilterSubscriptionId);
+        $("#filterTag").val(searchSettings.FilterTagId);
+        $("#columns").val(searchSettings.Columns);
+        $("#itemsPerPage").val(searchSettings.ItemsPerPage);
+        $("#currentPage").val(searchSettings.CurrentPage);
+        $("#filterSubscription").change();
+        $("#filterTag").change();
+        $("#columns").change();
+        getting = false;
+        if (callback) callback(true);
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  function setSettings(callback){
+    searchSettings.FilterText = $("#filtertext").val();
+    searchSettings.FilterSubscriptionId = $("#filterSubscription").val();
+    searchSettings.FilterTagId = $("#filterTag").val();
+    searchSettings.Columns = $("#columns").val();
+    searchSettings.ItemsPerPage = $("#itemsPerPage").val();
+    searchSettings.CurrentPage = $("#currentPage").val();
+    $.post("/contact/list/settings/set/" + searchSettings.Id, JSON.stringify(searchSettings), function(resultData){
+      if (callback) callback();
+    });
+  }
+  function set(){
+    if (!getting){
+      waitingDialog.show(undefined, undefined, function(){
+        setSettings(function(){
+          updateContactList(function(success){
+            if (success){
+              waitingDialog.hide();
+            }else{
+              waitingDialog.hide();
+            }
+          });
+        });
+      });
+    }
+  }
+  $(document).ready(function(){
+    $('.selectpicker').selectpicker();
+    $('#filtertext').keypress(function (e) {
+      if (e.which == 13) {
+        set();
+        return false;
+      }
+    });
+    $("#filtertext").on('focusout', set);
+    $("#filterSubscription").change(set);
+    $("#columns").change(set);
+    $("#filterTag").change(set);
+    waitingDialog.show(undefined, undefined, function(){
+      listSettings(function(success){
+        if (success){
+          getSettings(settingsList[0].Id, function(success){
+            if (success){
+              updateContactList(function(success){
+                if (success){
+                  waitingDialog.hide();
+                }else{
+                  waitingDialog.hide();
+                }
+              });
+            }else{
+              waitingDialog.hide();
+            }
+          });
+        }else{
+          waitingDialog.hide();
+        }
+      });
+    });
+  });
+  function updateContactList(callback){
+    $.get("/contact/list/pages/" + searchSettings.Id, function(contactPagesData, status){
+      if (contactPagesData){
+        $(".contactpage").remove();
+        $("#contactListNavBar").append(contactPagesData);
+        activatePages();
+        $.get("/contact/list/data/" + searchSettings.Id, function(contactListData, status){
+          if (contactListData){
+            $("#contactlist").html(contactListData);
+            if (callback) callback(true);
+          }else{
+            if (callback) callback(false);
+          }
+        });
+      }else{
+        if (callback) callback(false);
+      }
+    });
+  }
+  </script>
+@EndSection
+    
+@Section['input']
+<nav class="navbar navbar-expand-md navbar-light bg-light">
+  <form class="form-inline">
+    <input class="form-control mr-sm-2 navbar-field-margin" type="text" placeholder="@Model.PhraseSearch" aria-label="@Model.PhraseShowSearch" id="filtertext"/>
+  </form>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#contactListNavBar" aria-controls="contactListNavBar" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="contactListNavBar">
+    <select id="filterSubscription" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Subscriptions
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="filterTag" class="selectpicker form-control mr-sm-2" data-live-search="true">
+      @Each.Tags
+      <option value="@Current.Id" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+    <select id="columns" class="selectpicker form-control mr-sm-2" data-live-search="true" multiple>
+      @Each.Columns
+      <option value="@Current.Value" @Current.Options>@Current.Name</option>
+      @EndEach
+    </select>
+  </div>
+</nav>
+@EndSection
+
+@Section['data']
+<div id="contactlist" class="container"/>
+@EndSection

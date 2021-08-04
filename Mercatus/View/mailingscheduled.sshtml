@@ -1,0 +1,65 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+$(document).ready(function() {
+  $("#mailingAbortButton").click(function(event) {
+    $.get("/mailing/cancel/@Model.Id", function(resultData, status){
+      window.location.href = "/mailing";
+    });
+    event.preventDefault();
+  });
+  $("#mailingBackButton").click(function(event) {
+    window.location.href = "/mailing";
+    event.preventDefault();  
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <table class="table table-hover">
+    <tbody>
+      <tr class='centering clickable-row'>
+        <th width="25%">@Model.PhraseFieldTitle</th>
+        <td width="75%">@Model.Title</td>
+      </tr>
+        <tr class='centering clickable-row'>
+        <th width="25%">@Model.PhraseFieldRecipients</th>
+        <td width="75%">@Model.Recipients</td>
+      </tr>
+      <tr class='centering clickable-row'>
+        <th width="25%">@Model.PhraseFieldSubject</th>
+        <td width="75%">@Model.Subject</td>
+      </tr>
+      <tr class='centering clickable-row'>
+        <th width="25%">@Model.PhraseFieldStatus</th>
+        <td width="75%">@Model.Status</td>
+      </tr>
+    </tbody>
+  </table>
+  <table class="table table-hover table-fixed-md">
+    <thead>
+      <tr class='centering clickable-row'>
+        <th width="35%">@Model.PhraseFieldSendingName</th>
+        <th width="35%">@Model.PhraseFieldSendingAddress</th>
+        <th width="30%">@Model.PhraseFieldSendingStatus</th>
+      </tr>
+    </thead>
+    <tbody>
+      @Each.Sendings
+      <tr class='clickable-row'>
+        <td width="35%">@Current.Name</td>
+        <td width="35%">@Current.Address</td>
+        <td width="35%">@Current.Status</td>
+      </tr>
+      @EndEach
+    </tbody>
+  </table>
+  <button id="mailingBackButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonBack</button>
+  @If.Cancelable
+  <button id="mailingAbortButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonAbort</button>
+  @EndIf
+</div>
+@EndSection

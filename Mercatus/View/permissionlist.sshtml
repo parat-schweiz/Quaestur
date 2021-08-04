@@ -1,0 +1,71 @@
+﻿<script>
+$("#permissionRowAdd").click(function(){
+  $.get("/permission/add/@Model.Id", function(data, status){
+    if (data){
+      $('#permissionEditDialog').replaceWith(data);
+      $('#permissionEditDialog').modal('show');
+    }
+  });
+});
+function showEditPermissionDialog(id){
+  $.get("/permission/edit/" + id, function(data, status){
+    if (data){
+      $('#permissionEditDialog').replaceWith(data);
+      $('#permissionEditDialog').modal('show');
+    }
+  });
+}
+@Each.List
+$("#permissionRowEdit1@Current.Id").click(function(){
+  showEditPermissionDialog("@Current.Id");
+});
+$("#permissionRowEdit2@Current.Id").click(function(){
+  showEditPermissionDialog("@Current.Id");
+});
+$("#permissionRowEdit3@Current.Id").click(function(){
+  showEditPermissionDialog("@Current.Id");
+});
+$("#permissionRowDelete@Current.Id").click(function(){
+  $.confirm({
+    title: "@Model.PhraseDeleteConfirmationTitle",
+    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    buttons: {
+      confirm: function () {
+        $.get("/permission/delete/@Current.Id", function(data, status){
+          updatePermissionList();
+        });
+      },
+      cancel: function () {},
+    }
+  });
+});
+@EndEach
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="100%" colspan="4"><a href="/role/@Model.ParentId">@Model.PhraseHeaderRoleGroupFeed</a></th>
+    </tr>
+    <tr class='centering clickable-row'>
+      <td width="30%">@Model.PhraseHeaderPart</td>
+      <td width="30%">@Model.PhraseHeaderSubject</td>
+      <td width="30%">@Model.PhraseHeaderRight</td>
+    </tr>  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="30%" id="permissionRowEdit1@Current.Id" class="@Model.Editable">@Current.Part</td>
+      <td width="30%" id="permissionRowEdit2@Current.Id" class="@Model.Editable">@Current.Subject</td>
+      <td width="30%" id="permissionRowEdit3@Current.Id" class="@Model.Editable">@Current.Right</td>
+      <td width="10%" id="permissionRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    @If.AddAccess
+    <tr class='centering clickable-row'>
+      <td width="90%" id="permissionRowAdd" class="editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%"></td>
+    </tr>
+    @EndIf
+  </tbody>
+</table>
+<div id="permissionEditDialog"/>

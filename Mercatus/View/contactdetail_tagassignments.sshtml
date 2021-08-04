@@ -1,0 +1,43 @@
+﻿<script>
+$("#tagAssignmentRowAdd").click(function(){
+  showTagAssignmentEditDialog("add", "@Model.Id");
+});
+@Each.List
+$("#tagAssignmentRowDelete@Current.Id").click(function(){
+  $.get("/tagassignment/delete/@Current.Id", function(data, status){
+    showTagAssignments();
+  });
+});
+@EndEach
+function showTagAssignmentEditDialog(method, id){
+  $.get("/tagassignment/" + method + "/" + id, function(data, status){
+    if (data){
+      $('#tagAssignmentEditDialog').replaceWith(data);
+      $('#tagAssignmentEditDialog').modal('show');
+    }
+  });
+}
+</script>
+<table class="table table-hover table-fixed">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="60%">@Model.PhraseHeaderName</th>
+      <th width="30%">@Model.PhraseHeaderUsage</th>
+      <th width="10%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.List
+    <tr class='clickable-row'>
+      <td width="60%">@Current.Name</td>
+      <td width="30%">@Current.Usage</td>
+      <td width="10%" id="tagAssignmentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    </tr>
+    @EndEach
+    <tr class='centering clickable-row'>
+      <td width="90%" id="tagAssignmentRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
+      <td width="10%" colspan="2"></td>
+    </tr>
+  </tbody>
+</table>
+<div id="tagAssignmentEditDialog"/>

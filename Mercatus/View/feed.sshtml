@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateFeedList(){
+      $.get("/feed/list", function(data, status){
+          if (data){
+              $("#feedList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateFeedList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="feedList">
+</div>
+@EndSection

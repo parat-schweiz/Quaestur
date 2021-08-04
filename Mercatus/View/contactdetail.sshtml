@@ -1,0 +1,120 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function showMasterData(){
+      $.get("/contact/detail/master/@Model.Id", function(data, status){
+          if (data){
+              $("#contactdata").html(data);
+              $("#menuMasterData").addClass('active');
+              $("#menuSubscriptions").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuJournal").removeClass('active');
+          }
+      });
+  }
+  function showSubscriptions(){
+      $.get("/contact/detail/subscriptions/@Model.Id", function(data, status){
+          if (data){
+              $("#contactdata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuSubscriptions").addClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuJournal").removeClass('active');
+          }
+      });
+  }
+  function showTagAssignments(){
+      $.get("/contact/detail/tagassignments/@Model.Id", function(data, status){
+          if (data){
+              $("#contactdata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuSubscriptions").removeClass('active');
+              $("#menuTagAssignments").addClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuJournal").removeClass('active');
+          }
+      });
+  }
+  function showDocuments(){
+      $.get("/contact/detail/documents/@Model.Id", function(data, status){
+          if (data){
+              $("#contactdata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuSubscriptions").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuDocuments").addClass('active');
+              $("#menuJournal").removeClass('active');
+          }
+      });
+  }
+  function showJournal(){
+      $.get("/contact/detail/journal/@Model.Id", function(data, status){
+          if (data){
+              $("#contactdata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuSubscriptions").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuJournal").addClass('active');
+          }
+      });
+  }
+  function updatecontacthead(){
+      $.get("/contact/detail/head/@Model.Id", function(contactHeadData, status){
+          if (contactHeadData){
+              $("#contacthead").html(contactHeadData);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updatecontacthead();
+      showMasterData();
+  });
+</script>
+@EndSection
+
+@Section['input']
+<div id="contacthead" class="container">
+</div>
+@EndSection
+
+@Section['midnav']
+<nav class="navbar navbar-expand navbar-light bg-light">
+  <div id="contactDetailNav">
+    <ul class="nav nav-tabs">
+      @If.MasterReadable
+      <li class="nav-item">
+        <a id="menuMasterData" class="nav-link" onclick="showMasterData()" href="javascript:void(0);">@Model.PhraseTabMaster</a>
+      </li>
+      @EndIf
+      @If.SubscriptionsReadable
+      <li class="nav-item">
+        <a id="menuSubscriptions" class="nav-link" onclick="showSubscriptions()" href="javascript:void(0);">@Model.PhraseTabSubscriptions</a>
+      </li>
+      @EndIf
+      @If.TagAssignmentReadable
+      <li class="nav-item">
+        <a id="menuTagAssignments" class="nav-link" onclick="showTagAssignments()" href="javascript:void(0);">@Model.PhraseTabTags</a>
+      </li>
+      @EndIf
+      @If.DocumentReadable
+      <li class="nav-item">
+        <a id="menuDocuments" class="nav-link" onclick="showDocuments()" href="javascript:void(0);">@Model.PhraseTabDocuments</a>
+      </li>
+      @EndIf
+      @If.JournalReadable
+      <li class="nav-item">
+        <a id="menuJournal" class="nav-link" onclick="showJournal()" href="javascript:void(0);">@Model.PhraseTabJournal</a>
+      </li>
+      @EndIf
+    </ul>
+  </div>
+</nav>
+@EndSection
+
+@Section['data']
+<div class="container" id="contactdata"/>
+@EndSection
