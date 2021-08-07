@@ -22,13 +22,13 @@ namespace Census
             }
 
             var uri = "http://localhost:8893";
-            Global.Log.Notice("Starting Census on " + uri);
+            Global.Log.Info("Starting Census on " + uri);
 
             // initialize an instance of NancyHost
             var host = new NancyHost(new Uri(uri));
             host.Start();  // start hosting
 
-            Global.Log.Notice("Application started");
+            Global.Log.Info("Application started");
             var runner = new TaskRunner();
 
             while (true)

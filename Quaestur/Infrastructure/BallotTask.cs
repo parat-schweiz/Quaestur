@@ -21,11 +21,11 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastAction.AddMinutes(15))
             {
                 _lastAction = DateTime.UtcNow;
-                Global.Log.Notice("Running ballot task");
+                Global.Log.Info("Running ballot task");
 
                 RunAll(database);
 
-                Global.Log.Notice("Ballot task complete");
+                Global.Log.Info("Ballot task complete");
             }
         }
 

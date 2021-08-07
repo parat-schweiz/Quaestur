@@ -25,7 +25,7 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Notice("Running parameter update reminder task");
+                Global.Log.Info("Running parameter update reminder task");
 
                 foreach (var person in database.Query<Person>())
                 {
@@ -39,7 +39,7 @@ namespace Quaestur
                     }
                 }
 
-                Global.Log.Notice("Parameter update reminder task complete");
+                Global.Log.Info("Parameter update reminder task complete");
             }
         }
 

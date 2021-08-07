@@ -26,6 +26,7 @@ namespace Quaestur
             _task.Add(new BallotTask());
             _task.Add(new PointsTask());
             _task.Add(new PaymentParameterUpdateReminderTask());
+            _task.Add(new LogBufferTask());
             _database = Global.CreateDatabase();
         }
 

@@ -17,7 +17,7 @@ namespace Quaestur
 
         private static void CreateAllTables(IDatabase database)
         {
-            Global.Log.Notice("Checking tables...");
+            Global.Log.Info("Checking tables...");
 
             database.CreateTable<Meta>();
             database.CreateTable<Country>();
@@ -72,12 +72,12 @@ namespace Quaestur
             database.CreateTable<ReservedUserName>();
             database.CreateTable<SystemWideFile>();
 
-            Global.Log.Notice("Tables ok.");
+            Global.Log.Info("Tables ok.");
         }
 
         private static void Migrate(IDatabase database)
         {
-            Global.Log.Notice("Checking migrations...");
+            Global.Log.Info("Checking migrations...");
 
             var meta = database.Query<Meta>().SingleOrDefault();
 
@@ -89,7 +89,7 @@ namespace Quaestur
 
             while (meta.Version.Value < CurrentVersion)
             {
-                Global.Log.Notice("Migrating to version {0}.", (meta.Version.Value + 1));
+                Global.Log.Info("Migrating to version {0}.", (meta.Version.Value + 1));
 
                 using (var transaction = database.BeginTransaction())
                 {
@@ -99,10 +99,10 @@ namespace Quaestur
                     transaction.Commit();
                 }
 
-                Global.Log.Notice("Migration applied.");
+                Global.Log.Info("Migration applied.");
             }
 
-            Global.Log.Notice("Migrations done.");
+            Global.Log.Info("Migrations done.");
         }
 
         private static void Migrate(IDatabase database, int version)

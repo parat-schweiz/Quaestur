@@ -23,7 +23,7 @@ namespace Publicus
             {
                 _lastSending = DateTime.UtcNow;
                 _maxMailsCount = 5;
-                Global.Log.Notice("Running mailing task");
+                Global.Log.Info("Running mailing task");
 
                 foreach (var mailing in database.Query<Mailing>())
                 {
@@ -38,7 +38,7 @@ namespace Publicus
                     }
                 }
 
-                Global.Log.Notice("Mailing task complete");
+                Global.Log.Info("Mailing task complete");
             }
         }
 
@@ -74,7 +74,7 @@ namespace Publicus
 
             mailing.Status.Value = MailingStatus.Sending;
             database.Save(mailing);
-            Global.Log.Notice("Mailing {0} is now sending {1} mails", mailing.Title, count);
+            Global.Log.Info("Mailing {0} is now sending {1} mails", mailing.Title, count);
         }
 
         private void Journal(IDatabase database, Mailing mailing, Contact contact, string key, string hint, string technical, params Func<Translator, string>[] parameters)
@@ -185,11 +185,11 @@ namespace Publicus
                 mailing.Status.Value = MailingStatus.Sent;
                 mailing.SentDate.Value = DateTime.UtcNow;
                 database.Save(mailing);
-                Global.Log.Notice("Mailing {0} has finished sending", mailing.Title);
+                Global.Log.Info("Mailing {0} has finished sending", mailing.Title);
             }
             else
             {
-                Global.Log.Notice("Mailing {0} needs to send {1} more mails", mailing.Title, remainingCount);
+                Global.Log.Info("Mailing {0} needs to send {1} more mails", mailing.Title, remainingCount);
             }
         }
     }

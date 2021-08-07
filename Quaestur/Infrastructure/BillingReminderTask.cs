@@ -33,7 +33,7 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Notice("Running mailing task");
+                Global.Log.Info("Running mailing task");
                 var translation = new Translation(database);
                 var remindPersons = new Dictionary<string, Billing>();
 
@@ -61,7 +61,7 @@ namespace Quaestur
                     RemindOrSettleInternal(database, translation, billing, false);
                 }
 
-                Global.Log.Notice("Mailing task complete");
+                Global.Log.Info("Mailing task complete");
             }
         }
 

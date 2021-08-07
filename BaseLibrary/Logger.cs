@@ -16,6 +16,7 @@ namespace BaseLibrary
         Warning = 4,
         Error = 5,
         Critical = 6,
+        Disable = 7,
     }
 
     public class LogEntry
@@ -48,19 +49,33 @@ namespace BaseLibrary
 
         public LogSeverity FileSeverity { get; set; }
 
+        public LogSeverity BufferSeverity { get; set; }
+
         private FileStream _logFile;
 
         private TextWriter _logWriter;
 
         private DateTime _logFileDate;
 
+        private Queue<string> _buffer;
+
+        public DateTime BufferContentAge { get; private set; }
+
+        public LogSeverity BufferContentSeverity { get; private set; }
+
+        public int BufferCount { get { return _buffer.Count; } }
+
         public string LogFilePrefix { get; private set; }
 
         public Logger(string logFilePrefix)
         {
+            _buffer = new Queue<string>();
             LogFilePrefix = logFilePrefix;
             ConsoleSeverity = LogSeverity.Info;
             FileSeverity = LogSeverity.Verbose;
+            BufferSeverity = LogSeverity.Disable;
+            BufferContentSeverity = LogSeverity.Verbose;
+            BufferContentAge = DateTime.UtcNow;
         }
 
         public void Dispose()
@@ -159,7 +174,26 @@ namespace BaseLibrary
                 _logWriter.Flush();
             }
 
+            if (entry.Severity >= BufferSeverity)
+            {
+                _buffer.Enqueue(entry.ToText());
+
+                if (entry.Severity > BufferSeverity)
+                {
+                    BufferContentSeverity = entry.Severity;
+                }
+            }
+
             return entry;
+        }
+
+        public IEnumerable<string> PopBuffer()
+        {
+            BufferContentSeverity = LogSeverity.Verbose;
+            BufferContentAge = DateTime.UtcNow;
+            var list = _buffer.ToList();
+            _buffer.Clear();
+            return list;
         }
     }
 }

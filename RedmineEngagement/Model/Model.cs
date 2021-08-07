@@ -17,7 +17,7 @@ namespace RedmineEngagement
 
         private static void CreateAllTables(IDatabase database, Logger logger)
         {
-            logger.Notice("Checking tables...");
+            logger.Info("Checking tables...");
 
             database.CreateTable<Meta>();
             database.CreateTable<Phrase>();
@@ -26,12 +26,12 @@ namespace RedmineEngagement
             database.CreateTable<Issue>();
             database.CreateTable<Assignment>();
 
-            logger.Notice("Tables ok.");
+            logger.Info("Tables ok.");
         }
 
         private static void Migrate(IDatabase database, Logger logger)
         {
-            logger.Notice("Checking migrations...");
+            logger.Info("Checking migrations...");
 
             var meta = database.Query<Meta>().SingleOrDefault();
 
@@ -42,7 +42,7 @@ namespace RedmineEngagement
 
             while (meta.Version.Value < CurrentVersion)
             {
-                logger.Notice("Migrating to version {0}.", (meta.Version.Value + 1));
+                logger.Info("Migrating to version {0}.", (meta.Version.Value + 1));
 
                 using (var transaction = database.BeginTransaction())
                 {
@@ -52,10 +52,10 @@ namespace RedmineEngagement
                     transaction.Commit();
                 }
 
-                logger.Notice("Migration applied.");
+                logger.Info("Migration applied.");
             }
 
-            logger.Notice("Migrations done.");
+            logger.Info("Migrations done.");
         }
 
         private static void Migrate(IDatabase database, int version)

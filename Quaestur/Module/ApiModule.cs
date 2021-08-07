@@ -402,7 +402,7 @@ namespace Quaestur
                     {
                         if (Global.Security.VerifyPassword(client.SecureSecret.Value, parts[2]))
                         {
-                            Notice("Successful API authentication for {0}", client.Name.Value[Language.English]);
+                            Info("Successful API authentication for {0}", client.Name.Value[Language.English]);
                             return new ApiContext(_database, client);
                         }
                         else

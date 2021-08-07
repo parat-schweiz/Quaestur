@@ -30,7 +30,7 @@ namespace Quaestur
                 if (!match.Success &&
                     match.Groups.Count < 3)
                 {
-                    Global.Log.Notice("Invalid id at matrix login: {0}", id);
+                    Global.Log.Info("Invalid id at matrix login: {0}", id);
                     var error = new JObject(
                         new JProperty("auth",
                             new JObject(
@@ -43,7 +43,7 @@ namespace Quaestur
 
                 if (!Global.Config.MatrixDomains.Contains(domain))
                 {
-                    Global.Log.Notice("Invalid domain at matrix login: {0}", domain);
+                    Global.Log.Info("Invalid domain at matrix login: {0}", domain);
                     var error = new JObject(
                         new JProperty("auth",
                             new JObject(
@@ -57,11 +57,11 @@ namespace Quaestur
                 switch (result.Item2)
                 {
                     case LoginResult.WrongLogin:
-                        Global.Log.Notice("Wrong matrix login with username {0}", userName);
+                        Global.Log.Info("Wrong matrix login with username {0}", userName);
                         Global.Throttle.Fail(userName, false);
                         break;
                     case LoginResult.Locked:
-                        Global.Log.Notice("Matrx login denied due to locked user {0}", result.Item1.UserName);
+                        Global.Log.Info("Matrx login denied due to locked user {0}", result.Item1.UserName);
                         break;
                     case LoginResult.Success:
                         break;

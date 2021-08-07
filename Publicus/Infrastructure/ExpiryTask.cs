@@ -21,7 +21,7 @@ namespace Publicus
             if (DateTime.UtcNow > _lastSending.AddMinutes(65))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Notice("Running expiry task");
+                Global.Log.Info("Running expiry task");
 
                 foreach (var contact in database.Query<Contact>().ToList())
                 {
@@ -32,7 +32,7 @@ namespace Publicus
                     }
                 }
 
-                Global.Log.Notice("Mailing expiry complete");
+                Global.Log.Info("Mailing expiry complete");
             }
         }
     }

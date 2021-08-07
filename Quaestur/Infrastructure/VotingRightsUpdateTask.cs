@@ -20,7 +20,7 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastUpdate.AddMinutes(1))
             {
                 _lastUpdate = DateTime.UtcNow;
-                Global.Log.Notice("Voting rights update task");
+                Global.Log.Info("Voting rights update task");
 
                 if (_updateQueue.Count < 1)
                 {
@@ -49,7 +49,7 @@ namespace Quaestur
                     }
                 }
 
-                Global.Log.Notice("Voting rights update task complete");
+                Global.Log.Info("Voting rights update task complete");
             }
         }
     }

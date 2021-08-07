@@ -22,11 +22,11 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastAction.AddMinutes(15))
             {
                 _lastAction = DateTime.UtcNow;
-                Global.Log.Notice("Running points task");
+                Global.Log.Info("Running points task");
 
                 RunAll(database);
 
-                Global.Log.Notice("Points task complete");
+                Global.Log.Info("Points task complete");
             }
         }
 

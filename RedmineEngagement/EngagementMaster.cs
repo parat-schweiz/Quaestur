@@ -30,7 +30,7 @@ namespace RedmineEngagement
             _config.Load(filename);
 
             _logger = new Logger(_config.LogFilePrefix);
-            _logger.Notice("Redmine Engagement started");
+            _logger.Info("Redmine Engagement started");
 
             _database = new PostgresDatabase(_config.Database);
             Model.Install(_database, _logger);

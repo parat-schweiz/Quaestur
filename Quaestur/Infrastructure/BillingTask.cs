@@ -21,11 +21,11 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Notice("Running billing task");
+                Global.Log.Info("Running billing task");
 
                 RunAll(database);
 
-                Global.Log.Notice("Billing task complete");
+                Global.Log.Info("Billing task complete");
             }
         }
 

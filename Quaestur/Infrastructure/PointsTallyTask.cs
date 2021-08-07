@@ -20,11 +20,11 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Notice("Running points tally task");
+                Global.Log.Info("Running points tally task");
 
                 RunAll(database);
 
-                Global.Log.Notice("Billing points tally complete");
+                Global.Log.Info("Billing points tally complete");
             }
         }
 
@@ -71,7 +71,7 @@ namespace Quaestur
                             .FirstOrDefault();
                         var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
                         var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
-                        Global.Log.Notice(
+                        Global.Log.Info(
                             "Checking tally for {0} (last tally {1}, until date {2})",
                             person.ShortHand,
                             lastTallyUntilDate,

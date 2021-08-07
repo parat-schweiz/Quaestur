@@ -172,12 +172,12 @@ namespace SecurityServiceClient
                     if (i <= 5)
                     {
                         int msSleep = i * i * 100;
-                        Logger.Notice("Security client error: {0}; Backoff {1}ms", exception.Message, msSleep);
+                        Logger.Info("Security client error: {0}; Backoff {1}ms", exception.Message, msSleep);
                         Thread.Sleep(msSleep);
                     }
                     else
                     {
-                        Logger.Notice("Security client error: {0}; Backoff exhausted", exception.Message);
+                        Logger.Warning("Security client error: {0}; Backoff exhausted", exception.Message);
                         throw exception;
                     }
                 }

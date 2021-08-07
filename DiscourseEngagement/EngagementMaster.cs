@@ -29,7 +29,7 @@ namespace DiscourseEngagement
             _config.Load(filename);
 
             _logger = new Logger(_config.LogFilePrefix);
-            _logger.Notice("Discourse Engagement started");
+            _logger.Info("Discourse Engagement started");
 
             _database = new PostgresDatabase(_config.Database);
             Model.Install(_database, _logger);
@@ -122,13 +122,13 @@ namespace DiscourseEngagement
                         }
                         else if (debug)
                         {
-                            _logger.Notice("Not adding user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
+                            _logger.Info("Not adding user {0}, id {1}, {2} because not in Quaestur", user.Username, user.Auid.Value, user.Id);
                         }
                     }
                 }
                 else if (debug)
                 {
-                    _logger.Notice("User {0}, id {1} has no auid", user.Username, user.Id);
+                    _logger.Info("User {0}, id {1} has no auid", user.Username, user.Id);
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace DiscourseEngagement
 
                         if (dbTopic == null)
                         {
-                            _logger.Notice("New topic {0}", apiTopic.Id);
+                            _logger.Info("New topic {0}", apiTopic.Id);
                             dbTopic = new Topic(Guid.NewGuid());
                             dbTopic.TopicId.Value = apiTopic.Id;
                             dbTopic.PostsCount.Value = apiTopic.PostsCount;
@@ -162,7 +162,7 @@ namespace DiscourseEngagement
                                  dbTopic.LikeCount.Value != apiTopic.LikeCount ||
                                  dbTopic.LastPostedAt.Value != apiTopic.LastPostedAt)
                         {
-                            _logger.Notice("Updated topic {0}", apiTopic.Id);
+                            _logger.Info("Updated topic {0}", apiTopic.Id);
                             dbTopic.PostsCount.Value = apiTopic.PostsCount;
                             dbTopic.LikeCount.Value = apiTopic.LikeCount;
                             dbTopic.LastPostedAt.Value = apiTopic.LastPostedAt;
@@ -186,7 +186,7 @@ namespace DiscourseEngagement
 
                 if (dbPost == null)
                 {
-                    _logger.Notice("New post {0}", apiPost.Id);
+                    _logger.Info("New post {0}", apiPost.Id);
                     dbPost = new Post(Guid.NewGuid());
                     dbPost.Topic.Value = cache.GetTopic(apiTopic.Id);
                     dbPost.Person.Value = cache.GetPerson(apiPost.UserId);

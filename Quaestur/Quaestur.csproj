@@ -283,6 +283,8 @@
     <Compile Include="Documents\SettlementContentProvider.cs" />
     <Compile Include="Documents\SwissQrBill.cs" />
     <Compile Include="Module\PersonDetailActionsModule.cs" />
+    <Compile Include="Module\RobotsTxtModule.cs" />
+    <Compile Include="Infrastructure\LogBufferTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

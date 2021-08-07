@@ -24,13 +24,13 @@ namespace Publicus
             }
 
             var uri = "http://localhost:8889";
-            Global.Log.Notice("Starting Publicus on " + uri);
+            Global.Log.Info("Starting Publicus on " + uri);
 
             // initialize an instance of NancyHost
             var host = new NancyHost(new Uri(uri));
             host.Start();  // start hosting
 
-            Global.Log.Notice("Application started");
+            Global.Log.Info("Application started");
             var runner = new TaskRunner();
 
             while (true)

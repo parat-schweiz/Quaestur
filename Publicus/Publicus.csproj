@@ -216,6 +216,7 @@
     <Compile Include="Module\SignPetitionModule.cs" />
     <Compile Include="Module\UnsubcribeModule.cs" />
     <Compile Include="Infrastructure\ExpiryTask.cs" />
+    <Compile Include="Module\RobotsTxtModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

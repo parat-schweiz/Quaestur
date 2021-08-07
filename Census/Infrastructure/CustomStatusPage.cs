@@ -61,9 +61,25 @@ namespace Census
 
         public void Handle(HttpStatusCode statusCode, NancyContext context)
         {
-            Global.Log.Error(
-                "Custom status page called for request {0} {1} with status code {2}",
-                context.Request.Method, context.Request.Url, (int)statusCode);
+            switch (statusCode)
+            {
+                case HttpStatusCode.NotFound:
+                    Global.Log.Info(
+                        "Custom status page called for request {0} {1} with status code {2}",
+                        context.Request.Method, context.Request.Url, (int)statusCode);
+                    break;
+                case HttpStatusCode.Unauthorized:
+                case HttpStatusCode.Forbidden:
+                    Global.Log.Warning(
+                        "Custom status page called for request {0} {1} with status code {2}",
+                        context.Request.Method, context.Request.Url, (int)statusCode);
+                    break;
+                default:
+                    Global.Log.Error(
+                        "Custom status page called for request {0} {1} with status code {2}",
+                        context.Request.Method, context.Request.Url, (int)statusCode);
+                    break;
+            }
 
             try
             {
