@@ -5,7 +5,7 @@ using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
 using Nancy.Conventions;
 
-namespace Publicus
+namespace Mercatus
 {
     public class CustomBoostrapper : DefaultNancyBootstrapper
     {

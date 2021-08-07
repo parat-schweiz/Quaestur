@@ -6,18 +6,31 @@ using BaseLibrary;
 using SecurityServiceClient;
 using SiteLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public static class Global
     {
 		private static PublicusConfig _config;
 		private static Logger _logger;
 		private static Mailer _mailer;
-        private static SessionManager _login;
         private static SecurityThrottle _throttle;
         private static SecurityService _security;
         private static Gpg _gpg;
         private static MailCounter _mailCounter;
+        private static SessionManager _sessions;
+
+        public static SessionManager Sessions
+        {
+            get
+            {
+                if (_sessions == null)
+                {
+                    _sessions = new SessionManager();
+                }
+
+                return _sessions;
+            }
+        }
 
         public static MailCounter MailCounter
         {
@@ -69,19 +82,6 @@ namespace Publicus
 
                 return _throttle;
             }
-        }
-
-        public static SessionManager Sessions
-        {
-            get 
-            {
-                if (_login == null)
-                {
-                    _login = new SessionManager(); 
-                }
-
-                return _login;
-            } 
         }
 
         public static PublicusConfig Config

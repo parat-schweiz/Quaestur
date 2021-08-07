@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SiteLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public interface ITask
     {
@@ -17,8 +17,6 @@ namespace Publicus
         public TaskRunner()
         {
             _task = new List<ITask>();
-            _task.Add(new MailingTask());
-            _task.Add(new ExpiryTask());
             _database = Global.CreateDatabase();
         }
 

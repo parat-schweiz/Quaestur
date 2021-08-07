@@ -3,7 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Publicus
+namespace Mercatus
 {
     public class SecurityThrottle
     {

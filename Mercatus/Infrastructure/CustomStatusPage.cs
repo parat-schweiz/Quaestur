@@ -5,7 +5,7 @@ using Nancy.ErrorHandling;
 using Nancy.ViewEngines;
 using SiteLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public class CustomStatusPage : IStatusCodeHandler
     {

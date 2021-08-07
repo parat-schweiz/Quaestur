@@ -10,7 +10,7 @@ using Nancy.Authentication.Forms;
 using System.Security.Claims;
 using System.Security.Principal;
 
-namespace Publicus
+namespace Mercatus
 {
     public enum LoginResult
     {
@@ -24,223 +24,15 @@ namespace Publicus
         public const string IdentityIdClaim = "IdentityId";
         public const string AuthenticationType = "Login";
 
-        private class RolePermission
-        {
-            public Role Role { get; private set; } 
-            public Permission Permission { get; private set; }
-
-            public RolePermission(Role role, Permission permission)
-            {
-                Role = role;
-                Permission = permission;
-            }
-        }
-
-        private List<RolePermission> _access;
         public Guid Id { get; private set; }
         public User User { get; private set; } 
         public DateTime LastAccess { get; private set; }
-        public List<MasterRole> MasterRoles { get; private set; }
 
-        public IEnumerable<RoleAssignment> RoleAssignments
-        {
-            get
-            {
-                return MasterRoles.SelectMany(mr => mr.RoleAssignments);
-            }
-        }
-
-        public bool HasContactNewAccess()
-        {
-            return RoleAssignments
-                .Select(ra => ra.Role.Value.Group.Value.Feed.Value)
-                .Where(o => HasAccess(o, PartAccess.Demography, AccessRight.Write))
-                .Where(o => HasAccess(o, PartAccess.Subscription, AccessRight.Write))
-                .Where(o => HasAccess(o, PartAccess.Contact, AccessRight.Write))
-                .Any();
-        }
-
-        public bool HasSystemWideAccess(PartAccess partAccess, AccessRight right)
-        {
-            foreach (var rolePermission in _access
-                .Where(rp => rp.Permission.Part.Value == partAccess)
-                .Where(rp => rp.Permission.Right.Value >= right))
-            {
-                switch (rolePermission.Permission.Subject.Value)
-                {
-                    case SubjectAccess.SystemWide:
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        public bool HasAnyFeedAccess(PartAccess partAccess, AccessRight right)
-        {
-            foreach (var rolePermission in _access
-                .Where(rp => rp.Permission.Part.Value == partAccess)
-                .Where(rp => rp.Permission.Right.Value >= right))
-            {
-                switch (rolePermission.Permission.Subject.Value)
-                {
-                    case SubjectAccess.SystemWide:
-                    case SubjectAccess.Feed:
-                    case SubjectAccess.SubFeed:
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        private bool HasThisAccess(RolePermission rp)
-        {
-            switch (rp.Permission.Subject.Value)
-            {
-                case SubjectAccess.None:
-                    return true;
-                case SubjectAccess.SystemWide:
-                    return HasSystemWideAccess(rp.Permission.Part.Value, rp.Permission.Right.Value);
-                case SubjectAccess.Group:
-                    return HasAccess(rp.Role.Group.Value, rp.Permission.Part.Value, rp.Permission.Right.Value);
-                case SubjectAccess.Feed:
-                    return HasAccess(rp.Role.Group.Value.Feed.Value, rp.Permission.Part.Value, rp.Permission.Right.Value);
-               case SubjectAccess.SubFeed:
-                    return HasAccess(rp.Role.Group.Value.Feed.Value, rp.Permission.Part.Value, rp.Permission.Right.Value) &&
-                        rp.Role.Group.Value.Feed.Value.Children.All(c =>
-                            HasAccess(c, rp.Permission.Part.Value, rp.Permission.Right.Value));
-                default:
-                    throw new NotSupportedException();
-            }
-        }
-
-        public bool HasAccess(Contact contact, PartAccess partAccess, AccessRight right)
-        {
-            if ((partAccess != PartAccess.Deleted) &&
-                contact.Deleted && 
-                !HasAccess(contact, PartAccess.Deleted, right))
-            {
-                return false;
-            }
-
-            if (User == contact)
-            {
-                switch (partAccess)
-                {
-                    case PartAccess.Anonymous:
-                    case PartAccess.Contact:
-                        return true;
-                    case PartAccess.Demography:
-                    case PartAccess.Documents:
-                    case PartAccess.Subscription:
-                    case PartAccess.RoleAssignments:
-                    case PartAccess.TagAssignments:
-                    case PartAccess.Journal:
-                        if (right == AccessRight.Read)
-                        {
-                            return true; 
-                        }
-                        break;
-                }
-            }
-
-            foreach (var subscription in contact.ActiveSubscriptions)
-            {
-                if (HasAccess(subscription.Feed.Value, partAccess, right))
-                {
-                    return true; 
-                } 
-            }
-
-            return false;
-        }
-
-        public bool HasAccess(Feed feed, PartAccess partAccess, AccessRight right)
-        {
-            foreach (var rolePermission in _access
-                .Where(rp => rp.Permission.Part.Value == partAccess)
-                .Where(rp => rp.Permission.Right.Value >= right))
-            {
-                switch (rolePermission.Permission.Subject.Value)
-                {
-                    case SubjectAccess.SystemWide:
-                        return true;
-                    case SubjectAccess.Feed:
-                        if (rolePermission.Role.Group.Value.Feed.Value == feed)
-                        {
-                            return true; 
-                        }
-                        break;
-                    case SubjectAccess.SubFeed:
-                        if (rolePermission.Role.Group.Value.Feed.Value == feed)
-                        {
-                            return true;
-                        }
-                        else if (rolePermission.Role.Group.Value.Feed.Value
-                            .Subordinates.Contains(feed))
-                        {
-                            return true; 
-                        }
-                        break;
-                    case SubjectAccess.Group:
-                        break;
-                }
-            }
-
-            return false;
-        }
-
-        public bool HasAccess(Group group, PartAccess partAccess, AccessRight right)
-        {
-            foreach (var rolePermission in _access
-                .Where(rp => rp.Permission.Part.Value == partAccess)
-                .Where(rp => rp.Permission.Right.Value >= right))
-            {
-                switch (rolePermission.Permission.Subject.Value)
-                {
-                    case SubjectAccess.SystemWide:
-                        return true;
-                    case SubjectAccess.Feed:
-                        if (rolePermission.Role.Group.Value.Feed.Value
-                            .Groups.Contains(group))
-                        {
-                            return true;
-                        }
-                        break;
-                    case SubjectAccess.SubFeed:
-                        if (rolePermission.Role.Group.Value.Feed.Value
-                            .Groups.Contains(group))
-                        {
-                            return true;
-                        }
-                        else if (rolePermission.Role.Group.Value.Feed.Value
-                            .Subordinates.SelectMany(o => o.Groups).Contains(group))
-                        {
-                            return true;
-                        }
-                        break;
-                    case SubjectAccess.Group:
-                        if (rolePermission.Role.Group.Value == group)
-                        {
-                            return true; 
-                        }
-                        break;
-                }
-            }
-
-            return false;
-        }
-
-        public Session(User user, IEnumerable<MasterRole> masterRoles)
+        public Session(User user)
         {
             Id = Guid.NewGuid();
             User = user;
             LastAccess = DateTime.UtcNow;
-            MasterRoles = masterRoles.ToList();
-            _access = new List<RolePermission>(RoleAssignments
-                .Select(ra => ra.Role.Value)
-                .SelectMany(r => r.Permissions.Select(p => new RolePermission(r, p))));
         }
 
         public void Update()
@@ -300,11 +92,11 @@ namespace Publicus
             _sessions = new Dictionary<Guid, Session>();
         }
 
-        public Session Add(User user, IEnumerable<MasterRole> masterRoles)
+        public Session Add(User user)
         {
             lock (_sessions)
             {
-                var session = new Session(user, masterRoles);
+                var session = new Session(user);
                 _sessions.Add(session.Id, session);
                 return session;
             }

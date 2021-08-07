@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Linq;
 using BaseLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public class PublicusConfig : Config
     {

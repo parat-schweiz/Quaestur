@@ -9,7 +9,7 @@ using Nancy.Security;
 using Nancy.Authentication.Forms;
 using BaseLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public static class UserController
     {

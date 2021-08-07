@@ -6,7 +6,7 @@ using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public class User : DatabaseObject
     {

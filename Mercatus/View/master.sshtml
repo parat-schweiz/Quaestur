@@ -41,62 +41,8 @@
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuContacts</a>
                   <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                     <a class="dropdown-item" href="/contact/list">@Model.PhraseMenuContactsList</a>
-                    @EndIf
-                    @If.NavContactNew
-                    <a class="dropdown-item" href="/contact/new">@Model.PhraseMenuContactNew</a>
-                    @EndIf
-                    @If.NavExport
-                    <a class="dropdown-item" href="/export">@Model.PhraseMenuExport</a>
-                    @EndIf
-                    @If.NavBar
                   </div>
                 </li>
-                @EndIf
-                @If.NavMailing
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuMailings</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/mailing/add">@Model.PhraseMenuNewMailing</a>
-                    <a class="dropdown-item" href="/mailing">@Model.PhraseMenuListMailings</a>
-                    <a class="dropdown-item" href="/mailingelement">@Model.PhraseMenuMailingElement</a>
-                  </div>
-                </li>
-                @EndIf
-                @If.NavPetition
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuPetitions</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/petition">@Model.PhraseMenuListPetitions</a>
-                  </div>
-                </li>
-                @EndIf
-                @If.NavFeed
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuCustom</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/feed">@Model.PhraseMenuFeeds</a>
-                    @EndIf
-                    @If.NavCustom
-                    <a class="dropdown-item" href="/country">@Model.PhraseMenuCountries</a>
-                    <a class="dropdown-item" href="/state">@Model.PhraseMenuStates</a>
-                    <a class="dropdown-item" href="/tag">@Model.PhraseMenuTags</a>
-                    <a class="dropdown-item" href="/mailtemplate">@Model.PhraseMenuMailTemplates</a>
-                    <a class="dropdown-item" href="/latextemplate">@Model.PhraseMenuLatexTemplates</a>
-                    <a class="dropdown-item" href="/phrase">@Model.PhraseMenuPhrases</a>
-                    @EndIf
-                    @If.NavFeed
-                  </div>
-                </li>
-                @EndIf
-                @If.NavSettings
-                <li class="nav-item dropdown">
-                  <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.PhraseMenuSettings</a>
-                  <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                    <a class="dropdown-item" href="/systemwidefile">@Model.PhraseMenuSystemWideFiles</a>
-                  </div>
-                </li>
-                @EndIf
-                @If.NavBar
               </ul>
               <ul class="nav navbar-nav ml-auto"/>
                 <li class="nav-item dropdown">

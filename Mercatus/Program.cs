@@ -2,7 +2,7 @@
 using System.IO;
 using Nancy.Hosting.Self;
 
-namespace Publicus
+namespace Mercatus
 {
     public static class MainClass
     {

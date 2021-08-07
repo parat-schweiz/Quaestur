@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using SiteLibrary;
 
-namespace Publicus
+namespace Mercatus
 {
     public class Meta : DatabaseObject
     {
