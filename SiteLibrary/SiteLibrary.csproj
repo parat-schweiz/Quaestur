@@ -48,19 +48,19 @@
       <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp">
-      <HintPath>..\packages\AngleSharp.0.15.0\lib\net472\AngleSharp.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.0.16.0\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp.Css">
-      <HintPath>..\packages\AngleSharp.Css.0.15.0\lib\net472\AngleSharp.Css.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.Css.0.16.1\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.5.0.404\lib\net46\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.6.0.441\lib\net46\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\Portable.BouncyCastle.1.8.10\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.14.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.15.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
