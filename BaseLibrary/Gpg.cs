@@ -105,6 +105,17 @@ namespace BaseLibrary
         RSA,
         DSA,
         ELG,
+        Curve25519,
+        Ed25519,
+        X448,
+        Ed448,
+        NistP256,
+        NistP384,
+        NistP521,
+        BrainpoolP256r1,
+        BrainpoolP384r1,
+        BrainpoolP512r1,
+        Secp256k1,
         Unknown
     }
 
@@ -851,18 +862,52 @@ namespace BaseLibrary
             }
         }
 
-        public GpgKeyType ParseKeyType(string type)
+        public Tuple<GpgKeyType, int> ParseKeyType(string type)
         {
-            switch (type)
+            if (Regex.IsMatch(type, "rsa[0-9]+"))
             {
-                case "rsa":
-                    return GpgKeyType.RSA;
-                case "dsa":
-                    return GpgKeyType.DSA;
-                case "elg":
-                    return GpgKeyType.ELG;
-                default:
-                    return GpgKeyType.Unknown;
+                var bits = int.Parse(type.Substring(3));
+                return new Tuple<GpgKeyType, int>(GpgKeyType.RSA, bits);
+            }
+            else if (Regex.IsMatch(type, "dsa[0-9]+"))
+            {
+                var bits = int.Parse(type.Substring(3));
+                return new Tuple<GpgKeyType, int>(GpgKeyType.DSA, bits);
+            }
+            else if (Regex.IsMatch(type, "elg[0-9]+"))
+            {
+                var bits = int.Parse(type.Substring(3));
+                return new Tuple<GpgKeyType, int>(GpgKeyType.ELG, bits);
+            }
+            else
+            {
+                switch (type)
+                {
+                    case "Curve25519":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.Curve25519, 256);
+                    case "Ed25519":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.Ed25519, 256);
+                    case "X448":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.X448, 512);
+                    case "Ed448":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.Ed448, 521);
+                    case "NIST P-256":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.NistP256, 256);
+                    case "NIST P-384":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.NistP384, 384);
+                    case "NIST P-521":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.NistP521, 521);
+                    case "brainpoolP256r1":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.BrainpoolP256r1, 256);
+                    case "brainpoolP384r1":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.BrainpoolP384r1, 384);
+                    case "brainpoolP512r1":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.BrainpoolP512r1, 512);
+                    case "secp256k1":
+                        return new Tuple<GpgKeyType, int>(GpgKeyType.Secp256k1, 256);
+                    default:
+                        throw new NotSupportedException();
+                }
             }
         }
 
@@ -957,29 +1002,30 @@ namespace BaseLibrary
                 else if (line.StartsWith("------", StringComparison.Ordinal) && line.EndsWith("------", StringComparison.Ordinal)) { } // ignore line
                 else if (line.StartsWith("sec", StringComparison.Ordinal) || line.StartsWith("pub", StringComparison.Ordinal))
                 {
-                    var match = Regex.Match(line, @"^(?:(?:sec )|(?:sec> )|(?:pub )) +([a-z]+)([0-9]+) ([0-9]{4})-([0-9]{2})-([0-9]{2}) \[([A-Z]+)\](?: \[([a-z]+): ([0-9]{4})-([0-9]{2})-([0-9]{2})\])?$");
+                    var match = Regex.Match(line, @"^(?:(?:sec )|(?:sec> )|(?:pub )) +([a-zA-Z0-9]+) ([0-9]{4})-([0-9]{2})-([0-9]{2}) \[([A-Z]+)\](?: \[([a-z]+): ([0-9]{4})-([0-9]{2})-([0-9]{2})\])?$");
 
                     if (match.Success)
                     {
-                        var type = ParseKeyType(match.Groups[1].Value);
-                        var bits = int.Parse(match.Groups[2].Value);
-                        var createdYear = int.Parse(match.Groups[3].Value);
-                        var createdMonth = int.Parse(match.Groups[4].Value);
-                        var createdDay = int.Parse(match.Groups[5].Value);
+                        var keyType = ParseKeyType(match.Groups[1].Value);
+                        var type = keyType.Item1;
+                        var bits = keyType.Item2;
+                        var createdYear = int.Parse(match.Groups[2].Value);
+                        var createdMonth = int.Parse(match.Groups[3].Value);
+                        var createdDay = int.Parse(match.Groups[4].Value);
                         var created = new DateTime(createdYear, createdMonth, createdDay);
-                        var usage = ParseUsage(match.Groups[6].Value);
+                        var usage = ParseUsage(match.Groups[5].Value);
                         var id = lines.Dequeue().Trim();
                         var expiry = DateTime.MaxValue;
                         var status = GpgKeyStatus.Active;
 
-                        if ((match.Groups.Count >= 11) &&
-                            (match.Groups[7].Value != null) &&
-                            (match.Groups[7].Value != string.Empty))
+                        if ((match.Groups.Count >= 10) &&
+                            (match.Groups[6].Value != null) &&
+                            (match.Groups[6].Value != string.Empty))
                         {
-                            status = ParseKeyStatus(match.Groups[7].Value);
-                            var expiryYear = int.Parse(match.Groups[8].Value);
-                            var expiryMonth = int.Parse(match.Groups[9].Value);
-                            var expiryDay = int.Parse(match.Groups[10].Value);
+                            status = ParseKeyStatus(match.Groups[6].Value);
+                            var expiryYear = int.Parse(match.Groups[7].Value);
+                            var expiryMonth = int.Parse(match.Groups[8].Value);
+                            var expiryDay = int.Parse(match.Groups[9].Value);
                             expiry = new DateTime(expiryYear, expiryMonth, expiryDay);
                         }
 
@@ -1021,28 +1067,30 @@ namespace BaseLibrary
                 }
                 else if (line.StartsWith("sub", StringComparison.Ordinal) || line.StartsWith("ssb", StringComparison.Ordinal))
                 {
-                    var match = Regex.Match(line, @"^(?:(?:sub )|(?:ssb )|(?:ssb> )) +([a-z]+)([0-9]+) ([0-9]{4})-([0-9]{2})-([0-9]{2}) \[([A-Z]*)\](?: \[([a-z]+): ([0-9]{4})-([0-9]{2})-([0-9]{2})\])?$");
+                    var match = Regex.Match(line, @"^(?:(?:sub )|(?:ssb )|(?:ssb> )) +([a-zA-Z0-9]+) ([0-9]{4})-([0-9]{2})-([0-9]{2}) \[([A-Z]*)\](?: \[([a-z]+): ([0-9]{4})-([0-9]{2})-([0-9]{2})\])?$");
 
                     if (match.Success)
                     {
-                        var type = ParseKeyType(match.Groups[1].Value);
-                        var bits = int.Parse(match.Groups[2].Value);
-                        var createdYear = int.Parse(match.Groups[3].Value);
-                        var createdMonth = int.Parse(match.Groups[4].Value);
-                        var createdDay = int.Parse(match.Groups[5].Value);
+                        var keyType = ParseKeyType(match.Groups[1].Value);
+                        var type = keyType.Item1;
+                        var bits = keyType.Item2;
+                        var createdYear = int.Parse(match.Groups[2].Value);
+                        var createdMonth = int.Parse(match.Groups[3].Value);
+                        var createdDay = int.Parse(match.Groups[4].Value);
                         var created = new DateTime(createdYear, createdMonth, createdDay);
-                        var usage = ParseUsage(match.Groups[6].Value);
+                        var usage = ParseUsage(match.Groups[5].Value);
+                        var id = lines.Dequeue().Trim();
                         var expiry = DateTime.MaxValue;
                         var status = GpgKeyStatus.Active;
 
-                        if ((match.Groups.Count >= 11) &&
-                            (match.Groups[7].Value != null) &&
-                            (match.Groups[7].Value != string.Empty))
+                        if ((match.Groups.Count >= 10) &&
+                            (match.Groups[6].Value != null) &&
+                            (match.Groups[6].Value != string.Empty))
                         {
-                            status = ParseKeyStatus(match.Groups[7].Value);
-                            var expiryYear = int.Parse(match.Groups[8].Value);
-                            var expiryMonth = int.Parse(match.Groups[9].Value);
-                            var expiryDay = int.Parse(match.Groups[10].Value);
+                            status = ParseKeyStatus(match.Groups[6].Value);
+                            var expiryYear = int.Parse(match.Groups[7].Value);
+                            var expiryMonth = int.Parse(match.Groups[8].Value);
+                            var expiryDay = int.Parse(match.Groups[9].Value);
                             expiry = new DateTime(expiryYear, expiryMonth, expiryDay);
                         }
 
