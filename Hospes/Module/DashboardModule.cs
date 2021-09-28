@@ -81,7 +81,7 @@ namespace Hospes
         }
     }
 
-    public class DashboardModule : QuaesturModule
+    public class DashboardModule : HospesModule
     {
         public DashboardModule()
         {

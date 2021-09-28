@@ -68,7 +68,7 @@ namespace Quaestur
                 user.UserStatus.Value = UserStatus.Active;
                 _db.Save(user);
 
-                var ppzs = GetOrganization("Piratenpartei Zentralschweiz", null);
+                var ppzs = GetOrganization("PARAT", null);
                 var sgdi = GetGroup(ppzs, "SGDI");
                 var sysadmin = GetRole(sgdi, "SysAdmin", RoleProfile.SysAdmin);
                 var roleAssingment = new RoleAssignment(Guid.NewGuid());
@@ -93,12 +93,6 @@ namespace Quaestur
             var ppv = GetGroup(organization, "PPV");
             var ppv1 = GetRole(ppv, "Präsident", RoleProfile.BoardAdmin);
             AssignRole(ppv1, 1);
-
-            var agppp = GetGroup(organization, "AGPPP");
-            var agppp1 = GetRole(agppp, "Präsident", RoleProfile.GroupAdmin);
-            AssignRole(agppp1, 1);
-            var agpppm = GetRole(agppp, "Mitglied", RoleProfile.GroupMember);
-            AssignRole(agpppm, 6);
         }
 
         private void AssignRole(Role role, int count)

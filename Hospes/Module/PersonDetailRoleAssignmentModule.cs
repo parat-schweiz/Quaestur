@@ -44,7 +44,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailRoleAssignmentModule : QuaesturModule
+    public class PersonDetailRoleAssignmentModule : HospesModule
     {
         public PersonDetailRoleAssignmentModule()
         {

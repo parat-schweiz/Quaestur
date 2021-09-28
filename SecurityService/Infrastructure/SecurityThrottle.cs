@@ -73,8 +73,8 @@ namespace SecurityService
                     case 1000:
                     case 5000:
                     case 25000:
-                        Global.Log.Warning("Quaestur recored {1} total wrong {0}.", type, timeCount);
-                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recored {1} total wrong {0}.", type, timeCount));
+                        Global.Log.Warning("Quaestur recorded {1} total wrong {0}.", type, timeCount);
+                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recorded {1} total wrong {0}.", type, timeCount));
                         break;
                 }
             }
@@ -88,8 +88,8 @@ namespace SecurityService
                     case 100:
                     case 500:
                     case 2500:
-                        Global.Log.Warning("Quaestur recored {1} wrong {0} for account {2}.", type, timeCount, id);
-                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recored {1} wrong {0} for account {2}.", type, timeCount, id));
+                        Global.Log.Warning("Quaestur recorded {1} wrong {0} for account {2}.", type, timeCount, id);
+                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recorded {1} wrong {0} for account {2}.", type, timeCount, id));
                         break;
                 }
             }

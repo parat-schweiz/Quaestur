@@ -82,7 +82,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailDeleteModule : QuaesturModule
+    public class PersonDetailDeleteModule : HospesModule
     {
         public PersonDetailDeleteModule()
         {

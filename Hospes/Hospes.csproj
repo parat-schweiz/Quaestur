@@ -80,7 +80,7 @@
       <HintPath>..\packages\System.Drawing.Common.5.0.2\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp">
-      <HintPath>..\packages\AngleSharp.0.15.0\lib\net472\AngleSharp.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.0.16.0\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Memory">
@@ -96,19 +96,19 @@
       <HintPath>..\packages\BouncyCastle.1.8.9\lib\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.5.0.404\lib\net46\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.6.0.441\lib\net46\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Encoding.CodePages">
       <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp.Css">
-      <HintPath>..\packages\AngleSharp.Css.0.15.0\lib\net472\AngleSharp.Css.dll</HintPath>
+      <HintPath>..\packages\AngleSharp.Css.0.16.1\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.2.14.0\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.2.15.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.2.14.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.2.15.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
       <HintPath>..\packages\JWT.8.2.3\lib\net46\JWT.dll</HintPath>
@@ -149,7 +149,7 @@
     <Compile Include="Module\PersonDetailMembershipModule.cs" />
     <Compile Include="Module\PostalAddressEditModule.cs" />
     <Compile Include="Module\MasterViewModel.cs" />
-    <Compile Include="Module\QuaesturModule.cs" />
+    <Compile Include="Module\HospesModule.cs" />
     <Compile Include="Infrastructure\SessionManager.cs" />
     <Compile Include="Module\ServiceAddressEditModule.cs" />
     <Compile Include="Module\MembershipEditModule.cs" />
@@ -231,6 +231,7 @@
     <Compile Include="Module\SystemWideFileModule.cs" />
     <Compile Include="Module\ResourceModule.cs" />
     <Compile Include="Model\ITemplate.cs" />
+    <Compile Include="Module\OAuth2LoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -880,7 +881,7 @@
     <None Include="View\systemwidefilelist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\images\quaestur.png">
+    <None Include="Assets\images\hospes.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\persondetail_actions.sshtml">

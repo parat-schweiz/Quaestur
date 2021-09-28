@@ -43,7 +43,7 @@ namespace Hospes
         }
     }
 
-    public class DemographyEdit : QuaesturModule
+    public class DemographyEdit : HospesModule
     {
         public DemographyEdit()
         {

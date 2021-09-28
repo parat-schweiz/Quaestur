@@ -83,7 +83,7 @@ namespace Hospes
         }
     }
 
-    public class StateEdit : QuaesturModule
+    public class StateEdit : HospesModule
     {
         public StateEdit()
         {

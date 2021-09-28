@@ -46,7 +46,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailJournalModule : QuaesturModule
+    public class PersonDetailJournalModule : HospesModule
     {
         public PersonDetailJournalModule()
         {

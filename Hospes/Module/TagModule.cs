@@ -142,7 +142,7 @@ namespace Hospes
         }
     }
 
-    public class TagEdit : QuaesturModule
+    public class TagEdit : HospesModule
     {
         public TagEdit()
         {

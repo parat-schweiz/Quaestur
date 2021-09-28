@@ -93,7 +93,7 @@ namespace Hospes
         }
     }
 
-    public class PublicKeyModule : QuaesturModule
+    public class PublicKeyModule : HospesModule
     {
         public PublicKeyModule()
         {

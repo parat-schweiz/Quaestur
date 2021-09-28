@@ -164,7 +164,7 @@ namespace Hospes
         }
     }
 
-    public class PermissionEdit : QuaesturModule
+    public class PermissionEdit : HospesModule
     {
         private bool IsPermissionPermitted(Permission permission)
         {

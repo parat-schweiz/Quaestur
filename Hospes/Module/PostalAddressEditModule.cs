@@ -106,7 +106,7 @@ namespace Hospes
         }
     }
 
-    public class PostalAddressEdit : QuaesturModule
+    public class PostalAddressEdit : HospesModule
     {
         public PostalAddressEdit()
         {

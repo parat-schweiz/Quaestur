@@ -119,7 +119,7 @@ namespace Hospes
         }
     }
 
-    public class MembershipTypeEditModule : QuaesturModule
+    public class MembershipTypeEditModule : HospesModule
     {
         public MembershipTypeEditModule()
         {

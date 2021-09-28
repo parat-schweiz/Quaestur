@@ -53,7 +53,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailEditHeadModule : QuaesturModule
+    public class PersonDetailEditHeadModule : HospesModule
     {
         public PersonDetailEditHeadModule()
         {

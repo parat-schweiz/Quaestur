@@ -40,7 +40,7 @@ namespace Hospes
         }
     }
 
-    public class LoginModule : QuaesturModule
+    public class LoginModule : HospesModule
     {
         private string ValidateReturnUrl(string returnUrl)
         {
@@ -59,8 +59,9 @@ namespace Hospes
         {
             Get("/login", parameters =>
             {
-                var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
-                return View["View/login.sshtml", new LoginViewModel(Translator, returnUrl)];
+                string returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
+                string serviceId = Global.Config.Oauth2Services.First().OAuth2ServiceId;
+                return Response.AsRedirect("/oauth2login/" + serviceId + "?returnUrl=" + returnUrl);
             });
             Post("/login", parameters =>
             {

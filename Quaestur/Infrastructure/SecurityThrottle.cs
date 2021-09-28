@@ -74,8 +74,8 @@ namespace Quaestur
                     case 1000:
                     case 5000:
                     case 25000:
-                        Global.Log.Warning("Quaestur recored {1} total wrong {0}.", secondFactor ? "2fas" : "logins", timeCount);
-                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recored {1} total wrong {0}.", secondFactor ? "2fas" : "logins", timeCount));
+                        Global.Log.Warning("Quaestur recorded {1} total wrong {0}.", secondFactor ? "2fas" : "logins", timeCount);
+                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recorded {1} total wrong {0}.", secondFactor ? "2fas" : "logins", timeCount));
                         break;
                 }
             }
@@ -89,8 +89,8 @@ namespace Quaestur
                     case 100:
                     case 500:
                     case 2500:
-                        Global.Log.Warning("Quaestur recored {1} wrong {0} for account {2}.", secondFactor ? "2fas" : "logins", timeCount, username);
-                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recored {1} wrong {0} for account {2}.", secondFactor ? "2fas" : "logins", timeCount, username));
+                        Global.Log.Warning("Quaestur recorded {1} wrong {0} for account {2}.", secondFactor ? "2fas" : "logins", timeCount, username);
+                        Global.Mail.SendAdmin("Wrong login alert", string.Format("Quaestur recorded {1} wrong {0} for account {2}.", secondFactor ? "2fas" : "logins", timeCount, username));
                         break;
                 }
             }

@@ -55,7 +55,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailTagAssignmentModule : QuaesturModule
+    public class PersonDetailTagAssignmentModule : HospesModule
     {
         public PersonDetailTagAssignmentModule()
         {

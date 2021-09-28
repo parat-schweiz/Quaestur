@@ -138,7 +138,7 @@ namespace Hospes
         }
     }
 
-    public class LatexTemplateEdit : QuaesturModule
+    public class LatexTemplateEdit : HospesModule
     {
         public LatexTemplateEdit()
         {

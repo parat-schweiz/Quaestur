@@ -146,7 +146,7 @@ namespace Hospes
         }
     }
 
-    public class PhraseEdit : QuaesturModule
+    public class PhraseEdit : HospesModule
     {
         private void AssignLanguageText(Phrase phrase, Language language, string value)
         {

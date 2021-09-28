@@ -144,7 +144,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailMasterModule : QuaesturModule
+    public class PersonDetailMasterModule : HospesModule
     {
         public PersonDetailMasterModule()
         {

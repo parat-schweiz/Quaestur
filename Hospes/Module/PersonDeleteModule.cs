@@ -9,7 +9,7 @@ using SiteLibrary;
 
 namespace Hospes
 {
-    public class PersonDeleteModule : QuaesturModule
+    public class PersonDeleteModule : HospesModule
     {
         public PersonDeleteModule()
         {

@@ -84,7 +84,7 @@
     <Compile Include="Infrastructure\Bootstrapper.cs" />
     <Compile Include="Infrastructure\CustomStatusPage.cs" />
     <Compile Include="Infrastructure\Global.cs" />
-    <Compile Include="Infrastructure\PublicusConfig.cs" />
+    <Compile Include="Infrastructure\CensusConfig.cs" />
     <Compile Include="Infrastructure\SecurityThrottle.cs" />
     <Compile Include="Infrastructure\SessionManager.cs" />
     <Compile Include="Infrastructure\TaskRunner.cs" />
@@ -115,6 +115,7 @@
     <Compile Include="Module\SurveyModule.cs" />
     <Compile Include="Infrastructure\SurveySession.cs" />
     <Compile Include="Infrastructure\SurveySessionManager.cs" />
+    <Compile Include="Module\OAuth2LoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Model\" />

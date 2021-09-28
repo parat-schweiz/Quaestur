@@ -456,7 +456,7 @@ namespace Hospes
         }
     }
 
-    public class MailingModule : QuaesturModule
+    public class MailingModule : HospesModule
     {
         private string HtmlPage(string content)
         {

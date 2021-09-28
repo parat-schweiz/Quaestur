@@ -13,6 +13,7 @@ namespace Hospes
         public ConfigSectionMail Mail { get; private set; }
         public ConfigSectionMailCounter MailCounter { get; private set; }
         public ConfigSectionSecurityServiceClient SecurityService { get; private set; }
+        public List<ConfigSectionOauth2Client> Oauth2Services { get; private set; }
 
         public HospesConfig()
         {
@@ -20,6 +21,7 @@ namespace Hospes
             Mail = new ConfigSectionMail();
             MailCounter = new ConfigSectionMailCounter();
             SecurityService = new ConfigSectionSecurityServiceClient();
+            Oauth2Services = new List<ConfigSectionOauth2Client>();
         }
 
         public override IEnumerable<ConfigSection> ConfigSections
@@ -53,6 +55,15 @@ namespace Hospes
             }
         }
 
-        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
+        public override IEnumerable<SubConfig> SubConfigs
+        {
+            get
+            {
+                yield return new SubConfig<ConfigSectionOauth2Client>(
+                    ConfigSectionOauth2Client.Tag,
+                    e => new ConfigSectionOauth2Client(e),
+                    c => Oauth2Services.Add(c));
+            }
+        }
     }
 }

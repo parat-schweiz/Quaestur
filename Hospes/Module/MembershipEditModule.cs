@@ -85,7 +85,7 @@ namespace Hospes
         }
     }
 
-    public class MembershipEdit : QuaesturModule
+    public class MembershipEdit : HospesModule
     {
         public MembershipEdit()
         {

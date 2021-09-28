@@ -68,7 +68,7 @@ namespace Hospes
         }
     }
 
-    public class LoginLinkModule : QuaesturModule
+    public class LoginLinkModule : HospesModule
     {
         public LoginLinkModule()
         {

@@ -13,12 +13,12 @@ using SiteLibrary;
 
 namespace Hospes
 {
-    public class QuaesturModule : NancyModule, IDisposable
+    public class HospesModule : NancyModule, IDisposable
     {
         protected IDatabase Database { get; private set; }
         protected Translation Translation { get; private set; }
 
-        public QuaesturModule()
+        public HospesModule()
         { 
             Database = Global.CreateDatabase();
             Translation = new Translation(Database);

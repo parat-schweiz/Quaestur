@@ -70,7 +70,7 @@ namespace Hospes
         }
     }
 
-    public class Oauth2AuthModule : QuaesturModule
+    public class Oauth2AuthModule : HospesModule
     {
         public Negotiator OAuth2Error(string key, string hint, string technical)
         {
@@ -277,7 +277,7 @@ namespace Hospes
         public string state;
     }
 
-    public class Oauth2TokenModule : QuaesturModule
+    public class Oauth2TokenModule : HospesModule
     {
         private void ExpireSessions()
         {

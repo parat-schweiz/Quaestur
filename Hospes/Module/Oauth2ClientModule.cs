@@ -115,7 +115,7 @@ namespace Hospes
         }
     }
 
-    public class Oauth2ClientEdit : QuaesturModule
+    public class Oauth2ClientEdit : HospesModule
     {
         public Oauth2ClientEdit()
         {

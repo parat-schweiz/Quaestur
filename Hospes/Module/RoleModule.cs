@@ -130,7 +130,7 @@ namespace Hospes
         }
     }
 
-    public class RoleEdit : QuaesturModule
+    public class RoleEdit : HospesModule
     {
         public RoleEdit()
         {

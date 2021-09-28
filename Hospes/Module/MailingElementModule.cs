@@ -133,7 +133,7 @@ namespace Hospes
         }
     }
 
-    public class MailingElementEdit : QuaesturModule
+    public class MailingElementEdit : HospesModule
     {
         public MailingElementEdit()
         {

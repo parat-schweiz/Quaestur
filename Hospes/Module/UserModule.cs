@@ -36,7 +36,7 @@ namespace Hospes
         }
     }
 
-    public class UserModule : QuaesturModule
+    public class UserModule : HospesModule
     {
         public UserModule()
         {

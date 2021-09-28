@@ -154,7 +154,7 @@ namespace Hospes
         }
     }
 
-    public class ApiPermissionEdit : QuaesturModule
+    public class ApiPermissionEdit : HospesModule
     {
         public ApiPermissionEdit()
         {

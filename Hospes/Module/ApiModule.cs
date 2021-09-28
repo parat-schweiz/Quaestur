@@ -544,7 +544,7 @@ namespace Hospes
         }
     }
 
-    public class ApiModule : QuaesturModule
+    public class ApiModule : HospesModule
     {
         public ApiModule()
         {

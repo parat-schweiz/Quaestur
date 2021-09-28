@@ -127,7 +127,7 @@ namespace Hospes
         }
     }
 
-    public class GroupEdit : QuaesturModule
+    public class GroupEdit : HospesModule
     {
         public GroupEdit()
         {

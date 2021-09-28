@@ -73,7 +73,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailMembershipModule : QuaesturModule
+    public class PersonDetailMembershipModule : HospesModule
     {
         public PersonDetailMembershipModule()
         {

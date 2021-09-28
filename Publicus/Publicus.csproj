@@ -217,6 +217,7 @@
     <Compile Include="Module\UnsubcribeModule.cs" />
     <Compile Include="Infrastructure\ExpiryTask.cs" />
     <Compile Include="Module\RobotsTxtModule.cs" />
+    <Compile Include="Module\OAuth2LoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

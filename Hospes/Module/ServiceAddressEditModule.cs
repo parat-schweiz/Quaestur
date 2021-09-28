@@ -99,7 +99,7 @@ namespace Hospes
         }
     }
 
-    public class ServiceAddressEdit : QuaesturModule
+    public class ServiceAddressEdit : HospesModule
     {
         public ServiceAddressEdit()
         {

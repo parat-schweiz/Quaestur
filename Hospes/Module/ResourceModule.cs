@@ -12,7 +12,7 @@ using BaseLibrary;
 
 namespace Hospes
 {
-    public class ResourceModule : QuaesturModule
+    public class ResourceModule : HospesModule
     {
         public ResourceModule()
         {
@@ -26,7 +26,7 @@ namespace Hospes
                 }
                 else
                 {
-                    var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "images", "quaestur.png");
+                    var imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "images", "hospes.png");
                     var stream = File.OpenRead(imagePath);
                     return new StreamResponse(() => stream, "image/png");
                 }

@@ -128,7 +128,7 @@ namespace Hospes
         }
     }
 
-    public class ApiClientEdit : QuaesturModule
+    public class ApiClientEdit : HospesModule
     {
         public ApiClientEdit()
         {

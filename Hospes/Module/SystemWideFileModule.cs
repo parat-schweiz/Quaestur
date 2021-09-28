@@ -120,7 +120,7 @@ namespace Hospes
         }
     }
 
-    public class SystemWideFileEdit : QuaesturModule
+    public class SystemWideFileEdit : HospesModule
     {
         public SystemWideFileEdit()
         {

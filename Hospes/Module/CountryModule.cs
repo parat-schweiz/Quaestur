@@ -88,7 +88,7 @@ namespace Hospes
         }
     }
 
-    public class CountryEdit : QuaesturModule
+    public class CountryEdit : HospesModule
     {
         public CountryEdit()
         {

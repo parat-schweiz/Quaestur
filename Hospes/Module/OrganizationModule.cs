@@ -173,7 +173,7 @@ namespace Hospes
         }
     }
 
-    public class OrganizationEdit : QuaesturModule
+    public class OrganizationEdit : HospesModule
     {
         public OrganizationEdit()
         {

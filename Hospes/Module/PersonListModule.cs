@@ -313,7 +313,7 @@ namespace Hospes
         }
     }
 
-    public class PersonListModule : QuaesturModule
+    public class PersonListModule : HospesModule
     {
         private bool Filter(Person person, SearchSettings settings)
         {

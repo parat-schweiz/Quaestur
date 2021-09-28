@@ -145,7 +145,7 @@ namespace Hospes
         }
     }
 
-    public class MailTemplateEdit : QuaesturModule
+    public class MailTemplateEdit : HospesModule
     {
         public MailTemplateEdit()
         {

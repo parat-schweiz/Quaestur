@@ -48,7 +48,7 @@ namespace Hospes
         }
     }
 
-    public class PasswordModule : QuaesturModule
+    public class PasswordModule : HospesModule
     {
         public PasswordModule()
         {

@@ -50,7 +50,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailMasterPublicKeysModule : QuaesturModule
+    public class PersonDetailMasterPublicKeysModule : HospesModule
     {
         public PersonDetailMasterPublicKeysModule()
         {

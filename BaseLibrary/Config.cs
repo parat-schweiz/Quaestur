@@ -25,16 +25,25 @@ namespace BaseLibrary
 
     public class ConfigSectionOauth2Client : ConfigSection
     {
+        public const string Tag = "OAuth2Service";
+
+        public string OAuth2ServiceId { get; set; }
         public string OAuth2AuthorizationUrl { get; set; }
         public string OAuth2TokenUrl { get; set; }
         public string OAuth2ApiUrl { get; set; }
         public string OAuth2ClientId { get; set; }
         public string OAuth2ClientSecret { get; set; }
 
+        public ConfigSectionOauth2Client(XElement element)
+        {
+            Load(element);
+        }
+
         public override IEnumerable<ConfigItem> ConfigItems
         {
             get
             {
+                yield return new ConfigItemString("OAuth2ServiceId", v => OAuth2ServiceId = v);
                 yield return new ConfigItemString("OAuth2AuthorizationUrl", v => OAuth2AuthorizationUrl = v);
                 yield return new ConfigItemString("OAuth2TokenUrl", v => OAuth2TokenUrl = v);
                 yield return new ConfigItemString("OAuth2ApiUrl", v => OAuth2ApiUrl = v);

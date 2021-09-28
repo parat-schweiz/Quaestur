@@ -10,7 +10,7 @@ namespace Hospes
     {
     }
 
-    public class PersonDetailTagsModule : QuaesturModule
+    public class PersonDetailTagsModule : HospesModule
     {
         public PersonDetailTagsModule()
         {

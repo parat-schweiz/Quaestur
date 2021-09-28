@@ -154,7 +154,7 @@ namespace Hospes
         }
     }
 
-    public class ExportEdit : QuaesturModule
+    public class ExportEdit : HospesModule
     {
         public ExportEdit()
         {

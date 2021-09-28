@@ -42,7 +42,7 @@ namespace Hospes
         }
     }
 
-    public class PersonDetailDemographyModule : QuaesturModule
+    public class PersonDetailDemographyModule : HospesModule
     {
         public PersonDetailDemographyModule()
         {

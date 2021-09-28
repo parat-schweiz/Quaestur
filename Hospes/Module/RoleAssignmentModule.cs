@@ -128,7 +128,7 @@ namespace Hospes
         }
     }
 
-    public class RoleAssignmentModule : QuaesturModule
+    public class RoleAssignmentModule : HospesModule
     {
         public static bool IsAssingmentPermitted(Session session, Role role)
         {

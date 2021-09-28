@@ -77,7 +77,7 @@ namespace Hospes
     }
 
 
-    public class PasswordResetModule : QuaesturModule
+    public class PasswordResetModule : HospesModule
     {
         private const string PasswordResetTag = "PasswordReset";
 
@@ -138,7 +138,7 @@ namespace Hospes
                             id.ToString(),
                             time.Ticks.ToString(),
                             ComputeHmac(id, time).ToHexString());
-                        var subject = Translate("PasswordReset.Request.Mail.Subject", "Subject in the password reset request mail", "Quaestur Password Reset");
+                        var subject = Translate("PasswordReset.Request.Mail.Subject", "Subject in the password reset request mail", "Hospes Password Reset");
                         var greeting = Translate("PasswordReset.Request.Mail.Greeting", "Greeting in the password reset request mail", "Hello {0},", address.Person.Value.FirstOrUserName);
                         var message = Translate("PasswordReset.Request.Mail.Message", "Message in the password reset request mail", "you can reset your password using the following link:");
                         var regards = Translate("PasswordReset.Request.Mail.Regards", "Regards in the password reset request mail", "Best regards");

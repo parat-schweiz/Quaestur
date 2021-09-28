@@ -12,16 +12,16 @@ namespace Census
         public ConfigSectionDatabase Database { get; private set; }
         public ConfigSectionMail Mail { get; private set; }
         public ConfigSectionMailCounter MailCounter { get; private set; }
-        public ConfigSectionOauth2Client Oauth2 { get; private set; }
         public ConfigSectionSecurityServiceClient SecurityService { get; private set; }
+        public List<ConfigSectionOauth2Client> Oauth2Services { get; private set; }
 
         public CensusConfig()
         {
             Database = new ConfigSectionDatabase();
             Mail = new ConfigSectionMail();
             MailCounter = new ConfigSectionMailCounter();
-            Oauth2 = new ConfigSectionOauth2Client();
             SecurityService = new ConfigSectionSecurityServiceClient();
+            Oauth2Services = new List<ConfigSectionOauth2Client>();
         }
 
         public override IEnumerable<ConfigSection> ConfigSections
@@ -31,7 +31,6 @@ namespace Census
                 yield return Database;
                 yield return Mail;
                 yield return MailCounter;
-                yield return Oauth2;
                 yield return SecurityService;
             }
         }
@@ -54,6 +53,15 @@ namespace Census
             }
         }
 
-        public override IEnumerable<SubConfig> SubConfigs => new SubConfig[0];
+        public override IEnumerable<SubConfig> SubConfigs
+        {
+            get
+            {
+                yield return new SubConfig<ConfigSectionOauth2Client>(
+                    ConfigSectionOauth2Client.Tag,
+                    e => new ConfigSectionOauth2Client(e),
+                    c => Oauth2Services.Add(c));
+            }
+        }
     }
 }

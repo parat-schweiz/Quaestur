@@ -77,7 +77,7 @@ namespace Hospes
         }
     }
 
-    public class TwoFactorModule : QuaesturModule
+    public class TwoFactorModule : HospesModule
     {
         public TwoFactorModule()
         {
@@ -255,7 +255,7 @@ namespace Hospes
         }
     }
 
-    public class TwoFactorAuthModule : QuaesturModule
+    public class TwoFactorAuthModule : HospesModule
     { 
         public TwoFactorAuthModule()
         {
