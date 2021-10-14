@@ -510,7 +510,7 @@ namespace Quaestur
                 Journal(database, membership.Person.Value,
                     "BillingReminderTask.Settlement.SentMail",
                     "Successfully sent settlement mail",
-                    "Sent settlement by e-mail to {1}",
+                    "Sent settlement by e-mail to {0}",
                     t => billing.Person.PrimaryMailAddress);
 
                 return true;
