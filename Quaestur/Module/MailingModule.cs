@@ -97,7 +97,7 @@ namespace Quaestur
                 Recipients += " / " + mailing.RecipientLanguage.Value.Value.Translate(translator);
             }
 
-            var number = MailingTask.Targets(db, mailing);
+            var number = MailingTask.Targets(db, mailing).Count();
 
             Recipients +=  " / " + translator.Get("Mailing.Scheduled.Fields.Recipients.Contacts", "Contacts in the recipients field on the scheduled mailing page", "circa {0} contacts", number);
 
