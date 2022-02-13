@@ -173,7 +173,7 @@ namespace Quaestur
                 .Where(p => p.Moment.Value.ToLocalTime().Date >= PointsTally.FromDate.Value &&
                             p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
-            var sum = list.Sum(p => (long)p.Amount);
+            var sum = _lastTally.ForwardBalance.Value + list.Sum(p => (long)p.Amount);
             var tripleBase = Math.Min(sum, _membership.Type.Value.TriplePoints.Value);
             var doubleBase = Math.Min(Math.Max(0, sum - tripleBase), _membership.Type.Value.DoublePoints.Value);
             var triplePoints = tripleBase * 2;
