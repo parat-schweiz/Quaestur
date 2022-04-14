@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 31;
+        public static int CurrentVersion = 32;
 
         public static void Install(IDatabase database)
         {
@@ -124,6 +124,9 @@ namespace Quaestur
                     database.AddColumn<Organization>(o => o.BillLocation);
                     database.AddColumn<Organization>(o => o.BillCountry);
                     database.AddColumn<Organization>(o => o.BillIban);
+                    break;
+                case 32:
+                    database.AddColumn<Oauth2Session>(o => o.Nonce);
                     break;
                 default:
                     throw new NotSupportedException();

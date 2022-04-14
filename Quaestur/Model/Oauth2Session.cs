@@ -12,6 +12,7 @@ namespace Quaestur
         public StringField Token { get; private set; }
         public Field<DateTime> Moment { get; private set; }
         public Field<DateTime> Expiry { get; private set; }
+        public StringField Nonce { get; private set; }
 
         public Oauth2Session() : this(Guid.Empty)
         {
@@ -25,6 +26,7 @@ namespace Quaestur
             Token = new StringField(this, "token", 256);
             Moment = new Field<DateTime>(this, "moment", new DateTime(1850, 1, 1));
             Expiry = new Field<DateTime>(this, "expiry", new DateTime(1850, 1, 1));
+            Nonce = new StringField(this, "nonce", 256);
         }
 
         public override string ToString()

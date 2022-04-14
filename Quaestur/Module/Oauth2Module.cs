@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.IO;
+using System.Security.Cryptography;
 using System.Text;
-using Nancy;
-using Nancy.ModelBinding;
-using Nancy.Responses;
-using Nancy.Security;
-using Nancy.Responses.Negotiation;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using BaseLibrary;
+using JWT.Algorithms;
+using JWT.Builder;
+using Nancy;
+using Nancy.Helpers;
+using Nancy.ModelBinding;
+using Nancy.Responses.Negotiation;
+using Nancy.Security;
+using Newtonsoft.Json.Linq;
 using SiteLibrary;
 
 namespace Quaestur
@@ -18,13 +19,13 @@ namespace Quaestur
     public class Oauth2AuthViewModel : MasterViewModel
     {
         public string Id;
-        public string State;
+        public string Data;
         public string Message;
         public string Scope;
         public string PhraseButtonAuthorize;
         public string PhraseButtonReject;
 
-        public Oauth2AuthViewModel(Translator translator, Session session, Oauth2Client client, string state)
+        public Oauth2AuthViewModel(Translator translator, Session session, Oauth2Client client, string state, string nonce)
             : base(translator,
                    translator.Get("OAuth2.Title", "Title of the oauth2 page", "Authorization"),
                    session)
@@ -33,7 +34,7 @@ namespace Quaestur
             PhraseButtonReject = translator.Get("OAuth2.Button.Reject", "Reject button on the OAuth2 page", "Reject");
 
             Id = client.Id.Value.ToString();
-            State = state;
+            Data = "state=" + HttpUtility.UrlEncode(state) + "&nonce=" + HttpUtility.UrlEncode(nonce ?? string.Empty);
             Message = translator.Get("OAuth2.Message", "Messge on the OAuth2 page", "{0} requests authorization to authenticate you and access your {1}. Do you wish to allow this?", 
                 client.Name.Value[translator.Language], GetAccessString(translator, client));
         }
@@ -114,7 +115,7 @@ namespace Quaestur
                         !CurrentSession.CompleteAuth)
                     {
                         CurrentSession.ReturnUrl = "/oauth2/authorize/" + Request.Url.Query;
-                        return Response.AsRedirect("/twofactor/auth"); 
+                        return Response.AsRedirect("/twofactor/auth");
                     }
 
                     string redirectUri = Request.Query["redirect_uri"];
@@ -127,6 +128,7 @@ namespace Quaestur
                     }
 
                     string state = Request.Query["state"] ?? string.Empty;
+                    string nonce = Request.Query["nonce"] ?? string.Empty;
                     bool hasAuthorization = false;
 
                     using (var transaction = Database.BeginTransaction())
@@ -149,7 +151,7 @@ namespace Quaestur
 
                     if (hasAuthorization)
                     {
-                        Oauth2Session session = CreateSession(client);
+                        Oauth2Session session = CreateSession(client, nonce);
 
                         string uri = CreateRedirectUrl(client, session, state);
 
@@ -157,7 +159,7 @@ namespace Quaestur
                     }
                     else
                     {
-                        return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Translator, CurrentSession, client, state)];
+                        return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Translator, CurrentSession, client, state, nonce)];
                     }
                 }
                 else
@@ -173,51 +175,59 @@ namespace Quaestur
                 string idString = parameters.id;
                 var client = Database.Query<Oauth2Client>(idString);
 
-                if (client != null)
+                if (client == null)
                 {
-                    if (client.RequireTwoFactor &&
-                        (!CurrentSession.CompleteAuth))
-                    {
-                        return string.Empty;
-                    }
-
-                    using (var transaction = Database.BeginTransaction())
-                    {
-                        var authorization = Database.Query<Oauth2Authorization>(
-                            DC.Equal("userid", CurrentSession.User.Id.Value)
-                            .And(DC.Equal("clientid", client.Id.Value)))
-                            .SingleOrDefault();
-
-                        if (authorization != null &&
-                            DateTime.UtcNow > authorization.Expiry)
-                        {
-                            authorization.Delete(Database);
-                            authorization = null;
-                        }
-
-                        if (authorization == null)
-                        {
-                            authorization = new Oauth2Authorization(Guid.NewGuid());
-                            authorization.Client.Value = client;
-                            authorization.User.Value = CurrentSession.User;
-                            authorization.Moment.Value = DateTime.UtcNow;
-                            authorization.Expiry.Value = DateTime.UtcNow.AddDays(180);
-                            Database.Save(authorization);
-                        }
-
-                        transaction.Commit();
-                    }
-
-                    var state = ReadBody();
-
-                    Oauth2Session session = CreateSession(client);
-
-                    string uri = CreateRedirectUrl(client, session, state);
-
-                    return uri;
+                    Global.Log.Notice("OAuth2: Client not found on callback");
+                    return string.Empty;
                 }
 
-                return string.Empty;
+                if (client.RequireTwoFactor &&
+                    (!CurrentSession.CompleteAuth))
+                {
+                    return string.Empty;
+                }
+
+                using (var transaction = Database.BeginTransaction())
+                {
+                    var authorization = Database.Query<Oauth2Authorization>(
+                        DC.Equal("userid", CurrentSession.User.Id.Value)
+                        .And(DC.Equal("clientid", client.Id.Value)))
+                        .SingleOrDefault();
+
+                    if (authorization != null &&
+                        DateTime.UtcNow > authorization.Expiry)
+                    {
+                        authorization.Delete(Database);
+                        authorization = null;
+                    }
+
+                    if (authorization == null)
+                    {
+                        authorization = new Oauth2Authorization(Guid.NewGuid());
+                        authorization.Client.Value = client;
+                        authorization.User.Value = CurrentSession.User;
+                        authorization.Moment.Value = DateTime.UtcNow;
+                        authorization.Expiry.Value = DateTime.UtcNow.AddDays(180);
+                        Database.Save(authorization);
+                    }
+
+                    transaction.Commit();
+                }
+
+                string state = Context.Request.Form.state ?? string.Empty;
+                string nonce = Context.Request.Form.nonce ?? string.Empty;
+
+                if (string.IsNullOrEmpty(state))
+                {
+                    Global.Log.Notice("OAuth2: Could not retrieve state from callback body");
+                    return string.Empty;
+                }
+
+                Oauth2Session session = CreateSession(client, nonce);
+
+                string uri = CreateRedirectUrl(client, session, state);
+
+                return uri;
             });
         }
 
@@ -246,7 +256,7 @@ namespace Quaestur
             return uri.ToString();
         }
 
-        private Oauth2Session CreateSession(Oauth2Client client)
+        private Oauth2Session CreateSession(Oauth2Client client, string nonce)
         {
             var session = new Oauth2Session(Guid.NewGuid());
             session.Client.Value = client;
@@ -255,6 +265,7 @@ namespace Quaestur
             session.Token.Value = session.Id.Value.ToString() + "." + Rng.Get(16).ToHexString();
             session.Moment.Value = DateTime.UtcNow;
             session.Expiry.Value = DateTime.UtcNow.AddHours(1);
+            session.Nonce.Value = nonce ?? string.Empty;
             Database.Save(session);
 
             Journal(session.User.Value,
@@ -275,6 +286,46 @@ namespace Quaestur
         public string client_id;
         public string client_secret;
         public string state;
+    }
+
+    public class Oauth2SigningKey
+    {
+        private static Oauth2SigningKey _instance = null;
+
+        public static Oauth2SigningKey Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new Oauth2SigningKey();
+                }
+
+                return _instance;
+            }
+        }
+
+        public Oauth2SigningKey()
+        {
+            Rsa = RSA.Create(2048);
+            Id = Rng.Get(16).ToHexString();
+        }
+
+        public RSA Rsa { get; private set; }
+
+        public string Id { get; private set; }
+
+        public RS256Algorithm Algo(bool withPrivateKey)
+        {
+            if (withPrivateKey)
+            {
+                return new RS256Algorithm(Rsa, Rsa);
+            }
+            else
+            {
+                return new RS256Algorithm(Rsa);
+            }
+        }
     }
 
     public class Oauth2TokenModule : QuaesturModule
@@ -324,6 +375,33 @@ namespace Quaestur
 
         public Oauth2TokenModule()
         {
+            Get("/.well-known/openid-configuration", parameters =>
+            {
+                var response = new JObject(
+                    new JProperty("issuer", Global.Config.WebSiteAddress),
+                    new JProperty("authorization_endpoint", string.Format("{0}/oauth2/authorize", Global.Config.WebSiteAddress)),
+                    new JProperty("token_endpoint", string.Format("{0}/oauth2/token", Global.Config.WebSiteAddress)),
+                    new JProperty("jwks_uri", string.Format("{0}/oauth2/jwk.json", Global.Config.WebSiteAddress)),
+                    new JProperty("response_types_supported", new JArray("code")),
+                    new JProperty("subject_types_supported", new JArray("public")),
+                    new JProperty("id_token_signing_alg_values_supported", new JArray("RS256")),
+                    new JProperty("userinfo_endpoint", string.Format("{0}/api/v1/user/profile", Global.Config.WebSiteAddress)));
+                return Response.AsText(response.ToString(), "application/json");
+            });
+            Get("/oauth2/jwk.json", parameters =>
+            {
+                var rsa = Oauth2SigningKey.Instance.Rsa.ExportParameters(false);
+                var response = new JObject(
+                    new JProperty("keys", new JArray(
+                        new JObject(
+                            new JProperty("kid", Oauth2SigningKey.Instance.Id),
+                            new JProperty("kty", "RSA"),
+                            new JProperty("alg", "RS256"),
+                            new JProperty("use", "sig"),
+                            new JProperty("n", rsa.Modulus),
+                            new JProperty("e", rsa.Exponent)))));
+                return Response.AsText(response.ToString(), "application/json");
+            });
             Post("/oauth2/token", parameters =>
             {
                 ExpireSessions();
@@ -346,8 +424,8 @@ namespace Quaestur
                         int authTime = (int)Math.Floor(session.Moment.Value.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
 
                         var builder = new JWT.Builder.JwtBuilder()
-                            .WithAlgorithm(new JWT.Algorithms.HMACSHA256Algorithm())
-                            .WithSecret(session.Client.Value.Secret.Value)
+                            .WithAlgorithm(Oauth2SigningKey.Instance.Algo(true))
+                            .AddHeader(HeaderName.KeyId, Oauth2SigningKey.Instance.Id)
                             .AddClaim("iss", Global.Config.WebSiteAddress)
                             .AddClaim("sub", session.User.Value.Id.Value.ToString())
                             .AddClaim("aud", session.Client.Value.Id.Value.ToString())
@@ -355,6 +433,12 @@ namespace Quaestur
                             .AddClaim("exp", expiry)
                             .AddClaim("iat", issueTime)
                             .AddClaim("auth_time", authTime);
+
+                        if (!string.IsNullOrEmpty(session.Nonce.Value))
+                        {
+                            builder = builder
+                                .AddClaim("nonce", session.Nonce.Value);
+                        }
 
                         if (session.Client.Value.Access.Value.HasFlag(Oauth2ClientAccess.Email))
                         {

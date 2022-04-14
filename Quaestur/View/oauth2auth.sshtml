@@ -4,7 +4,7 @@
 <script>
 $(document).ready(function() {
   $("#authorizeButton").click(function(event) {
-    $.post("/oauth2/callback/@Model.Id", "@Model.State", function(resultData, status){
+    $.post("/oauth2/callback/@Model.Id", "@Model.Data", function(resultData, status){
       window.location.href = resultData;
     });
     event.preventDefault();
