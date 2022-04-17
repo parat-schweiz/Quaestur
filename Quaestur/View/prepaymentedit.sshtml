@@ -30,6 +30,9 @@ function assignValidation(resultData){
   assignFieldValidation("Moment", result);
   assignFieldValidation("Amount", result);
   assignFieldValidation("Reason", result);
+  assignFieldValidation("Url", result);
+  assignFieldValidation("Reference", result);
+  assignFieldValidation("ReferenceType", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -38,10 +41,13 @@ $("#@Model.ButtonId").click(function() {
   formData.Moment = $("#prepaymentMoment").val();
   formData.Amount = $("#prepaymentAmount").val();
   formData.Reason = $("#prepaymentReason").val();
+  formData.Url = $("#prepaymentUrl").val();
+  formData.Reference = $("#prepaymentReference").val();
+  formData.ReferenceType = $("#prepaymentReferenceType").val();
   $.post("/prepayment/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
     if (assignValidation(resultData)) {
       $('#@Model.DialogId').modal('hide');
-      showPrepayment();
+      showPrepayment('@Model.Id');
       $('.modal-backdrop').remove();
     }
   });
@@ -74,6 +80,31 @@ $('.selectpicker').selectpicker();
         <label for="prepaymentReason">@Model.PhraseFieldReason</label>
         <input type="text" id="prepaymentReason" class="form-control" value="@Model.Reason"/>
         <div id="prepaymentReasonFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="prepaymentUrl">@Model.PhraseFieldUrl</label>
+        <input type="text" id="prepaymentUrl" class="form-control" value="@Model.Url"/>
+        <div id="prepaymentUrlFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="prepaymentReference">@Model.PhraseFieldReference</label>
+        <input type="text" id="prepaymentReference" class="form-control" value="@Model.Reference"/>
+        <div id="prepaymentReferenceFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="prepaymentReferenceType">@Model.PhraseFieldReferenceType</label>
+        <select id="prepaymentReferenceType" class="selectpicker form-control" data-live-search="true">
+          @Each.ReferenceTypes
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="prepaymentReferenceTypeFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

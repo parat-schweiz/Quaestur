@@ -19,9 +19,16 @@ namespace Quaestur
         public string Moment;
         public string Amount;
         public string Reason;
+        public string Url;
+        public string Reference;
+        public string ReferenceType;
+        public List<NamedIntViewModel> ReferenceTypes;
         public string PhraseFieldMoment;
         public string PhraseFieldAmount;
         public string PhraseFieldReason;
+        public string PhraseFieldUrl;
+        public string PhraseFieldReference;
+        public string PhraseFieldReferenceType;
 
         public PrepaymentEditViewModel()
         { 
@@ -35,6 +42,9 @@ namespace Quaestur
             PhraseFieldMoment = translator.Get("Prepayment.Edit.Field.Moment", "Field 'Moment' in the edit prepayment dialog", "Date").EscapeHtml();
             PhraseFieldAmount = translator.Get("Prepayment.Edit.Field.Amount", "Field 'Amount' in the edit prepayment dialog", "Amount").EscapeHtml();
             PhraseFieldReason = translator.Get("Prepayment.Edit.Field.Reason", "Field 'Reason' in the edit prepayment dialog", "Reason").EscapeHtml();
+            PhraseFieldUrl = translator.Get("Prepayment.Edit.Field.Url", "Field 'Url' in the edit prepayment dialog", "Url").EscapeHtml();
+            PhraseFieldReference = translator.Get("Prepayment.Edit.Field.Reference", "Field 'Reference' in the edit prepayment dialog", "Reference").EscapeHtml();
+            PhraseFieldReferenceType = translator.Get("Prepayment.Edit.Field.ReferenceType", "Field 'Reference Type' in the edit prepayment dialog", "Reference Type").EscapeHtml();
         }
 
         public PrepaymentEditViewModel(Translator translator, IDatabase db, Session session, Person person)
@@ -45,6 +55,16 @@ namespace Quaestur
             Moment = string.Empty;
             Amount = string.Empty;
             Reason = string.Empty;
+            Url = string.Empty;
+            Reference = string.Empty;
+            ReferenceType = string.Empty;
+            ReferenceTypes = new List<NamedIntViewModel>();
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.None, false));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.BankTransaction, false));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.Expenses, false));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.StorePayment, false));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.Judgement, false));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.MembershipFee, false));
         }
 
         public PrepaymentEditViewModel(Translator translator, IDatabase db, Session session, Prepayment prepayment)
@@ -55,6 +75,16 @@ namespace Quaestur
             Moment = prepayment.Moment.Value.FormatSwissDateDay();
             Amount = prepayment.Amount.Value.FormatMoney();
             Reason = prepayment.Reason.Value.EscapeHtml();
+            Url = prepayment.Url.Value.EscapeHtml();
+            Reference = prepayment.Reference.Value.EscapeHtml();
+            ReferenceType = string.Empty;
+            ReferenceTypes = new List<NamedIntViewModel>();
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.None, prepayment.ReferenceType.Value == PrepaymentType.None));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.BankTransaction, prepayment.ReferenceType.Value == PrepaymentType.BankTransaction));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.Expenses, prepayment.ReferenceType.Value == PrepaymentType.Expenses));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.StorePayment, prepayment.ReferenceType.Value == PrepaymentType.StorePayment));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.Judgement, prepayment.ReferenceType.Value == PrepaymentType.Judgement));
+            ReferenceTypes.Add(new NamedIntViewModel(translator, PrepaymentType.MembershipFee, prepayment.ReferenceType.Value == PrepaymentType.MembershipFee));
         }
     }
 
@@ -94,6 +124,9 @@ namespace Quaestur
                         status.AssignStringRequired("Reason", prepayment.Reason, model.Reason);
                         status.AssignDecimalString("Amount", prepayment.Amount, model.Amount);
                         status.AssignDateString("Moment", prepayment.Moment, model.Moment);
+                        status.AssignStringFree("Url", prepayment.Url, model.Url);
+                        status.AssignStringFree("Reference", prepayment.Reference, model.Reference);
+                        status.AssignEnumIntString("ReferenceType", prepayment.ReferenceType, model.ReferenceType);
 
                         if (status.IsSuccess)
                         {
@@ -141,6 +174,9 @@ namespace Quaestur
                         status.AssignStringRequired("Reason", prepayment.Reason, model.Reason);
                         status.AssignDecimalString("Amount", prepayment.Amount, model.Amount);
                         status.AssignDateString("Moment", prepayment.Moment, model.Moment);
+                        status.AssignStringFree("Url", prepayment.Url, model.Url);
+                        status.AssignStringFree("Reference", prepayment.Reference, model.Reference);
+                        status.AssignEnumIntString("ReferenceType", prepayment.ReferenceType, model.ReferenceType);
 
                         if (status.IsSuccess)
                         {

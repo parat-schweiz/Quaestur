@@ -110,6 +110,12 @@ namespace Quaestur
                         "Settle bill with prepayment in billing remainder task",
                         "Settled bill {0}",
                         bill.Number.Value);
+                    prepayment.Url.Value = string.Format(
+                        "{0}/bill/download/{1}",
+                        Global.Config.WebSiteAddress,
+                        bill.Id.Value);
+                    prepayment.ReferenceType.Value = PrepaymentType.MembershipFee;
+                    prepayment.Reference.Value = bill.Id.Value.ToString();
                     database.Save(prepayment);
 
                     bill.Status.Value = BillStatus.Payed;

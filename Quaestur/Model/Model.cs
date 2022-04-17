@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 32;
+        public static int CurrentVersion = 35;
 
         public static void Install(IDatabase database)
         {
@@ -71,6 +71,7 @@ namespace Quaestur
             database.CreateTable<Sequence>();
             database.CreateTable<ReservedUserName>();
             database.CreateTable<SystemWideFile>();
+            database.CreateTable<Credits>();
 
             Global.Log.Info("Tables ok.");
         }
@@ -127,6 +128,17 @@ namespace Quaestur
                     break;
                 case 32:
                     database.AddColumn<Oauth2Session>(o => o.Nonce);
+                    break;
+                case 33:
+                    database.AddColumn<SystemWideSettings>(o => o.CreditsPerCurrency);
+                    break;
+                case 34:
+                    database.AddColumn<Prepayment>(o => o.Url);
+                    database.AddColumn<Prepayment>(o => o.Reference);
+                    database.AddColumn<Prepayment>(o => o.ReferenceType);
+                    break;
+                case 35:
+                    database.AddColumn<SystemWideSettings>(o => o.CreditsDecayAgeDays);
                     break;
                 default:
                     throw new NotSupportedException();

@@ -76,6 +76,19 @@ namespace Newtonsoft.Json.Linq
             }
         }
 
+        public static bool TryValueDecimal(this JObject obj, string key, out decimal value)
+        {
+            if (obj.TryValueString(key, out string valueString))
+            {
+                return decimal.TryParse(valueString, out value);
+            }
+            else
+            {
+                value = 0M;
+                return false;
+            }
+        }
+
         public static bool TryValueString(this JObject obj, string key, out string value)
         {
             try

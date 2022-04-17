@@ -5,6 +5,18 @@ namespace System
 {
     public static class LinqExtensions
     {
+        public static int SumOrDefault<T>(this IEnumerable<T> list, Func<T, int> selector, int defaultValue)
+        {
+            if (list.Any())
+            {
+                return list.Sum(selector);
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
+
         public static int MaxOrDefault<T>(this IEnumerable<T> list, Func<T, int> selector, int defaultValue)
         {
             if (list.Any())

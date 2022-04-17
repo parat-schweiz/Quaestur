@@ -311,6 +311,15 @@ namespace Quaestur
                 json.Add(Property("share", budget.Share));
                 json.Add(Property("fulllabel", "/", budget.Owner.Value.Organization.Value.Name, budget.Owner.Value.Name, budget.Label));
             }
+            else if (dbObj is Credits credits)
+            {
+                json.Add(Property("ownerid", credits.Owner.Value.Id));
+                json.Add(Property("amount", credits.Amount));
+                json.Add(Property("reason", credits.Reason));
+                json.Add(Property("url", credits.Url));
+                json.Add(Property("referencetype", credits.ReferenceType));
+                json.Add(Property("referenceid", credits.ReferenceId));
+            }
             else if (dbObj is BudgetPeriod period)
             {
                 json.Add(Property("startdate", period.StartDate));
@@ -431,6 +440,21 @@ namespace Quaestur
             Global.Log.Warning(text, parameters);
         }
 
+        public bool TryParameterObjectId<T>(string idString, out T obj)
+            where T : DatabaseObject, new()
+        {
+            if (Guid.TryParse(idString, out Guid id))
+            {
+                obj = _database.Query<T>(id);
+                return obj != null;
+            }
+            else
+            {
+                obj = null;
+                return false;
+            }
+        }
+
         public bool TryParseJson(string text, out JObject obj)
         {
             try
@@ -462,6 +486,19 @@ namespace Quaestur
         public bool TryValueInt32(JObject request, string key, out int value)
         {
             if (request.TryValueInt32(key, out value))
+            {
+                return true;
+            }
+            else
+            {
+                SetErrorMissingOrMalformed(key);
+                return false;
+            }
+        }
+
+        public bool TryValueDecimal(JObject request, string key, out decimal value)
+        {
+            if (request.TryValueDecimal(key, out value))
             {
                 return true;
             }
@@ -558,9 +595,21 @@ namespace Quaestur
             _response.Add(new JProperty("error", "Malformed JSON object"));
         }
 
+        public void SetError(string error)
+        {
+            _response.Add(new JProperty("status", "failure"));
+            _response.Add(new JProperty("error", error));
+        }
+
         public void SetSuccess()
         {
             _response.Add(new JProperty("status", "success"));
+        }
+
+        public void SetSuccess(string key, object value)
+        {
+            _response.Add(new JProperty("status", "success"));
+            _response.Add(new JProperty(key, value));
         }
 
         public string ToJson()
@@ -662,7 +711,7 @@ namespace Quaestur
                     response.TryValueString(request, "reason", out string reason) &&
                     response.TryValueString(request, "url", out string url) &&
                     response.TryValueDateTime(request, "moment", out DateTime moment) &&
-                    response.TryValueEnum(request, "referencetype", out PointsReferenceType referenceType) &&
+                    response.TryValueEnum(request, "referencetype", out InteractionReferenceType referenceType) &&
                     response.TryValueGuid(request, "referenceid", out Guid referenceId) &&
                     response.HasAccess(person, PartAccess.Points, AccessRight.Write) &&
                     response.HasAccess(budget.Owner.Value.Organization.Value, PartAccess.Points, AccessRight.Write))
@@ -676,6 +725,15 @@ namespace Quaestur
                     points.Url.Value = url;
                     points.ReferenceType.Value = referenceType;
                     points.ReferenceId.Value = referenceId;
+
+                    var credits = new Credits(Guid.NewGuid());
+                    credits.Owner.Value = person;
+                    credits.Amount.Value = amount;
+                    credits.Moment.Value = moment;
+                    credits.Reason.Value = reason;
+                    credits.Url.Value = url;
+                    credits.ReferenceType.Value = referenceType;
+                    credits.ReferenceId.Value = referenceId;
 
                     var success = true;
 
@@ -701,6 +759,7 @@ namespace Quaestur
                         using (var transaction = Database.BeginTransaction())
                         {
                             Database.Save(points);
+                            Database.Save(credits);
                             Journal("API",
                                     person,
                                     "Journal.API.Points.Add",
@@ -711,6 +770,138 @@ namespace Quaestur
                         }
 
                         response.SetObject(points, response.Context);
+                    }
+                }
+
+                return Response.AsText(response.ToJson(), "application/json");
+            });
+            Post("/api/v2/payment/prepare", parameters =>
+            {
+                PaymentTransactions.Instance.Expire();
+                var response = CreateResponse();
+
+                if (response.CheckLogin(Request) &&
+                    response.TryParseJson(ReadBody(), out JObject request) &&
+                    response.TryValueDecimal(request, "amount", out decimal amount) &&
+                    response.TryValueString(request, "reason", out string reason) &&
+                    response.TryValueString(request, "url", out string url) &&
+                    response.TryValueString(request, "payreturnurl", out string payReturnUrl) &&
+                    response.TryValueString(request, "cancelreturnurl", out string cancelReturnUrl))
+                {
+                    var transaction = new PaymentTransaction(
+                        response.Context.Client.Id.Value,
+                        amount,
+                        reason,
+                        url,
+                        payReturnUrl,
+                        cancelReturnUrl);
+                    PaymentTransactions.Instance.Add(transaction);
+                    response.SetSuccess("id", transaction.Id);
+                    Global.Log.Notice(
+                        "Payment transaction id {0} prepared for store {1}.",
+                        transaction.Id,
+                        response.Context.Client.Name.Value[Language.English]);
+                }
+
+                return Response.AsText(response.ToJson(), "application/json");
+            });
+            Post("/api/v2/payment/commit", parameters =>
+            {
+                PaymentTransactions.Instance.Expire();
+                var response = CreateResponse();
+
+                if (response.CheckLogin(Request) &&
+                    response.TryParseJson(ReadBody(), out JObject request) &&
+                    response.TryValueGuid(request, "id", out Guid id))
+                {
+                    var transaction = PaymentTransactions.Instance.Get(id);
+
+                    if ((transaction != null) &&
+                        (transaction.State == PaymentTransactionState.Authorized))
+                    {
+                        var person = Database.Query<Person>(transaction.BuyerId);
+
+                        if (person != null)
+                        {
+                            if (response.HasAccess(person, PartAccess.Credits, AccessRight.Write))
+                            {
+                                using (var dbTransaction = Database.BeginTransaction())
+                                {
+                                    var creditsBalance = Database
+                                    .Query<Credits>(DC.Equal("ownerid", person.Id.Value))
+                                    .Sum(c => c.Amount.Value);
+                                    var settings = Database
+                                        .Query<SystemWideSettings>()
+                                        .Single();
+                                    var split = new PaymentTransactionSplit(settings, transaction, creditsBalance);
+                                    var translator = new Translator(Translation, person.Language.Value);
+                                    var reason = translator.Get(
+                                        "API.Payment.Reason",
+                                        "Reason used by API for store purchase.",
+                                        "Payment for {0}: {1}",
+                                        response.Context.Client.Name.Value[translator.Language],
+                                        transaction.Reason);
+
+                                    var credits = new Credits(transaction.Id);
+                                    credits.Owner.Value = person;
+                                    credits.Amount.Value = (-split.PayableCredits);
+                                    credits.Reason.Value = reason;
+                                    credits.Url.Value = transaction.Url;
+                                    credits.Moment.Value = transaction.Moment;
+                                    credits.ReferenceType.Value = InteractionReferenceType.StorePayment;
+                                    credits.ReferenceId.Value = transaction.ShopId;
+                                    Database.Save(credits);
+
+                                    if (split.PayableCurrency > 0M)
+                                    {
+                                        var prepayment = new Prepayment(Guid.NewGuid());
+                                        prepayment.Person.Value = person;
+                                        prepayment.Amount.Value = (-split.PayableCurrency);
+                                        prepayment.Reason.Value = reason;
+                                        prepayment.Moment.Value = transaction.Moment;
+                                        prepayment.Url.Value = transaction.Url;
+                                        prepayment.Reference.Value = transaction.Id.ToString();
+                                        prepayment.ReferenceType.Value = PrepaymentType.StorePayment;
+                                        Database.Save(prepayment);
+                                    }
+
+                                    Journal("API",
+                                            person,
+                                            "Journal.API.Payment.Committed",
+                                            "Payment committed through the API",
+                                            "Payment committed for store {0}.",
+                                            t => response.Context.Client.Name.Value[t.Language]);
+                                    Global.Log.Notice(
+                                        "Payment transaction committed for user {0} by store {1}.",
+                                        person.GetText(new Translator(Translation, Language.English)),
+                                        response.Context.Client.Name.Value[Language.English]);
+                                    dbTransaction.Commit();
+                                    response.SetSuccess();
+                                    PaymentTransactions.Instance.Remove(transaction.Id);
+                                }
+                            }
+                            else
+                            {
+                                Global.Log.Notice(
+                                    "Credits payment transaction for user {0} by store {1} failed because access was denied.",
+                                    person.GetText(new Translator(Translation, Language.English)),
+                                    response.Context.Client.Name.Value[Language.English]);
+                            }
+                        }
+                        else
+                        {
+                            Global.Log.Notice(
+                                "Credits payment transaction by store {0} failed because the buyer was not found.",
+                                response.Context.Client.Name.Value[Language.English]);
+                            response.SetError("Buyer not found.");
+                        }
+                    }
+                    else
+                    {
+                        Global.Log.Info(
+                            "Credits payment transaction by store {0} failed because the transaction was not found.",
+                            response.Context.Client.Name.Value[Language.English]);
+                        response.SetError("Transaction not found.");
                     }
                 }
 

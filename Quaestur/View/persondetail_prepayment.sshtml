@@ -3,33 +3,27 @@ $("#prepaymentRowAdd").click(function(){
   showPrepaymentEditDialog("add", "@Model.Id");
 });
 @Each.List
-$("#prepaymentRowEdit1@Current.Id").click(function(){
-  showPrepaymentEditDialog("edit", "@Current.Id");
-});
-$("#prepaymentRowEdit2@Current.Id").click(function(){
-  showPrepaymentEditDialog("edit", "@Current.Id");
-});
-$("#prepaymentRowEdit3@Current.Id").click(function(){
-  showPrepaymentEditDialog("edit", "@Current.Id");
-});
-$("#prepaymentRowEdit4@Current.Id").click(function(){
+$("#prepaymentRowEdit@Current.Id").click(function(){
   showPrepaymentEditDialog("edit", "@Current.Id");
 });
 $("#prepaymentRowDelete@Current.Id").click(function(){
+  showPrepaymentDeleteDialog("@Current.Id", "@Current.PhraseDeleteConfirmationQuestion");
+});
+@EndEach
+function showPrepaymentDeleteDialog(id, question){
   $.confirm({
     title: "@Model.PhraseDeleteConfirmationTitle",
-    content: "@Current.PhraseDeleteConfirmationQuestion<br/><br/>@Model.PhraseDeleteConfirmationInfo",
+    content: question + "<br/><br/>@Model.PhraseDeleteConfirmationInfo",
     buttons: {
       confirm: function () {
-        $.get("/prepayment/delete/@Current.Id", function(data, status){
+        $.get("/prepayment/delete/" + id, function(data, status){
           showPrepayment();
         });
       },
       cancel: function () {},
     }
   });
-});
-@EndEach
+}
 function showPrepaymentEditDialog(method, id){
   $.get("/prepayment/" + method + "/" + id, function(data, status){
     if (data){
@@ -38,31 +32,43 @@ function showPrepaymentEditDialog(method, id){
     }
   });
 }
+$(document).ready(function(){
+  if ('@Model.ShowId' != ''){
+    var tableContainer = $('#tableContainer');
+    var halfHeight = tableContainer.height()/2;
+    var rowPosition = $('#Row@Model.ShowId').position();
+    tableContainer.scrollTop(rowPosition.top - halfHeight);
+  }
+});
 </script>
+<span>
+  <span id="prepaymentRowAdd" class="fas fa-plus-circle @Model.Enabled">
+</span>
 <table class="table table-hover table-fixed">
   <thead>
     <tr class='centering clickable-row'>
-      <th width="15%">@Model.PhraseHeaderMoment</th>
-      <th width="50%">@Model.PhraseHeaderReason</th>
-      <th width="15%">@Model.PhraseHeaderAmount</th>
-      <th width="15%">@Model.PhraseHeaderBalance</th>
-      <th width="5%"></th>
+      <th width="11%">@Model.PhraseHeaderMoment</th>
+      <th width="16%">@Model.PhraseHeaderType</th>
+      <th width="40%">@Model.PhraseHeaderReason</th>
+      <th width="13%">@Model.PhraseHeaderAmount</th>
+      <th width="13%">@Model.PhraseHeaderBalance</th>
+      <th width="7%"></th>
     </tr>
   </thead>
-  <tbody>
+  <tbody id="tableContainer">
     @Each.List
-    <tr class='clickable-row'>
-      <td width="15%" id="prepaymentRowEdit1@Current.Id" class="@Model.Editable">@Current.Moment</td>
-      <td width="50%" id="prepaymentRowEdit2@Current.Id" class="@Model.Editable">@Current.Reason</td>
-      <td width="15%" id="prepaymentRowEdit3@Current.Id" class="@Model.Editable alignright">@Current.Amount</td>
-      <td width="15%" id="prepaymentRowEdit4@Current.Id" class="@Model.Editable alignright">@Current.Balance</td>
-      <td width="5%" id="prepaymentRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
+    <tr id="Row@Current.Id" class='clickable-row'>
+      <td width="11%">@Current.Moment</td>
+      <td width="16%">@Current.Type</td>
+      <td width="40%">@Current.Reason</td>
+      <td width="13%" class="alignright">@Current.Amount</td>
+      <td width="13%" class="alignright">@Current.Balance</td>
+      <td width="7%">
+        <span id="prepaymentRowEdit@Current.Id" class="fas fa-pen-to-square @Model.Enabled"></span>
+        <span id="prepaymentRowDelete@Current.Id" class="fas fa-trash-alt @Model.Enabled"></span>
+      </td>
     </tr>
     @EndEach
-    <tr class='centering clickable-row'>
-      <td width="95%" colspan="4" id="prepaymentRowAdd" class="@Model.Editable"><span class="fas fa-plus-circle"></span></td>
-      <td width="5%"></td>
-    </tr>
   </tbody>
 </table>
 <div id="prepaymentEditDialog"/>

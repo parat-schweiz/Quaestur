@@ -1,0 +1,102 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldValidation(field, result){
+  var fieldId = '#credits' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  assignFieldValidation("MomentDate", result);
+  assignFieldValidation("MomentTime", result);
+  assignFieldValidation("Amount", result);
+  assignFieldValidation("Reason", result);
+  assignFieldValidation("Url", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$("#@Model.ButtonId").click(function() {
+  var formData = new Object();
+  formData.MomentDate = $("#creditsMomentDate").val();
+  formData.MomentTime = $("#creditsMomentTime").val();
+  formData.Amount = $("#creditsAmount").val();
+  formData.Reason = $("#creditsReason").val();
+  formData.Url = $("#creditsUrl").val();
+  $.post("/credits/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      showCredits();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.datepicker').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '-3650d',
+    language: 'de'
+});
+$('.selectpicker').selectpicker();
+$('#creditsOrganization').on('change', function() {
+  updateCreditsTypesDiv();
+});
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="creditsMomentDate">@Model.PhraseFieldMomentDate</label>
+        <input type="text" id="creditsMomentDate" class="form-control datepicker" value="@Model.MomentDate"/>
+        <div id="creditsMomentDateFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="creditsMomentTime">@Model.PhraseFieldMomentTime</label>
+        <input type="text" id="creditsMomentTime" class="form-control" value="@Model.MomentTime"/>
+        <div id="creditsMomentTimeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="creditsAmount">@Model.PhraseFieldAmount</label>
+        <input type="text" id="creditsAmount" class="form-control" value="@Model.Amount"/>
+        <div id="creditsAmountFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="creditsReason">@Model.PhraseFieldReason</label>
+        <input type="text" id="creditsReason" class="form-control" value="@Model.Reason"/>
+        <div id="creditsReasonFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="creditsUrl">@Model.PhraseFieldUrl</label>
+        <input type="text" id="creditsUrl" class="form-control" value="@Model.Url"/>
+        <div id="creditsUrlFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

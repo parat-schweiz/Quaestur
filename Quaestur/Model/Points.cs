@@ -5,23 +5,31 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public enum PointsReferenceType
+    public enum InteractionReferenceType
     {
         None = 0,
         DiscoursePost = 1,
-        RedmineIssue = 2
+        RedmineIssue = 2,
+        StorePayment = 3,
+        Decay = 4,
     }
 
-    public static class PointsReferenceTypeExtensions
+    public static class InteractionReferenceTypeExtensions
     {
-        public static string Translate(this PointsReferenceType status, Translator translator)
+        public static string Translate(this InteractionReferenceType status, Translator translator)
         {
             switch (status)
             {
-                case PointsReferenceType.None:
-                    return translator.Get("Enum.PointsReferenceType.None", "Value 'None' in PointsReferenceType enum", "None");
-                case PointsReferenceType.DiscoursePost:
-                    return translator.Get("Enum.PointsReferenceType.DiscoursePost", "Value 'DiscoursePost' in PointsReferenceType enum", "Discourse Post");
+                case InteractionReferenceType.None:
+                    return translator.Get("Enum.InteractionReferenceType.None", "Value 'None' in InteractionReferenceType enum", "None");
+                case InteractionReferenceType.DiscoursePost:
+                    return translator.Get("Enum.InteractionReferenceType.DiscoursePost", "Value 'DiscoursePost' in InteractionReferenceType enum", "Discourse Post");
+                case InteractionReferenceType.RedmineIssue:
+                    return translator.Get("Enum.InteractionReferenceType.RedmineIssue", "Value 'RedmineIssue' in InteractionReferenceType enum", "Redmine Issue");
+                case InteractionReferenceType.StorePayment:
+                    return translator.Get("Enum.InteractionReferenceType.StorePayment", "Value 'StorePayment' in InteractionReferenceType enum", "Store Payment");
+                case InteractionReferenceType.Decay:
+                    return translator.Get("Enum.InteractionReferenceType.Decay", "Value 'Decay' in InteractionReferenceType enum", "Decay");
                 default:
                     throw new NotSupportedException();
             }
@@ -36,7 +44,7 @@ namespace Quaestur
         public Field<int> Amount { get; private set; }
         public StringField Reason { get; private set; }
         public StringField Url { get; private set; }
-        public EnumField<PointsReferenceType> ReferenceType { get; private set; }
+        public EnumField<InteractionReferenceType> ReferenceType { get; private set; }
         public Field<Guid> ReferenceId { get; private set; }
 
         public Points() : this(Guid.Empty)
@@ -51,7 +59,7 @@ namespace Quaestur
             Amount = new Field<int>(this, "amount", 0);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
             Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);
-            ReferenceType = new EnumField<PointsReferenceType>(this, "referencetype", PointsReferenceType.None, PointsReferenceTypeExtensions.Translate);
+            ReferenceType = new EnumField<InteractionReferenceType>(this, "referencetype", InteractionReferenceType.None, InteractionReferenceTypeExtensions.Translate);
             ReferenceId = new Field<Guid>(this, "referenceid", Guid.Empty);
         }
 

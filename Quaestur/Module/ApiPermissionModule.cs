@@ -57,6 +57,7 @@ namespace Quaestur
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Membership, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.PointBudget, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Points, false));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Credits, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Security, false));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, false));
@@ -91,6 +92,7 @@ namespace Quaestur
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Membership, permission.Part.Value == PartAccess.Membership));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.PointBudget, permission.Part.Value == PartAccess.PointBudget));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Points, permission.Part.Value == PartAccess.Points));
+            Parts.Add(new NamedIntViewModel(translator, PartAccess.Credits, permission.Part.Value == PartAccess.Credits));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.RoleAssignments, permission.Part.Value == PartAccess.RoleAssignments));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Security, permission.Part.Value == PartAccess.Security));
             Parts.Add(new NamedIntViewModel(translator, PartAccess.Structure, permission.Part.Value == PartAccess.Structure));

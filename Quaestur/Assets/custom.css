@@ -175,3 +175,11 @@ input[type=checkbox] {
 .alignright {
   text-align: right;
 }
+
+.fa-enabled {
+}
+
+.fa-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,0 +1,36 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+$(document).ready(function() {
+  $("#payButton").click(function(event) {
+    window.location.href = "/payments/authorize/@Model.Id/@Model.AuthCode/";
+    event.preventDefault();
+  });
+  $("#cancelButton").click(function(event) {
+    window.location.href = "@Model.CancelReturnUrl";
+    event.preventDefault();  
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<h3>@Model.PhraseQuestion</h3>
+<div class="container">
+    <table class="table table-fixed">
+    <tbody>
+      @Each.Infos
+      <tr>
+        <td width="50%">@Current.Label</td>
+        <td width="50%">@Current.Value</td>
+      </tr>
+      @EndEach
+    </tbody>
+  </table>
+  @If.IsPayable
+  <button id="payButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonPay</button>
+  @EndIf
+  <button id="cancelButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonCancel</button>
+</div>
+@EndSection

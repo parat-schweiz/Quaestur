@@ -124,6 +124,8 @@ namespace SiteLibrary
                     throw new InvalidOperationException("Type string should not arrive here.");
                 case "System.DateTime":
                     return "timestamp";
+                case "System.TimeSpan":
+                    return "timespan";
                 case "System.Decimal":
                     throw new InvalidOperationException("Type decimal should not arrive here.");
                 case "System.Boolean":

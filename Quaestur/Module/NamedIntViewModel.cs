@@ -86,6 +86,11 @@ namespace Quaestur
         {
         }
 
+        public NamedIntViewModel(Translator translator, PrepaymentType type, bool selected)
+            : this((int)type, type.Translate(translator), selected)
+        {
+        }
+
         public NamedIntViewModel(Translator translator, SubjectAccess subject, bool selected)
             : this((int)subject, subject.Translate(translator), selected)
         {

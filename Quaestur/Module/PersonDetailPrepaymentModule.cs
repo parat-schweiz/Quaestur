@@ -14,14 +14,18 @@ namespace Quaestur
         public string Moment;
         public string Amount;
         public string Balance;
+        public string Type;
         public string PhraseDeleteConfirmationQuestion;
 
         public PersonDetailPrepaymentItemViewModel(Translator translator, Prepayment prepayment, decimal balance)
         {
             Id = prepayment.Id.Value.ToString();
-            Reason = prepayment.Reason.Value.EscapeHtml();
+            var reason = prepayment.Reason.Value.EscapeHtml();
+            var url = prepayment.Url.Value.EscapeHtml();
+            Reason = Html.LinkIfNotEmpty(reason, url, true);
             Moment = prepayment.Moment.Value.FormatSwissDateDay();
             Amount = prepayment.Amount.Value.FormatMoney();
+            Type = prepayment.ReferenceType.Value.Translate(translator);
             Balance = balance.FormatMoney();
             PhraseDeleteConfirmationQuestion = translator.Get("Person.Detail.Master.Prepayments.Delete.Confirm.Question", "Delete prepayment confirmation question", "Do you really wish to delete prepayment {0}?", prepayment.GetText(translator)).EscapeHtml();
         }
@@ -30,16 +34,18 @@ namespace Quaestur
     public class PersonDetailPrepaymentViewModel
     {
         public string Id;
-        public string Editable;
+        public string Enabled;
+        public string ShowId;
         public List<PersonDetailPrepaymentItemViewModel> List;
         public string PhraseHeaderReason;
         public string PhraseHeaderMoment;
         public string PhraseHeaderAmount;
         public string PhraseHeaderBalance;
+        public string PhraseHeaderType;
         public string PhraseDeleteConfirmationTitle;
         public string PhraseDeleteConfirmationInfo;
 
-        public PersonDetailPrepaymentViewModel(Translator translator, IDatabase database, Session session, Person person)
+        public PersonDetailPrepaymentViewModel(Translator translator, IDatabase database, Session session, Person person, string showId)
         {
             Id = person.Id.Value.ToString();
             List = new List<PersonDetailPrepaymentItemViewModel>();
@@ -55,15 +61,17 @@ namespace Quaestur
             }
 
             List.Reverse();
-            Editable =
+            Enabled =
                 session.HasAccess(person, PartAccess.Billing, AccessRight.Write) ?
-                "editable" : "accessdenied";
+                "fa-enabled" : "fa-disabled";
             PhraseHeaderReason = translator.Get("Person.Detail.Prepayment.Header.Reason", "Column 'Reason' on the prepayment tab of the person detail page", "Reason").EscapeHtml();
             PhraseHeaderMoment = translator.Get("Person.Detail.Prepayment.Header.Moment", "Column 'Moment' on the prepayment tab of the person detail page", "Date").EscapeHtml();
             PhraseHeaderAmount = translator.Get("Person.Detail.Prepayment.Header.Amount", "Column 'Amount' on the prepayment tab of the person detail page", "Amount").EscapeHtml();
             PhraseHeaderBalance = translator.Get("Person.Detail.Prepayment.Header.Balance", "Column 'Balance' on the prepayment tab of the person detail page", "Balance").EscapeHtml();
+            PhraseHeaderType = translator.Get("Person.Detail.Prepayment.Header.Type", "Column 'Type' on the prepayment tab of the person detail page", "Type").EscapeHtml();
             PhraseDeleteConfirmationTitle = translator.Get("Person.Detail.Master.Prepayment.Delete.Confirm.Title", "Delete prepayment confirmation title", "Delete?").EscapeHtml();
             PhraseDeleteConfirmationInfo = string.Empty;
+            ShowId = showId;
         }
     }
 
@@ -77,13 +85,14 @@ namespace Quaestur
             {
                 string idString = parameters.id;
                 var person = Database.Query<Person>(idString);
+                var showId = Request.Query.row ?? string.Empty;
 
                 if (person != null)
                 {
                     if (HasAccess(person, PartAccess.Billing, AccessRight.Read))
                     {
                         return View["View/persondetail_prepayment.sshtml", 
-                            new PersonDetailPrepaymentViewModel(Translator, Database, CurrentSession, person)];
+                            new PersonDetailPrepaymentViewModel(Translator, Database, CurrentSession, person, showId)];
                     }
                 }
 

@@ -25,6 +25,7 @@ namespace Quaestur
         Ballot = 16,
         PointBudget = 17,
         Points = 18,
+        Credits = 19,
 s    }
 
     public static class PartAccessExtensions
@@ -71,6 +72,8 @@ s    }
                     return translator.Get("Enum.PartAccess.PointBudget", "Value 'Point budget' in PartAccess enum", "Point budget");
                 case PartAccess.Points:
                     return translator.Get("Enum.PartAccess.Points", "Value 'Points' in PartAccess enum", "Points");
+                case PartAccess.Credits:
+                    return translator.Get("Enum.PartAccess.Credits", "Value 'Credits' in PartAccess enum", "Credits");
                 default:
                     throw new NotSupportedException();
             }

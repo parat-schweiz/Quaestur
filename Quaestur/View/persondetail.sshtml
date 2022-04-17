@@ -17,6 +17,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -36,6 +37,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -55,12 +57,14 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
   }
-  function showPrepayment(){
-      $.get("/person/detail/prepayment/@Model.Id", function(data, status){
+  function showPrepayment(showId = ''){
+      var suffix = showId == '' ? '' : ('?row=' + showId);
+      $.get("/person/detail/prepayment/@Model.Id" + suffix, function(data, status){
           if (data){
               $("#persondata").html(data);
               $("#menuMasterData").removeClass('active');
@@ -74,6 +78,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -93,6 +98,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -112,6 +118,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -131,6 +138,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -150,6 +158,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -169,6 +178,7 @@
               $("#menuSecurity").addClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -188,6 +198,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").addClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
@@ -207,11 +218,32 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").addClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").removeClass('active');
           }
       });
   }
-    function showActions(){
+  function showCredits(){
+      $.get("/person/detail/credits/@Model.Id", function(data, status){
+          if (data){
+              $("#persondata").html(data);
+              $("#menuMasterData").removeClass('active');
+              $("#menuMemberships").removeClass('active');
+              $("#menuTagAssignments").removeClass('active');
+              $("#menuRoleAssignments").removeClass('active');
+              $("#menuDocuments").removeClass('active');
+              $("#menuBilling").removeClass('active');
+              $("#menuPrepayment").removeClass('active');
+              $("#menuJournal").removeClass('active');
+              $("#menuSecurity").removeClass('active');
+              $("#menuPoints").removeClass('active');
+              $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").addClass('active');
+              $("#menuActions").removeClass('active');
+          }
+      });
+  }
+  function showActions(){
       $.get("/person/detail/actions/@Model.Id", function(data, status){
           if (data){
               $("#persondata").html(data);
@@ -226,6 +258,7 @@
               $("#menuSecurity").removeClass('active');
               $("#menuPoints").removeClass('active');
               $("#menuPointsTally").removeClass('active');
+              $("#menuCredits").removeClass('active');
               $("#menuActions").addClass('active');
           }
       });
@@ -292,6 +325,11 @@
       @If.PointsReadable
       <li class="nav-item">
         <a id="menuPoints" class="nav-link" onclick="showPoints()" href="javascript:void(0);">@Model.PhraseTabPoints</a>
+      </li>
+      @EndIf
+      @If.CreditsReadable
+      <li class="nav-item">
+        <a id="menuCredits" class="nav-link" onclick="showCredits()" href="javascript:void(0);">@Model.PhraseTabCredits</a>
       </li>
       @EndIf
       @If.JournalReadable

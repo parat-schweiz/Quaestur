@@ -16,6 +16,7 @@ namespace Quaestur
         public bool DocumentReadable;
         public bool BillingReadable;
         public bool PointsReadable;
+        public bool CreditsReadable;
         public bool JournalReadable;
         public bool SecurityReadable;
         public bool ActionsReadable;
@@ -28,6 +29,7 @@ namespace Quaestur
         public string PhraseTabPrepayment;
         public string PhraseTabPointsTally;
         public string PhraseTabPoints;
+        public string PhraseTabCredits;
         public string PhraseTabJournal;
         public string PhraseTabSecurity;
         public string PhraseTabActions;
@@ -47,6 +49,7 @@ namespace Quaestur
             PhraseTabPrepayment = translator.Get("Person.Detail.Tab.Prepayment", "Tab 'Prepayment' in the person detail page", "Prepayment");
             PhraseTabPointsTally = translator.Get("Person.Detail.Tab.PointsTally", "Tab 'Points tally' in the person detail page", "Points tally");
             PhraseTabPoints = translator.Get("Person.Detail.Tab.Points", "Tab 'Points' in the person detail page", "Points");
+            PhraseTabCredits = translator.Get("Person.Detail.Tab.Credits", "Tab 'Credits' in the person detail page", "Credits");
             PhraseTabJournal = translator.Get("Person.Detail.Tab.Journal", "Tab 'Journal' in the person detail page", "Journal");
             PhraseTabSecurity = translator.Get("Person.Detail.Tab.Security", "Tab 'Security' in the person detail page", "Security");
             PhraseTabActions = translator.Get("Person.Detail.Tab.Actions", "Tab 'Actions' in the person detail page", "Actions");
@@ -58,6 +61,7 @@ namespace Quaestur
             DocumentReadable = session.HasAccess(person, PartAccess.Documents, AccessRight.Read);
             BillingReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Read);
             PointsReadable = session.HasAccess(person, PartAccess.Points, AccessRight.Read);
+            CreditsReadable = session.HasAccess(person, PartAccess.Credits, AccessRight.Read);
             JournalReadable = session.HasAccess(person, PartAccess.Journal, AccessRight.Read);
             SecurityReadable = session.HasAccess(person, PartAccess.Security, AccessRight.Read);
             ActionsReadable = session.HasAccess(person, PartAccess.Billing, AccessRight.Extended);
