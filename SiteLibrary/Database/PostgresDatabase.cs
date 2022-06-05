@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Npgsql;
 using BaseLibrary;
+using System.Data;
 
 namespace SiteLibrary
 {
@@ -551,7 +552,7 @@ namespace SiteLibrary
                 throw new InvalidOperationException("Transaction already in progress."); 
             }
 
-            _transaction = new PostgresTransaction(_connection.BeginTransaction());
+            _transaction = new PostgresTransaction(_connection.BeginTransaction(IsolationLevel.Serializable));
 
             return _transaction;
         }
