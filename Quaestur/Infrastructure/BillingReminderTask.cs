@@ -179,9 +179,7 @@ namespace Quaestur
                     Journal(database, billing.Person,
                         "Document.BillingReminder.NoTemplate",
                         "Whenn a billing reminder cannot be send because no template is configured",
-                        "Sending bill(s) failed for lack of a template",
-                        t => ComputeBillText(t, billing.Bills),
-                        t => template.Name.Value);
+                        "Sending bill(s) failed for lack of a template");
                     UpdateBills(database, billing, DateTime.UtcNow.AddDays(-7d), null);
                     return;
                 }
