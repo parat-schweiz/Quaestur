@@ -24,6 +24,16 @@
     <script src="/Assets/jquery-confirm/jquery-confirm.min.js"></script>
     <script src="/Assets/filesaver/FileSaver.min.js"></script>
     <script src="/Assets/waitdialog.js"></script>
+    <script>
+    $(document).on({
+        ajaxStart: function(){
+            $("body").addClass("loading"); 
+        },
+        ajaxStop: function(){ 
+            $("body").removeClass("loading"); 
+        }    
+    });
+    </script>
     @Section['script'];
   </head>
   <body>
@@ -153,5 +163,6 @@
         </div>
       </div>
     </div>
+    <div class="overlay"></div>
   </body>
 </html>
