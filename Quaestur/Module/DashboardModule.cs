@@ -5,6 +5,7 @@ using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
 using Newtonsoft.Json;
+using BaseLibrary;
 using SiteLibrary;
 
 namespace Quaestur
@@ -56,8 +57,23 @@ namespace Quaestur
         }
     }
 
+    public class DashboardBalanceViewModel
+    {
+        public string Name;
+        public string Value;
+        public string Explain;
+
+        public DashboardBalanceViewModel(string name, string value, string explain)
+        {
+            Name = name;
+            Value = value;
+            Explain = explain;
+        }
+    }
+
     public class DashboardViewModel : MasterViewModel
     {
+        public List<DashboardBalanceViewModel> Balance;
         public List<DashboardItemViewModel> List;
 
         private void AddRecursive(Translator translator, IDatabase db, Organization organization, int indent)
@@ -70,11 +86,99 @@ namespace Quaestur
             }
         }
 
+        private Bill LastBill(Membership membership, IDatabase database)
+        {
+            switch (membership.Type.Value.Collection.Value)
+            {
+                case CollectionModel.Direct:
+                    return database
+                        .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
+                        .OrderByDescending(b => b.UntilDate.Value)
+                        .FirstOrDefault();
+                case CollectionModel.ByParent:
+                    var parent = membership.Person.Value.ActiveMemberships
+                        .Where(m => m.Type.Value.Collection.Value != CollectionModel.None)
+                        .FirstOrDefault(m => membership.Type.Value.Organization.Value.Parent.Value.MembershipTypes.Contains(m.Type.Value));
+                    if (parent == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return LastBill(parent, database);
+                    }
+                case CollectionModel.BySub:
+                    var sub = membership.Person.Value.ActiveMemberships
+                        .Where(m => m.Type.Value.Collection.Value != CollectionModel.None)
+                        .FirstOrDefault(m => membership.Type.Value.Organization.Value.Children.SelectMany(c => c.MembershipTypes).Contains(m.Type.Value));
+                    if (sub == null)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        return LastBill(sub, database);
+                    }
+                default:
+                    return null;
+            }
+        }
+
+        private Tuple<decimal, decimal> ComputeFeeAndDiscounted(Membership membership, IDatabase database, decimal portionOfDiscount)
+        {
+            var lastBill = LastBill(membership, database);
+            var paymentModel = membership.Type.Value.CreatePaymentModel(database);
+            var fromDate = lastBill != null ? lastBill.UntilDate.Value.AddDays(1) : membership.StartDate.Value;
+            var untilDate = fromDate.AddDays(paymentModel.GetBillingPeriod() - 1);
+            var amount = paymentModel.ComputeAmount(membership, fromDate, untilDate);
+            var maxDiscount = membership.Type.Value.MaximumDiscount.Value / 100m;
+            var discounted = amount * (1m - maxDiscount * portionOfDiscount);
+            return new Tuple<decimal, decimal>(amount, discounted);
+        }
+
+        private decimal PointsDiscountPercent(Person person, IDatabase database, long pointsBalance)
+        {
+            var points = person.PointsBalance(database);
+            var memberships = person.ActiveMemberships
+                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
+                .ToList();
+            var maxPoints = memberships
+                .Sum(m => m.Type.Value.MaximumPoints.Value);
+            var portionOfDiscount = (maxPoints > 0) ?
+                Math.Min(1m, (decimal)pointsBalance / (decimal)maxPoints) : 0m;
+            var fees = memberships
+                .Select(m => ComputeFeeAndDiscounted(m, database, portionOfDiscount))
+                .ToList();
+            var undiscountedFees = fees.Sum(f => f.Item1);
+            var discountedFees = fees.Sum(f => f.Item2);
+            return (undiscountedFees > 0m) ? (100m - (100m / undiscountedFees * discountedFees)) : 0m;
+        }
+
         public DashboardViewModel(Translator translator, IDatabase db, Session session)
             : base(translator,
                    translator.Get("Dashboard.Title", "Dashboard page title", "Dashboard"),
                    session)
         {
+            var settings = db.Query<SystemWideSettings>().Single();
+            var points = session.User.PointsBalance(db);
+            var pointsDiscountPercent = PointsDiscountPercent(session.User, db, points);
+            var money = session.User.MoneyBalance(db);
+            var credits = session.User.CreditsBalance(db);
+            var creditsWorth = (decimal)credits / (decimal)settings.CreditsPerCurrency.Value;
+
+            Balance = new List<DashboardBalanceViewModel>();
+            Balance.Add(new DashboardBalanceViewModel(
+                translator.Get("Dashboard.Balance.Credits.Name", "Credits balance name on the dashboard", "Credits"),
+                credits.ToString(),
+                translator.Get("Dashboard.Balance.Credits.Explain", "Credits balance explain on the dashboard", "Worth {0} {1} in our shop", settings.Currency.Value, creditsWorth)));
+            Balance.Add(new DashboardBalanceViewModel(
+                translator.Get("Dashboard.Balance.Points.Name", "Points balance name on the dashboard", "Points"),
+                points.ToString(),
+                translator.Get("Dashboard.Balance.Points.Explain", "Points balance explain on the dashboard", "{0:0.00}% discount towards you next membership fee", pointsDiscountPercent)));
+            Balance.Add(new DashboardBalanceViewModel(
+                translator.Get("Dashboard.Balance.Money.Name", "Money balance name on the dashboard", "Fees balance"),
+                string.Format("{0} {1}", settings.Currency.Value, money.FormatMoney()), ""));
+
             List = new List<DashboardItemViewModel>();
             List.Add(new DashboardItemViewModel(
                 translator.Get("Dashboard.Members.Row.All", "All members row in the dashbaord", "All persons"),

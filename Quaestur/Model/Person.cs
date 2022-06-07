@@ -166,6 +166,34 @@ namespace Quaestur
             }
         }
 
+        public long CreditsBalance(IDatabase database)
+        {
+            return database
+                .Query<Credits>(DC.Equal("ownerid", Id.Value))
+                .SumOrDefault(c => c.Amount.Value, 0);
+        }
+
+        public decimal MoneyBalance(IDatabase database)
+        {
+            return database
+                .Query<Prepayment>(DC.Equal("personid", Id.Value))
+                .SumOrDefault(c => c.Amount.Value, 0M);
+        }
+
+        public long PointsBalance(IDatabase database)
+        {
+            var tally = database.Query<PointsTally>(DC.Equal("personid", Id.Value))
+                .OrderByDescending(t => t.UntilDate.Value)
+                .FirstOrDefault();
+            var tallyDate = tally != null ? tally.UntilDate.Value : DateTime.MinValue;
+            var tallyForward = tally != null ? tally.ForwardBalance.Value : 0;
+            return database
+                .Query<Points>(DC.Equal("ownerid", Id.Value))
+                .Where(p => p.Moment.Value > tallyDate)
+                .SumOrDefault(t => t.Amount.Value, 0) +
+                tallyForward;
+        }
+
         public string PrimaryPostalAddressFiveLines(Translator translator)
         {
             var address = PrimaryPostalAddress;
