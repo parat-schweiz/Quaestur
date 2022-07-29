@@ -373,6 +373,48 @@ namespace Quaestur
             return null;
         }
 
+        private Oauth2Client Authenticate(Oauth2TokenPost post)
+        {
+            var header = Request.Headers["Authorization"].FirstOrDefault();
+
+            if (!string.IsNullOrEmpty(header) &&
+                header.StartsWith("Basic ", StringComparison.InvariantCulture))
+            {
+                var text = Encoding.UTF8.GetString(Convert.FromBase64String(header.Substring(6)));
+                var parts = text.Split(new string[] { ":" }, StringSplitOptions.None);
+                if (parts.Length == 2 &&
+                    Guid.TryParse(parts[0], out Guid clientId))
+                {
+                    var client = Database
+                        .Query<Oauth2Client>(DC.Equal("id", clientId))
+                        .SingleOrDefault();
+
+                    if (client != null &&
+                        client.Secret.Value == parts[1] &&
+                        client.RedirectUri.Value == post.redirect_uri)
+                    {
+                        return client;
+                    }
+                }
+            }
+            else if (!string.IsNullOrEmpty(post.client_id) &&
+                Guid.TryParse(post.client_id, out Guid clientId))
+            {
+                var client = Database
+                    .Query<Oauth2Client>(DC.Equal("id", clientId))
+                    .SingleOrDefault();
+
+                if (client != null &&
+                    client.Secret.Value == post.client_secret &&
+                    client.RedirectUri.Value == post.redirect_uri)
+                {
+                    return client;
+                }
+            }
+
+            return null;
+        }
+
         public Oauth2TokenModule()
         {
             Get("/.well-known/openid-configuration", parameters =>
@@ -406,18 +448,16 @@ namespace Quaestur
             {
                 ExpireSessions();
                 var post = this.Bind<Oauth2TokenPost>();
+                var client = Authenticate(post);
 
-                if (post.grant_type == "authorization_code" &&
-                    !string.IsNullOrEmpty(post.client_id) &&
-                    Guid.TryParse(post.client_id, out Guid clientId))
+                if (client != null &&
+                    post.grant_type == "authorization_code")
                 {
                     var session = Database
-                        .Query<Oauth2Session>(DC.Equal("clientid", clientId))
+                        .Query<Oauth2Session>(DC.Equal("clientid", client.Id.Value))
                         .SingleOrDefault(s => s.AuthCode.Value == post.code);
 
-                    if (session != null &&
-                        session.Client.Value.RedirectUri.Value == post.redirect_uri &&
-                        session.Client.Value.Secret.Value == post.client_secret)
+                    if (session != null)
                     {
                         int expiry = (int)Math.Floor(DateTime.UtcNow.AddHours(1).Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
                         int issueTime = (int)Math.Floor(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds);
