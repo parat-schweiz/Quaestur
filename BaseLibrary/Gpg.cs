@@ -116,6 +116,7 @@ namespace BaseLibrary
         BrainpoolP384r1,
         BrainpoolP512r1,
         Secp256k1,
+        EDDSA,
         Unknown
     }
 
@@ -883,13 +884,13 @@ namespace BaseLibrary
             {
                 switch (type)
                 {
-                    case "Curve25519":
+                    case "cv25519":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.Curve25519, 256);
-                    case "Ed25519":
+                    case "ed25519":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.Ed25519, 256);
-                    case "X448":
+                    case "x448":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.X448, 512);
-                    case "Ed448":
+                    case "ed448":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.Ed448, 521);
                     case "NIST P-256":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.NistP256, 256);
@@ -906,7 +907,7 @@ namespace BaseLibrary
                     case "secp256k1":
                         return new Tuple<GpgKeyType, int>(GpgKeyType.Secp256k1, 256);
                     default:
-                        throw new NotSupportedException();
+                        throw new NotSupportedException("Key type " + type + " not supported.");
                 }
             }
         }
