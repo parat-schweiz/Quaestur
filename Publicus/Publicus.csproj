@@ -108,10 +108,10 @@
       <HintPath>..\packages\JWT.9.0.3\lib\net46\JWT.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.3.3.0\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.3.4.1\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.3.4.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.3.4.1\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
