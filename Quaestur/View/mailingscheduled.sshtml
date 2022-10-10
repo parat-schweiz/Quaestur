@@ -13,6 +13,19 @@ $(document).ready(function() {
     window.location.href = "/mailing";
     event.preventDefault();  
   });
+  $("#mailingResendButton").click(function(event) {
+    $('#sendResendDialog').modal('show');
+    event.preventDefault();
+  });
+  $("#mailingResendDialogOkButton").click(function(event) {
+    $('#sendResendDialog').modal('hide');
+    $.post("/mailing/resend/@Model.Id", $("#mailingResendAddress").val(), function(statusData, status){
+      $('.modal-backdrop').remove();
+      var statusObject = JSON.parse(statusData);
+      $.notify({ message: statusObject.MessageText },{ type: statusObject.MessageType });
+    });
+    event.preventDefault();
+  });
 });
 </script>
 @EndSection
@@ -57,9 +70,34 @@ $(document).ready(function() {
       @EndEach
     </tbody>
   </table>
+  <button id="mailingResendButton" class="btn btn-primary mb-2">@Model.PhraseButtonResend</button>
   <button id="mailingBackButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonBack</button>
   @If.Cancelable
   <button id="mailingAbortButton" class="btn btn-primary mb-2 width-20p float-right left-space">@Model.PhraseButtonAbort</button>
   @EndIf
+</div>
+<div class="modal fade" id="sendResendDialog" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">@Model.PhraseButtonResend</h4>
+      </div>
+      <div class="modal-body">
+        <form>
+          <div class="form-row">
+            <div class="col-12 mb-3">
+              <label for="mailingTitle">@Model.PhraseFieldResendAddress</label>
+              <input type="text" class="form-control" id="mailingResendAddress" value="">
+              <div class="valid-feedback"></div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button id="mailingResendDialogOkButton" type="button" class="btn btn-default btn-dialog">@Model.PhraseButtonOk</button>
+        <button type="button" class="btn btn-default btn-dialog" data-dismiss="modal">@Model.PhraseButtonCancel</button>
+      </div>
+    </div>
+  </div>
 </div>
 @EndSection

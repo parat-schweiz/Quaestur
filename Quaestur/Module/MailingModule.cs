@@ -50,11 +50,16 @@ namespace Quaestur
         public string PhraseFieldRecipients;
         public string PhraseFieldSubject;
         public string PhraseFieldStatus;
+        public string PhraseButtonResend;
         public string PhraseButtonAbort;
         public string PhraseButtonBack;
         public string PhraseFieldSendingName;
         public string PhraseFieldSendingAddress;
         public string PhraseFieldSendingStatus;
+        public string PhraseFieldResendAddress;
+        public string PhraseButtonSaveSend;
+        public string PhraseButtonCancel;
+        public string PhraseButtonOk;
 
         public string Id;
         public string Recipients;
@@ -73,11 +78,15 @@ namespace Quaestur
             PhraseFieldRecipients = translator.Get("Mailing.Scheduled.Field.Recipients", "Recipients field the scheduled mailing page", "Recipients").EscapeHtml();
             PhraseFieldSubject = translator.Get("Mailing.Scheduled.Field.Subject", "Subject field the scheduled mailing page", "Subject").EscapeHtml();
             PhraseFieldStatus = translator.Get("Mailing.Scheduled.Field.Status", "Status field the scheduled mailing page", "Status").EscapeHtml();
+            PhraseButtonResend = translator.Get("Mailing.Scheduled.Button.Resend", "Resend button the edit mailing page", "Resend mail").EscapeHtml();
             PhraseButtonAbort = translator.Get("Mailing.Scheduled.Button.Abort", "Abort button the scheduled mailing page", "Abort").EscapeHtml();
             PhraseButtonBack = translator.Get("Mailing.Scheduled.Button.Back", "Back button the scheduled mailing page", "Back").EscapeHtml();
-            PhraseFieldSendingName = translator.Get("Mailing.Sending.Field.Name", "Sending name field the scheduled mailing page", "Name").EscapeHtml();
-            PhraseFieldSendingAddress = translator.Get("Mailing.Sending.Field.Address", "Sending address field the scheduled mailing page", "Address").EscapeHtml();
-            PhraseFieldSendingStatus = translator.Get("Mailing.Sending.Field.Status", "Sending status field the scheduled mailing page", "Status").EscapeHtml();
+            PhraseFieldSendingName = translator.Get("Mailing.Scheduled.Field.Name", "Sending name field the scheduled mailing page", "Name").EscapeHtml();
+            PhraseFieldSendingAddress = translator.Get("Mailing.Scheduled.Field.Address", "Sending address field the scheduled mailing page", "Address").EscapeHtml();
+            PhraseFieldSendingStatus = translator.Get("Mailing.Scheduled.Field.Status", "Sending status field the scheduled mailing page", "Status").EscapeHtml();
+            PhraseFieldResendAddress = translator.Get("Mailing.Scheduled.Field.ResendAddress", "Test address field the edit mailing page", "E-Mail address").EscapeHtml();
+            PhraseButtonCancel = translator.Get("Mailing.Scheduled.Button.Cancel", "Cancel button the edit mailing page", "Cancel").EscapeHtml();
+            PhraseButtonOk = translator.Get("Mailing.Scheduled.Button.Ok", "Ok button the edit mailing page", "OK").EscapeHtml();
         }
 
         public MailingScheduledViewModel(Translator translator, IDatabase db, Session session, Mailing mailing)
@@ -641,6 +650,74 @@ namespace Quaestur
                 {
                     return PostResult.Failed(
                         Translate("Mailing.Edit.Test.Failed", "Failed message on sending test mail in mailing edit page", "E-Mail could not be sent."));
+                }
+            });
+            Post("/mailing/resend/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var mailing = Database.Query<Mailing>(idString);
+                var status = CreateStatus();
+
+                if (status.ObjectNotNull(mailing))
+                {
+                    var sendToAddress = ReadBody();
+                    var worker = new HtmlWorker(mailing.HtmlText.Value);
+
+                    var htmlText = worker.CleanHtml;
+                    var plainText = worker.PlainText;
+
+                    if (mailing.Header.Value != null)
+                    {
+                        htmlText = HtmlWorker.ConcatHtml(mailing.Header.Value.HtmlText.Value, htmlText);
+                        plainText = mailing.Header.Value.PlainText.Value + plainText;
+                    }
+
+                    if (mailing.Header.Value != null)
+                    {
+                        htmlText = HtmlWorker.ConcatHtml(htmlText, mailing.Header.Value.HtmlText.Value);
+                        plainText = plainText + mailing.Header.Value.PlainText.Value;
+                    }
+
+                    var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
+                    htmlText = templator.Apply(htmlText);
+                    plainText = templator.Apply(plainText);
+
+                    try
+                    {
+                        var language = CurrentSession.User.Language.Value;
+                        var from = new MailboxAddress(
+                            mailing.Sender.Value.MailName.Value[language],
+                            mailing.Sender.Value.MailAddress.Value[language]);
+                        var to = MailboxAddress.Parse(sendToAddress);
+                        var senderKey = string.IsNullOrEmpty(mailing.Sender.Value.GpgKeyId.Value) ? null :
+                            new GpgPrivateKeyInfo(
+                            mailing.Sender.Value.GpgKeyId.Value,
+                            mailing.Sender.Value.GpgKeyPassphrase.Value);
+                        var content = new Multipart("alternative");
+                        var textPart = new TextPart("plain") { Text = plainText };
+                        textPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                        content.Add(textPart);
+                        var htmlPart = new TextPart("html") { Text = htmlText };
+                        htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                        content.Add(htmlPart);
+
+                        Global.MailCounter.Used();
+                        Global.Mail.Send(from, to, senderKey, null, mailing.Subject.Value, content);
+                        Notice("{0} resent mailing with subject {1}", CurrentSession.User.ShortHand, mailing.Subject.Value);
+
+                        return PostResult.Success(
+                            Translate("Mailing.Scheduled.Resend.Success", "Success message on sending resend mail in mailing scheduled page", "Resent E-Mail."));
+                    }
+                    catch
+                    {
+                        return PostResult.Failed(
+                            Translate("Mailing.Scheduled.Resend.Failed", "Failed message on sending resend mail in mailing scheduled page", "E-Mail could not be sent."));
+                    }
+                }
+                else
+                {
+                    return PostResult.Failed(
+                        Translate("Mailing.Scheduled.Resend.Failed", "Failed message on sending resend mail in mailing scheduled page", "E-Mail could not be sent."));
                 }
             });
             Get("/mailing/send/{id}", parameters =>
