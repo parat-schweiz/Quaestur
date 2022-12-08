@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-using Ganss.XSS;
+using Ganss.Xss;
 
 namespace SiteLibrary
 {
