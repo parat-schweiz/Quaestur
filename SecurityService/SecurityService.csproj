@@ -43,9 +43,6 @@
     <Reference Include="Nancy.Hosting.Self">
       <HintPath>..\packages\Nancy.Hosting.Self.2.0.0\lib\net452\Nancy.Hosting.Self.dll</HintPath>
     </Reference>
-    <Reference Include="Sodium">
-      <HintPath>..\packages\libsodium-net.0.10.0\lib\Net40\Sodium.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -91,6 +88,10 @@
       <Project>{1DE4624F-E205-4E23-B40A-F54FD18CAFB3}</Project>
       <Name>SecurityServiceClient</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libsodium-net\libsodium-net\libsodium-net.csproj">
+      <Project>{8E6F5390-F39A-90BD-763E-7F08197788B3}</Project>
+      <Name>libsodium-net</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -105,5 +106,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <Import Project="..\packages\Baseclass.Contrib.Nuget.Output.2.4.4\build\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('..\packages\Baseclass.Contrib.Nuget.Output.2.4.4\build\Baseclass.Contrib.Nuget.Output.targets')" />
 </Project>

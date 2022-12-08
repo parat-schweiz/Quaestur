@@ -7,5 +7,11 @@
     <MonoDebugCasts>false</MonoDebugCasts>
     <MonoDebugMdbOptimizations>false</MonoDebugMdbOptimizations>
     <MonoGdbInfo>false</MonoGdbInfo>
+    <MonoProfile></MonoProfile>
+    <MonoVerboseLevel>0</MonoVerboseLevel>
+    <MonoRuntimeVersion></MonoRuntimeVersion>
+    <MonoSecurityMode>Disabled</MonoSecurityMode>
+    <MonoVerifyAll>false</MonoVerifyAll>
+    <MonoTraceExpressions></MonoTraceExpressions>
   </PropertyGroup>
 </Project>

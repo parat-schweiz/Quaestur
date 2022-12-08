@@ -1,0 +1,4 @@
+[submodule "libsodium-net"]
+	path = libsodium-net
+	url = https://github.com/throwException/libsodium-net
+	branch = master

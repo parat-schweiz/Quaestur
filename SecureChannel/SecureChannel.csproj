@@ -32,9 +32,6 @@
       <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="netstandard" />
-    <Reference Include="Sodium">
-      <HintPath>..\packages\libsodium-net.0.10.0\lib\Net40\Sodium.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -53,6 +50,10 @@
       <Project>{64AB460A-DE0F-4141-99C7-EC983E22D8B6}</Project>
       <Name>BaseLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libsodium-net\libsodium-net\libsodium-net.csproj">
+      <Project>{676CE0AC-5756-4714-9B95-AB5E37E82DFC}</Project>
+      <Name>libsodium-net</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -67,5 +68,4 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
-  <Import Project="..\packages\Baseclass.Contrib.Nuget.Output.2.4.4\build\Baseclass.Contrib.Nuget.Output.targets" Condition="Exists('..\packages\Baseclass.Contrib.Nuget.Output.2.4.4\build\Baseclass.Contrib.Nuget.Output.targets')" />
 </Project>
