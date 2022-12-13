@@ -249,6 +249,22 @@ namespace Publicus
             Database.Save(permission);
         }
 
+        private string DescribeNullOrEmpty(string value)
+        { 
+            if (value == null)
+            {
+                return "null";
+            }
+            else if (value == string.Empty)
+            {
+                return "empty";
+            }
+            else
+            {
+                return "not null or empty";
+            }
+        }
+
         public LoginModule()
         {
             Get("/login", parameters =>
@@ -271,6 +287,7 @@ namespace Publicus
                 if (string.IsNullOrEmpty(code) ||
                     string.IsNullOrEmpty(returnUrl))
                 {
+                    Global.Log.Warning("Invalid OAuth2 login: Code is {0}, return URL is {1}", DescribeNullOrEmpty(code), DescribeNullOrEmpty(returnUrl));
                     return View["View/info.sshtml", new InfoViewModel(Translator,
                         Translate("Login.Redirect.Invalid.Title", "Title of the message when login redirect is invalid", "Invalid request"),
                         Translate("Login.Redirect.Invalid.Message", "Text of the message when login redirect is invalid", "Request is invalid."),
@@ -295,6 +312,7 @@ namespace Publicus
 
                     if (tokenType != "Bearer")
                     {
+                        Global.Log.Warning("Invalid OAuth2 login: Token type is not bearer, but {0}", tokenType);
                         return View["View/info.sshtml", new InfoViewModel(Translator,
                             Translate("Login.Redirect.Invalid.Title", "Title of the message when login redirect is invalid", "Invalid request"),
                             Translate("Login.Redirect.Invalid.Message", "Text of the message when login redirect is invalid", "Request is invalid."),
@@ -334,8 +352,9 @@ namespace Publicus
 
                     return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), returnUrl);
                 }
-                catch
+                catch (Exception exception)
                 {
+                    Global.Log.Warning("Invalid OAuth2 login: {0}", exception.Message);
                     return View["View/info.sshtml", new InfoViewModel(Translator,
                         Translate("Login.Redirect.Invalid.Title", "Title of the message when login redirect is invalid", "Invalid request"),
                         Translate("Login.Redirect.Invalid.Message", "Text of the message when login redirect is invalid", "Request is invalid."),
