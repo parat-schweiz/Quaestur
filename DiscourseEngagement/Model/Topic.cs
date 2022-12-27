@@ -10,7 +10,7 @@ namespace DiscourseEngagement
         public Field<int> TopicId { get; private set; }
         public Field<int> PostsCount { get; private set; }
         public Field<int> LikeCount { get; private set; }
-        public Field<DateTime> LastPostedAt { get; private set; }
+        public FieldDateTime LastPostedAt { get; private set; }
 
         public Topic() : this(Guid.Empty)
         {
@@ -21,7 +21,7 @@ namespace DiscourseEngagement
             TopicId = new Field<int>(this, "topicid", 0);
             PostsCount = new Field<int>(this, "postscount", 0);
             LikeCount = new Field<int>(this, "likecount", 0);
-            LastPostedAt = new Field<DateTime>(this, "lastpostedat", new DateTime(1970, 1, 1));
+            LastPostedAt = new FieldDateTime(this, "lastpostedat", new DateTime(1970, 1, 1));
         }
 
         public override string ToString()

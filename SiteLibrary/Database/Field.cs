@@ -257,6 +257,131 @@ namespace SiteLibrary
         }
     }
 
+    public class FieldDate : Field<DateTime>
+    {
+        public FieldDate(DatabaseObject obj, string columnName, DateTime defaultValue)
+         : base(obj, columnName, defaultValue)
+        {
+        }
+
+        public override DateTime Value
+        {
+            get
+            {
+                return new DateTime(base.Value.Year, base.Value.Month, base.Value.Day);
+            }
+            set
+            {
+                base.Value = new DateTime(value.Year, value.Month, value.Day);
+            }
+        }
+    }
+
+    public class FieldDateNull : FieldNull<DateTime>
+    {
+        public FieldDateNull(DatabaseObject obj, string columnName)
+         : base(obj, columnName)
+        {
+        }
+
+        public override DateTime? Value
+        {
+            get
+            {
+                var value = base.Value;
+                if (value.HasValue)
+                {
+                    return new DateTime(value.Value.Year, value.Value.Month, value.Value.Day);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            set
+            {
+                if (value.HasValue)
+                {
+                    base.Value = new DateTime(value.Value.Year, value.Value.Month, value.Value.Day);
+                }
+                else
+                {
+                    base.Value = null;
+                }
+            }
+        }
+    }
+
+    public class FieldDateTime : Field<DateTime>
+    {
+        public FieldDateTime(DatabaseObject obj, string columnName, DateTime defaultValue)
+         : base(obj, columnName, defaultValue)
+        {
+        }
+
+        public override DateTime Value
+        {
+            get
+            {
+                var value = base.Value;
+                if (value.Kind == DateTimeKind.Local)
+                {
+                    return new DateTime(value.Ticks, DateTimeKind.Utc);
+                }
+                else
+                {
+                    return value;
+                }
+            }
+            set
+            {
+                if (value.Kind == DateTimeKind.Local)
+                {
+                    base.Value = value.ToUniversalTime();
+                }
+                else
+                {
+                    base.Value = value;
+                }
+            }
+        }
+    }
+
+    public class FieldDateTimeNull : FieldNull<DateTime>
+    {
+        public FieldDateTimeNull(DatabaseObject obj, string columnName) 
+         : base(obj, columnName)
+        {
+        }
+
+        public override DateTime? Value
+        {
+            get
+            {
+                var value = base.Value;
+                if (value.HasValue && value.Value.Kind == DateTimeKind.Local)
+                {
+                    return new DateTime(value.Value.Ticks, DateTimeKind.Utc);
+                }
+                else
+                {
+                    return value;
+                }
+            }
+            set
+            {
+                if (value.HasValue && value.Value.Kind == DateTimeKind.Local)
+                {
+                    base.Value = value.Value.ToUniversalTime();
+                }
+                else
+                {
+                    base.Value = value;
+                }
+            }
+        }
+    }
+
     public class FieldNull<T> : ValueField<T?> where T : struct
     {
         protected T? _value;

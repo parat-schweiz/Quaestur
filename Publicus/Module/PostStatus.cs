@@ -310,7 +310,152 @@ namespace Publicus
             }
         }
 
-        public void AssignDateString(string fieldName, Field<DateTime> field, string stringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTime field, string dateStringValue, string timeStringValue)
+        {
+            if (!string.IsNullOrEmpty(dateStringValue) &&
+                !string.IsNullOrEmpty(timeStringValue))
+            {
+                if (DateTime.TryParseExact(dateStringValue + " " + timeStringValue,
+                    new string[] {
+                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm",
+                        "dd.MM.yyyy HH:mm:ss",
+                        "dd.MM.yyyy HH:mm",
+                        "MM/dd/yyyy HH:mm:ss",
+                        "MM/dd/yyyy HH:mm"
+                    },
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out DateTime value))
+                {
+                    field.Value = value;
+                }
+                else
+                {
+                    Add(dateFieldName,
+                        "Validation.DateOrTime.Invalid",
+                        "Validation message on date or time invalid",
+                        "Date or time invalid");
+                    Add(timeFieldName,
+                        "Validation.DateOrTime.Invalid",
+                        "Validation message on date or time invalid",
+                        "Date or time invalid");
+                    IsSuccess = false;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(dateStringValue))
+                {
+                    Add(dateFieldName,
+                        "Validation.Date.Required",
+                        "Validation message on date required",
+                        "Date required");
+                }
+                if (string.IsNullOrEmpty(timeStringValue))
+                {
+                    Add(timeFieldName,
+                        "Validation.Time.Required",
+                        "Validation message on time required",
+                        "Time required");
+                }
+                IsSuccess = false;
+            }
+        }
+
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTimeNull field, string dateStringValue, string timeStringValue)
+        {
+            if (!string.IsNullOrEmpty(dateStringValue) &&
+                !string.IsNullOrEmpty(timeStringValue))
+            {
+                if (DateTime.TryParseExact(dateStringValue + " " + timeStringValue,
+                    new string[] {
+                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm",
+                        "dd.MM.yyyy HH:mm:ss",
+                        "dd.MM.yyyy HH:mm",
+                        "MM/dd/yyyy HH:mm:ss",
+                        "MM/dd/yyyy HH:mm"
+                    },
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out DateTime value))
+                {
+                    field.Value = value;
+                }
+                else
+                {
+                    Add(dateFieldName,
+                        "Validation.DateOrTime.Invalid",
+                        "Validation message on date or time invalid",
+                        "Date or time invalid");
+                    Add(timeFieldName,
+                        "Validation.DateOrTime.Invalid",
+                        "Validation message on date or time invalid",
+                        "Date or time invalid");
+                    IsSuccess = false;
+                }
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(dateStringValue))
+                {
+                    Add(dateFieldName,
+                        "Validation.Date.Required",
+                        "Validation message on date required",
+                        "Date required");
+                }
+                if (string.IsNullOrEmpty(timeStringValue))
+                {
+                    Add(timeFieldName,
+                        "Validation.Time.Required",
+                        "Validation message on time required",
+                        "Time required");
+                }
+                IsSuccess = false;
+            }
+        }
+
+        public void AssignDateTimeString(string fieldName, FieldDateTime field, string stringValue)
+        {
+            if (!string.IsNullOrEmpty(stringValue))
+            {
+                if (DateTime.TryParseExact(stringValue,
+                    new string[] {
+                        "yyyy-MM-dd HH:mm:ss",
+                        "yyyy-MM-dd HH:mm",
+                        "dd.MM.yyyy HH:mm:ss",
+                        "dd.MM.yyyy HH:mm",
+                        "MM/dd/yyyy HH:mm:ss",
+                        "MM/dd/yyyy HH:mm"
+                    },
+                    CultureInfo.InvariantCulture,
+                    DateTimeStyles.AssumeLocal,
+                    out DateTime value))
+                {
+                    field.Value = value;
+                }
+                else
+                {
+                    Add(fieldName,
+                        "Validation.Date.Invalid",
+                        "Validation message on date invalid",
+                        "Date invalid");
+                    IsSuccess = false;
+                }
+            }
+            else
+            {
+                Add(fieldName,
+                    "Validation.Date.Required",
+                    "Validation message on date required",
+                    "Date required");
+                IsSuccess = false;
+            }
+        }
+
+
+        public void AssignDateString(string fieldName, FieldDate field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -341,41 +486,7 @@ namespace Publicus
             }
         }
 
-        public void AddAssignTimeString(string fieldName, FieldNull<DateTime> field, string stringValue)
-        {
-            if (!string.IsNullOrEmpty(stringValue))
-            {
-                if (field.Value.HasValue &&
-                    TimeSpan.TryParseExact(stringValue,
-                    new string[] {
-                        @"hh\:mm",
-                        @"h\:mm",
-                    },
-                    CultureInfo.InvariantCulture,
-                    out TimeSpan value))
-                {
-                    field.Value = field.Value.Value.Add(value);
-                }
-                else
-                {
-                    Add(fieldName,
-                        "Validation.Time.Invalid",
-                        "Validation message on time invalid",
-                        "Time invalid");
-                    IsSuccess = false;
-                }
-            }
-            else
-            {
-                Add(fieldName,
-                    "Validation.Time.Required",
-                    "Validation message on time required",
-                    "Time required");
-                IsSuccess = false;
-            }
-        }
-
-        public void AssignDateString(string fieldName, FieldNull<DateTime> field, string stringValue, bool notNull = false)
+        public void AssignDateString(string fieldName, FieldDateNull field, string stringValue, bool notNull = false)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -386,7 +497,7 @@ namespace Publicus
                     "MM/dd/yyyy",
                     },
                     CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
+                    DateTimeStyles.AssumeUniversal,
                     out DateTime value))
                 {
                     field.Value = value;

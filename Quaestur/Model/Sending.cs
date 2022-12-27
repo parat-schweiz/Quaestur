@@ -34,7 +34,7 @@ namespace Quaestur
 		public ForeignKeyField<Mailing, Sending> Mailing { get; set; }
         public ForeignKeyField<ServiceAddress, Sending> Address { get; set; }
         public EnumField<SendingStatus> Status { get; set; }
-        public FieldNull<DateTime> SentDate { get; set; }
+        public FieldDateTimeNull SentDate { get; set; }
         public StringNullField FailureMessage { get; set; }
 
         public Sending() : this(Guid.Empty)
@@ -46,7 +46,7 @@ namespace Quaestur
             Mailing = new ForeignKeyField<Mailing, Sending>(this, "mailingid", false, null);
             Address = new ForeignKeyField<ServiceAddress, Sending>(this, "addressid", false, null);
             Status = new EnumField<SendingStatus>(this, "status", SendingStatus.Created, SendingStatusExtensions.Translate);
-            SentDate = new FieldNull<DateTime>(this, "sentdate");
+            SentDate = new FieldDateTimeNull(this, "sentdate");
             FailureMessage = new StringNullField(this, "failuremessage", 256);
         }
 

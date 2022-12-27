@@ -57,7 +57,7 @@ namespace SiteLibrary
         public PostgresDatabase(ConfigSectionDatabase config)
         {
             var connectionString = string.Format(
-                "Server={0};Port={1};Database={2};User Id={3};Password={4};",
+                "Server={0};Port={1};Database={2};User Id={3};Password={4};Timezone=UTC;",
                 config.DatabaseServer,
                 config.DatabasePort,
                 config.DatabaseName,

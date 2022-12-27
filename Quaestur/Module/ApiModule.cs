@@ -201,7 +201,12 @@ namespace Quaestur
             return new JProperty(name, field.Value.ToString());
         }
 
-        private JProperty Property(string name, Field<DateTime> field)
+        private JProperty Property(string name, FieldDateTime field)
+        {
+            return new JProperty(name, field.Value.FormatIso());
+        }
+
+        private JProperty Property(string name, FieldDate field)
         {
             return new JProperty(name, field.Value.FormatIso());
         }

@@ -48,9 +48,9 @@ namespace Publicus
         public StringField Subject { get; set; }
         public StringField HtmlText { get; set; }
         public StringField PlainText { get; set; }
-        public Field<DateTime> CreatedDate { get; set; }
-        public FieldNull<DateTime> SendingDate { get; set; }
-        public FieldNull<DateTime> SentDate { get; set; }
+        public FieldDateTime CreatedDate { get; set; }
+        public FieldDateTimeNull SendingDate { get; set; }
+        public FieldDateTimeNull SentDate { get; set; }
         public EnumField<MailingStatus> Status { get; set; }
 
         public Mailing() : this(Guid.Empty)
@@ -70,9 +70,9 @@ namespace Publicus
             Subject = new StringField(this, "subject", 256);
             HtmlText = new StringField(this, "htmltext", 33554432, AllowStringType.SafeHtml);
             PlainText = new StringField(this, "plaintext", 33554432, AllowStringType.SafeHtml);
-            CreatedDate = new Field<DateTime>(this, "createddate", DateTime.UtcNow);
-            SendingDate = new FieldNull<DateTime>(this, "sendingdate");
-            SentDate = new FieldNull<DateTime>(this, "sentdate");
+            CreatedDate = new FieldDateTime(this, "createddate", DateTime.UtcNow);
+            SendingDate = new FieldDateTimeNull(this, "sendingdate");
+            SentDate = new FieldDateTimeNull(this, "sentdate");
             Status = new EnumField<MailingStatus>(this, "status", MailingStatus.New, MailingStatusExtensions.Translate);
         }
 

@@ -26,7 +26,7 @@ namespace Quaestur
                 foreach (var mailing in database.Query<Mailing>())
                 {
                     if (mailing.Status.Value == MailingStatus.Scheduled &&
-                        DateTime.UtcNow > mailing.SendingDate.Value)
+                        DateTime.UtcNow >= mailing.SendingDate.Value)
                     {
                         RunSend(database, mailing);
                     }

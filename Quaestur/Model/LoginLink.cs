@@ -10,7 +10,7 @@ namespace Quaestur
         public ByteArrayField Secret { get; private set; }
         public Field<bool> CompleteAuth { get; private set; }
         public Field<bool> TwoFactorAuth { get; private set; }
-        public Field<DateTime> Expires { get; private set; }
+        public FieldDateTime Expires { get; private set; }
         public StringNullField Verification { get; private set; }
         public Field<bool> Confirmed { get; private set; }
 
@@ -24,7 +24,7 @@ namespace Quaestur
             Secret = new ByteArrayField(this, "secret", false);
             CompleteAuth = new Field<bool>(this, "completeauth", false);
             TwoFactorAuth = new Field<bool>(this, "twofactorauth", false);
-            Expires = new Field<DateTime>(this, "expires", DateTime.UtcNow.AddMinutes(5));
+            Expires = new FieldDateTime(this, "expires", DateTime.UtcNow.AddMinutes(5));
             Verification = new StringNullField(this, "verification", 256, AllowStringType.SimpleText);
             Confirmed = new Field<bool>(this, "confirmed", false);
         }

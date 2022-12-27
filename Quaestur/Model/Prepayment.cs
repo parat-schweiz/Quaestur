@@ -42,7 +42,7 @@ namespace Quaestur
     public class Prepayment : DatabaseObject
     {
 		public ForeignKeyField<Person, Prepayment> Person { get; private set; }
-        public Field<DateTime> Moment { get; private set; }
+        public FieldDate Moment { get; private set; }
         public DecimalField Amount { get; private set; }
         public StringField Reason { get; private set; }
         public StringField Url { get; private set; }
@@ -56,7 +56,7 @@ namespace Quaestur
         public Prepayment(Guid id) : base(id)
         {
             Person = new ForeignKeyField<Person, Prepayment>(this, "personid", false, null);
-            Moment = new Field<DateTime>(this, "moment", new DateTime(1850, 1, 1));
+            Moment = new FieldDate(this, "moment", new DateTime(1850, 1, 1));
             Amount = new DecimalField(this, "amount", 16, 4);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
             Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);

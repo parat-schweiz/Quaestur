@@ -100,8 +100,7 @@ namespace Quaestur
                 {
                     if (status.HasAccess(credits.Owner.Value, PartAccess.Credits, AccessRight.Write))
                     {
-                        status.AssignDateString("MomentDate", credits.Moment, model.MomentDate);
-                        status.AddAssignTimeString("MomentTime", credits.Moment, model.MomentTime);
+                        status.AssignDateTimeString("MomentDate", "MomentTime", credits.Moment, model.MomentDate, model.MomentTime);
                         status.AssignInt32String("Amount", credits.Amount, model.Amount);
                         status.AssignStringRequired("Reason", credits.Reason, model.Reason);
                         status.AssignStringFree("Url", credits.Url, model.Url);
@@ -111,8 +110,6 @@ namespace Quaestur
                         {
                             status.SetValidationError("Url", "Credits.Edit.Url.Invalid", "When the Url in the credits edit dialog is not valid", "Invalid Url");
                         }
-
-                        credits.Moment.Value = credits.Moment.Value.ToUniversalTime();
 
                         if (status.IsSuccess)
                         {
@@ -156,13 +153,11 @@ namespace Quaestur
                     if (status.HasAccess(person, PartAccess.Credits, AccessRight.Write))
                     {
                         var credits = new Credits(Guid.NewGuid());
-                        status.AssignDateString("MomentDate", credits.Moment, model.MomentDate);
-                        status.AddAssignTimeString("MomentTime", credits.Moment, model.MomentTime);
+                        status.AssignDateTimeString("MomentDate", "MomentTime", credits.Moment, model.MomentDate, model.MomentTime);
                         status.AssignInt32String("Amount", credits.Amount, model.Amount);
                         status.AssignStringRequired("Reason", credits.Reason, model.Reason);
                         status.AssignStringFree("Url", credits.Url, model.Url);
                         credits.Owner.Value = person;
-                        credits.Moment.Value = credits.Moment.Value.ToUniversalTime();
 
                         if (status.IsSuccess)
                         {

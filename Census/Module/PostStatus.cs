@@ -305,7 +305,7 @@ namespace Census
             }
         }
 
-        public void AssignDateString(string fieldName, Field<DateTime> field, string stringValue)
+        public void AssignDateString(string fieldName, FieldDateTime field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -336,7 +336,7 @@ namespace Census
             }
         }
 
-        public void AddAssignTimeString(string fieldName, FieldNull<DateTime> field, string stringValue)
+        public void AddAssignTimeString(string fieldName, FieldDateTimeNull field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -370,7 +370,7 @@ namespace Census
             }
         }
 
-        public void AssignDateString(string fieldName, FieldNull<DateTime> field, string stringValue, bool notNull = false)
+        public void AssignDateString(string fieldName, FieldDateTimeNull field, string stringValue, bool notNull = false)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {

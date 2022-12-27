@@ -679,15 +679,13 @@ namespace Publicus
 
                 if (status.ObjectNotNull(mailing))
                 {
-                    status.AssignDateString("Date", mailing.SendingDate, model.Date, true);
-                    status.AddAssignTimeString("Time", mailing.SendingDate, model.Time);
+                    status.AssignDateTimeString("Date", "Time", mailing.SendingDate, model.Date, model.Time);
 
                     if (status.IsSuccess)
                     {
                         if (status.HasAccess(mailing.RecipientFeed.Value, PartAccess.Mailings, AccessRight.Write) &&
                             (mailing.Sender.Value == null || status.HasAccess(mailing.Sender.Value, PartAccess.Mailings, AccessRight.Write)))
                         {
-                            mailing.SendingDate.Value = mailing.SendingDate.Value.Value.ToUniversalTime();
                             mailing.Status.Value = MailingStatus.Scheduled;
                             Database.Save(mailing);
                             Notice("{0} sent mailing {1}", CurrentSession.User.UserName.Value, mailing);

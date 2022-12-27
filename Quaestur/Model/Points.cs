@@ -40,7 +40,7 @@ namespace Quaestur
     {
         public ForeignKeyField<Person, Points> Owner { get; private set; }
         public ForeignKeyField<PointBudget, Points> Budget { get; private set; }
-        public Field<DateTime> Moment { get; private set; }
+        public FieldDateTime Moment { get; private set; }
         public Field<int> Amount { get; private set; }
         public StringField Reason { get; private set; }
         public StringField Url { get; private set; }
@@ -55,7 +55,7 @@ namespace Quaestur
         {
             Owner = new ForeignKeyField<Person, Points>(this, "ownerid", false, null);
             Budget = new ForeignKeyField<PointBudget, Points>(this, "budgetid", false, null);
-            Moment = new Field<DateTime>(this, "moment", DateTime.UtcNow);
+            Moment = new FieldDateTime(this, "moment", DateTime.UtcNow);
             Amount = new Field<int>(this, "amount", 0);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
             Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);

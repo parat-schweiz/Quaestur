@@ -122,8 +122,7 @@ namespace Quaestur
                     if (status.HasAccess(points.Owner.Value, PartAccess.Points, AccessRight.Write))
                     {
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
-                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
+                        status.AssignDateTimeString("MomentDate", "MomentTime", points.Moment, model.MomentDate, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
                         status.AssignStringFree("Url", points.Url, model.Url);
@@ -136,8 +135,6 @@ namespace Quaestur
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
-                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
-
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);
@@ -182,8 +179,7 @@ namespace Quaestur
                     {
                         var points = new Points(Guid.NewGuid());
                         status.AssignObjectIdString("Budget", points.Budget, model.Budget);
-                        status.AssignDateString("MomentDate", points.Moment, model.MomentDate);
-                        status.AddAssignTimeString("MomentTime", points.Moment, model.MomentTime);
+                        status.AssignDateTimeString("MomentDate", "MomentTime", points.Moment, model.MomentDate, model.MomentTime);
                         status.AssignInt32String("Amount", points.Amount, model.Amount);
                         status.AssignStringRequired("Reason", points.Reason, model.Reason);
                         status.AssignStringFree("Url", points.Url, model.Url);
@@ -191,8 +187,6 @@ namespace Quaestur
 
                         if (status.HasAccess(points.Budget.Value.Owner.Value, PartAccess.Points, AccessRight.Write))
                         {
-                            points.Moment.Value = points.Moment.Value.ToUniversalTime();
-
                             if (status.IsSuccess)
                             {
                                 Database.Save(points);

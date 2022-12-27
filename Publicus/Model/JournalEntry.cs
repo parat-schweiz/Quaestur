@@ -7,7 +7,7 @@ namespace Publicus
     public class JournalEntry : DatabaseObject
     {
 		public ForeignKeyField<Contact, JournalEntry> Contact { get; private set; }
-        public Field<DateTime> Moment { get; private set; }
+        public FieldDateTime Moment { get; private set; }
         public StringField Subject { get; private set; }
         public StringField Text { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Publicus
         public JournalEntry(Guid id) : base(id)
         {
             Contact = new ForeignKeyField<Contact, JournalEntry>(this, "contactid", false, null);
-            Moment = new Field<DateTime>(this, "moment", DateTime.UtcNow);
+            Moment = new FieldDateTime(this, "moment", DateTime.UtcNow);
             Subject = new StringField(this, "subject", 256);
             Text = new StringField(this, "text", 32768);
         }

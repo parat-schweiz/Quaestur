@@ -10,8 +10,8 @@ namespace Quaestur
         public ForeignKeyField<Person, Membership> Person { get; private set; }
         public ForeignKeyField<Organization, Membership> Organization { get; private set; }
         public ForeignKeyField<MembershipType, Membership> Type { get; private set; }
-        public Field<DateTime> StartDate { get; private set; }
-        public FieldNull<DateTime> EndDate { get; private set; }
+        public FieldDate StartDate { get; private set; }
+        public FieldDateNull EndDate { get; private set; }
         public FieldNull<bool> HasVotingRight { get; private set; }
 
         public Membership() : this(Guid.Empty)
@@ -23,8 +23,8 @@ namespace Quaestur
             Person = new ForeignKeyField<Person, Membership>(this, "personid", false, p => p.Memberships);
             Organization = new ForeignKeyField<Organization, Membership>(this, "organizationid", false, null);
             Type = new ForeignKeyField<MembershipType, Membership>(this, "membershiptypeid", false, null);
-            StartDate = new Field<DateTime>(this, "startdate", DateTime.UtcNow);
-            EndDate = new FieldNull<DateTime>(this, "enddate");
+            StartDate = new FieldDate(this, "startdate", DateTime.UtcNow);
+            EndDate = new FieldDateNull(this, "enddate");
             HasVotingRight = new FieldNull<bool>(this, "hasvotingright");
         }
 
