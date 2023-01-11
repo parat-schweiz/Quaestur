@@ -672,10 +672,10 @@ namespace Quaestur
                         plainText = mailing.Header.Value.PlainText.Value + plainText;
                     }
 
-                    if (mailing.Header.Value != null)
+                    if (mailing.Footer.Value != null)
                     {
-                        htmlText = HtmlWorker.ConcatHtml(htmlText, mailing.Header.Value.HtmlText.Value);
-                        plainText = plainText + mailing.Header.Value.PlainText.Value;
+                        htmlText = HtmlWorker.ConcatHtml(htmlText, mailing.Footer.Value.HtmlText.Value);
+                        plainText = plainText + mailing.Footer.Value.PlainText.Value;
                     }
 
                     var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
