@@ -21,6 +21,10 @@ namespace Quaestur
 
         public PointsTallyDocument(Translator translator, IDatabase database, Membership membership, IEnumerable<Points> pointsOverride = null)
         {
+            translator.ArgumentNotNull("translator");
+            database.ArgumentNotNull("database");
+            membership.ArgumentNotNull("membership");
+
             _translator = translator;
             _database = database;
             _membership = membership;
@@ -173,7 +177,8 @@ namespace Quaestur
                 .Where(p => p.Moment.Value.ToLocalTime().Date >= PointsTally.FromDate.Value &&
                             p.Moment.Value.ToLocalTime().Date <= PointsTally.UntilDate.Value)
                 .ToList();
-            var sum = _lastTally.ForwardBalance.Value + list.Sum(p => (long)p.Amount);
+            var lastTallyValue = _lastTally == null ? 0L : _lastTally.ForwardBalance.Value;
+            var sum = lastTallyValue + list.Sum(p => (long)p.Amount);
             var tripleBase = Math.Min(sum, _membership.Type.Value.TriplePoints.Value);
             var doubleBase = Math.Min(Math.Max(0, sum - tripleBase), _membership.Type.Value.DoublePoints.Value);
             var triplePoints = tripleBase * 2;

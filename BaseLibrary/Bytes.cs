@@ -72,11 +72,11 @@ namespace System
             }
         }
 
-        public static void ArgumentNotNull(this object argument)
+        public static void ArgumentNotNull(this object argument, string paramName = null)
         {
             if (argument == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(paramName);
             }
         }
 
