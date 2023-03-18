@@ -29,7 +29,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="netstandard" />
   </ItemGroup>
@@ -51,7 +51,7 @@
       <Name>BaseLibrary</Name>
     </ProjectReference>
     <ProjectReference Include="..\libsodium-net\libsodium-net\libsodium-net.csproj">
-      <Project>{676CE0AC-5756-4714-9B95-AB5E37E82DFC}</Project>
+      <Project>{8E6F5390-F39A-90BD-763E-7F08197788B3}</Project>
       <Name>libsodium-net</Name>
     </ProjectReference>
   </ItemGroup>
