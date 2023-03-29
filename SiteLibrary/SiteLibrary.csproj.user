@@ -37,5 +37,10 @@
     <MonoLlvm>false</MonoLlvm>
     <MonoNoLlvm>false</MonoNoLlvm>
     <MonoDesktopMode>false</MonoDesktopMode>
+    <MonoServerMode>false</MonoServerMode>
+    <MonoAdditionalOptions></MonoAdditionalOptions>
+    <MonoArchitecture>Default</MonoArchitecture>
+    <Architecture></Architecture>
+    <TargetRuntimeId></TargetRuntimeId>
   </PropertyGroup>
 </Project>
