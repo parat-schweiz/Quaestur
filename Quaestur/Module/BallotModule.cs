@@ -17,11 +17,15 @@ namespace Quaestur
         public string Method;
         public string Id;
         public string Template;
+        public string AnnouncementDate;
+        public string StartDate;
         public string EndDate;
         public List<MultiItemViewModel> AnnouncementText;
         public List<MultiItemViewModel> Questions;
         public List<NamedIdViewModel> Templates;
         public string PhraseFieldTemplate;
+        public string PhraseFieldAnnouncementDate;
+        public string PhraseFieldStartDate;
         public string PhraseFieldEndDate;
         public string PhraseButtonSave;
         public string PhraseButtonCancel;
@@ -37,7 +41,9 @@ namespace Quaestur
             session)
         {
             PhraseFieldTemplate = translator.Get("Ballot.Edit.Field.Template", "Template field in the ballot edit page", "Template").EscapeHtml();
-            PhraseFieldEndDate = translator.Get("Ballot.Edit.Field.EndDate", "EndDate field in the ballot edit page", "EndDate").EscapeHtml();
+            PhraseFieldAnnouncementDate = translator.Get("Ballot.Edit.Field.AnnouncementDate", "AnnouncementDate field in the ballot edit page", "Announcement date").EscapeHtml();
+            PhraseFieldStartDate = translator.Get("Ballot.Edit.Field.StartDate", "StartDate field in the ballot edit page", "Start date").EscapeHtml();
+            PhraseFieldEndDate = translator.Get("Ballot.Edit.Field.EndDate", "EndDate field in the ballot edit page", "End date").EscapeHtml();
             PhraseButtonSave = translator.Get("Ballot.Edit.Button.Save", "Save button in the ballot edit page", "Save").EscapeHtml();
             PhraseButtonCancel = translator.Get("Ballot.Edit.Button.Cancel", "Cancel button in the ballot edit page", "Cancel").EscapeHtml();
             PhraseButtonTest = translator.Get("Ballot.Edit.Button.Test", "Test button in the ballot edit page", "Test").EscapeHtml();
@@ -49,7 +55,9 @@ namespace Quaestur
             Method = "add";
             Id = "new";
             Template = string.Empty;
-            EndDate = DateTime.Now.AddDays(21).Date.FormatSwissDateDay();
+            AnnouncementDate = DateTime.Now.AddDays(3).Date.FormatSwissDateDay();
+            StartDate = DateTime.Now.AddDays(6).Date.FormatSwissDateDay();
+            EndDate = DateTime.Now.AddDays(14).Date.FormatSwissDateDay();
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", new MultiLanguageString());
             Questions =  translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", new MultiLanguageString(AllowStringType.SafeLatex), EscapeMode.Latex);
             Templates = new List<NamedIdViewModel>(db
@@ -64,6 +72,8 @@ namespace Quaestur
             Method = "edit";
             Id = ballot.Id.ToString();
             Template = string.Empty;
+            AnnouncementDate = ballot.AnnouncementDate.Value.FormatSwissDateDay();
+            StartDate = ballot.StartDate.Value.FormatSwissDateDay();
             EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             AnnouncementText = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.AnnouncementText", "Announcement text field in the ballot edit page", "Announcement text ({0})", ballot.AnnouncementText.Value);
             Questions = translator.CreateLanguagesMultiItem("Ballot.Edit.Field.Questions", "Questions field in the ballot edit page", "Questions ({0})", ballot.Questions.Value, EscapeMode.None);
@@ -99,13 +109,13 @@ namespace Quaestur
         {
             Id = ballot.Id.Value.ToString();
             Organizer = ballot.Template.Value.Organizer.Value.GetText(translator);
-            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).FormatSwissDateDay();
-            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).FormatSwissDateDay();
+            AnnouncementDate = ballot.AnnouncementDate.Value.FormatSwissDateDay();
+            StartDate = ballot.StartDate.Value.FormatSwissDateDay();
             EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             Status = ballot.Status.Value.Translate(translator);
             PhraseDeleteConfirmationQuestion = translator.Get("Ballot.List.Delete.Confirm.Question", "Delete ballot confirmation question", "Do you really wish to delete ballot {0}?", ballot.GetText(translator));
             var writeAccess = session.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write);
-            Editable = (writeAccess && (ballot.Status.Value == BallotStatus.New)) ? "editable" : string.Empty;
+            Editable = (writeAccess && ballot.Editable) ? "editable" : string.Empty;
         }
     }
 
@@ -133,8 +143,8 @@ namespace Quaestur
             List = new List<BallotListItemViewModel>(database
                 .Query<Ballot>()
                 .Where(bt => session.HasAccess(bt.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Read))
-                .Select(bt => new BallotListItemViewModel(translator, session, bt))
-                .OrderBy(bt => bt.EndDate));
+                .OrderByDescending(bt => bt.EndDate.Value)
+                .Select(bt => new BallotListItemViewModel(translator, session, bt)));
             AddAccess = database.Query<BallotTemplate>()
                 .Any(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write));
         }
@@ -162,7 +172,7 @@ namespace Quaestur
                 var ballot = Database.Query<Ballot>(idString);
 
                 if (ballot != null &&
-                    ballot.Status.Value == BallotStatus.New)
+                    ballot.Editable)
                 {
                     if (HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                     {
@@ -188,7 +198,9 @@ namespace Quaestur
                         newBallot.Status.Value = BallotStatus.New;
                         newBallot.AnnouncementText.Value = ballot.AnnouncementText.Value;
                         newBallot.Questions.Value = ballot.Questions.Value;
-                        newBallot.EndDate.Value = DateTime.Now.AddDays(21).Date;
+                        newBallot.AnnouncementDate.Value = DateTime.Now.AddDays(3).Date;
+                        newBallot.StartDate.Value = newBallot.AnnouncementDate.Value.AddDays(ballot.StartDate.Value.Subtract(ballot.AnnouncementDate.Value).TotalDays).Date;
+                        newBallot.EndDate.Value = newBallot.AnnouncementDate.Value.AddDays(ballot.EndDate.Value.Subtract(ballot.AnnouncementDate.Value).TotalDays).Date;
                         newBallot.Secret.Value = Rng.Get(32);
                         Database.Save(newBallot);
                     }
@@ -207,9 +219,11 @@ namespace Quaestur
                 {
                     if (status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                     {
-                        if (ballot.Status.Value == BallotStatus.New)
+                        if (ballot.Editable)
                         {
                             status.AssignObjectIdString("Template", ballot.Template, model.Template);
+                            status.AssignDateString("AnnouncementDate", ballot.AnnouncementDate, model.AnnouncementDate);
+                            status.AssignDateString("StartDate", ballot.StartDate, model.StartDate);
                             status.AssignDateString("EndDate", ballot.EndDate, model.EndDate);
                             status.AssignMultiLanguageFree("AnnouncementText", ballot.AnnouncementText, model.AnnouncementText);
                             status.AssignMultiLanguageFree("Questions", ballot.Questions, model.Questions);
@@ -217,14 +231,22 @@ namespace Quaestur
                             if (status.IsSuccess &&
                                 status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                             {
-                                if (DateTime.Now.Date <= ballot.AnnouncementDate)
+                                if (ballot.StartDate.Value < ballot.AnnouncementDate.Value)
                                 {
-                                    Database.Save(ballot);
-                                    Notice("{0} changed ballot {1}", CurrentSession.User.ShortHand, ballot);
+                                    status.SetError("Ballot.Edit.DateInconsistent", "When ballot dates are inconsistent", "The dates of this ballot are not consistent.");
+                                }
+                                else if (ballot.EndDate.Value <= ballot.StartDate.Value)
+                                {
+                                    status.SetError("Ballot.Edit.DateInconsistent", "When ballot dates are inconsistent", "The dates of this ballot are not consistent.");
+                                }
+                                else if (DateTime.Now.Date > ballot.StartDate.Value)
+                                {
+                                    status.SetError("Ballot.Edit.DatePassed", "When end date is so that invitation date already passed", "This end date does not allow sufficient time to invite to this ballot.");
                                 }
                                 else
                                 {
-                                    status.SetError("Ballot.Edit.DatePassed", "When end date is so that invitation date already passed", "This end date does not allow sufficient time to invite to this ballot.");
+                                    Database.Save(ballot);
+                                    Notice("{0} modified ballot {1}", CurrentSession.User.ShortHand, ballot);
                                 }
                             }
                         }
@@ -249,6 +271,8 @@ namespace Quaestur
                 var model = JsonConvert.DeserializeObject<BallotEditViewModel>(ReadBody());
                 var ballot = new Ballot(Guid.NewGuid());
                 status.AssignObjectIdString("Template", ballot.Template, model.Template);
+                status.AssignDateString("AnnouncementDate", ballot.AnnouncementDate, model.AnnouncementDate);
+                status.AssignDateString("StartDate", ballot.StartDate, model.StartDate);
                 status.AssignDateString("EndDate", ballot.EndDate, model.EndDate);
                 status.AssignMultiLanguageFree("AnnouncementText", ballot.AnnouncementText, model.AnnouncementText);
                 status.AssignMultiLanguageFree("Questions", ballot.Questions, model.Questions);
@@ -257,14 +281,22 @@ namespace Quaestur
                 if (status.IsSuccess &&
                     status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                 {
-                    if (DateTime.Now.Date <= ballot.AnnouncementDate)
+                    if (ballot.StartDate.Value < ballot.AnnouncementDate.Value)
                     {
-                        Database.Save(ballot);
-                        Notice("{0} added ballot {1}", CurrentSession.User.ShortHand, ballot);
+                        status.SetError("Ballot.Edit.DateInconsistent", "When ballot dates are inconsistent", "The dates of this ballot are not consistent.");
+                    }
+                    else if (ballot.EndDate.Value <= ballot.StartDate.Value)
+                    {
+                        status.SetError("Ballot.Edit.DateInconsistent", "When ballot dates are inconsistent", "The dates of this ballot are not consistent.");
+                    }
+                    else if (DateTime.Now.Date > ballot.AnnouncementDate.Value)
+                    {
+                        status.SetError("Ballot.Edit.DatePassed", "When end date is so that invitation date already passed", "This end date does not allow sufficient time to invite to this ballot.");
                     }
                     else
                     {
-                        status.SetError("Ballot.Edit.DatePassed", "When end date is so that invitation date already passed", "This end date does not allow sufficient time to invite to this ballot.");
+                        Database.Save(ballot);
+                        Notice("{0} added ballot {1}", CurrentSession.User.ShortHand, ballot);
                     }
                 }
 

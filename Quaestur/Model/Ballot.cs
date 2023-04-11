@@ -39,12 +39,30 @@ namespace Quaestur
     {
         public ForeignKeyField<BallotTemplate, Ballot> Template { get; private set; }
         public EnumField<BallotStatus> Status { get; private set; }
+        public FieldDate AnnouncementDate { get; private set; }
+        public FieldDate StartDate { get; private set; }
         public FieldDate EndDate { get; private set; }
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
         public ByteArrayField Secret { get; private set; }
 
-        public DateTime AnnouncementDate
+        public bool Editable
+        { 
+            get
+            { 
+                switch (Status.Value)
+                {
+                    case BallotStatus.New:
+                    case BallotStatus.Announcing:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+        }
+
+        [Obsolete("Replaced by explicit announcment date in each ballot")]
+        public DateTime OldAnnouncementDate
         {
             get
             {
@@ -52,7 +70,8 @@ namespace Quaestur
             }
         }
 
-        public DateTime StartDate
+        [Obsolete("Replaced by explicit start date in each ballot")]
+        public DateTime OldStartDate
         {
             get
             {
@@ -68,6 +87,8 @@ namespace Quaestur
         {
             Template = new ForeignKeyField<BallotTemplate, Ballot>(this, "templateid", false, null);
             Status = new EnumField<BallotStatus>(this, "status", BallotStatus.New, BallotStatusExtensions.Translate);
+            AnnouncementDate = new FieldDate(this, "announcementdate", new DateTime(1850, 1, 3));
+            StartDate = new FieldDate(this, "startdate", new DateTime(1850, 1, 3));
             EndDate = new FieldDate(this, "enddate", new DateTime(1850, 1, 3));
             AnnouncementText = new MultiLanguageStringField(this, "announcementtext", AllowStringType.SafeHtml);
             Questions = new MultiLanguageStringField(this, "questions", AllowStringType.SafeLatex);

@@ -10,7 +10,11 @@ namespace Quaestur
         public MultiLanguageStringField Name { get; private set; }
         public ForeignKeyField<Group, BallotTemplate> Organizer { get; private set; }
         public ForeignKeyField<Tag, BallotTemplate> ParticipantTag { get; private set; }
+
+        [Obsolete("Replaced by explicit announcment date in each ballot")]
         public Field<int> PreparationDays { get; private set; }
+
+        [Obsolete("Replaced by explicit start date in each ballot")]
         public Field<int> VotingDays { get; private set; }
 
         public BallotTemplate() : this(Guid.Empty)

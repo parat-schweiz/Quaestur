@@ -26,8 +26,8 @@ namespace Quaestur
         {
             Id = ballot.Id.Value.ToString();
             Organization = ballot.Template.Value.Organizer.Value.Organization.Value.GetText(translator);
-            AnnouncementDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value - ballot.Template.Value.PreparationDays.Value).FormatSwissDateDay();
-            StartDate = ballot.EndDate.Value.AddDays(1 - ballot.Template.Value.VotingDays.Value).FormatSwissDateDay();
+            AnnouncementDate = ballot.AnnouncementDate.Value.FormatSwissDateDay();
+            StartDate = ballot.StartDate.Value.FormatSwissDateDay();
             EndDate = ballot.EndDate.Value.FormatSwissDateDay();
             Status = ballot.Status.Value.Translate(translator);
 
@@ -85,8 +85,8 @@ namespace Quaestur
             List = new List<BallotPaperListItemViewModel>(database
                 .Query<Ballot>()
                 .Where(bt => session.User.Memberships.Any(m => bt.Template.Value.Organizer.Value.Organization.Value == m.Organization.Value))
-                .Select(bt => new BallotPaperListItemViewModel(database, translator, session, bt))
-                .OrderBy(bt => bt.EndDate));
+                .OrderByDescending(bt => bt.EndDate.Value)
+                .Select(bt => new BallotPaperListItemViewModel(database, translator, session, bt)));
         }
     }
 

@@ -44,6 +44,8 @@ function assignFieldValidation(field, result){
 function assignValidation(resultData){
   var result = JSON.parse(resultData);
   assignFieldValidation("Template", result);
+  assignFieldValidation("AnnouncementDate", result);
+  assignFieldValidation("StartDate", result);
   assignFieldValidation("EndDate", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
@@ -52,6 +54,8 @@ function saveObject(callback){
   var formData = new Object();
     
   formData.Template = $("#ballotTemplate").val();
+  formData.AnnouncementDate = $("#ballotAnnouncementDate").val();
+  formData.StartDate = $("#ballotStartDate").val();
   formData.EndDate = $("#ballotEndDate").val();
     
   formData.AnnouncementText = new Array();
@@ -137,6 +141,16 @@ $(document).ready(function() {
           @EndEach
         </select>
         <div id="ballotTemplateFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ballotAnnouncementDate">@Model.PhraseFieldAnnouncementDate</label>
+        <input type="text" id="ballotAnnouncementDate" class="form-control datepicker" value="@Model.AnnouncementDate"/>
+        <div id="ballotAnnouncementDateFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ballotStartDate">@Model.PhraseFieldStartDate</label>
+        <input type="text" id="ballotStartDate" class="form-control datepicker" value="@Model.StartDate"/>
+        <div id="ballotStartDateFeedback" class="valid-feedback"></div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="ballotEndDate">@Model.PhraseFieldEndDate</label>

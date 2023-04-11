@@ -48,8 +48,6 @@ function assignValidation(resultData){
   @EndEach
   assignFieldValidation("Organizer", result);
   assignFieldValidation("ParticipantTag", result);
-  assignFieldValidation("PreparationDays", result);
-  assignFieldValidation("VotingDays", result);
   assignFieldValidation("AnnouncementMails", result);
   assignFieldValidation("InvitationMails", result);
   assignFieldValidation("BallotPapers", result);
@@ -69,8 +67,6 @@ function saveObject(callback){
     
   formData.Organizer = $("#ballotTemplateOrganizer").val();
   formData.ParticipantTag = $("#ballotTemplateParticipantTag").val();
-  formData.PreparationDays = $("#ballotTemplatePreparationDays").val();
-  formData.VotingDays = $("#ballotTemplateVotingDays").val();
   formData.AnnouncementMailTemplates = $("#ballotTemplateAnnouncementMails").val();
   formData.InvitationMailTemplates = $("#ballotTemplateInvitationMails").val();
   formData.BallotPaperTemplates = $("#ballotTemplateBallotPapers").val();
@@ -145,16 +141,6 @@ $(document).ready(function() {
           @EndEach
         </select>
         <div id="ballotTemplateParticipantTagFeedback" class="valid-feedback"></div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="ballotTemplatePreparationDays">@Model.PhraseFieldPreparationDays</label>
-        <input type="text" id="ballotTemplatePreparationDays" class="form-control" value="@Model.PreparationDays"/>
-        <div id="ballotTemplatePreparationDaysFeedback" class="valid-feedback"></div>
-      </div>
-      <div class="col-md-3 mb-3">
-        <label for="ballotTemplateVotingDays">@Model.PhraseFieldVotingDays</label>
-        <input type="text" id="ballotTemplateVotingDays" class="form-control" value="@Model.VotingDays"/>
-        <div id="ballotTemplateVotingDaysFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

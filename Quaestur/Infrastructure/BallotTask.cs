@@ -89,7 +89,7 @@ namespace Quaestur
             {
                 case BallotStatus.New:
                     {
-                        if (DateTime.Now.Date >= ballot.AnnouncementDate.Date)
+                        if (DateTime.Now.Date >= ballot.AnnouncementDate.Value.Date)
                         {
                             ballot.Status.Value = BallotStatus.Announcing;
                             database.Save(ballot);
@@ -99,7 +99,7 @@ namespace Quaestur
                     break;
                 case BallotStatus.Announcing:
                     {
-                        if (DateTime.Now.Date >= ballot.StartDate.Date)
+                        if (DateTime.Now.Date >= ballot.StartDate.Value.Date)
                         {
                             ballot.Status.Value = BallotStatus.Voting;
                             database.Save(ballot);

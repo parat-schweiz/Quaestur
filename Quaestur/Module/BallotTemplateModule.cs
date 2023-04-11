@@ -288,8 +288,6 @@ namespace Quaestur
                         status.AssignMultiLanguageRequired("Name", ballotTemplate.Name, model.Name);
                         status.AssignObjectIdString("Organizer", ballotTemplate.Organizer, model.Organizer);
                         status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
-                        status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
-                        status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
 
                         if (status.IsSuccess &&
                             status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
@@ -331,8 +329,8 @@ namespace Quaestur
                 status.AssignMultiLanguageRequired("Name", ballotTemplate.Name, model.Name);
                 status.AssignObjectIdString("Organizer", ballotTemplate.Organizer, model.Organizer);
                 status.AssignObjectIdString("ParticipantTag", ballotTemplate.ParticipantTag, model.ParticipantTag);
-                status.AssignInt32String("PreparationDays", ballotTemplate.PreparationDays, model.PreparationDays);
-                status.AssignInt32String("VotingDays", ballotTemplate.VotingDays, model.VotingDays);
+                ballotTemplate.PreparationDays.Value = 3; //dummy value for deprecated field
+                ballotTemplate.VotingDays.Value = 7; //dummy value for deprecated field
 
                 if (status.IsSuccess &&
                     status.HasAccess(ballotTemplate.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
