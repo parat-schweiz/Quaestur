@@ -9,7 +9,7 @@ namespace SecurityService
     {
         private const string SecretProperty = "secret";
 
-        private byte[] _secret;
+        public byte[] Secret { get; private set; }
 
         public TotpObject()
             : base(false)
@@ -19,12 +19,12 @@ namespace SecurityService
         public TotpObject(byte[] secret)
             : base(true)
         {
-            _secret = secret;
+            Secret = secret;
         }
 
         public bool Verify(string code)
         {
-            var totp = new Totp(_secret);
+            var totp = new Totp(Secret);
 
             return totp.VerifyTotp(code, out long timeStepMatched);
         }
@@ -33,12 +33,12 @@ namespace SecurityService
 
         protected override void LoadData(JObject json)
         {
-            _secret = Convert.FromBase64String(json.Value<string>(SecretProperty));
+            Secret = Convert.FromBase64String(json.Value<string>(SecretProperty));
         }
 
         protected override void SaveData(JObject json)
         {
-            json.Add(new JProperty(SecretProperty, Convert.ToBase64String(_secret)));
+            json.Add(new JProperty(SecretProperty, Convert.ToBase64String(Secret)));
         }
     }
 }

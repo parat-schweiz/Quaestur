@@ -55,6 +55,9 @@ namespace SecurityService
                     case SecurityServiceProtocol.CommandVerifyTotp:
                         VerifyTotp(request, reply);
                         break;
+                    case SecurityServiceProtocol.CommandGetTotp:
+                        GetTotp(request, reply);
+                        break;
                     case SecurityServiceProtocol.CommandSecureGpgPassphrase:
                         SecureGpgPassphrase(request, reply);
                         break;
@@ -247,6 +250,30 @@ namespace SecurityService
 
             if (totpObject.Verify(code))
             {
+                reply.AddProperty(SecurityServiceProtocol.VerificationProperty, SecurityServiceProtocol.VerificationSuccess);
+                _logger.Info("TOTP verification for {0} successful", totpObject.Id);
+            }
+            else
+            {
+                Global.Throttle.Fail(totpObject.Id.ToString(), SecurityThrottleType.Totp);
+                _logger.Info("TOTP verification for {0} failed", totpObject.Id);
+                reply.AddProperty(SecurityServiceProtocol.VerificationProperty, SecurityServiceProtocol.VerificationFailure);
+            }
+
+            reply.AddProperty(SecurityServiceProtocol.ResultProperty, SecurityServiceProtocol.ResultSuccess);
+        }
+
+        private void GetTotp(JObject request, JObject reply)
+        {
+            var code = request.ValueString(SecurityServiceProtocol.CodeProperty);
+            var encryptedTotpData = request.ValueBytes(SecurityServiceProtocol.TotpDataProperty);
+            var encryptedTotp = new Encrypted<TotpObject>(encryptedTotpData);
+            var totpObject = encryptedTotp.Decrypt(_secretKey);
+            Global.Throttle.Check(totpObject.Id.ToString(), SecurityThrottleType.Totp);
+
+            if (totpObject.Verify(code))
+            {
+                reply.AddProperty(SecurityServiceProtocol.SecretProperty, totpObject.Secret);
                 reply.AddProperty(SecurityServiceProtocol.VerificationProperty, SecurityServiceProtocol.VerificationSuccess);
                 _logger.Info("TOTP verification for {0} successful", totpObject.Id);
             }

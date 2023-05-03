@@ -212,14 +212,15 @@ namespace Quaestur
                 if (person == CurrentSession.User &&
                     person.TwoFactorSecret.Value != null)
                 {
-                    if (Global.Security.VerifyTotp(person.TwoFactorSecret.Value, model.Code))
+                    var secret = Global.Security.GetTotp(person.TwoFactorSecret.Value, model.Code);
+                    if (secret != null)
                     {
                         Journal(person,
                             "TwoFactor.Journal.Show",
                             "Journal entry show TOTP 2FA secret",
                             "Showed two-factor authentication secret");
                         var newModel = new TwoFactorEditViewModel(Translator, person);
-                        newModel.Secret = person.TwoFactorSecret.Value.ToBase32String();
+                        newModel.Secret = secret.ToBase32String();
                         newModel.ShowSecret = true;
                         newModel.PhraseExplaination = Translate(
                             "TwoFactor.Edit.Explaination.Set",

@@ -144,6 +144,27 @@ namespace SecurityServiceClient
                 return reply.ValueString(SecurityServiceProtocol.VerificationProperty) == SecurityServiceProtocol.VerificationSuccess;
             }
         }
+
+        public byte[] GetTotp(byte[] totpData, string code)
+        {
+            lock (_lock)
+            {
+                var request = new JObject();
+                request.AddProperty(SecurityServiceProtocol.CommandProperty, SecurityServiceProtocol.CommandGetTotp);
+                request.AddProperty(SecurityServiceProtocol.CodeProperty, code);
+                request.AddProperty(SecurityServiceProtocol.TotpDataProperty, totpData);
+                var reply = _channel.Request(request);
+                CheckError(reply);
+                if (reply.ValueString(SecurityServiceProtocol.VerificationProperty) == SecurityServiceProtocol.VerificationSuccess)
+                {
+                    return reply.ValueBytes(SecurityServiceProtocol.SecretProperty);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
     }
 
     public class SecurityServiceChannel : SecureChannel.SecureClient

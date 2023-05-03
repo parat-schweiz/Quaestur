@@ -8,6 +8,7 @@ namespace SecurityServiceClient
         public const string CommandVerifyPassword = "verifypassword";
         public const string CommandSecureTotp = "securetotp";
         public const string CommandVerifyTotp = "verifytotp";
+        public const string CommandGetTotp = "gettotp";
         public const string CommandSecureGpgPassphrase = "securegpgpassphrase";
         public const string CommandExecuteGpg = "executegpg";
         public const string PasswordProperty = "password";
