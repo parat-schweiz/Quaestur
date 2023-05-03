@@ -105,10 +105,10 @@
       <HintPath>..\packages\AngleSharp.Css.0.17.0\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.3.6.0\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.4.0.0\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.3.6.1\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.4.0.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
       <HintPath>..\packages\JWT.10.0.2\lib\net462\JWT.dll</HintPath>
@@ -127,6 +127,9 @@
     </Reference>
     <Reference Include="System.Text.Json">
       <HintPath>..\packages\System.Text.Json.7.0.2\lib\net462\System.Text.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Cryptography">
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.1.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
