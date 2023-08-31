@@ -60,8 +60,8 @@ namespace Quaestur
 
     public class TagViewModel : MasterViewModel
     {
-        public TagViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("Tag.List.Title", "Title of the tag list page", "Tags"), 
+        public TagViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("Tag.List.Title", "Title of the tag list page", "Tags"), 
             session)
         { 
         }
@@ -153,7 +153,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/tag.sshtml",
-                        new TagViewModel(Translator, CurrentSession)];
+                        new TagViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

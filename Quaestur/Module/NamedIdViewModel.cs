@@ -51,6 +51,20 @@ namespace Quaestur
             Selected = selected;
         }
 
+        public NamedIdViewModel(Translator translator, CustomMenuEntry customMenuEntry, bool selected)
+        {
+            Id = customMenuEntry.Id.ToString();
+            Name = customMenuEntry.Name.Value[translator.Language].EscapeHtml();
+            Selected = selected;
+        }
+
+        public NamedIdViewModel(Translator translator, CustomPage customPage, bool selected)
+        {
+            Id = customPage.Id.ToString();
+            Name = customPage.Name.Value[translator.Language].EscapeHtml();
+            Selected = selected;
+        }
+
         public NamedIdViewModel(Translator translator, State state, bool selected)
         {
             Id = state.Id.ToString();

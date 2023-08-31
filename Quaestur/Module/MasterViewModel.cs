@@ -32,6 +32,33 @@ namespace Quaestur
         }
     }
 
+    public class CustomMenu
+    {
+        public string Name;
+        public string Entries;
+
+        private string CreateEntry(Translator translator, CustomMenuEntry entry)
+        {
+            if (entry.Page.Value != null)
+            {
+                return string.Format("<a class=\"dropdown-item\" href=\"/page/{0}\">{1}</a>", entry.Page.Value.Id.Value.ToString(), entry.Name.Value[translator.Language]);
+            }
+            else
+            {
+                return string.Format("<a class=\"dropdown-item\" href=\"{0}\" target=\"_blank\">{1}</a>", entry.LinkUrl.Value[translator.Language], entry.Name.Value[translator.Language]);
+            }
+        }
+
+        public CustomMenu(IDatabase db, Translator translator, CustomMenuEntry entry)
+        {
+            Name = entry.Name.Value[translator.Language];
+            Entries = string.Join(Environment.NewLine, db
+                .Query<CustomMenuEntry>(DC.Equal("parentid", entry.Id.Value))
+                .OrderBy(e => e.Ordering.Value)
+                .Select(e => CreateEntry(translator, e)));
+        }
+    }
+
     public class MasterViewModel
     {
         public string UserId = String.Empty;
@@ -70,6 +97,8 @@ namespace Quaestur
         public string PhraseMenuOAuth2Clients = string.Empty;
         public string PhraseMenuApiClients = string.Empty;
         public string PhraseMenuSystemWideFiles = string.Empty;
+        public string PhraseMenuCustomPage = string.Empty;
+        public string PhraseMenuCustomMenuEntry = string.Empty;
         public string PhraseMenuBallot = string.Empty;
         public string PhraseMenuBallotList = string.Empty;
         public string PhraseMenuBallotTemplates = string.Empty;
@@ -78,9 +107,11 @@ namespace Quaestur
         public string PhraseMenuLoginLink = string.Empty;
         public string PhraseMenuPoints = string.Empty;
         public string PhraseMenuPointsBudget = string.Empty;
+        public List<CustomMenu> CustomMenus;
 
         public MasterViewModel()
         {
+            CustomMenus = new List<CustomMenu>();
         }
 
         public bool SomeCustomAccess(Session session)
@@ -89,7 +120,7 @@ namespace Quaestur
                    session.HasAnyOrganizationAccess(PartAccess.Ballot, AccessRight.Read);
         }
 
-        public MasterViewModel(Translator translator, string title, Session session)
+        public MasterViewModel(IDatabase db, Translator translator, string title, Session session)
         {
             Title = title.EscapeHtml();
             UserId = session != null ? session.User.Id.Value.ToString() : string.Empty;
@@ -127,6 +158,8 @@ namespace Quaestur
             PhraseMenuLogout = translator.Get("Master.Menu.User.Logout", "Item 'Logout' under user in the main menu", "Logut").EscapeHtml();
             PhraseMenuSettings = translator.Get("Master.Menu.Settings", "Menu 'Settings' in the main menu", "Settings").EscapeHtml();
             PhraseMenuSystemWideFiles = translator.Get("Master.Menu.Settings.SystemWideFiles", "Item 'System wide files' under settings in the main menu", "System wide files").EscapeHtml();
+            PhraseMenuCustomPage = translator.Get("Master.Menu.Settings.CustomPage", "Item 'Custom pages' under settings in the main menu", "Custom pages").EscapeHtml();
+            PhraseMenuCustomMenuEntry = translator.Get("Master.Menu.Settings.CustomMenuEntry", "Item 'Custom menu entries' under settings in the main menu", "Custom menu entries").EscapeHtml();
             PhraseMenuOAuth2Clients = translator.Get("Master.Menu.Settings.OAuth2Clients", "Item 'OAuth2 Clients' under settings in the main menu", "OAuth2 Clients").EscapeHtml();
             PhraseMenuApiClients = translator.Get("Master.Menu.Settings.ApiClients", "Item 'API Clients' under settings in the main menu", "API Clients").EscapeHtml();
             PhraseMenuBallot = translator.Get("Master.Menu.Ballots", "Menu 'Ballot' in the main menu", "Ballots").EscapeHtml();
@@ -135,6 +168,11 @@ namespace Quaestur
             PhraseMenuIncome = translator.Get("Master.Menu.User.Income", "Item 'Report income' under user in the main menu", "Report income").EscapeHtml();
             PhraseMenuPoints = translator.Get("Master.Menu.Points", "Menu 'Points' in the main menu", "Points").EscapeHtml();
             PhraseMenuPointsBudget = translator.Get("Master.Menu.Points.PointsBudget", "Item 'Points budget' under points in the main menu", "Points budget").EscapeHtml();
+            CustomMenus = db
+                .Query<CustomMenuEntry>(DC.Equal("parentid", null))
+                .OrderBy(e => e.Ordering.Value)
+                .Select(e => new CustomMenu(db, translator, e))
+                .ToList();
         }
     }
 
@@ -144,8 +182,8 @@ namespace Quaestur
         public string LinkTitle { get; private set; }
         public string LinkAddress { get; private set; }
 
-        public InfoViewModel(Translator translator, string title, string text, string linkTitle, string linkAddress)
-            : base(translator, title, null)
+        public InfoViewModel(IDatabase database, Translator translator, string title, string text, string linkTitle, string linkAddress)
+            : base(database, translator, title, null)
         {
             Text = text.EscapeHtml();
             LinkTitle = linkTitle.EscapeHtml();
@@ -155,8 +193,8 @@ namespace Quaestur
 
     public class AccessDeniedViewModel : InfoViewModel
     {
-        public AccessDeniedViewModel(Translator translator)
-            : base(translator,
+        public AccessDeniedViewModel(IDatabase database, Translator translator)
+            : base(database, translator,
                    translator.Get("Access.Denied.Title", "Title of the access denied page", "Access Denied"),
                    translator.Get("Access.Denied.Text", "Text on the access denied page", "Access to this page is denied."),
                    translator.Get("Access.Denied.Back", "Back text on the access denied page", "Back to dashboard"),

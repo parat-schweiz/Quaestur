@@ -249,7 +249,8 @@ namespace Quaestur
         public List<NamedIntViewModel> Columns;
 
         public PersonListViewModel(IDatabase database, Translator translator, Session session)
-            : base(translator, 
+            : base(database,
+                   translator, 
                    translator.Get("Person.List.Title", "Title of the person list page", "Liste"), 
                    session)
         {

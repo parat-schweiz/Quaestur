@@ -39,8 +39,8 @@ namespace Quaestur
         { 
         }
 
-        public BillSendingTemplateEditViewModel(Translator translator, Session session)
-            : base(translator, 
+        public BillSendingTemplateEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("BillSendingTemplate.Edit.Title", "Title of the billSendingTemplate edit dialog", "Edit bill sending template"), 
             session)
         {
@@ -57,7 +57,7 @@ namespace Quaestur
         }
 
         public BillSendingTemplateEditViewModel(Translator translator, IDatabase database, Session session, MembershipType membershipType)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "add";
             Id = membershipType.Id.Value.ToString();
@@ -87,7 +87,7 @@ namespace Quaestur
         }
 
         public BillSendingTemplateEditViewModel(Translator translator, IDatabase database, Session session, BillSendingTemplate billSendingTemplate)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "edit";
             Id = billSendingTemplate.Id.ToString();
@@ -121,8 +121,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public BillSendingTemplateViewModel(Translator translator, Session session, MembershipType membershipType)
-            : base(translator, 
+        public BillSendingTemplateViewModel(IDatabase database, Translator translator, Session session, MembershipType membershipType)
+            : base(database, translator, 
             translator.Get("BillSendingTemplate.List.Title", "Title of the bill sending template list page", "bill sending templates"), 
             session)
         {
@@ -198,7 +198,7 @@ namespace Quaestur
                     if (HasAccess(membershipType.Organization.Value, PartAccess.Structure, AccessRight.Read))
                     {
                         return View["View/billsendingtemplate.sshtml",
-                            new BillSendingTemplateViewModel(Translator, CurrentSession, membershipType)];
+                            new BillSendingTemplateViewModel(Database, Translator, CurrentSession, membershipType)];
                     }
                 }
 

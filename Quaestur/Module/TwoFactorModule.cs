@@ -28,8 +28,8 @@ namespace Quaestur
         { 
         }
 
-        public TwoFactorAuthViewModel(Translator translator, Session session)
-            : base(translator,
+        public TwoFactorAuthViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
                    translator.Get("TwoFactor.Auth.Title", "Title of the two-factor authentication page", "Two-factor authentication"),
                    session)
         {
@@ -295,7 +295,7 @@ namespace Quaestur
                 else
                 {
                     return View["View/twofactorauth.sshtml",
-                        new TwoFactorAuthViewModel(Translator, CurrentSession)];
+                        new TwoFactorAuthViewModel(Database, Translator, CurrentSession)];
                 }
             });
             Post("/twofactor/auth", parameters =>
@@ -322,7 +322,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    var newModel = new TwoFactorAuthViewModel(Translator, CurrentSession);
+                    var newModel = new TwoFactorAuthViewModel(Database, Translator, CurrentSession);
                     newModel.Problems = Translate(
                         "TwoFactor.Auth.Validation.CodeMismatch",
                         "When code does not match when authentication using TOTP 2FA",

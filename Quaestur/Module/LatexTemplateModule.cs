@@ -33,8 +33,8 @@ namespace Quaestur
         { 
         }
 
-        public LatexTemplateEditViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("LatexTemplate.Edit.Title", "Title of the latex template edit page", "Edit latex template"), session)
+        public LatexTemplateEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("LatexTemplate.Edit.Title", "Title of the latex template edit page", "Edit latex template"), session)
         {
             PhraseFieldLabel = translator.Get("LatexTemplate.Edit.Field.Label", "Label field in the latex template edit page", "Label");
             PhraseFieldLanguage = translator.Get("LatexTemplate.Edit.Field.Language", "Language field in the latex template edit page", "Language");
@@ -43,11 +43,7 @@ namespace Quaestur
             PhraseFieldText = translator.Get("LatexTemplate.Edit.Field.Text", "Text field in the latex template edit page", "Text");
             PhraseButtonSave = translator.Get("LatexTemplate.Edit.Button.Save", "Save button in the latex template edit page", "Save").EscapeHtml();
             PhraseButtonCancel = translator.Get("LatexTemplate.Edit.Button.Cancel", "Cancel button in the latex template edit page", "Cancel").EscapeHtml();
-        }
 
-        public LatexTemplateEditViewModel(IDatabase database, Translator translator, Session session)
-            : this(translator, session)
-        {
             Method = "add";
             Id = "new";
             Label = string.Empty;
@@ -69,7 +65,7 @@ namespace Quaestur
         }
 
         public LatexTemplateEditViewModel(IDatabase database, Translator translator, Session session, LatexTemplate latexTemplate)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "edit";
             Id = latexTemplate.Id.ToString();
@@ -94,8 +90,8 @@ namespace Quaestur
 
     public class LatexTemplateViewModel : MasterViewModel
     {
-        public LatexTemplateViewModel(Translator translator, Session session)
-            : base(translator, 
+        public LatexTemplateViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("LatexTemplate.List.Title", "Title of the latex template list page", "Countries"), 
             session)
         { 
@@ -153,7 +149,7 @@ namespace Quaestur
                 if (SomeAccess(AccessRight.Read))
                 {
                     return View["View/latextemplate.sshtml",
-                        new LatexTemplateViewModel(Translator, CurrentSession)];
+                        new LatexTemplateViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

@@ -111,8 +111,8 @@ namespace Quaestur
 
     public class ExportViewModel : MasterViewModel
     {
-        public ExportViewModel(Translator translator, Session session)
-            : base(translator, 
+        public ExportViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
                    translator.Get("Export.List.Title", "Title of the exports list page", "Exports"), 
                    session)
         { 
@@ -165,7 +165,7 @@ namespace Quaestur
                 if (HasAnyOrganizationAccess(PartAccess.Demography, AccessRight.Read))
                 {
                     return View["View/export.sshtml",
-                        new ExportViewModel(Translator, CurrentSession)];
+                        new ExportViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

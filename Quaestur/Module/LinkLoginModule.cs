@@ -26,7 +26,7 @@ namespace Quaestur
         public string PhraseVerification;
 
         public LinkLoginViewModel(IDatabase database, Translator translator, Session session, LoginLink loginLink)
-            : base(translator, 
+            : base(database, translator, 
                 translator.Get("LinkLogin.Title", "Title of the link login page", "Login device"), 
                 session)
         {
@@ -60,7 +60,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                    return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                         Translate("LinkLogin.Error.Title", "Title in link login error page", "Error"),
                         Translate("LinkLogin.Error.Text", "Text on link login error page", "Invalid authentication link."),
                         Translate("LinkLogin.Error.BackLink", "Back link on link login error page", "Back"),

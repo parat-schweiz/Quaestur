@@ -68,8 +68,8 @@ namespace Quaestur
 
     public class ApiClientViewModel : MasterViewModel
     {
-        public ApiClientViewModel(Translator translator, Session session)
-            : base(translator, 
+        public ApiClientViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("ApiClient.List.Title", "Title of the API client list page", "API clients"), 
             session)
         {
@@ -139,7 +139,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.Structure, AccessRight.Read))
                 {
                     return View["View/apiclient.sshtml",
-                        new ApiClientViewModel(Translator, CurrentSession)];
+                        new ApiClientViewModel(Database, Translator, CurrentSession)];
                 }
 
                 return string.Empty;

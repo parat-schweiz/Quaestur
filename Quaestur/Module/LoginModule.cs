@@ -27,8 +27,9 @@ namespace Quaestur
         { 
         }
 
-        public LoginViewModel(Translator translator, string returnUrl)
-            : base(translator, 
+        public LoginViewModel(IDatabase database, Translator translator, string returnUrl)
+            : base(database,
+                translator, 
                 translator.Get("Login.Title", "Title of the login page", "Login"), 
                 null)
         {
@@ -60,7 +61,7 @@ namespace Quaestur
             Get("/login", parameters =>
             {
                 var returnUrl = ValidateReturnUrl(Request.Query["returnUrl"]);
-                return View["View/login.sshtml", new LoginViewModel(Translator, returnUrl)];
+                return View["View/login.sshtml", new LoginViewModel(Database, Translator, returnUrl)];
             });
             Post("/login", parameters =>
             {
@@ -68,7 +69,7 @@ namespace Quaestur
                 Global.Throttle.Check(login.UserName, false);
                 var returnUrl = ValidateReturnUrl(login.ReturnUrl);
                 var result = UserController.Login(Database, login.UserName, login.Password);
-                var newLogin = new LoginViewModel(Translator, returnUrl);
+                var newLogin = new LoginViewModel(Database, Translator, returnUrl);
 
                 switch (result.Item2)
                 {

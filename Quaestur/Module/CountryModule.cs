@@ -48,8 +48,8 @@ namespace Quaestur
 
     public class CountryViewModel : MasterViewModel
     {
-        public CountryViewModel(Translator translator, Session session)
-            : base(translator, 
+        public CountryViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("Country.List.Title", "Title of the country list page", "Countries"), 
             session)
         { 
@@ -99,7 +99,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/country.sshtml",
-                        new CountryViewModel(Translator, CurrentSession)];
+                        new CountryViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

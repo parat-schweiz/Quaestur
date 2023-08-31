@@ -75,8 +75,8 @@ namespace Quaestur
 
     public class Oauth2ClientViewModel : MasterViewModel
     {
-        public Oauth2ClientViewModel(Translator translator, Session session)
-            : base(translator, 
+        public Oauth2ClientViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("Oauth2Client.List.Title", "Title of the OAuth2 client list page", "OAuth2 Clients"), 
             session)
         { 
@@ -126,7 +126,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.Crypto, AccessRight.Write))
                 {
                     return View["View/oauth2client.sshtml",
-                        new Oauth2ClientViewModel(Translator, CurrentSession)];
+                        new Oauth2ClientViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

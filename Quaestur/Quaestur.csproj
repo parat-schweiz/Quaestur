@@ -308,6 +308,10 @@
     <Compile Include="Module\CreditsEditModule.cs" />
     <Compile Include="Module\PaymentModule.cs" />
     <Compile Include="Infrastructure\CreditsDecayTask.cs" />
+    <Compile Include="Model\CustomPage.cs" />
+    <Compile Include="Model\CustomMenuEntry.cs" />
+    <Compile Include="Module\CustomPageModule.cs" />
+    <Compile Include="Module\CustomMenuEntryModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1037,6 +1041,27 @@
     </None>
     <None Include="Assets\images\spinner.gif">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custompage.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custompageedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custompagelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custommenuentry.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custommenuentryedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\custommenuentrylist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\page.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>

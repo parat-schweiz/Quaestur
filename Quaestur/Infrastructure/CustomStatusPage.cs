@@ -28,30 +28,30 @@ namespace Quaestur
             }
         }
 
-        private InfoViewModel GetInfo(HttpStatusCode statusCode, Translator translator)
+        private InfoViewModel GetInfo(HttpStatusCode statusCode, IDatabase database, Translator translator)
         { 
             switch (statusCode)
             {
                 case HttpStatusCode.NotFound:
-                    return new InfoViewModel(translator,
+                    return new InfoViewModel(database, translator,
                            translator.Get("CustomStatusPage.NotFound.Title", "Title on the custom status page when status is 404", "Page not found"),
                            translator.Get("CustomStatusPage.NotFound.Text", "Text on the custom status page when status is 404", "This page does not exist."),
                            translator.Get("CustomStatusPage.NotFound.BackLink", "Back link text on the custom status page when status is 404", "Back"),
                            "/");
                 case HttpStatusCode.Unauthorized:
-                    return new InfoViewModel(translator,
+                    return new InfoViewModel(database, translator,
                            translator.Get("CustomStatusPage.Unauthorized.Title", "Title on the custom status page when status is 401", "Unauthorized"),
                            translator.Get("CustomStatusPage.Unauthorized.Text", "Text on the custom status page when status is 401", "Access to this page is not authorized."),
                            translator.Get("CustomStatusPage.Unauthorized.BackLink", "Back link text on the custom status page when status is 401", "Back"),
                            "/");
                 case HttpStatusCode.Forbidden:
-                    return new InfoViewModel(translator,
+                    return new InfoViewModel(database, translator,
                            translator.Get("CustomStatusPage.Forbidden.Title", "Title on the custom status page when status is 403", "Forbidden"),
                            translator.Get("CustomStatusPage.Forbidden.Text", "Text on the custom status page when status is 403", "Access to this page is forbidden."),
                            translator.Get("CustomStatusPage.Forbidden.BackLink", "Back link text on the custom status page when status is 403", "Back"),
                            "/");
                 default:
-                    return new InfoViewModel(translator,
+                    return new InfoViewModel(database, translator,
                            translator.Get("CustomStatusPage.Error.Title", "Title on the custom status page on error", "Opps! Error {0}", (int)statusCode),
                            translator.Get("CustomStatusPage.Error.Text", "Text on the custom status page on error", "Something went wrong. If this problem persists, please contact the administrator of this page at {0}.", Global.Config.Mail.AdminMailAddress),
                            translator.Get("CustomStatusPage.Error.BackLink", "Back link text on the custom status page on error", "Back"),
@@ -88,7 +88,7 @@ namespace Quaestur
                     var translation = new Translation(database);
                     var translator = new Translator(translation, Language.English);
                     var viewContext = new ViewLocationContext { Context = context };
-                    context.Response = _factory.RenderView("View/info.sshtml", GetInfo(statusCode, translator), viewContext);
+                    context.Response = _factory.RenderView("View/info.sshtml", GetInfo(statusCode, database, translator), viewContext);
                     context.Response.StatusCode = statusCode;
                 }
             }

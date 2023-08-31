@@ -74,8 +74,8 @@ namespace Quaestur
 
     public class SystemWideFileViewModel : MasterViewModel
     {
-        public SystemWideFileViewModel(Translator translator, Session session)
-            : base(translator, 
+        public SystemWideFileViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("SystemWideFile.List.Title", "Title of the system wide file list page", "Countries"), 
             session)
         { 
@@ -131,7 +131,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/systemwidefile.sshtml",
-                        new SystemWideFileViewModel(Translator, CurrentSession)];
+                        new SystemWideFileViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

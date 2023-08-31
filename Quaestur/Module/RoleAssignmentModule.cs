@@ -79,8 +79,8 @@ namespace Quaestur
         public string Id;
         public string ParentId;
 
-        public RoleAssignmentViewModel(Translator translator, Session session, Role role)
-            : base(translator, 
+        public RoleAssignmentViewModel(IDatabase database, Translator translator, Session session, Role role)
+            : base(database, translator, 
             translator.Get("RoleAssignment.List.Title", "Title of the role assignment list page", "Role assignments"), 
             session)
         {
@@ -169,7 +169,7 @@ namespace Quaestur
                     if (HasAccess(role.Group.Value, PartAccess.RoleAssignments, AccessRight.Read))
                     {
                         return View["View/roleAssignment.sshtml",
-                            new RoleAssignmentViewModel(Translator, CurrentSession, role)];
+                            new RoleAssignmentViewModel(Database, Translator, CurrentSession, role)];
                     }
                 }
 

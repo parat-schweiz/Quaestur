@@ -31,8 +31,8 @@ namespace Quaestur
         { 
         }
 
-        public MailingElementEditViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("MailingElement.Edit.Title", "Title of the mailingElement edit dialog", "Edit mailing element"), session)
+        public MailingElementEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("MailingElement.Edit.Title", "Title of the mailingElement edit dialog", "Edit mailing element"), session)
         {
             PhraseFieldOwner = translator.Get("MailingElement.Edit.Field.Owner", "Owner field in the mailing element edit page", "Owner").EscapeHtml();
             PhraseFieldName = translator.Get("MailingElement.Edit.Field.Name", "Name field in the mailing element edit page", "Name").EscapeHtml();
@@ -43,7 +43,7 @@ namespace Quaestur
         }
 
         public MailingElementEditViewModel(Translator translator, IDatabase db, Session session)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Method = "add";
             Id = "new";
@@ -63,7 +63,7 @@ namespace Quaestur
         }
 
         public MailingElementEditViewModel(Translator translator, IDatabase db, Session session, MailingElement mailingElement)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Method = "edit";
             Id = mailingElement.Id.ToString();
@@ -85,8 +85,8 @@ namespace Quaestur
 
     public class MailingElementViewModel : MasterViewModel
     {
-        public MailingElementViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("MailingElement.List.Title", "Title of the mailingElement list page", "Mailing elements"), 
+        public MailingElementViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("MailingElement.List.Title", "Title of the mailingElement list page", "Mailing elements"), 
             session)
         { 
         }
@@ -144,7 +144,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.Mailings, AccessRight.Read))
                 {
                     return View["View/mailingelement.sshtml",
-                        new MailingElementViewModel(Translator, CurrentSession)];
+                        new MailingElementViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

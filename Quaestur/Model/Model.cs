@@ -72,6 +72,8 @@ namespace Quaestur
             database.CreateTable<ReservedUserName>();
             database.CreateTable<SystemWideFile>();
             database.CreateTable<Credits>();
+            database.CreateTable<CustomPage>();
+            database.CreateTable<CustomMenuEntry>();
 
             Global.Log.Info("Tables ok.");
         }

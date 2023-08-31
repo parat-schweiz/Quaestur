@@ -25,8 +25,8 @@ namespace Quaestur
         public string PhraseButtonAuthorize;
         public string PhraseButtonReject;
 
-        public Oauth2AuthViewModel(Translator translator, Session session, Oauth2Client client, string state, string nonce)
-            : base(translator,
+        public Oauth2AuthViewModel(IDatabase database, Translator translator, Session session, Oauth2Client client, string state, string nonce)
+            : base(database, translator,
                    translator.Get("OAuth2.Title", "Title of the oauth2 page", "Authorization"),
                    session)
         {
@@ -75,7 +75,7 @@ namespace Quaestur
     {
         public Negotiator OAuth2Error(string key, string hint, string technical)
         {
-            return View["View/info.sshtml", new InfoViewModel(Translator,
+            return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                 Translate("Oauth2.Error.Title", "Errot title in OAuth2", "Error"),
                 Translate(key, hint, technical),
                 Translate("Oauth2.Error.BackLink", "Back link on oauth2 error page", "Back"),
@@ -159,7 +159,7 @@ namespace Quaestur
                     }
                     else
                     {
-                        return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Translator, CurrentSession, client, state, nonce)];
+                        return View["View/oauth2auth.sshtml", new Oauth2AuthViewModel(Database, Translator, CurrentSession, client, state, nonce)];
                     }
                 }
                 else

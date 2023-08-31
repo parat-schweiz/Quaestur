@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateCustomMenuEntryList(){
+      $.get("/custommenuentry/list", function(data, status){
+          if (data){
+              $("#customMenuEntry").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateCustomMenuEntryList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="customMenuEntry">
+</div>
+@EndSection

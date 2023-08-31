@@ -97,8 +97,8 @@ namespace Quaestur
 
     public class OrganizationViewModel : MasterViewModel
     {
-        public OrganizationViewModel(Translator translator, Session session)
-            : base(translator, 
+        public OrganizationViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("Organization.List.Title", "Title of the organization list page", "Organizations"), 
             session)
         { 
@@ -182,7 +182,7 @@ namespace Quaestur
             Get("/organization", parameters =>
             {
                 return View["View/organization.sshtml",
-                    new OrganizationViewModel(Translator, CurrentSession)];
+                    new OrganizationViewModel(Database, Translator, CurrentSession)];
             });
             Get("/organization/list", parameters =>
             {

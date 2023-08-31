@@ -98,7 +98,7 @@ namespace Quaestur
         }
 
         public IncomeEditViewModel(IDatabase database, Translator translator, Person person, Session session)
-            : base(translator,
+            : base(database, translator,
             translator.Get("Income.Edit.Title", "Title of the income edit dialog", "Edit income"),
             session)
         {

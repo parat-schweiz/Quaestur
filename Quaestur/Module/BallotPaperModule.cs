@@ -70,7 +70,7 @@ namespace Quaestur
         public List<BallotPaperListItemViewModel> List;
 
         public BallotPaperViewModel(Translator translator, IDatabase database, Session session)
-            : base(translator,
+            : base(database, translator,
             translator.Get("BallotPaper.List.Title", "Title of the ballot paper page", "Ballots"),
             session)
         {
@@ -107,7 +107,7 @@ namespace Quaestur
         public List<BallotPaperVerifyItemViewModel> List;
 
         public BallotPaperVerifyViewModel(Translator translator, IDatabase database, Session session, BallotPaper ballotPaper, byte[] code, bool marked)
-            : base(translator,
+            : base(database, translator,
             translator.Get("BallotPaper.Verify.Title", "Title of the ballot paper verify page", "Ballot paper verification"),
             session)
         {
@@ -299,7 +299,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                    return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                         Translate("BallotPaper.Verify.Error.Title", "Error title in ballot paper verfiy", "Error"),
                         Translate("BallotPaper.Verify.Error.Text", "Back link on ballot paper verfiy error", "Invalid ballot paper verification link."),
                         Translate("BallotPaper.Verify.Error.BackLink", "Back link on ballot paper verfiy error", "Back"),

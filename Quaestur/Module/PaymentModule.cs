@@ -37,8 +37,8 @@ namespace Quaestur
         public bool IsPayable;
         public string Id;
 
-        public PaymentViewModel(Translator translator, Session session, Person person, ApiClient client, PaymentTransaction transaction, SystemWideSettings settings, int creditsBalance, string authCode)
-            : base(translator,
+        public PaymentViewModel(IDatabase database, Translator translator, Session session, Person person, ApiClient client, PaymentTransaction transaction, SystemWideSettings settings, int creditsBalance, string authCode)
+            : base(database, translator,
                    translator.Get("Payment.Title", "Title of the payment page", "Payment"),
                    session)
         {
@@ -90,7 +90,7 @@ namespace Quaestur
     {
         public Negotiator Error(string returnUrl)
         {
-            return View["View/info.sshtml", new InfoViewModel(Translator,
+            return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                 Translate("Payment.Error.Title", "Title of the message when payment requst is invalid", "Invalid request"),
                 Translate("Payment.Error.Message", "Text of the message when payment requst is invalid", "Payment request is invalid."),
                 Translate("Payment.Error.BackLink", "Link text of the message when payment requstis invalid", "Back"),
@@ -129,7 +129,7 @@ namespace Quaestur
                                     CurrentSession.User.GetText(Translator),
                                     apiClient.Name.Value[Language.English]);
                                 return View["View/payment.sshtml",
-                                    new PaymentViewModel(Translator, CurrentSession, CurrentSession.User, apiClient, transaction, settings, creditsBalance, authCode)];
+                                    new PaymentViewModel(Database, Translator, CurrentSession, CurrentSession.User, apiClient, transaction, settings, creditsBalance, authCode)];
                             }
                             else
                             {

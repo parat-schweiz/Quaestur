@@ -112,8 +112,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public PermissionViewModel(Translator translator, Session session, Role role)
-            : base(translator, 
+        public PermissionViewModel(IDatabase database, Translator translator, Session session, Role role)
+            : base(database, translator, 
             translator.Get("Permission.List.Title", "Title of the permission list page", "Permissions"), 
             session)
         {
@@ -208,7 +208,7 @@ namespace Quaestur
                     if (HasAccess(role.Group.Value, PartAccess.Structure, AccessRight.Read))
                     {
                         return View["View/permission.sshtml",
-                            new PermissionViewModel(Translator, CurrentSession, role)];
+                            new PermissionViewModel(Database, Translator, CurrentSession, role)];
                     }
                 }
 

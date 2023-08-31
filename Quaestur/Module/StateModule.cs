@@ -42,8 +42,8 @@ namespace Quaestur
 
     public class StateViewModel : MasterViewModel
     {
-        public StateViewModel(Translator translator, Session session)
-            : base(translator, 
+        public StateViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
                    translator.Get("State.List.Title", "Title of the states list page", "States"), 
                    session)
         { 
@@ -94,7 +94,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/state.sshtml",
-                        new StateViewModel(Translator, CurrentSession)];
+                        new StateViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

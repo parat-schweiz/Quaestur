@@ -86,7 +86,7 @@ namespace Quaestur
         public string PhraseDeleteConfirmationInfo;
 
         public PointBudgetListViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod period)
-            : base(translator,
+            : base(database, translator,
             translator.Get("PointBudget.List.Title", "Title of the point budget list page", "Points budget"),
             session)
         {
@@ -133,7 +133,7 @@ namespace Quaestur
         public List<NamedIdViewModel> BudgetPeriods;
 
         public PointBudgetViewModel(IDatabase database, Translator translator, Session session, BudgetPeriod defaultPeriod)
-            : base(translator,
+            : base(database, translator,
             translator.Get("PointBudget.List.Title", "Title of the point budget list page", "Points budget"),
             session)
         {

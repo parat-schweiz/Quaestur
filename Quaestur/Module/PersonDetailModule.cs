@@ -34,8 +34,8 @@ namespace Quaestur
         public string PhraseTabSecurity;
         public string PhraseTabActions;
 
-        public PersonDetailViewModel(Translator translator, Session session, Person person)
-            : base(translator, 
+        public PersonDetailViewModel(IDatabase database, Translator translator, Session session, Person person)
+            : base(database, translator, 
             session.HasAccess(person, PartAccess.Demography, AccessRight.Read) ? person.ShortHand : person.UserName, 
             session)
         {
@@ -187,11 +187,11 @@ namespace Quaestur
                     if (HasAccess(person, PartAccess.Anonymous, AccessRight.Read))
                     {
                         return View["View/persondetail.sshtml",
-                            new PersonDetailViewModel(Translator, CurrentSession, person)];
+                            new PersonDetailViewModel(Database, Translator, CurrentSession, person)];
                     }
                 }
 
-                return View["View/info.sshtml", new InfoViewModel(Translator,
+                return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                     Translate("Person.Detail.NotFound.Title", "Title of the message when person is not found", "Not found"),
                     Translate("Person.Detail.NotFound.Message", "Text of the message when person is not found", "No person was found."),
                     Translate("Person.Detail.NotFound.BackLink", "Link text of the message when person is not found", "Back"),

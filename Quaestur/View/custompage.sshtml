@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateCustomPageList(){
+      $.get("/custompage/list", function(data, status){
+          if (data){
+              $("#customPageList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateCustomPageList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="customPageList">
+</div>
+@EndSection

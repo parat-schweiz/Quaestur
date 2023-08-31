@@ -84,8 +84,8 @@ namespace Quaestur
 
     public class PhraseViewModel : MasterViewModel
     {
-        public PhraseViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("Phrase.List.Title", "Title of the phrase list page", "Countries"), 
+        public PhraseViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("Phrase.List.Title", "Title of the phrase list page", "Countries"), 
             session)
         { 
         }
@@ -187,7 +187,7 @@ namespace Quaestur
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
                 {
                     return View["View/phrase.sshtml",
-                        new PhraseViewModel(Translator, CurrentSession)];
+                        new PhraseViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

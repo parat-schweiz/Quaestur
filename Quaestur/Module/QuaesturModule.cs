@@ -339,7 +339,7 @@ namespace Quaestur
 
         public Negotiator AccessDenied()
         {
-            return View["View/info.sshtml", new AccessDeniedViewModel(Translator)];
+            return View["View/info.sshtml", new AccessDeniedViewModel(Database, Translator)];
         }
 
         private static Language? ConvertLocale(string locale)

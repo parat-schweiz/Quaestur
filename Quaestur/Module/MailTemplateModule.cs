@@ -36,8 +36,8 @@ namespace Quaestur
         { 
         }
 
-        public MailTemplateEditViewModel(Translator translator, Session session)
-            : base(translator, translator.Get("MailTemplate.Edit.Title", "Title of the mail template edit page", "Edit mail template"), session)
+        public MailTemplateEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, translator.Get("MailTemplate.Edit.Title", "Title of the mail template edit page", "Edit mail template"), session)
         {
             PhraseFieldLabel = translator.Get("MailTemplate.Edit.Field.Label", "Label field in the mail template edit page", "Label");
             PhraseFieldLanguage = translator.Get("MailTemplate.Edit.Field.Language", "Language field in the mail template edit page", "Language");
@@ -48,12 +48,8 @@ namespace Quaestur
             PhraseButtonSave = translator.Get("MailTemplate.Edit.Button.Save", "Save button in the mail template edit page", "Save").EscapeHtml();
             PhraseButtonCancel = translator.Get("MailTemplate.Edit.Button.Cancel", "Cancel button in the mail template edit page", "Cancel").EscapeHtml();
             HtmlEditorId = Guid.NewGuid().ToString();
-        }
-
-        public MailTemplateEditViewModel(IDatabase database, Translator translator, Session session)
-            : this(translator, session)
-        {
             Method = "add";
+
             Id = "new";
             Label = string.Empty;
             Subject = string.Empty;
@@ -75,7 +71,7 @@ namespace Quaestur
         }
 
         public MailTemplateEditViewModel(IDatabase database, Translator translator, Session session, MailTemplate mailTemplate)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "edit";
             Id = mailTemplate.Id.ToString();
@@ -101,8 +97,8 @@ namespace Quaestur
 
     public class MailTemplateViewModel : MasterViewModel
     {
-        public MailTemplateViewModel(Translator translator, Session session)
-            : base(translator, 
+        public MailTemplateViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("MailTemplate.List.Title", "Title of the mail template list page", "Countries"), 
             session)
         { 
@@ -160,7 +156,7 @@ namespace Quaestur
                 if (SomeAccess(AccessRight.Read))
                 {
                     return View["View/mailtemplate.sshtml",
-                        new MailTemplateViewModel(Translator, CurrentSession)];
+                        new MailTemplateViewModel(Database, Translator, CurrentSession)];
                 }
                 return AccessDenied();
             });

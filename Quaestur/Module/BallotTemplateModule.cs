@@ -45,8 +45,8 @@ namespace Quaestur
         { 
         }
 
-        public BallotTemplateEditViewModel(Translator translator, Session session)
-            : base(translator,
+        public BallotTemplateEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
             translator.Get("BallotTemplate.Edit.Title", "Title of the ballot template edit dialog", "Edit ballot template"),
             session)
         {
@@ -63,7 +63,7 @@ namespace Quaestur
         }
 
         public BallotTemplateEditViewModel(Translator translator, IDatabase database, Session session)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "add";
             Id = string.Empty;
@@ -97,7 +97,7 @@ namespace Quaestur
         }
 
         public BallotTemplateEditViewModel(Translator translator, IDatabase database, Session session, BallotTemplate ballotTemplate)
-            : this(translator, session)
+            : this(database, translator, session)
         {
             Method = "edit";
             Id = ballotTemplate.Id.ToString();
@@ -133,8 +133,8 @@ namespace Quaestur
 
     public class BallotTemplateViewModel : MasterViewModel
     {
-        public BallotTemplateViewModel(Translator translator, Session session)
-            : base(translator, 
+        public BallotTemplateViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("BallotTemplate.List.Title", "Title of the ballot template list page", "Ballot templates"), 
             session)
         {
@@ -193,7 +193,7 @@ namespace Quaestur
             Get("/ballottemplate", parameters =>
             {
                 return View["View/ballottemplate.sshtml",
-                    new BallotTemplateViewModel(Translator, CurrentSession)];
+                    new BallotTemplateViewModel(Database, Translator, CurrentSession)];
             });
             Get("/ballottemplate/list", parameters =>
             {

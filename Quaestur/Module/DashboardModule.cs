@@ -155,7 +155,7 @@ namespace Quaestur
         }
 
         public DashboardViewModel(Translator translator, IDatabase db, Session session)
-            : base(translator,
+            : base(db, translator,
                    translator.Get("Dashboard.Title", "Dashboard page title", "Dashboard"),
                    session)
         {

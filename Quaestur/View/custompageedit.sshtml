@@ -1,0 +1,128 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#customPage' + field + key;
+  var feedbackId = '#customPage' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#customPage' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function saveObject(callback){
+  var formData = new Object();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#customPageName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  formData.Content = new Array();
+  @Each.Content
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = tinymce.get("customPageContent@Current.Key").getContent();
+  formData.Content.push(obj@Current.Key);
+  @EndEach
+  $.post("/custompage/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
+    if (assignValidation(resultData)) {
+      callback(true);
+    }else{
+      callback(false);
+    }
+  });
+}
+$(document).ready(function() {
+  $("#customPageCancelButton").click(function(event) {
+    window.location.href = "/custompage";
+    event.preventDefault();  
+  });
+  $("#customPageSaveButton").click(function(event) {
+    saveObject(function(success) {
+      if (success){
+        window.location.href = "/custompage";
+      }
+    });
+    event.preventDefault();  
+  });
+  tinymce.init({
+    selector: '.tinyeditor',
+    theme: 'modern',
+    height: 200,
+    plugins: [
+      'advlist autolink link image lists charmap print preview hr anchor pagebreak spellchecker',
+      'searchreplace wordcount visualblocks visualchars code fullscreen insertdatetime media nonbreaking',
+      'save table contextmenu directionality emoticons template paste textcolor'
+    ],
+  });
+});
+</script>
+@EndSection
+
+@Section['data']
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="customPageName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="customPageName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="customPageNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      @Each.Content
+      <div class="col-12 mb-3">
+        <label for="customPageContent@Current.Key">@Current.Phrase</label>
+        <textarea id="customPageContent@Current.Key" class="tinyeditor">@Current.Value</textarea>
+        <div id="customPageContentFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <button id="customPageCancelButton" class="btn btn-primary mb-2">@Model.PhraseButtonCancel</button>
+    <button id="customPageSaveButton" class="btn btn-primary mb-2">@Model.PhraseButtonSave</button>
+  </form>
+</div>
+@EndSection

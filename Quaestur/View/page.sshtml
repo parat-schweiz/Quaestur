@@ -1,0 +1,8 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+@EndSection
+
+@Section['data']
+@Model.Content
+@EndSection

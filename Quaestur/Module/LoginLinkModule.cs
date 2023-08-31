@@ -21,7 +21,7 @@ namespace Quaestur
     public class LoginLinkViewModel : MasterViewModel
     {
         public LoginLinkViewModel(IDatabase database, Translator translator, Session session)
-            : base(translator, 
+            : base(database, translator, 
                 translator.Get("LoginLink.Title", "Title of the link login page", "Get login link"), 
                 session)
         {

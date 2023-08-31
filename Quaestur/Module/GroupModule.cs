@@ -72,8 +72,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public GroupViewModel(Translator translator, Session session, Organization organization)
-            : base(translator, 
+        public GroupViewModel(IDatabase database, Translator translator, Session session, Organization organization)
+            : base(database, translator, 
             translator.Get("Group.List.Title", "Title of the group list page", "Groups"), 
             session)
         {
@@ -143,7 +143,7 @@ namespace Quaestur
                     if (HasAccess(organization, PartAccess.Structure, AccessRight.Read))
                     {
                         return View["View/group.sshtml",
-                            new GroupViewModel(Translator, CurrentSession, organization)];
+                            new GroupViewModel(Database, Translator, CurrentSession, organization)];
                     }
                 }
 

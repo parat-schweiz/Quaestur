@@ -69,8 +69,8 @@ namespace Quaestur
 
         public List<MailingSendingViewModel> Sendings;
 
-        private MailingScheduledViewModel(Translator translator, Session session)
-            : base(translator,
+        private MailingScheduledViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
                    translator.Get("Mailing.Scheduled.Title", "Title of the scheduled mailing page", "Scheduled mailing"),
                    session)
         {
@@ -90,7 +90,7 @@ namespace Quaestur
         }
 
         public MailingScheduledViewModel(Translator translator, IDatabase db, Session session, Mailing mailing)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Id = mailing.Id.Value.ToString();
             Title = mailing.Title.Value.EscapeHtml();
@@ -172,8 +172,8 @@ namespace Quaestur
         { 
         }
 
-        private MailingSendViewModel(Translator translator, Session session)
-            : base(translator,
+        private MailingSendViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
                    translator.Get("Mailing.Edit.Title", "Title of the edit mailing page", "Edit mailing"),
                    session)
         {
@@ -189,7 +189,7 @@ namespace Quaestur
         }
 
         public MailingSendViewModel(Translator translator, IDatabase db, Session session, Mailing mailing)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Id = mailing.Id.Value.ToString();
             Title = mailing.Title.Value.EscapeHtml();
@@ -253,8 +253,8 @@ namespace Quaestur
         { 
         }
 
-        private MailingEditViewModel(Translator translator, Session session)
-            : base(translator,
+        private MailingEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
                    translator.Get("Mailing.Edit.Title", "Title of the edit mailing page", "Edit mailing"),
                    session)
         {
@@ -276,7 +276,7 @@ namespace Quaestur
         }
 
         public MailingEditViewModel(Translator translator, IDatabase db, Session session)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Method = "add";
             Id = Guid.NewGuid().ToString();
@@ -322,7 +322,7 @@ namespace Quaestur
         }
 
         public MailingEditViewModel(Translator translator, IDatabase db, Session session, Mailing mailing)
-        : this(translator, session)
+        : this(db, translator, session)
         {
             Method = "edit";
             Id = mailing.Id.Value.ToString();
@@ -368,8 +368,8 @@ namespace Quaestur
 
     public class MailingViewModel : MasterViewModel
     {
-        public MailingViewModel(Translator translator, Session session)
-            : base(translator, 
+        public MailingViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("Mailing.List.Title", "Title of the mailing list page", "Mailing"), 
             session)
         {
@@ -479,7 +479,7 @@ namespace Quaestur
             Get("/mailing", parameters =>
             {
                 return View["View/mailing.sshtml",
-                    new MailingViewModel(Translator, CurrentSession)];
+                    new MailingViewModel(Database, Translator, CurrentSession)];
             });
             Get("/mailing/list", parameters =>
             {

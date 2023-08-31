@@ -33,8 +33,8 @@ namespace Quaestur
         {
         }
 
-        public PasswordResetRequestViewModel(Translator translator)
-            : base(translator,
+        public PasswordResetRequestViewModel(IDatabase database, Translator translator)
+            : base(database, translator,
                    translator.Get("PasswordReset.Request.Title", "Title of the password reset request page", "Reset Password"),
                    null)
         {
@@ -59,8 +59,8 @@ namespace Quaestur
         {
         }
 
-        public PasswordResetChangeViewModel(Translator translator, Person person, string time, string mac)
-            : base(translator,
+        public PasswordResetChangeViewModel(IDatabase database, Translator translator, Person person, string time, string mac)
+            : base(database, translator,
                    translator.Get("PasswordReset.Change.Title", "Title of the password reset change dialog", "Reset password"),
                    null)
         {
@@ -102,7 +102,7 @@ namespace Quaestur
             Get("/password/reset/request", parameters =>
             {
                 return View["View/passwordresetrequest.sshtml",
-                    new PasswordResetRequestViewModel(Translator)];
+                    new PasswordResetRequestViewModel(Database, Translator)];
             });
             Post("/password/reset/request", parameters =>
             {
@@ -173,7 +173,7 @@ namespace Quaestur
                         }
                     }
 
-                    return View["View/info.sshtml", new InfoViewModel(Translator,
+                    return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                         Translate("PasswordReset.Request.Title", "Title of the message when a password reset is requested", "Password reset"),
                         Translate("PasswordReset.Request.Message", "Text of the message when a password reset is requested", "If your mail address is in our database we have sent a password reset link to that address. Please check your inbox."),
                         Translate("PasswordReset.Request.BackLink", "Link text of the message when a password reset is requested", "Back"),
@@ -181,7 +181,7 @@ namespace Quaestur
                 }
                 else
                 {
-                    var newModel = new PasswordResetRequestViewModel(Translator);
+                    var newModel = new PasswordResetRequestViewModel(Database, Translator);
                     newModel.Problems = Translate(
                         "PasswordReset.Request.Validation.Invalid",
                         "When e-mail is invalid on password reset",
@@ -209,7 +209,7 @@ namespace Quaestur
                         ComputeHmac(person.Id.Value, time).AreEqual(mac))
                     {
                         return View["View/passwordresetchange.sshtml",
-                            new PasswordResetChangeViewModel(Translator, person, timeString, macString)];
+                            new PasswordResetChangeViewModel(Database, Translator, person, timeString, macString)];
                     }
                 }
 
@@ -276,7 +276,7 @@ namespace Quaestur
 
         private Negotiator ChangeInvalid()
         {
-            return View["View/info.sshtml", new InfoViewModel(Translator,
+            return View["View/info.sshtml", new InfoViewModel(Database, Translator,
                 Translate("PasswordReset.Change.Invalid.Title", "Title of the message when a password reset link is invalid", "Invalid link"),
                 Translate("PasswordReset.Change.Invalid.Message", "Text of the message when a password reset link is invalid", "This password reset link is not valid."),
                 Translate("PasswordReset.Change.Invalid.BackLink", "Link text of the message when a password reset link is invalid", "Back"),

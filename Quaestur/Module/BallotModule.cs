@@ -35,8 +35,8 @@ namespace Quaestur
         { 
         }
 
-        public BallotEditViewModel(Translator translator, Session session)
-            : base(translator,
+        public BallotEditViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator,
             translator.Get("Ballot.Edit.Title", "Title of the ballot edit dialog", "Edit ballot"),
             session)
         {
@@ -50,7 +50,7 @@ namespace Quaestur
         }
 
         public BallotEditViewModel(Translator translator, IDatabase db, Session session)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Method = "add";
             Id = "new";
@@ -67,7 +67,7 @@ namespace Quaestur
         }
 
         public BallotEditViewModel(Translator translator, IDatabase db, Session session, Ballot ballot)
-            : this(translator, session)
+            : this(db, translator, session)
         {
             Method = "edit";
             Id = ballot.Id.ToString();
@@ -86,8 +86,8 @@ namespace Quaestur
 
     public class BallotViewModel : MasterViewModel
     {
-        public BallotViewModel(Translator translator, Session session)
-            : base(translator, 
+        public BallotViewModel(IDatabase database, Translator translator, Session session)
+            : base(database, translator, 
             translator.Get("Ballot.List.Title", "Title of the ballot list page", "Ballots"), 
             session)
         {
@@ -159,7 +159,7 @@ namespace Quaestur
             Get("/ballot", parameters =>
             {
                 return View["View/ballot.sshtml",
-                    new BallotViewModel(Translator, CurrentSession)];
+                    new BallotViewModel(Database, Translator, CurrentSession)];
             });
             Get("/ballot/list", parameters =>
             {

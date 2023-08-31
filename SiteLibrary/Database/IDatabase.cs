@@ -161,7 +161,19 @@ namespace SiteLibrary
         {
             get
             {
-                if (string.IsNullOrEmpty(Function))
+                if (Value == null)
+                {
+                    switch (Operator)
+                    {
+                        case DataOperator.Equal:
+                            return string.Format("({0} is null)", ColumnName);
+                        case DataOperator.NotEqual:
+                            return string.Format("({0} is not null)", ColumnName);
+                        default:
+                            throw new NotSupportedException("operators other an equal or not equal are not supported with null values");
+                    }
+                }
+                else if (string.IsNullOrEmpty(Function))
                 {
                     return string.Format("({0} {1} {2})", ColumnName, OperatorText, VariableName);
                 }
@@ -176,12 +188,32 @@ namespace SiteLibrary
         {
             get 
             {
-                yield return new Tuple<string, object>(VariableName, Value);
+                if (Value != null)
+                {
+                    yield return new Tuple<string, object>(VariableName, Value);
+                }
             } 
         }
 
         public DataValueCondition(string columnName, DataOperator op, object value, string function)
         {
+            if (value == null)
+            { 
+                if (function != null)
+                {
+                    throw new ArgumentException("function is not allowed when value is null");
+                }
+
+                switch (op)
+                {
+                    case DataOperator.Equal:
+                    case DataOperator.NotEqual:
+                        break;
+                    default:
+                        throw new ArgumentException("when value is null only operators equal and not equal are allowed");
+                }
+            }
+
             ColumnName = columnName;
             Operator = op;
             Value = value;

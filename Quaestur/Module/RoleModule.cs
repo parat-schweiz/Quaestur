@@ -45,8 +45,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public RoleViewModel(Translator translator, Session session, Group group)
-            : base(translator, 
+        public RoleViewModel(IDatabase database, Translator translator, Session session, Group group)
+            : base(database, translator, 
             translator.Get("Role.List.Title", "Title of the role list page", "Roles"), 
             session)
         {
@@ -146,7 +146,7 @@ namespace Quaestur
                     if (HasAccess(group, PartAccess.Structure, AccessRight.Read))
                     {
                         return View["View/role.sshtml",
-                            new RoleViewModel(Translator, CurrentSession, group)];
+                            new RoleViewModel(Database, Translator, CurrentSession, group)];
                     }
                 }
 

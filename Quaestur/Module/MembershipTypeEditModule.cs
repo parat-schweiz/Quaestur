@@ -259,8 +259,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public MembershipTypeViewModel(Translator translator, Session session, Organization organization)
-            : base(translator, 
+        public MembershipTypeViewModel(IDatabase database, Translator translator, Session session, Organization organization)
+            : base(database, translator, 
             translator.Get("MembershipType.List.Title", "Title of the membership type list page", "Membership type"), 
             session)
         {
@@ -333,7 +333,7 @@ namespace Quaestur
                 if (organization != null)
                 {
                     return View["View/membershiptype.sshtml",
-                        new MembershipTypeViewModel(Translator, CurrentSession, organization)];
+                        new MembershipTypeViewModel(Database, Translator, CurrentSession, organization)];
                 }
 
                 return string.Empty;

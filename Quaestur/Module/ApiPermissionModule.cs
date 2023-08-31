@@ -110,8 +110,8 @@ namespace Quaestur
     {
         public string Id;
 
-        public ApiPermissionViewModel(Translator translator, Session session, ApiClient apiClient)
-            : base(translator, 
+        public ApiPermissionViewModel(IDatabase database, Translator translator, Session session, ApiClient apiClient)
+            : base(database, translator, 
             translator.Get("ApiPermission.List.Title", "Title of the API permission list page", "API permissions"), 
             session)
         {
@@ -182,7 +182,7 @@ namespace Quaestur
                     if (HasSystemWideAccess(PartAccess.Structure, AccessRight.Read))
                     {
                         return View["View/apipermission.sshtml",
-                            new ApiPermissionViewModel(Translator, CurrentSession, apiClient)];
+                            new ApiPermissionViewModel(Database, Translator, CurrentSession, apiClient)];
                     }
                 }
 
