@@ -86,7 +86,7 @@
       <HintPath>..\packages\AngleSharp.0.17.1\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.8.0.645\lib\net461\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.8.0.692\lib\net461\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -105,7 +105,7 @@
       <HintPath>..\packages\AngleSharp.Css.0.17.0\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
-      <HintPath>..\packages\JWT.10.0.2\lib\net462\JWT.dll</HintPath>
+      <HintPath>..\packages\JWT.10.1.0\lib\net462\JWT.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
       <HintPath>..\packages\MailKit.4.1.0\lib\net48\MailKit.dll</HintPath>
