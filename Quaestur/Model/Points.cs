@@ -12,6 +12,7 @@ namespace Quaestur
         RedmineIssue = 2,
         StorePayment = 3,
         Decay = 4,
+        BalanceForward = 5,
     }
 
     public static class InteractionReferenceTypeExtensions
@@ -30,6 +31,8 @@ namespace Quaestur
                     return translator.Get("Enum.InteractionReferenceType.StorePayment", "Value 'StorePayment' in InteractionReferenceType enum", "Store Payment");
                 case InteractionReferenceType.Decay:
                     return translator.Get("Enum.InteractionReferenceType.Decay", "Value 'Decay' in InteractionReferenceType enum", "Decay");
+                case InteractionReferenceType.BalanceForward:
+                    return translator.Get("Enum.InteractionReferenceType.BalanceForward", "Value 'Balance forward' in InteractionReferenceType enum", "Balance forward");
                 default:
                     throw new NotSupportedException();
             }

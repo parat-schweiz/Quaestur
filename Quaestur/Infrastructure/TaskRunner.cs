@@ -28,6 +28,11 @@ namespace Quaestur
             _task.Add(new PaymentParameterUpdateReminderTask());
             _task.Add(new LogBufferTask());
             _task.Add(new CreditsDecayTask());
+            _task.Add(new CreditsPruneTask());
+            _task.Add(new PointsPruneTask());
+            _task.Add(new JournalPruneTask());
+            _task.Add(new MailingPruneTask());
+            _task.Add(new BallotPruneTask());
             _database = Global.CreateDatabase();
         }
 

@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 36;
+        public static int CurrentVersion = 37;
 
         public static void Install(IDatabase database)
         {
@@ -146,6 +146,14 @@ namespace Quaestur
                     database.AddColumn<Ballot>(o => o.AnnouncementDate);
                     database.AddColumn<Ballot>(o => o.StartDate);
                     FillBallotDates(database);
+                    break;
+                case 37:
+                    database.AddColumn<SystemWideSettings>(o => o.CreditsDataPreservationYears);
+                    database.AddColumn<SystemWideSettings>(o => o.PointsDataPreservationYears);
+                    database.AddColumn<SystemWideSettings>(o => o.PointsTallyDataPreservationYears);
+                    database.AddColumn<SystemWideSettings>(o => o.JournalPreservationDays);
+                    database.AddColumn<SystemWideSettings>(o => o.MailingPreservationDays);
+                    database.AddColumn<SystemWideSettings>(o => o.BallotPreservationDays);
                     break;
                 default:
                     throw new NotSupportedException();

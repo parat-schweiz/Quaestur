@@ -312,6 +312,11 @@
     <Compile Include="Model\CustomMenuEntry.cs" />
     <Compile Include="Module\CustomPageModule.cs" />
     <Compile Include="Module\CustomMenuEntryModule.cs" />
+    <Compile Include="Infrastructure\JournalPruneTask.cs" />
+    <Compile Include="Infrastructure\PointsPruneTask.cs" />
+    <Compile Include="Infrastructure\CreditsPruneTask.cs" />
+    <Compile Include="Infrastructure\MailingPruneTask.cs" />
+    <Compile Include="Infrastructure\BallotPruneTask.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
