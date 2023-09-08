@@ -99,7 +99,7 @@ namespace Quaestur
 
         public PaymentModule()
         {
-            this.RequiresAuthentication();
+            this.RequireCompleteLogin();
 
             base.Get("/payments/show/{id}", parameters =>
             {

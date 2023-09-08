@@ -48,6 +48,7 @@ function assignValidation(resultData){
   @EndEach
   assignFieldValidation("Secret", result);
   assignFieldValidation("RedirectUri", result);
+  assignFieldValidation("SessionExpirySeconds", result);
   assignFieldValidation("Access", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
@@ -63,6 +64,7 @@ $("#@Model.ButtonId").click(function() {
   @EndEach
   formData.Secret = $("#clientSecret").val();
   formData.RedirectUri = $("#clientRedirectUri").val();
+  formData.SessionExpirySeconds = $("#clientSessionExpirySeconds").val();
   formData.RequireTwoFactor = $('#clientRequireTwoFactor').is(':checked');
   formData.Access = $("#clientAccess").val();
   $.post("/oauth2client/@Model.Method/@Model.Id", JSON.stringify(formData), function(resultData, status){
@@ -128,6 +130,13 @@ $('.selectpicker').selectpicker();
           @EndEach
         </select>
         <div id="clientAccessFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="clientSessionExpirySeconds">@Model.PhraseFieldSessionExpirySeconds</label>
+        <input type="text" id="clientSessionExpirySeconds" class="form-control" value="@Model.SessionExpirySeconds"/>
+        <div id="clientSessionExpirySecondsFeedback" class="valid-feedback"></div>
       </div>
     </div>
   </form>

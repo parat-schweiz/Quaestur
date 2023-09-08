@@ -41,6 +41,10 @@ namespace Quaestur
         public string LogFilePrefix { get; private set; }
         public List<string> MatrixDomains { get; private set; }
         public int StartTaskWaitSeconds { get; private set; }
+        public int SessionExpiryAbsoluteSeconds { get; private set; }
+        public int SessionExpiryRelativeSeconds { get; private set; }
+        public byte[] SessionEncryptionKey { get; private set; }
+        public byte[] SessionAuthenticationKey { get; private set; }
 
         public override IEnumerable<ConfigItem> ConfigItems
         {
@@ -53,6 +57,10 @@ namespace Quaestur
                 yield return new ConfigItemString("LogFilePrefix", v => LogFilePrefix = v);
                 yield return new ConfigMultiItemString("MatrixDomain", v => MatrixDomains.Add(v));
                 yield return new ConfigItemInt32("StartTaskWaitSeconds", v => StartTaskWaitSeconds = v);
+                yield return new ConfigItemInt32("SessionExpiryAbsoluteSeconds", v => SessionExpiryAbsoluteSeconds = v);
+                yield return new ConfigItemInt32("SessionExpiryRelativeSeconds", v => SessionExpiryRelativeSeconds = v);
+                yield return new ConfigItemBytes("SessionEncryptionKey", v => SessionEncryptionKey = v);
+                yield return new ConfigItemBytes("SessionAuthenticationKey", v => SessionAuthenticationKey = v);
             }
         }
 

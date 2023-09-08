@@ -68,7 +68,7 @@ namespace Quaestur
                 var login = this.Bind<LoginViewModel>();
                 Global.Throttle.Check(login.UserName, false);
                 var returnUrl = ValidateReturnUrl(login.ReturnUrl);
-                var result = UserController.Login(Database, login.UserName, login.Password);
+                var result = UserController.Login(Database, Translation, login.UserName, login.Password);
                 var newLogin = new LoginViewModel(Database, Translator, returnUrl);
 
                 switch (result.Item2)
@@ -85,7 +85,7 @@ namespace Quaestur
                         Global.Log.Notice("Login denied due to locked user {0}", result.Item1.UserName);
                         break;
                     case LoginResult.Success:
-                        var session = Global.Sessions.Add(result.Item1);
+                        var session = Global.Sessions.Add(result.Item1, Request.Headers.UserAgent);
                         Journal(Translate(
                             "Password.Journal.Auth.Process",
                             "Journal entry subject on authentication",
@@ -94,27 +94,10 @@ namespace Quaestur
                             "Password.Journal.Auth.Success",
                             "Journal entry when authentication with password succeeded",
                             "Login with password succeeded");
+                        var sessionExpiry = DateTime.Now.AddSeconds(Global.Config.SessionExpiryAbsoluteSeconds).AddDays(1);
 
-                        using (var transaction = Database.BeginTransaction())
-                        {
-                            foreach (var loginLink in Database
-                                .Query<LoginLink>(DC.Equal("personid", session.User.Id.Value)))
-                            {
-                                loginLink.Delete(Database);
-                            }
-
-                            transaction.Commit();
-                        }
-
-                        if (returnUrl.StartsWith("/oauth2/authorize", StringComparison.Ordinal))
-                        {
-                            return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), returnUrl);
-                        }
-                        else
-                        {
-                            session.ReturnUrl = returnUrl;
-                            return this.LoginAndRedirect(session.Id, DateTime.Now.AddDays(1), "/twofactor/auth");
-                        }
+                        session.ReturnUrl = returnUrl;
+                        return this.LoginAndRedirect(session.Id, sessionExpiry, "/twofactor/auth");
                 }
 
                 return View["View/login.sshtml", newLogin];
@@ -123,17 +106,6 @@ namespace Quaestur
             {
                 if (CurrentSession != null)
                 {
-                    using (var transaction = Database.BeginTransaction())
-                    {
-                        foreach (var loginLink in Database
-                            .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
-                        {
-                            loginLink.Delete(Database);
-                        }
-
-                        transaction.Commit();
-                    }
-
                     Global.Sessions.Remove(CurrentSession);
                 }
 

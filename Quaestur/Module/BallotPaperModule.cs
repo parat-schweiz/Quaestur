@@ -80,7 +80,7 @@ namespace Quaestur
             PhraseHeaderEndDate = translator.Get("BallotPaper.List.Header.EndDate", "Link 'EndDate' caption in the ballot list", "End date").EscapeHtml();
             PhraseHeaderStatus = translator.Get("BallotPaper.List.Header.Status", "Link 'Status' caption in the ballot list", "Status").EscapeHtml();
             PhraseDownloadWait = translator.Get("BallotPaper.List.Download.Wait", "Message while waiting for download", "Creating document...").EscapeHtml();
-            session.ReloadUser(database);
+            session.ReloadDeviceSession(database);
             session.User.UpdateAllVotingRights(database);
             List = new List<BallotPaperListItemViewModel>(database
                 .Query<Ballot>()

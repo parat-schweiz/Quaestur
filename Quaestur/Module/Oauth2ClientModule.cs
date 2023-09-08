@@ -17,6 +17,7 @@ namespace Quaestur
         public List<MultiItemViewModel> Name;
         public string Secret;
         public bool RequireTwoFactor;
+        public string SessionExpirySeconds;
         public string[] Access;
         public List<NamedIntViewModel> Accesses;
         public string RedirectUri;
@@ -25,6 +26,7 @@ namespace Quaestur
         public string PhraseFieldRedirectUri;
         public string PhraseFieldRequireTwoFactor;
         public string PhraseFieldAccess;
+        public string PhraseFieldSessionExpirySeconds;
 
         public Oauth2ClientEditViewModel()
         { 
@@ -38,6 +40,7 @@ namespace Quaestur
             PhraseFieldRedirectUri = translator.Get("Oauth2Client.Edit.Field.RedirectUri", "Redirect URI field in the OAuth2 client edit dialog", "Redirect URI");
             PhraseFieldRequireTwoFactor = translator.Get("Oauth2Client.Edit.Field.RequireTwoFactor", "Require second factor field in the OAuth2 client edit dialog", "Require second factor");
             PhraseFieldAccess = translator.Get("Oauth2Client.Edit.Field.Access", "Access field in the OAuth2 client edit dialog", "Access");
+            PhraseFieldSessionExpirySeconds = translator.Get("Oauth2Client.Edit.Field.SessionExpirySeconds", "Session expiry seconds field in the OAuth2 client edit dialog", "Session expiry seconds");
         }
 
         public Oauth2ClientEditViewModel(Translator translator, IDatabase db)
@@ -49,6 +52,7 @@ namespace Quaestur
             Secret = Rng.Get(16).ToHexString();
             RedirectUri = string.Empty;
             RequireTwoFactor = false;
+            SessionExpirySeconds = "3600";
             Accesses = new List<NamedIntViewModel>();
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, false));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, false));
@@ -65,6 +69,7 @@ namespace Quaestur
             Secret = client.Secret.Value;
             RedirectUri = client.RedirectUri.Value;
             RequireTwoFactor = client.RequireTwoFactor.Value;
+            SessionExpirySeconds = client.SessionExpirySeconds.Value.ToString();
             Accesses = new List<NamedIntViewModel>();
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Membership, client.Access.Value.HasFlag(Oauth2ClientAccess.Membership)));
             Accesses.Add(new NamedIntViewModel(translator, Oauth2ClientAccess.Email, client.Access.Value.HasFlag(Oauth2ClientAccess.Email)));
@@ -171,6 +176,7 @@ namespace Quaestur
                         status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
                         status.AssignFlagIntsString("Access", client.Access, model.Access);
                         client.RequireTwoFactor.Value = model.RequireTwoFactor;
+                        status.AssignInt32String("SessionExpirySeconds", client.SessionExpirySeconds, model.SessionExpirySeconds);
 
                         if (status.IsSuccess)
                         {
@@ -205,6 +211,7 @@ namespace Quaestur
                     status.AssignStringRequired("RedirectUri", client.RedirectUri, model.RedirectUri);
                     status.AssignFlagIntsString("Access", client.Access, model.Access);
                     client.RequireTwoFactor.Value = model.RequireTwoFactor;
+                    status.AssignInt32String("SessionExpirySeconds", client.SessionExpirySeconds, model.SessionExpirySeconds);
 
                     if (status.IsSuccess)
                     {

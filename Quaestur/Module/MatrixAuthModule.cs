@@ -52,7 +52,8 @@ namespace Quaestur
                 }
 
                 Global.Throttle.Check(userName, false);
-                var result = UserController.Login(Database, userName, password);
+
+                var result = UserController.Login(Database, Translation, userName, password);
 
                 switch (result.Item2)
                 {

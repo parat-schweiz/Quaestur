@@ -481,11 +481,6 @@ namespace Quaestur
                 session.Delete(database);
             }
 
-            foreach (var loginLink in database.Query<LoginLink>(DC.Equal("personid", Id.Value)))
-            {
-                loginLink.Delete(database);
-            }
-
             foreach (var prepayment in database.Query<Prepayment>(DC.Equal("personid", Id.Value)))
             {
                 prepayment.Delete(database);
@@ -494,6 +489,11 @@ namespace Quaestur
             foreach (var settings in database.Query<SearchSettings>(DC.Equal("personid", Id.Value)))
             {
                 settings.Delete(database);
+            }
+
+            foreach (var deviceSession in database.Query<DeviceSession>(DC.Equal("userid", Id.Value)))
+            {
+                deviceSession.Delete(database);
             }
 
             var reservedUserName = new ReservedUserName(Guid.NewGuid());

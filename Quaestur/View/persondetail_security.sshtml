@@ -12,13 +12,41 @@ $("#@Current.RowId").click(function(){
   showEditDialog("@Current.Path", "@Model.Id");
 });
 @EndEach
+@Each.Sessions
+$("#sessionRowDelete@Current.Id").click(function(){
+  $.get("/session/delete/@Current.Id", function(data, status){
+    showSecurity();
+  });
+});
+@EndEach
 </script>
-<table class="table table-hover table-fixed">
+<table class="table table-hover">
   <tbody>
     @Each.List
     <tr class='clickable-row'>
       <td width="50%">@Current.Phrase</td>
       <td width="50%" id="@Current.RowId" class="@Current.Editable">@Current.Value</td>
+    </tr>
+    @EndEach
+  </tbody>
+</table>
+
+<table class="table table-hover">
+  <thead>
+    <tr class='centering clickable-row'>
+      <th width="45%">@Model.PhraseSessionsHeaderName</th>
+      <th width="25%">@Model.PhraseSessionsHeaderCreated</th>
+      <th width="25%">@Model.PhraseSessionsHeaderLastAccess</th>
+      <th width="5%"></th>
+    </tr>
+  </thead>
+  <tbody>
+    @Each.Sessions
+    <tr class='clickable-row'>
+      <td width="45%">@Current.Name</td>
+      <td width="25%">@Current.Created</td>
+      <td width="25%">@Current.LastAccess</td>
+      <td width="5%" id="sessionRowDelete@Current.Id" class="@Model.Editable"><span class="fas fa-trash-alt"></span></td>
     </tr>
     @EndEach
   </tbody>

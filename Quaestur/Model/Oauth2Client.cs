@@ -43,6 +43,7 @@ namespace Quaestur
         public StringField RedirectUri { get; private set; }
         public Field<bool> RequireTwoFactor { get; private set; }
         public EnumField<Oauth2ClientAccess> Access { get; private set; }
+        public Field<int> SessionExpirySeconds { get; private set; }
 
         public Oauth2Client() : this(Guid.Empty)
         {
@@ -55,6 +56,7 @@ namespace Quaestur
             RedirectUri = new StringField(this, "redirecturi", 256, AllowStringType.UnsecureText);
             RequireTwoFactor = new Field<bool>(this, "requiretwofactor", false);
             Access = new EnumField<Oauth2ClientAccess>(this, "access", Oauth2ClientAccess.None, Oauth2ClientAccessExtensions.Translate);
+            SessionExpirySeconds = new Field<int>(this, "sessionexpiryseconds", 3600);
         }
 
         public override string ToString()

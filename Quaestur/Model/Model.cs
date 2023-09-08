@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 37;
+        public static int CurrentVersion = 38;
 
         public static void Install(IDatabase database)
         {
@@ -55,7 +55,6 @@ namespace Quaestur
             database.CreateTable<BallotTemplate>();
             database.CreateTable<Ballot>();
             database.CreateTable<BallotPaper>();
-            database.CreateTable<LoginLink>();
             database.CreateTable<PersonalPaymentParameter>();
             database.CreateTable<BudgetPeriod>();
             database.CreateTable<PointBudget>();
@@ -74,6 +73,7 @@ namespace Quaestur
             database.CreateTable<Credits>();
             database.CreateTable<CustomPage>();
             database.CreateTable<CustomMenuEntry>();
+            database.CreateTable<DeviceSession>();
 
             Global.Log.Info("Tables ok.");
         }
@@ -154,6 +154,10 @@ namespace Quaestur
                     database.AddColumn<SystemWideSettings>(o => o.JournalPreservationDays);
                     database.AddColumn<SystemWideSettings>(o => o.MailingPreservationDays);
                     database.AddColumn<SystemWideSettings>(o => o.BallotPreservationDays);
+                    break;
+                case 38:
+                    database.DropTable("loginlink");
+                    database.AddColumn<Oauth2Client>(o => o.SessionExpirySeconds);
                     break;
                 default:
                     throw new NotSupportedException();

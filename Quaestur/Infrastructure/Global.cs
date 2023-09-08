@@ -77,7 +77,7 @@ namespace Quaestur
             {
                 if (_login == null)
                 {
-                    _login = new SessionManager(); 
+                    _login = new SessionManager(CreateDatabase()); 
                 }
 
                 return _login;

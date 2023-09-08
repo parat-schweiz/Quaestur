@@ -4,6 +4,10 @@ using Nancy.Bootstrapper;
 using Nancy.TinyIoc;
 using Nancy.Authentication.Forms;
 using Nancy.Conventions;
+using Nancy.Cryptography;
+using System.Security.Cryptography;
+using System.Text;
+using System.IO;
 
 namespace Quaestur
 {
@@ -27,7 +31,11 @@ namespace Quaestur
                 new FormsAuthenticationConfiguration()
                 {
                     RedirectUrl = "~/login",
-                    UserMapper = Global.Sessions
+                    UserMapper = Global.Sessions,
+                    CryptographyConfiguration = 
+                        new CryptographyConfiguration(
+                            new AesEncryptionProvider(new RandomKeyGenerator(), Global.Config.SessionEncryptionKey),
+                            new DefaultHmacProvider(Global.Config.SessionAuthenticationKey)),
                 };
 
             FormsAuthentication.Enable(pipelines, formsAuthConfiguration);

@@ -34,15 +34,6 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Security" />
-    <Reference Include="Nancy">
-      <HintPath>..\packages\Nancy.2.0.0\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\packages\Nancy.Hosting.Self.2.0.0\lib\net452\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Authentication.Forms">
-      <HintPath>..\packages\Nancy.Authentication.Forms.2.0.0\lib\net452\Nancy.Authentication.Forms.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.ValueTuple">
@@ -134,6 +125,15 @@
     <Reference Include="System.Formats.Asn1">
       <HintPath>..\packages\System.Formats.Asn1.7.0.0\lib\net462\System.Formats.Asn1.dll</HintPath>
     </Reference>
+    <Reference Include="NancyEx">
+      <HintPath>..\packages\ThrowException.Nancy.2.0.2\lib\net452\NancyEx.dll</HintPath>
+    </Reference>
+    <Reference Include="NancyEx.Hosting.Self">
+      <HintPath>..\packages\ThrowException.Nancy.Hosting.Self.2.0.1\lib\net452\NancyEx.Hosting.Self.dll</HintPath>
+    </Reference>
+    <Reference Include="NancyEx.Authentication.Forms">
+      <HintPath>..\packages\ThrowException.Nancy.Authentication.Forms.2.0.1\lib\net452\NancyEx.Authentication.Forms.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -156,7 +156,6 @@
     <Compile Include="Model\TagAssignment.cs" />
     <Compile Include="Model\Mailing.cs" />
     <Compile Include="Model\Sending.cs" />
-    <Compile Include="Module\LoginModule.cs" />
     <Compile Include="Infrastructure\UserController.cs" />
     <Compile Include="Model\Model.cs" />
     <Compile Include="Model\Seeder.cs">
@@ -248,9 +247,6 @@
     <Compile Include="Infrastructure\BallotTask.cs" />
     <Compile Include="Documents\BallotPaperContentProvider.cs" />
     <Compile Include="Documents\BallotPaperDocument.cs" />
-    <Compile Include="Module\LoginLinkModule.cs" />
-    <Compile Include="Model\LoginLink.cs" />
-    <Compile Include="Module\LinkLoginModule.cs" />
     <Compile Include="Infrastructure\TaskRunner.cs" />
     <Compile Include="Documents\UniversalDocument.cs" />
     <Compile Include="Module\PostStatus.cs" />
@@ -317,6 +313,8 @@
     <Compile Include="Infrastructure\CreditsPruneTask.cs" />
     <Compile Include="Infrastructure\MailingPruneTask.cs" />
     <Compile Include="Infrastructure\BallotPruneTask.cs" />
+    <Compile Include="Model\DeviceSession.cs" />
+    <Compile Include="Module\LoginModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -900,12 +898,6 @@
     </None>
     <None Include="Documents\ballotpaper_de.tex" />
     <None Include="View\ballotpaperverify.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\loginlink.sshtml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="View\loginlinkcurrent.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="View\linklogin.sshtml">

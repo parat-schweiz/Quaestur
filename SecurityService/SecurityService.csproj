@@ -37,16 +37,16 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Security" />
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Nancy">
-      <HintPath>..\packages\Nancy.2.0.0\lib\net452\Nancy.dll</HintPath>
-    </Reference>
-    <Reference Include="Nancy.Hosting.Self">
-      <HintPath>..\packages\Nancy.Hosting.Self.2.0.0\lib\net452\Nancy.Hosting.Self.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="netstandard" />
+    <Reference Include="NancyEx">
+      <HintPath>..\packages\ThrowException.Nancy.2.0.2\lib\net452\NancyEx.dll</HintPath>
+    </Reference>
+    <Reference Include="NancyEx.Hosting.Self">
+      <HintPath>..\packages\ThrowException.Nancy.Hosting.Self.2.0.1\lib\net452\NancyEx.Hosting.Self.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

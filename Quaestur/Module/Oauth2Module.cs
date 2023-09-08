@@ -84,7 +84,7 @@ namespace Quaestur
 
         public Oauth2AuthModule()
         {
-            this.RequiresAuthentication();
+            this.RequireCompleteLogin();
 
             base.Get("/oauth2/authorize/", parameters =>
             {
@@ -112,10 +112,11 @@ namespace Quaestur
                     }
 
                     if (client.RequireTwoFactor &&
-                        !CurrentSession.CompleteAuth)
+                        !CurrentSession.TwoFactorAuth)
                     {
-                        CurrentSession.ReturnUrl = "/oauth2/authorize/" + Request.Url.Query;
-                        return Response.AsRedirect("/twofactor/auth");
+                        return OAuth2Error("Oauth2.Error.Text.TwoFactorRequired",
+                            "Two-factor required text in OAuth2",
+                            "Two-factor login must be activated to use this service.");
                     }
 
                     string redirectUri = Request.Query["redirect_uri"];
@@ -182,8 +183,9 @@ namespace Quaestur
                 }
 
                 if (client.RequireTwoFactor &&
-                    (!CurrentSession.CompleteAuth))
+                    (!CurrentSession.TwoFactorAuth))
                 {
+                    Global.Log.Notice("OAuth2: Callback from client requiring 2FA without 2FA enabled");
                     return string.Empty;
                 }
 
@@ -207,7 +209,7 @@ namespace Quaestur
                         authorization.Client.Value = client;
                         authorization.User.Value = CurrentSession.User;
                         authorization.Moment.Value = DateTime.UtcNow;
-                        authorization.Expiry.Value = DateTime.UtcNow.AddDays(180);
+                        authorization.Expiry.Value = DateTime.UtcNow.AddYears(2);
                         Database.Save(authorization);
                     }
 
@@ -264,7 +266,7 @@ namespace Quaestur
             session.AuthCode.Value = Rng.Get(16).ToHexString();
             session.Token.Value = session.Id.Value.ToString() + "." + Rng.Get(16).ToHexString();
             session.Moment.Value = DateTime.UtcNow;
-            session.Expiry.Value = DateTime.UtcNow.AddHours(1);
+            session.Expiry.Value = DateTime.UtcNow.AddSeconds(client.SessionExpirySeconds.Value);
             session.Nonce.Value = nonce ?? string.Empty;
             Database.Save(session);
 

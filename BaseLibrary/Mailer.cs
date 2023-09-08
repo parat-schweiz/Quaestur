@@ -69,9 +69,9 @@ namespace BaseLibrary
             Send(_config.AdminMailAddress, subject, body);
         }
 
-        public void Send(string to, string subject, string plainBody)
+        public void Send(InternetAddress to, string subject, string plainBody)
         {
-            _log.Verbose("Sending message to {0}", to);
+            _log.Verbose("Sending message to {0}", to.ToString());
 
             try
             {
@@ -86,7 +86,7 @@ namespace BaseLibrary
 
                 var message = new MimeMessage();
                 message.From.Add(InternetAddress.Parse(_config.SystemMailAddress));
-                message.To.Add(InternetAddress.Parse(to));
+                message.To.Add(to);
                 message.Subject = subject;
                 message.Body = text;
                 client.Send(message);
@@ -98,6 +98,11 @@ namespace BaseLibrary
                 _log.Error("Error sending mail to {0}", to);
                 _log.Error(exception.ToString());
             }
+        }
+
+        public void Send(string to, string subject, string plainBody)
+        {
+            Send(InternetAddress.Parse(to), subject, plainBody);
         }
 
         private MailboxAddress AdminMailAddress

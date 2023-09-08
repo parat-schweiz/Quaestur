@@ -109,6 +109,10 @@ namespace Quaestur
                 {
                     person.TwoFactorSecret.Value = null;
                     Database.Save(person);
+                    if (person == CurrentSession.User)
+                    {
+                        CurrentSession.SetOneFactorLogin(Database);
+                    }
                 }
 
                 return string.Empty;
@@ -182,6 +186,7 @@ namespace Quaestur
                                 "TwoFactor.Journal.Edit",
                                 "Journal entry set TOTP 2FA",
                                 "Set two-factor authentication");
+                            CurrentSession.SetTwoFactorLogin(Database);
                         }
                     }
                     else
@@ -266,22 +271,11 @@ namespace Quaestur
             {
                 if (CurrentSession.User.TwoFactorSecret.Value == null)
                 {
-                    CurrentSession.CompleteAuth = true;
                     Journal(CurrentSession.User,
                         "TwoFactor.Journal.Auth.Null",
                         "Journal entry login without 2FA",
                         "Logged in without two-factor authentication");
-
-                    using (var transaction = Database.BeginTransaction())
-                    {
-                        foreach (var loginLink in Database
-                            .Query<LoginLink>(DC.Equal("personid", CurrentSession.User.Id.Value)))
-                        {
-                            loginLink.Delete(Database);
-                        }
-
-                        transaction.Commit();
-                    }
+                    CurrentSession.SetOneFactorLogin(Database);
 
                     if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))
                     {
@@ -305,12 +299,12 @@ namespace Quaestur
 
                 if (Global.Security.VerifyTotp(CurrentSession.User.TwoFactorSecret.Value, model.Code))
                 {
-                    CurrentSession.CompleteAuth = true;
-                    CurrentSession.TwoFactorAuth = true;
                     Journal(CurrentSession.User,
                         "TwoFactor.Journal.Auth.2FA.Success",
                         "Journal entry login with 2FA",
                         "Logged in with two-factor authentication");
+                    CurrentSession.SetTwoFactorLogin(Database);
+
                     if (string.IsNullOrEmpty(CurrentSession.ReturnUrl))
                     {
                         return Response.AsRedirect("/");

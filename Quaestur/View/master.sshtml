@@ -122,6 +122,7 @@
                 @EndIf
                 @If.NavBar
               </ul>
+              @EndIf
               @Each.CustomMenus
               <ul class="nav navbar-nav ml-auto"/>
                 <li class="nav-item dropdown">
@@ -132,6 +133,7 @@
                 </li>
               </ul>
               @EndEach
+              @If.NavBar
               <ul class="nav navbar-nav ml-auto"/>
                 <li class="nav-item dropdown">
                   <a class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">@Model.UserName</a>
@@ -144,7 +146,6 @@
                     @If.NavBar
                     <a class="dropdown-item" href="/income">@Model.PhraseMenuIncome</a>
                     <a class="dropdown-item" href="/password">@Model.PhraseMenuChangePassword</a>
-                    <a class="dropdown-item" href="/loginlink">@Model.PhraseMenuLoginLink</a>
                     <a class="dropdown-item" href="/logout">@Model.PhraseMenuLogout</a>
                   </div>
                 </li>

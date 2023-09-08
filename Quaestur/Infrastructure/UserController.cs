@@ -8,6 +8,7 @@ using Nancy;
 using Nancy.Security;
 using Nancy.Authentication.Forms;
 using SiteLibrary;
+using MimeKit;
 
 namespace Quaestur
 {
@@ -23,7 +24,7 @@ namespace Quaestur
             return actual.AreEqual(hash);
         }
 
-        public static Tuple<Person, LoginResult> Login(IDatabase db, string userName, string password)
+        public static Tuple<Person, LoginResult> Login(IDatabase db, Translation translation, string userName, string password)
         {
             Global.Sessions.CleanUp();
             var user = db.Query<Person>(DC.EqualLower("username", userName)).FirstOrDefault();
@@ -46,7 +47,11 @@ namespace Quaestur
             switch (user.UserStatus.Value)
             {
                 case UserStatus.Active:
-                    Global.Sessions.Add(user);
+                    var translator = new Translator(translation, user.Language.Value);
+                    InternetAddress address = new MailboxAddress(user.SortName, user.PrimaryMailAddress);
+                    var subject = translator.Get("Login.Mail.Subject", "Subject of the login info mail", "New device logged in");
+                    var body = translator.Get("Login.Mail.Body", "Body of the login info mail", "A new device has succesfully logged into your account. If this was not you, contact your administrator immediatly.");
+                    Global.Mail.Send(address, subject, body);
                     return new Tuple<Person, LoginResult>(user, LoginResult.Success);
                 case UserStatus.Locked:
                     return new Tuple<Person, LoginResult>(user, LoginResult.Locked);

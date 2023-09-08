@@ -25,8 +25,8 @@ namespace Quaestur
         public const string IdentityIdClaim = "IdentityId";
         public const string AuthenticationType = "Login";
         public const string AuthenticationClaim = "Authentication";
-        public const string AuthenticationClaimComplete = "CompleteAuth";
         public const string AuthenticationClaimTwoFactor = "TwoFactorAuth";
+        public const string AuthenticationClaimComplete = "Complete";
 
         private class RolePermission
         {
@@ -41,16 +41,41 @@ namespace Quaestur
         }
 
         private List<RolePermission> _access;
-        public Guid Id { get; private set; }
-        public Person User { get; private set; }
-        public DateTime LastAccess { get; private set; }
-        public bool CompleteAuth { get; set; }
-        public bool TwoFactorAuth { get; set; }
+        private DeviceSession _deviceSession;
+        public Guid Id { get { return _deviceSession.Id.Value; } }
+        public Person User { get { return _deviceSession.User.Value; } }
+        public bool TwoFactorAuth { get { return _deviceSession.TwoFactorAuth.Value; } }
+        public DateTime LastAccess { get { return _deviceSession.LastAccess.Value; } }
+        public bool CompleteAuth { get; private set; }
         public string ReturnUrl { get; set; }
 
-        public void ReloadUser(IDatabase database)
+        public void ReloadDeviceSession(IDatabase database)
         {
-            User = database.Query<Person>(User.Id);
+            _deviceSession = database.Query<DeviceSession>(_deviceSession.Id);
+            _access = new List<RolePermission>(User.RoleAssignments
+                .Select(ra => ra.Role.Value)
+                .SelectMany(r => r.Permissions.Select(p => new RolePermission(r, p))));
+        }
+
+        public void SetOneFactorLogin(IDatabase database)
+        {
+            Update(database);
+            _deviceSession.TwoFactorAuth.Value = false;
+            database.Save(_deviceSession);
+            CompleteAuth = true;
+        }
+
+        public void SetTwoFactorLogin(IDatabase database)
+        {
+            Update(database);
+            _deviceSession.TwoFactorAuth.Value = true;
+            database.Save(_deviceSession);
+            CompleteAuth = true;
+        }
+
+        public void DeleteDeviceSession(IDatabase database)
+        {
+            _deviceSession.Delete(database);
         }
 
         public bool HasPersonNewAccess()
@@ -299,29 +324,38 @@ namespace Quaestur
             return false;
         }
 
-        public Session(Person user)
+        public Session(IDatabase database, Person user, string sessionName)
         {
-            Id = Guid.NewGuid();
-            User = user;
-            LastAccess = DateTime.UtcNow;
-            CompleteAuth = false;
-            TwoFactorAuth = false;
+            _deviceSession = new DeviceSession(Guid.NewGuid());
+            _deviceSession.User.Value = user;
+            _deviceSession.Name.Value = sessionName;
+            database.Save(_deviceSession);
             _access = new List<RolePermission>(user.RoleAssignments
                 .Select(ra => ra.Role.Value)
                 .SelectMany(r => r.Permissions.Select(p => new RolePermission(r, p))));
         }
 
-        public void Update()
+        public Session(DeviceSession deviceSession)
         {
-            LastAccess = DateTime.UtcNow;
+            _deviceSession = deviceSession;
+            CompleteAuth = true;
+            _access = new List<RolePermission>(User.RoleAssignments
+                .Select(ra => ra.Role.Value)
+                .SelectMany(r => r.Permissions.Select(p => new RolePermission(r, p))));
+        }
+
+        public void Update(IDatabase database)
+        {
+            if (_deviceSession.LastAccess.Value.AddSeconds(60) < DateTime.UtcNow)
+            {
+                _deviceSession.LastAccess.Value = DateTime.UtcNow;
+                database.Save(_deviceSession);
+            }
         }
 
         public bool Expired
         {
-            get
-            {
-                return DateTime.UtcNow > LastAccess + new TimeSpan(0, 1, 0, 0);
-            }
+            get { return _deviceSession.Expired; }
         }
 
         public string UserName
@@ -356,14 +390,14 @@ namespace Quaestur
             {
                 yield return new Claim(IdentityIdClaim, User.Id.ToString());
 
-                if (CompleteAuth)
-                {
-                    yield return new Claim(AuthenticationClaim, AuthenticationClaimComplete);
-                }
-
                 if (TwoFactorAuth)
                 {
                     yield return new Claim(AuthenticationClaim, AuthenticationClaimTwoFactor);
+                }
+
+                if (CompleteAuth)
+                {
+                    yield return new Claim(AuthenticationClaim, AuthenticationClaimComplete);
                 }
             }
         }
@@ -372,19 +406,35 @@ namespace Quaestur
     public class SessionManager : IUserMapper
     {
         private readonly Dictionary<Guid, Session> _sessions;
+        private readonly IDatabase _database;
+        private DateTime _lastDatabaseCleanup = DateTime.UtcNow;
 
-        public SessionManager()
+        public SessionManager(IDatabase database)
         {
+            _database = database;
             _sessions = new Dictionary<Guid, Session>();
         }
 
-        public Session Add(Person user)
+        public Session Add(Person user, string sessionName)
         {
             lock (_sessions)
             {
-                var session = new Session(user);
+                var session = new Session(_database, user, sessionName);
                 _sessions.Add(session.Id, session);
                 return session;
+            }
+        }
+
+        public void Remove(DeviceSession session)
+        {
+            lock (_sessions)
+            {
+                _database.Delete(session);
+
+                if (_sessions.ContainsKey(session.Id))
+                {
+                    _sessions.Remove(session.Id);
+                }
             }
         }
 
@@ -392,6 +442,8 @@ namespace Quaestur
         {
             lock (_sessions)
             {
+                session.DeleteDeviceSession(_database);
+
                 if (_sessions.ContainsKey(session.Id))
                 {
                     _sessions.Remove(session.Id);
@@ -403,9 +455,20 @@ namespace Quaestur
         {
             lock (_sessions)
             {
-                foreach (var session in _sessions.Values.Where(s => s.Expired).ToList())
+                foreach (var session in _sessions.Values
+                    .Where(s => s.Expired).ToList())
                 {
-                    _sessions.Remove(session.Id);
+                    Remove(session);
+                }
+
+                if (DateTime.UtcNow > _lastDatabaseCleanup.AddHours(1))
+                { 
+                    foreach (var session in _database.Query<DeviceSession>()
+                        .Where(s => s.Expired).ToList())
+                    {
+                        session.Delete(_database);
+                    }
+                    _lastDatabaseCleanup = DateTime.UtcNow;
                 }
             }
         }
@@ -414,24 +477,50 @@ namespace Quaestur
         {
             lock (_sessions)
             {
+                Session session = null;
+
                 if (_sessions.ContainsKey(identifier))
                 {
-                    var session = _sessions[identifier];
+                    session = _sessions[identifier];
+                }
 
+                if (session != null)
+                {
                     if (session.Expired)
                     {
-                        _sessions.Remove(session.Id);
+                        Remove(session);
                         return null;
                     }
                     else
                     {
-                        session.Update();
+                        session.Update(_database);
                         return session;
                     }
                 }
                 else
                 {
-                    return null;
+                    var deviceSession = _database.Query<DeviceSession>(identifier);
+
+                    if (deviceSession != null)
+                    {
+                        session = new Session(deviceSession);
+
+                        if (session.Expired)
+                        {
+                            session.DeleteDeviceSession(_database);
+                            return null;
+                        }
+                        else
+                        {
+                            session.Update(_database);
+                            _sessions.Add(session.Id, session);
+                            return session;
+                        }
+                    }
+                    else
+                    {
+                        return null;
+                    }
                 }
             }
         }
