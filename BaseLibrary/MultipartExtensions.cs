@@ -18,7 +18,7 @@ namespace BaseLibrary
         public PdfAttachement(byte[] data, string fileName)
         {
             Data = data;
-            FileName = fileName;
+            FileName = fileName + ".pdf";
         }
 
         public override MimePart Create()
