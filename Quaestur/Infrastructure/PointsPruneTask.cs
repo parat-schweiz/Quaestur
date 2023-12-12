@@ -55,34 +55,37 @@ namespace Quaestur
 
                 tallies.RemoveAll(t => t.UntilDate.Value.Year < DateTime.Now.Year - settings.PointsDataPreservationYears.Value);
 
-                var oldestTallyFull = tallies.OrderBy(t => t.FromDate.Value).First();
+                var oldestTallyFull = tallies.OrderBy(t => t.FromDate.Value).FirstOrDefault();
 
-                var deletePointsList = pointsList
-                    .Where(p => p.Moment.Value.Date < oldestTallyFull.FromDate.Value.Date)
-                    .ToList();
-
-                if (deletePointsList.Any())
+                if (oldestTallyFull != null)
                 {
-                    foreach (var points in deletePointsList)
+                    var deletePointsList = pointsList
+                        .Where(p => p.Moment.Value.Date < oldestTallyFull.FromDate.Value.Date)
+                        .ToList();
+
+                    if (deletePointsList.Any())
                     {
-                        points.Delete(database);
+                        foreach (var points in deletePointsList)
+                        {
+                            points.Delete(database);
+                        }
+
+                        Global.Log.Notice("Pruned {0} points entries from {1}.", deletePointsList.Count, person);
                     }
 
-                    Global.Log.Notice("Pruned {0} points entries from {1}.", deletePointsList.Count, person);
-                }
+                    var deleteTalliesList = tallies
+                        .Where(t => t.FromDate.Value.Year < DateTime.UtcNow.Year - settings.PointsTallyDataPreservationYears.Value)
+                        .ToList();
 
-                var deleteTalliesList = tallies
-                    .Where(t => t.FromDate.Value.Year < DateTime.UtcNow.Year - settings.PointsTallyDataPreservationYears.Value)
-                    .ToList();
-
-                if (deleteTalliesList.Any())
-                {
-                    foreach (var pointsTally in deleteTalliesList)
+                    if (deleteTalliesList.Any())
                     {
-                        pointsTally.Delete(database);
-                    }
+                        foreach (var pointsTally in deleteTalliesList)
+                        {
+                            pointsTally.Delete(database);
+                        }
 
-                    Global.Log.Notice("Pruned {0} points talies from {1}.", deleteTalliesList.Count, person);
+                        Global.Log.Notice("Pruned {0} points talies from {1}.", deleteTalliesList.Count, person);
+                    }
                 }
 
                 transaction.Commit();
