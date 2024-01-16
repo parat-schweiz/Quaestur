@@ -104,6 +104,9 @@ namespace Quaestur
 
     public class BallotPaperVerifyViewModel : MasterViewModel
     {
+        public string MarkUrl;
+        public bool CanMark;
+        public string PhraseButtonMark;
         public List<BallotPaperVerifyItemViewModel> List;
 
         public BallotPaperVerifyViewModel(Translator translator, IDatabase database, Session session, BallotPaper ballotPaper, byte[] code, bool marked)
@@ -137,7 +140,7 @@ namespace Quaestur
             else
             {
                 List.Add(new BallotPaperVerifyItemViewModel(
-                    translator.Get("BallotPaper.Verify.Verification.Bad", "Good verifcation on the ballot paper verify page", "Wrong verification"),
+                    translator.Get("BallotPaper.Verify.Verification.Bad", "Wrong verifcation on the ballot paper verify page", "Wrong verification"),
                     code.ToHexStringGroupFour()));
             }
 
@@ -169,6 +172,11 @@ namespace Quaestur
                         translator.Get("BallotPaper.Verify.BallotPaper.Status.Default", "Ballotpaper status default on the ballot paper verify page", "This ballot cannot be counted yet.")));
                     break;
             }
+
+            CanMark = (ballotPaper.ComputeCode().AreEqual(code)) &&
+                (ballotPaper.Status.Value == BallotPaperStatus.RightVerified);
+            MarkUrl = CanMark ? string.Format("/ballotpaper/mark/{0}/{1}", ballotPaper.Id.Value, code.ToHexString()) : "/";
+            PhraseButtonMark = translator.Get("BallotPaper.Verify.BallotPaper.Button.Mark", "Mark button on the ballot paper verify page", "Mark as counted");
 
             if (marked)
             {
@@ -266,6 +274,36 @@ namespace Quaestur
                     if (HasAccess(ballotPaper.Ballot.Value.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Read) ||
                         ballotPaper.Member.Value.Person.Value == CurrentSession.User)
                     {
+                        return View["View/ballotpaperverify.sshtml",
+                            new BallotPaperVerifyViewModel(Translator, Database, CurrentSession, ballotPaper, code, false)];
+                    }
+                    else
+                    {
+                        return AccessDenied();
+                    }
+                }
+                else
+                {
+                    return View["View/info.sshtml", new InfoViewModel(Database, Translator,
+                        Translate("BallotPaper.Verify.Error.Title", "Error title in ballot paper verfiy", "Error"),
+                        Translate("BallotPaper.Verify.Error.Text", "Back link on ballot paper verfiy error", "Invalid ballot paper verification link."),
+                        Translate("BallotPaper.Verify.Error.BackLink", "Back link on ballot paper verfiy error", "Back"),
+                        "/")];
+                }
+            });
+            Get("/ballotpaper/mark/{id}/{code}", parameters =>
+            {
+                string idString = parameters.id;
+                string codeString = parameters.code;
+                var ballotPaper = Database.Query<BallotPaper>(idString);
+                var code = codeString.TryParseHexBytes();
+
+                if (ballotPaper != null &&
+                    code != null)
+                {
+                    if (HasAccess(ballotPaper.Ballot.Value.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Read) ||
+                        ballotPaper.Member.Value.Person.Value == CurrentSession.User)
+                    {
                         bool marked = false;
 
                         if (ballotPaper.Status.Value == BallotPaperStatus.RightVerified &&
@@ -294,7 +332,7 @@ namespace Quaestur
                     }
                     else
                     {
-                        return AccessDenied(); 
+                        return AccessDenied();
                     }
                 }
                 else

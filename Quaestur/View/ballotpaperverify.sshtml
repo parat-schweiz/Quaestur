@@ -17,5 +17,14 @@
     @EndEach
   </tbody>
 </table>
+@If.CanMark
+<form>
+  <div class="form-row">
+    <div class="col-12 mb-3">
+      <a href="@Model.MarkUrl" class="btn btn-info" role="button">@Model.PhraseButtonMark</a>
+    </div>
+  </div>
+</form>
+@EndIf
 </div>
 @EndSection
