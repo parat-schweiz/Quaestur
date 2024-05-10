@@ -40,7 +40,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Security" />
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.4.3.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.4.5.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -62,7 +62,7 @@
       <HintPath>..\packages\System.Text.Encoding.CodePages.8.0.0\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Cryptography">
-      <HintPath>..\packages\BouncyCastle.Cryptography.2.2.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.3.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
