@@ -75,6 +75,19 @@ namespace Quaestur
             RemindOrSettleInternal(database, translation, billing, forceSend);
         }
 
+        public static Tuple<byte[], string> CreateSettlementDocument(IDatabase database, Translation translation, Membership membership)
+        {
+            var billing = new Billing(membership.Organization.Value, membership.Person.Value);
+            billing.Bills.AddRange(database
+                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
+                .Where(b => b.Status.Value == BillStatus.New)
+                .OrderByDescending(DaysSinceLastReminder));
+            var translator = new Translator(translation, billing.Person.Language.Value);
+            string settlementDocumentName = GetSettlementDocumentName(translator);
+            byte[] document = CreateSettlement(database, translator, billing);
+            return new Tuple<byte[], string>(document, settlementDocumentName);
+        }
+
         private static void RemindOrSettleInternal(IDatabase database, Translation translation, Billing billing, bool forceReminder)
         {
             var prepayment = billing.Person.CurrentPrepayment(database);

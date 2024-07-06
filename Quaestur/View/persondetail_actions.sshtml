@@ -56,6 +56,11 @@ $("#actionSendSettlementOrReminder").click(function(event) {
   });
   event.preventDefault();
 });
+$("#actionButtonDownloadSettlement").click(function(event) {
+  var membershipId = $("#actionMembership").val();
+  downloadUrlWait("/person/detail/actions/createsettlement/" + membershipId);
+  event.preventDefault();
+});
 $("#actionCreateBallotPaper").click(function(event) {
   var membershipId = $("#actionMembership").val();
   downloadUrlWait("/person/detail/actions/createballotpaper/" + membershipId);
@@ -80,6 +85,7 @@ $('.selectpicker').selectpicker();
         <button id ="actionSendParameterUpdate" type="button" class="btn btn-default">@Model.PhraseButtonSendParameterUpdate</button>
         <button id ="actionCreatePointTally" type="button" class="btn btn-default">@Model.PhraseButtonCreatePointTally</button>
         <button id ="actionCreateBill" type="button" class="btn btn-default">@Model.PhraseButtonCreateBill</button>
+        <button id ="actionButtonDownloadSettlement" type="button" class="btn btn-default">@Model.PhraseButtonDownloadSettlement</button>
         <button id ="actionSendSettlementOrReminder" type="button" class="btn btn-default">@Model.PhraseButtonSendSettlementOrReminder</button>
         <button id ="actionCreateBallotPaper" type="button" class="btn btn-default">@Model.PhraseButtonCreateBallotPaper</button>
       </div>

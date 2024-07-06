@@ -18,6 +18,7 @@ namespace Quaestur
         public string PhraseButtonCreatePointTally;
         public string PhraseButtonCreateBill;
         public string PhraseButtonSendSettlementOrReminder;
+        public string PhraseButtonDownloadSettlement;
         public string PhraseButtonCreateBallotPaper;
         public string PhraseDownloadWait;
 
@@ -28,6 +29,7 @@ namespace Quaestur
             PhraseButtonCreatePointTally = translator.Get("Person.Detail.Master.Actions.Button.CreatePointTally", "Button to create point tally on actions tab in person detail page", "Create point tally");
             PhraseButtonCreateBill = translator.Get("Person.Detail.Master.Actions.Button.CreateBill", "Button to create bill on actions tab in person detail page", "Create bill");
             PhraseButtonSendSettlementOrReminder = translator.Get("Person.Detail.Master.Actions.Button.SendSettlementOrReminder", "Button to send settlement or reminder on actions tab in person detail page", "Send settlement or reminder");
+            PhraseButtonDownloadSettlement = translator.Get("Person.Detail.Master.Actions.Button.DownloadSettlement", "Button to download settlement on actions tab in person detail page", "Download settlement");
             PhraseButtonCreateBallotPaper = translator.Get("Person.Detail.Master.Actions.Button.CreateBallotPaper", "Button to create ballot paper on actions tab in person detail page", "Create Ballot Paper");
             PhraseDownloadWait = translator.Get("Person.Detail.Master.Actions.Wait.Download", "Wait for download message on actions tab in person detail page", "Downloading...");
             Memberships = new List<NamedIdViewModel>(
@@ -128,6 +130,28 @@ namespace Quaestur
                 }
 
                 return string.Empty;
+            });
+            Get("/person/detail/actions/createsettlement/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var membership = Database.Query<Membership>(idString);
+                var status = CreateStatus();
+
+                if (membership != null &&
+                    HasAccessBilling(membership))
+                {
+                    var pdf = BillingReminderTask.CreateSettlementDocument(Database, Translation, membership);
+                    status.SetDataSuccess(Convert.ToBase64String(pdf.Item1), pdf.Item2);
+                }
+                else
+                {
+                    status.SetError(
+                        "Settlement.Download.Status.Error.NotFound",
+                        "Status message when downloading settlement fails because not current ballot paper was found.",
+                        "Could not create settlement because no valid membership was found.");
+                }
+
+                return status.CreateJsonData();
             });
             Get("/person/detail/actions/sendsettlementorreminder/{id}", parameters =>
             {
