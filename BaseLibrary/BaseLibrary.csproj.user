@@ -28,5 +28,11 @@
     <MonoNoSmp>false</MonoNoSmp>
     <MonoPath></MonoPath>
     <MonoWindowsFormsTheme></MonoWindowsFormsTheme>
+    <MonoDesktopMode>false</MonoDesktopMode>
+    <MonoServerMode>false</MonoServerMode>
+    <MonoAdditionalOptions></MonoAdditionalOptions>
+    <MonoArchitecture>Default</MonoArchitecture>
+    <Architecture></Architecture>
+    <TargetRuntimeId></TargetRuntimeId>
   </PropertyGroup>
 </Project>
