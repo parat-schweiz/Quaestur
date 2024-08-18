@@ -19,6 +19,7 @@ namespace RedmineApi
         public NamedId Category { get; private set; }
         public NamedId Author { get; private set; }
         public NamedId AssignedTo { get; private set; }
+        public NamedId Version { get; private set; }
         public List<CustomField> CustomFields { get; private set; }
 
         private NamedId GetNamedId(JObject obj, string key)
@@ -48,6 +49,7 @@ namespace RedmineApi
             Category = GetNamedId(obj, "category");
             Author = GetNamedId(obj, "author");
             AssignedTo = GetNamedId(obj, "assigned_to");
+            Version = GetNamedId(obj, "fixed_version");
             CustomFields = new List<CustomField>();
             var customFields = obj.Value<JArray>("custom_fields");
 

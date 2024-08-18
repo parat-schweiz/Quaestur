@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using QRCoder;
 using SiteLibrary;
+using RedmineApi;
 
 namespace Quaestur
 {
@@ -19,6 +20,7 @@ namespace Quaestur
         private readonly Person _person;
         private readonly Ballot _ballot;
         private readonly BallotTemplate _template;
+        private readonly List<Issue> _issues;
 
         public Bill Bill { get; private set; }
 
@@ -31,6 +33,27 @@ namespace Quaestur
             _person = _membership.Person.Value;
             _ballot = _ballotPaper.Ballot.Value;
             _template = _ballot.Template.Value;
+
+            var redmine = new Redmine(Global.Config.RedmineApiConfig);
+
+            if (_ballot.RedmineProject.Value.HasValue &&
+                _ballot.RedmineVersion.Value.HasValue &&
+                _ballot.RedmineStatus.Value.HasValue)
+            {
+                try
+                {
+                    _issues = redmine
+                        .GetIssues(_ballot.RedmineProject.Value.Value)
+                        .Where(i => (i.Status?.Id == _ballot.RedmineStatus.Value.Value) &&
+                                    (i.Version?.Id == _ballot.RedmineVersion.Value.Value))
+                        .OrderBy(i => i.Id)
+                        .ToList();
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Warning("Could not get issues for ballot {0} due to {1}", _ballot, exception.Message);
+                }
+            }
         }
 
         public override bool Prepare()
@@ -66,10 +89,74 @@ namespace Quaestur
                     return _ballotPaper.ComputeCode().ToHexStringGroupFour();
                 case "BallotPaperDocument.VerificationLink":
                     return CreateVerificationLink();
+                case "BallotPaperDocument.Motions":
+                    return CreateMotions();
                 default:
                     throw new InvalidOperationException(
                         "Variable " + variable + " not known in provider " + Prefix);
             }
+        }
+
+        private string CreateMotions()
+        {
+            var redmine = new Redmine(Global.Config.RedmineApiConfig);
+
+            if (!_issues.Any())
+            {
+                return "No redmine issues for ballot available.";
+            }
+
+            var text = new StringBuilder();
+            var issueCounter = 1;
+
+            foreach (var issue in _issues)
+            {
+                var questions = issue.CustomFields
+                    .Where(f => f.Name.StartsWith("Abstimmungstitel", StringComparison.Ordinal))
+                    .Where(f => f.Values.Any())
+                    .Select(f => f.Values.FirstOrDefault())
+                    .Where(f => !string.IsNullOrEmpty(f))
+                    .ToList();
+                var shortUrl = string.Format(
+                    "https://a.parat.swiss/{0}",
+                    issue.Id);
+                var qrFilename = string.Format(
+                    "qr{0}.png",
+                    issue.Id);
+
+                if (questions.Any())
+                {
+                    text.AppendLine(@"\begin{samepage}");
+                    text.AppendLine(@"\section*{Abstimmungsvorlage §§§}"
+                                    .Replace("§§§", issueCounter.ToString()));
+                    text.AppendLine(@"\questionurl{§§§}{£££}"
+                                    .Replace("§§§", shortUrl)
+                                    .Replace("£££", qrFilename));
+
+                    var questionCounter = 1;
+
+                    foreach (var question in questions)
+                    {
+                        text.AppendLine(@"\subsection*{Frage £££}"
+                                        .Replace("§§§", issueCounter.ToString())
+                                        .Replace("£££", questionCounter.ToString()));
+                        text.AppendLine(@"\question{Stimmst du dem Antrag von £££ auf §§§ zu?}"
+                                        .Replace("§§§", question)
+                                        .Replace("£££", issue.Author?.Name ?? "Unbekannt"));
+
+                        questionCounter++;
+                    }
+                    text.AppendLine(@"\end{samepage}");
+                }
+
+                text.AppendLine();
+                text.AppendLine(@"\vspace{0.5cm}");
+                text.AppendLine();
+
+                issueCounter++;
+            }
+
+            return text.ToString();
         }
 
         private string CreateVerificationLink()
@@ -80,10 +167,10 @@ namespace Quaestur
                 _ballotPaper.ComputeCode().ToHexString());
         }
 
-        private byte[] CreateVerificationLinkQrImage()
+        private byte[] CreateQrImage(string text)
         {
             QRCodeGenerator qrGenerator = new QRCodeGenerator();
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(CreateVerificationLink(), QRCodeGenerator.ECCLevel.Q);
+            QRCodeData qrCodeData = qrGenerator.CreateQrCode(text, QRCodeGenerator.ECCLevel.Q);
             QRCode qrCode = new QRCode(qrCodeData);
             Bitmap qrCodeImage = qrCode.GetGraphic(20);
 
@@ -94,11 +181,27 @@ namespace Quaestur
             }
         }
 
+        private byte[] CreateVerificationLinkQrImage()
+        {
+            return CreateQrImage(CreateVerificationLink());
+        }
+
         public override IEnumerable<Tuple<string, byte[]>> Files
         {
-            get 
+            get
             {
                 yield return new Tuple<string, byte[]>("qrcode.png", CreateVerificationLinkQrImage());
+
+                foreach (var issue in _issues)
+                {
+                    var shortUrl = string.Format(
+                        "https://a.parat.swiss/{0}",
+                        issue.Id);
+                    var qrFilename = string.Format(
+                        "qr{0}.png",
+                        issue.Id);
+                    yield return new Tuple<string, byte[]>(qrFilename, CreateQrImage(shortUrl));
+                }
             } 
         }
     }

@@ -42,6 +42,17 @@ namespace RedmineApi
         }
     }
 
+    public class RedmineApiException : Exception
+    {
+        public HttpStatusCode StatusCode { get; private set; }
+
+        public RedmineApiException(HttpStatusCode statusCode)
+            : base("HTTP status code " + (int)statusCode)
+        {
+            StatusCode = statusCode;
+        }
+    }
+
     public class Redmine
     {
         private readonly RedmineApiConfig _config;
@@ -79,6 +90,26 @@ namespace RedmineApi
             } while (count < total);
         }
 
+        public IEnumerable<Issue> GetIssues(int projectId)
+        {
+            int count = 0;
+            int total = int.MaxValue;
+
+            do
+            {
+                var request = string.Format("/projects/{0}/issues.json?status_id=*&offset={1}&limit=100", projectId, count);
+                var response = Request<JObject>(request, HttpMethod.Get, null);
+
+                foreach (var issue in response.Value<JArray>("issues").Values<JObject>())
+                {
+                    count++;
+                    yield return new Issue(issue);
+                }
+
+                total = response.Value<int>("total_count");
+            } while (count < total);
+        }
+
         public IEnumerable<User> GetUsers()
         {
             int count = 0;
@@ -104,6 +135,26 @@ namespace RedmineApi
             var response = Request<JObject>("/issue_statuses.json", HttpMethod.Get, null);
 
             foreach (var status in response.Value<JArray>("issue_statuses").Values<JObject>())
+            {
+                yield return new NamedId(status);
+            }
+        }
+
+        public IEnumerable<NamedId> GetProjects()
+        {
+            var response = Request<JObject>("/projects.json", HttpMethod.Get, null);
+
+            foreach (var status in response.Value<JArray>("projects").Values<JObject>())
+            {
+                yield return new NamedId(status);
+            }
+        }
+
+        public IEnumerable<NamedId> GetVersions(int projectId)
+        {
+            var response = Request<JObject>(string.Format("/projects/{0}/versions.json", projectId), HttpMethod.Get, null);
+
+            foreach (var status in response.Value<JArray>("versions").Values<JObject>())
             {
                 yield return new NamedId(status);
             }
@@ -170,25 +221,32 @@ namespace RedmineApi
             waitResponse.Wait();
             var response = waitResponse.Result;
 
-            var waitRead = response.Content.ReadAsByteArrayAsync();
-            waitRead.Wait();
-            var responseText = Encoding.UTF8.GetString(waitRead.Result);
+            if (response.IsSuccessStatusCode)
+            {
+                var waitRead = response.Content.ReadAsByteArrayAsync();
+                waitRead.Wait();
+                var responseText = Encoding.UTF8.GetString(waitRead.Result);
 
-            if (typeof(T) == typeof(JObject))
-            {
-                return JObject.Parse(responseText) as T;
-            }
-            else if (typeof(T) == typeof(JArray))
-            {
-                return JArray.Parse(responseText) as T;
-            }
-            else if (typeof(T) == typeof(JValue))
-            {
-                return new JValue(responseText) as T;
+                if (typeof(T) == typeof(JObject))
+                {
+                    return JObject.Parse(responseText) as T;
+                }
+                else if (typeof(T) == typeof(JArray))
+                {
+                    return JArray.Parse(responseText) as T;
+                }
+                else if (typeof(T) == typeof(JValue))
+                {
+                    return new JValue(responseText) as T;
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
             }
             else
             {
-                throw new NotSupportedException();
+                throw new RedmineApiException(response.StatusCode);
             }
         }
     }

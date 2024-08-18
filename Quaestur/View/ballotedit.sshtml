@@ -47,6 +47,8 @@ function assignValidation(resultData){
   assignFieldValidation("AnnouncementDate", result);
   assignFieldValidation("StartDate", result);
   assignFieldValidation("EndDate", result);
+  assignFieldValidation("RedmineVersion", result);
+  assignFieldValidation("RedmineStatus", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -57,6 +59,8 @@ function saveObject(callback){
   formData.AnnouncementDate = $("#ballotAnnouncementDate").val();
   formData.StartDate = $("#ballotStartDate").val();
   formData.EndDate = $("#ballotEndDate").val();
+  formData.RedmineVersion = $("#ballotRedmineVersion").val();
+  formData.RedmineStatus = $("#ballotRedmineStatus").val();
     
   formData.AnnouncementText = new Array();
   @Each.AnnouncementText
@@ -156,6 +160,24 @@ $(document).ready(function() {
         <label for="ballotEndDate">@Model.PhraseFieldEndDate</label>
         <input type="text" id="ballotEndDate" class="form-control datepicker" value="@Model.EndDate"/>
         <div id="ballotEndDateFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ballotRedmineVersion">@Model.PhraseFieldRedmineVersion</label>
+        <select id="ballotRedmineVersion" class="selectpicker form-control" data-live-search="true">
+          @Each.RedmineVersions
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotRedmineVersionFeedback" class="valid-feedback"></div>
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="ballotRedmineStatus">@Model.PhraseFieldRedmineStatus</label>
+        <select id="ballotRedmineStatus" class="selectpicker form-control" data-live-search="true">
+          @Each.RedmineStatuses
+          <option value="@Current.Value" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="ballotRedmineStatusFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

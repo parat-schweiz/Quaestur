@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using BaseLibrary;
 using MimeKit;
 using SiteLibrary;
+using RedmineApi;
 
 namespace Quaestur
 {
@@ -20,19 +21,83 @@ namespace Quaestur
         public string AnnouncementDate;
         public string StartDate;
         public string EndDate;
+        public string RedmineVersion;
+        public string RedmineStatus;
         public List<MultiItemViewModel> AnnouncementText;
         public List<MultiItemViewModel> Questions;
         public List<NamedIdViewModel> Templates;
+        public List<NamedIntViewModel> RedmineVersions;
+        public List<NamedIntViewModel> RedmineStatuses;
         public string PhraseFieldTemplate;
         public string PhraseFieldAnnouncementDate;
         public string PhraseFieldStartDate;
         public string PhraseFieldEndDate;
+        public string PhraseFieldRedmineVersion;
+        public string PhraseFieldRedmineStatus;
         public string PhraseButtonSave;
         public string PhraseButtonCancel;
         public string PhraseButtonTest;
 
         public BallotEditViewModel()
         { 
+        }
+
+        private IEnumerable<NamedIntViewModel> TryGetRedmineStatuses(int? selectedId)
+        {
+            try
+            {
+                var redmine = new Redmine(Global.Config.RedmineApiConfig);
+                return redmine.GetIssueStatuses()
+                    .Select(i => new NamedIntViewModel(i.Id, i.Name, i.Id == selectedId));
+            }
+            catch (Exception exception)
+            {
+                Global.Log.Warning("Cannot get redmine issue statuses: {0}", exception.Message);
+                return new NamedIntViewModel[0];
+            }
+        }
+
+        private IEnumerable<NamedIntViewModel> TryGetRedmineVersions(int? selectedId)
+        {
+            try
+            {
+                var result = new List<NamedIntViewModel>();
+                var redmine = new Redmine(Global.Config.RedmineApiConfig);
+                foreach (var project in redmine.GetProjects())
+                {
+                    try
+                    {
+                        foreach (var version in redmine.GetVersions(project.Id))
+                        {
+                            var id = CreateVersionId(project.Id, version.Id);
+                            var name = project.Name + " - " + version.Name;
+                            result.Add(new NamedIntViewModel(id, name, id == selectedId));
+                        }
+                    }
+                    catch (Exception versionException)
+                    {
+                        Global.Log.Info("Cannot get redmine versions from project {0} {1}: {2}", project.Id, project.Name, versionException.Message);
+                    }
+                }
+                return result;
+            }
+            catch (Exception exception)
+            {
+                Global.Log.Warning("Cannot get redmine projects: {0}", exception.Message);
+                return new NamedIntViewModel[0];
+            }
+        }
+
+        private int CreateVersionId(int? projectId, int? versionId)
+        { 
+            if (projectId.HasValue && versionId.HasValue)
+            {
+                return projectId.Value * BallotModule.RedmineProjectIdOffset + versionId.Value;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         public BallotEditViewModel(IDatabase database, Translator translator, Session session)
@@ -44,6 +109,8 @@ namespace Quaestur
             PhraseFieldAnnouncementDate = translator.Get("Ballot.Edit.Field.AnnouncementDate", "AnnouncementDate field in the ballot edit page", "Announcement date").EscapeHtml();
             PhraseFieldStartDate = translator.Get("Ballot.Edit.Field.StartDate", "StartDate field in the ballot edit page", "Start date").EscapeHtml();
             PhraseFieldEndDate = translator.Get("Ballot.Edit.Field.EndDate", "EndDate field in the ballot edit page", "End date").EscapeHtml();
+            PhraseFieldRedmineVersion = translator.Get("Ballot.Edit.Field.RedmineVersion", "Redmine version field in the ballot edit page", "Redmine version").EscapeHtml();
+            PhraseFieldRedmineStatus = translator.Get("Ballot.Edit.Field.RedmineStatus", "Redmine status field in the ballot edit page", "Redmine status").EscapeHtml();
             PhraseButtonSave = translator.Get("Ballot.Edit.Button.Save", "Save button in the ballot edit page", "Save").EscapeHtml();
             PhraseButtonCancel = translator.Get("Ballot.Edit.Button.Cancel", "Cancel button in the ballot edit page", "Cancel").EscapeHtml();
             PhraseButtonTest = translator.Get("Ballot.Edit.Button.Test", "Test button in the ballot edit page", "Test").EscapeHtml();
@@ -64,6 +131,8 @@ namespace Quaestur
                 .Query<BallotTemplate>()
                 .Where(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                 .Select(bt => new NamedIdViewModel(translator, bt, false)));
+            RedmineVersions = TryGetRedmineVersions(0).ToList();
+            RedmineStatuses = TryGetRedmineStatuses(0).ToList();
         }
 
         public BallotEditViewModel(Translator translator, IDatabase db, Session session, Ballot ballot)
@@ -81,6 +150,8 @@ namespace Quaestur
                 .Query<BallotTemplate>()
                 .Where(bt => session.HasAccess(bt.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))
                 .Select(bt => new NamedIdViewModel(translator, bt, ballot.Template.Value == bt)));
+            RedmineVersions = TryGetRedmineVersions(CreateVersionId(ballot.RedmineProject.Value, ballot.RedmineVersion.Value)).ToList();
+            RedmineStatuses = TryGetRedmineStatuses(ballot.RedmineStatus.Value).ToList();
         }
     }
 
@@ -152,6 +223,8 @@ namespace Quaestur
 
     public class BallotModule : QuaesturModule
     {
+        public const int RedmineProjectIdOffset = 1000000;
+
         public BallotModule()
         {
             RequireCompleteLogin();
@@ -201,6 +274,8 @@ namespace Quaestur
                         newBallot.AnnouncementDate.Value = DateTime.Now.AddDays(3).Date;
                         newBallot.StartDate.Value = newBallot.AnnouncementDate.Value.AddDays(ballot.StartDate.Value.Subtract(ballot.AnnouncementDate.Value).TotalDays).Date;
                         newBallot.EndDate.Value = newBallot.AnnouncementDate.Value.AddDays(ballot.EndDate.Value.Subtract(ballot.AnnouncementDate.Value).TotalDays).Date;
+                        newBallot.RedmineVersion.Value = newBallot.RedmineVersion.Value;
+                        newBallot.RedmineStatus.Value = newBallot.RedmineStatus.Value;
                         newBallot.Secret.Value = Rng.Get(32);
                         Database.Save(newBallot);
                     }
@@ -227,6 +302,32 @@ namespace Quaestur
                             status.AssignDateString("EndDate", ballot.EndDate, model.EndDate);
                             status.AssignMultiLanguageFree("AnnouncementText", ballot.AnnouncementText, model.AnnouncementText);
                             status.AssignMultiLanguageFree("Questions", ballot.Questions, model.Questions);
+
+                            if (int.TryParse(model.RedmineStatus, out int redmineStatusId))
+                            {
+                                if (redmineStatusId > 0)
+                                {
+                                    ballot.RedmineStatus.Value = redmineStatusId;
+                                }
+                                else
+                                {
+                                    ballot.RedmineStatus.Value = null;
+                                }
+                            }
+
+                            if (int.TryParse(model.RedmineVersion, out int redmineVersionId))
+                            {
+                                if (redmineVersionId > RedmineProjectIdOffset)
+                                {
+                                    ballot.RedmineProject.Value = redmineVersionId / RedmineProjectIdOffset;
+                                    ballot.RedmineVersion.Value = redmineVersionId % RedmineProjectIdOffset;
+                                }
+                                else
+                                {
+                                    ballot.RedmineProject.Value = null;
+                                    ballot.RedmineVersion.Value = null;
+                                }
+                            }
 
                             if (status.IsSuccess &&
                                 status.HasAccess(ballot.Template.Value.Organizer.Value.Organization.Value, PartAccess.Ballot, AccessRight.Write))

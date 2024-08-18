@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using BaseLibrary;
 using SiteLibrary;
+using RedmineApi;
+using System.Text;
 
 namespace Quaestur
 {
@@ -36,9 +38,69 @@ namespace Quaestur
                     return _ballotPaper.Ballot.Value.AnnouncementText.Value[_translator.Language];
                 case "BallotPaper.DownloadLink":
                     return string.Format("{0}/ballotpaper", Global.Config.WebSiteAddress);
+                case "BallotPaper.Motions":
+                    return CreateMotions();
                 default:
                     throw new InvalidOperationException(
                         "Variable " + variable + " not known in provider " + Prefix);
+            }
+        }
+
+        private string CreateMotions()
+        {
+            var redmine = new Redmine(Global.Config.RedmineApiConfig);
+            var ballot = _ballotPaper.Ballot.Value;
+
+            if ((!ballot.RedmineProject.Value.HasValue) ||
+                (!ballot.RedmineVersion.Value.HasValue) ||
+                (!ballot.RedmineStatus.Value.HasValue))
+            {
+                return "Redmine project, version or status not set for ballot.";
+            }
+
+            try
+            {
+                var issues = redmine
+                    .GetIssues(ballot.RedmineProject.Value.Value)
+                    .Where(i => (i.Status?.Id == ballot.RedmineStatus.Value.Value) &&
+                                (i.Version?.Id == ballot.RedmineVersion.Value.Value))
+                    .OrderBy(i => i.Id)
+                    .ToList();
+                var text = new StringBuilder();
+                text.AppendLine("<ul>");
+
+                foreach (var issue in issues)
+                {
+                    var discussionUrl = issue.CustomFields.FirstOrDefault(f => f.Name == "Diskussion")?.Values?.FirstOrDefault();
+                    var issueUrl = string.Format(
+                        "{0}/issues/{1}",
+                        Global.Config.RedmineApiConfig.ApiUrl,
+                        issue.Id);
+                    if (!string.IsNullOrEmpty(discussionUrl))
+                    {
+                        text.AppendLine(string.Format(
+                            "<li>Antrag {0}: <a href=\"{1}\">{2}</a> - <a href=\"{3}\">Diskussion zum Antrag</a></li>",
+                            issue.Id,
+                            issueUrl,
+                            issue.Subject,
+                            discussionUrl));
+                    }
+                    else
+                    {
+                        text.AppendLine(string.Format(
+                            "<li>Antrag {0}: <a href=\"{1}\">{2}</a></li>",
+                            issue.Id,
+                            issue.Subject,
+                            issueUrl));
+                    }
+                }
+
+                text.AppendLine("</ul>");
+                return text.ToString();
+            }
+            catch (Exception exception)
+            {
+                return exception.Message;
             }
         }
     }

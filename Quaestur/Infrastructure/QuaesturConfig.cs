@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Linq;
 using BaseLibrary;
+using RedmineApi;
 
 namespace Quaestur
 {
@@ -13,6 +14,7 @@ namespace Quaestur
         public ConfigSectionMail Mail { get; private set; }
         public ConfigSectionMailCounter MailCounter { get; private set; }
         public ConfigSectionSecurityServiceClient SecurityService { get; private set; }
+        public RedmineApiConfig RedmineApiConfig { get; private set; }
 
         public QuaesturConfig()
         {
@@ -20,6 +22,7 @@ namespace Quaestur
             Mail = new ConfigSectionMail();
             MailCounter = new ConfigSectionMailCounter();
             SecurityService = new ConfigSectionSecurityServiceClient();
+            RedmineApiConfig = new RedmineApiConfig();
             MatrixDomains = new List<string>();
         }
 
@@ -31,6 +34,7 @@ namespace Quaestur
                 yield return Mail;
                 yield return MailCounter;
                 yield return SecurityService;
+                yield return RedmineApiConfig;
             }
         }
 

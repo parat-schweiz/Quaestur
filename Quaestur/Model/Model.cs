@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 38;
+        public static int CurrentVersion = 39;
 
         public static void Install(IDatabase database)
         {
@@ -158,6 +158,11 @@ namespace Quaestur
                 case 38:
                     database.DropTable("loginlink");
                     database.AddColumn<Oauth2Client>(o => o.SessionExpirySeconds);
+                    break;
+                case 39:
+                    database.AddColumn<Ballot>(o => o.RedmineStatus);
+                    database.AddColumn<Ballot>(o => o.RedmineProject);
+                    database.AddColumn<Ballot>(o => o.RedmineVersion);
                     break;
                 default:
                     throw new NotSupportedException();

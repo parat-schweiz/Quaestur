@@ -1086,6 +1086,10 @@
       <Project>{A0909BA7-CACC-4B86-88CD-9ABD5F78D921}</Project>
       <Name>SiteLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\RedmineApi\RedmineApi.csproj">
+      <Project>{6723C1E9-C0FB-433B-86B9-CA66A2B5732C}</Project>
+      <Name>RedmineApi</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions>

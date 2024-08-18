@@ -45,6 +45,9 @@ namespace Quaestur
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
         public ByteArrayField Secret { get; private set; }
+        public FieldNull<int> RedmineVersion { get; private set; }
+        public FieldNull<int> RedmineStatus { get; private set; }
+        public FieldNull<int> RedmineProject { get; private set; }
 
         public bool Editable
         { 
@@ -93,6 +96,9 @@ namespace Quaestur
             AnnouncementText = new MultiLanguageStringField(this, "announcementtext", AllowStringType.SafeHtml);
             Questions = new MultiLanguageStringField(this, "questions", AllowStringType.SafeLatex);
             Secret = new ByteArrayField(this, "secret", false);
+            RedmineVersion = new FieldNull<int>(this, "redmineversion");
+            RedmineStatus = new FieldNull<int>(this, "redminestatus");
+            RedmineProject = new FieldNull<int>(this, "redmineproject");
         }
 
         public override string ToString()
