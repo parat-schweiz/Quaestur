@@ -1,5 +1,5 @@
 ﻿<script>
-function downloadUrlWait(url){
+function downloadUrlWait(url, format){
   waitingDialog.show("@Model.PhraseDownloadWait", undefined, function(){
     $.get(url, function(resultData, status){
         var result = JSON.parse(resultData);
@@ -10,7 +10,7 @@ function downloadUrlWait(url){
           for (var i = 0; i < byteString.length; i++) {
             uint8Array[i] = byteString.charCodeAt(i);
           }
-          var blob = new Blob([arrayBuffer], {type: "application/pdf"});
+          var blob = new Blob([arrayBuffer], {type: format});
           waitingDialog.hide();
           saveAs(blob, result.FileName);
         }else{
@@ -58,12 +58,17 @@ $("#actionSendSettlementOrReminder").click(function(event) {
 });
 $("#actionButtonDownloadSettlement").click(function(event) {
   var membershipId = $("#actionMembership").val();
-  downloadUrlWait("/person/detail/actions/createsettlement/" + membershipId);
+  downloadUrlWait("/person/detail/actions/createsettlement/" + membershipId, "application/pdf");
   event.preventDefault();
 });
 $("#actionCreateBallotPaper").click(function(event) {
   var membershipId = $("#actionMembership").val();
-  downloadUrlWait("/person/detail/actions/createballotpaper/" + membershipId);
+  downloadUrlWait("/person/detail/actions/createballotpaper/" + membershipId, "application/pdf");
+  event.preventDefault();
+});
+$("#actionDownloadBillData").click(function(event) {
+  var membershipId = $("#actionMembership").val();
+  downloadUrlWait("/person/detail/actions/downloadbilldata/" + membershipId, "text/csv");
   event.preventDefault();
 });
 $('.selectpicker').selectpicker();
@@ -85,6 +90,7 @@ $('.selectpicker').selectpicker();
         <button id ="actionSendParameterUpdate" type="button" class="btn btn-default">@Model.PhraseButtonSendParameterUpdate</button>
         <button id ="actionCreatePointTally" type="button" class="btn btn-default">@Model.PhraseButtonCreatePointTally</button>
         <button id ="actionCreateBill" type="button" class="btn btn-default">@Model.PhraseButtonCreateBill</button>
+        <button id ="actionDownloadBillData" type="button" class="btn btn-default">@Model.PhraseButtonDownloadBillData</button>
         <button id ="actionButtonDownloadSettlement" type="button" class="btn btn-default">@Model.PhraseButtonDownloadSettlement</button>
         <button id ="actionSendSettlementOrReminder" type="button" class="btn btn-default">@Model.PhraseButtonSendSettlementOrReminder</button>
         <button id ="actionCreateBallotPaper" type="button" class="btn btn-default">@Model.PhraseButtonCreateBallotPaper</button>

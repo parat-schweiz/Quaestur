@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Nancy;
 using Nancy.ModelBinding;
 using Nancy.Security;
@@ -20,6 +21,7 @@ namespace Quaestur
         public string PhraseButtonSendSettlementOrReminder;
         public string PhraseButtonDownloadSettlement;
         public string PhraseButtonCreateBallotPaper;
+        public string PhraseButtonDownloadBillData;
         public string PhraseDownloadWait;
 
         public PersonDetailActionsView(Translator translator, Person person)
@@ -31,6 +33,7 @@ namespace Quaestur
             PhraseButtonSendSettlementOrReminder = translator.Get("Person.Detail.Master.Actions.Button.SendSettlementOrReminder", "Button to send settlement or reminder on actions tab in person detail page", "Send settlement or reminder");
             PhraseButtonDownloadSettlement = translator.Get("Person.Detail.Master.Actions.Button.DownloadSettlement", "Button to download settlement on actions tab in person detail page", "Download settlement");
             PhraseButtonCreateBallotPaper = translator.Get("Person.Detail.Master.Actions.Button.CreateBallotPaper", "Button to create ballot paper on actions tab in person detail page", "Create Ballot Paper");
+            PhraseButtonDownloadBillData = translator.Get("Person.Detail.Master.Actions.Button.DownloadBillData", "Button to download bill data on actions tab in person detail page", "Download Bill Data");
             PhraseDownloadWait = translator.Get("Person.Detail.Master.Actions.Wait.Download", "Wait for download message on actions tab in person detail page", "Downloading...");
             Memberships = new List<NamedIdViewModel>(
                 person.Memberships.Select(m => new NamedIdViewModel(translator, m, false)));
@@ -221,6 +224,49 @@ namespace Quaestur
                             "Status message when downloading ballot paper fails because not current ballot paper was found.",
                             "Could not create ballot papier because no currently valid ballot was found.");
                     }
+                }
+
+                return status.CreateJsonData();
+            });
+            Get("/person/detail/actions/downloadbilldata/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var membership = Database.Query<Membership>(idString);
+                var status = CreateStatus();
+
+                if (membership != null &&
+                    HasAccessBilling(membership))
+                {
+                    var csv = new StringBuilder();
+                    foreach (var bill in Database
+                        .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
+                        .Where(x => (x.CreatedDate.Value.Year == DateTime.UtcNow.Year) || (x.CreatedDate.Value.Year == (DateTime.UtcNow.Year - 1))) 
+                        .OrderBy(x => x.CreatedDate.Value))
+                    {
+                        var fields = new List<string>();
+                        fields.Add(bill.Membership.Value.Organization.Value.Name.Value.AnyValue);
+                        fields.Add(bill.Membership.Value.Person.Value.Number.Value.ToString());
+                        fields.Add(bill.Number.Value);
+                        fields.Add(bill.FromDate.Value.ToShortDateString());
+                        fields.Add(bill.UntilDate.Value.ToShortDateString());
+                        fields.Add(bill.CreatedDate.Value.ToShortDateString());
+                        fields.Add(string.Format("Beitrag {0} von {1} bis {2}",
+                            bill.Number.Value,
+                            bill.FromDate.Value.ToShortDateString(),
+                            bill.UntilDate.Value.ToShortDateString()));
+                        fields.Add(bill.Amount.Value.ToString());
+                        fields.Add(bill.Status.ToString());
+                        fields.Add(bill.PayedDate.Value?.ToString() ?? string.Empty);
+                        csv.AppendLine(string.Join(";", fields.Select(y => "\"" + y + "\"")));
+                    }
+                    var b = new Bill();
+                    var csvBytes = Encoding.UTF8.GetBytes(csv.ToString());
+                    status.SetDataSuccess(Convert.ToBase64String(csvBytes), membership.Person.Value.Number.Value + ".csv");
+                    Journal(
+                        CurrentSession.User,
+                        "BillData.Journal.Download.Success",
+                        "Journal entry when downloaded bill data",
+                        "Downloaded bill data");
                 }
 
                 return status.CreateJsonData();
