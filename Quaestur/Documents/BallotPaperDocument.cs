@@ -97,9 +97,59 @@ namespace Quaestur
             }
         }
 
+        private string GetUserValue(IEnumerable<User> users, string value)
+        {
+            if (int.TryParse(value, out int id))
+            {
+                var user = users.SingleOrDefault(u => u.Id == id);
+                if (user != null)
+                {
+                    if (!string.IsNullOrEmpty(user.Firstname) && !string.IsNullOrEmpty(user.Lastname))
+                    {
+                        return user.Firstname + " " + user.Lastname;
+                    }
+                    else if (!string.IsNullOrEmpty(user.Firstname))
+                    {
+                        return user.Firstname;
+                    }
+                    else if (!string.IsNullOrEmpty(user.Lastname))
+                    {
+                        return user.Lastname;
+                    }
+                    else
+                    {
+                        return user.Username;
+                    }
+                }
+            }
+            return value;
+        }
+
+        private string GetIssuePoster(IEnumerable<User> users, Issue issue)
+        {
+            var customField = issue.CustomFields.SingleOrDefault(c => c.Name == "Antragsteller");
+            if (customField != null)
+            {
+                var values = customField.Values
+                    .Select(v => GetUserValue(users, v))
+                    .OrderBy(v => v)
+                    .ToList();
+                if (values.Count == 1)
+                {
+                    return values.Single();
+                }
+                else
+                {
+                    return string.Join(", ", values.Take(values.Count - 1)) + " sowie " + values.Last();
+                }
+            }
+            return issue.Author?.Name ?? "Unbekannt";
+        }
+
         private string CreateMotions()
         {
             var redmine = new Redmine(Global.Config.RedmineApiConfig);
+            var users = redmine.GetUsers().ToList();
 
             if (!_issues.Any())
             {
@@ -142,7 +192,7 @@ namespace Quaestur
                                         .Replace("£££", questionCounter.ToString()));
                         text.AppendLine(@"\question{Stimmst du dem Antrag von £££ auf §§§ zu?}"
                                         .Replace("§§§", question)
-                                        .Replace("£££", issue.Author?.Name ?? "Unbekannt"));
+                                        .Replace("£££", GetIssuePoster(users, issue)));
 
                         questionCounter++;
                     }
