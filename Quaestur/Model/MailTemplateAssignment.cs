@@ -40,6 +40,10 @@ namespace Quaestur
             {
                 return ((BillSendingTemplate)o).MembershipType.Value.Organization.Value;
             }
+            else if (o is Subscription)
+            {
+                return ((Subscription)o).Membership.Value.Organization.Value;
+            }
             else
             {
                 throw new NotSupportedException();
@@ -84,6 +88,8 @@ namespace Quaestur
                     return database.Query<MembershipType>(AssignedId.Value);
                 case TemplateAssignmentType.BillSendingTemplate:
                     return database.Query<BillSendingTemplate>(AssignedId.Value);
+                case TemplateAssignmentType.Subscription:
+                    return database.Query<Subscription>(AssignedId.Value);
                 default:
                     throw new NotSupportedException();
             }

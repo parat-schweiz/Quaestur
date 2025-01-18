@@ -452,7 +452,7 @@ namespace Quaestur
 
                     foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
                     {
-                        var announcementTemplate = ballotTemplate.GetAnnouncementMail(Database, language);
+                        var announcementTemplate = ballotTemplate.AnnouncementMails.Value(Database, language);
 
                         if (announcementTemplate != null)
                         {
@@ -461,7 +461,7 @@ namespace Quaestur
                             Global.Mail.Send(message);
                         }
 
-                        var invitationTemplate = ballotTemplate.GetInvitationMail(Database, language);
+                        var invitationTemplate = ballotTemplate.InvitationMails.Value(Database, language);
 
                         if (invitationTemplate != null)
                         {

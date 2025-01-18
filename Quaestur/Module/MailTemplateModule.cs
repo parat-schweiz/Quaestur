@@ -64,6 +64,7 @@ namespace Quaestur
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, false));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, false));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, false));
+            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.Subscription, false));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, false))
@@ -88,6 +89,7 @@ namespace Quaestur
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, TemplateAssignmentType.BallotTemplate == mailTemplate.AssignmentType.Value));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, TemplateAssignmentType.MembershipType == mailTemplate.AssignmentType.Value));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, TemplateAssignmentType.BillSendingTemplate == mailTemplate.AssignmentType.Value));
+            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.Subscription, TemplateAssignmentType.Subscription == mailTemplate.AssignmentType.Value));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, mailTemplate.Organization.Value == o))

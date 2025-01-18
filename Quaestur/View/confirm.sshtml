@@ -1,0 +1,9 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+      @Model.Text
+    </div>
+  </div>
+@EndSection

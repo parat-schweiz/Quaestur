@@ -1,0 +1,108 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['script']
+<script>
+$(document).ready(function() {
+  $('#BirthDate').datepicker({
+    format: 'dd.mm.yyyy',
+    startDate: '@Model.StartDate',
+    endDate: '@Model.EndDate',
+    defaultDate: "@Model.BirthDate",
+    language: '@Model.Language',
+  });
+});
+</script>
+@EndSection
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Text
+    </div>
+  </div>
+  <div class="row input">
+    <div class="col-12">
+      <form action="@Model.LinkUrl" method="post">
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <label for="MailAddress">@Model.PhraseFieldMailAddress</label>
+            <input type="text" class="form-control" id="MailAddress" name="MailAddress" value="@Model.MailAddress" sensitive="false"/>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="UserName">@Model.PhraseFieldUserName</label>
+            <input type="text" class="form-control @Model.UserNameValid" id="UserName" name="UserName" value="@Model.UserName" autofocus/>
+            <div id="UserNameFeedback" class="invalid-feedback">@Model.UserNameFeedback</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <label for="FirstName">@Model.PhraseFieldFirstName</label>
+            <input type="text" class="form-control @Model.FirstNameValid" id="FirstName" name="FirstName" value="@Model.FirstName"/>
+            <div id="FirstNameFeedback" class="invalid-feedback">@Model.FirstNameFeedback</div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="MiddleNames">@Model.PhraseFieldMiddleNames</label>
+            <input type="text" class="form-control @Model.MiddleNamesValid" id="MiddleNames" name="MiddleNames" value="@Model.MiddleNames"/>
+            <div id="MiddleNamesFeedback" class="invalid-feedback">@Model.MiddleNamesFeedback</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <label for="LastName">@Model.PhraseFieldLastName</label>
+            <input type="text" class="form-control @Model.LastNameValid" id="LastName" name="LastName" value="@Model.LastName"/>
+            <div id="LastNameFeedback" class="invalid-feedback">@Model.LastNameFeedback</div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="BirthDate">@Model.PhraseFieldBirthDate</label>
+            <input type="text" id="BirthDate" class="form-control datepicker @Model.BirthDateValid" name="BirthDate" value="@Model.BirthDate"/>
+            <div id="BirthDateFeedback" class="valid-feedback">@Model.BirthDateFeedback</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-12 mb-3">
+            <label for="Street">@Model.PhraseFieldStreet</label>
+            <input type="text" class="form-control @Model.StreetValid" id="Street" name="Street" value="@Model.Street"/>
+            <div id="StreetFeedback" class="invalid-feedback">@Model.StreetFeedback</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-3 mb-3">
+            <label for="PostalCode">@Model.PhraseFieldPostalCode</label>
+            <input type="text" class="form-control @Model.PostalCodeValid" id="PostalCode" name="PostalCode" value="@Model.PostalCode"/>
+            <div id="PostalCodeFeedback" class="invalid-feedback">@Model.PostalCodeFeedback</div>
+          </div>
+          <div class="col-9 mb-3">
+            <label for="Place">@Model.PhraseFieldPlace</label>
+            <input type="text" class="form-control @Model.PlaceValid" id="Place" name="Place" value="@Model.Place"/>
+            <div id="PlaceFeedback" class="invalid-feedback">@Model.PlaceFeedback</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <label for="State">@Model.PhraseFieldState</label>
+            <select id="State" name="State" class="selectpicker form-control @Model.StateValid" data-live-search="true">
+              @Each.States
+              <option value="@Current.Id" @Current.Options>@Current.Name</option>
+              @EndEach
+            </select>
+            <div id="StateFeedback" class="valid-feedback">@Model.StateFeedback</div>
+          </div>
+          <div class="col-6 mb-3">
+            <label for="Country">@Model.PhraseFieldCountry</label>
+            <select id="Country" name="Country" class="selectpicker form-control @Model.CountryValid" data-live-search="true">
+              @Each.Countries
+              <option value="@Current.Id" @Current.Options>@Current.Name</option>
+              @EndEach
+            </select>
+            <div id="Country" class="valid-feedback">@Model.Country</div>
+          </div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="col-12 mb-3">
+          <input type="submit" class="btn btn-primary" value="@Model.PhraseButtonJoin"/>
+        </div>
+      </div>
+    </form>
+  </div>
+@EndSection

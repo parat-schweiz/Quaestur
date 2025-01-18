@@ -122,7 +122,7 @@ namespace Quaestur
 
                         var translation = new Translation(database);
                         var translator = new Translator(translation, sending.Address.Value.Person.Value.Language.Value);
-                        var templator = new Templator(new PersonContentProvider(translator, sending.Address.Value.Person.Value));
+                        var templator = new Templator(new PersonContentProvider(database, translator, sending.Address.Value.Person.Value));
                         htmlText = templator.Apply(htmlText);
                         plainText = templator.Apply(plainText);
 

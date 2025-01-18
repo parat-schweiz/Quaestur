@@ -86,6 +86,11 @@ namespace Quaestur
                 database.Save(mailing);
             }
 
+            foreach (var subscription in database.Query<Subscription>(DC.Equal("tagid", Id.Value)))
+            {
+                subscription.Delete(database);
+            }
+
             foreach (var tagAssignment in database.Query<TagAssignment>(DC.Equal("tagid", Id.Value)))
             {
                 tagAssignment.Delete(database);

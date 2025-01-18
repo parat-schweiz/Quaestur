@@ -616,7 +616,7 @@ namespace Quaestur
                     plainText = plainText + footer.PlainText.Value;
                 }
 
-                var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
+                var templator = new Templator(new PersonContentProvider(Database, Translator, CurrentSession.User));
                 htmlText = templator.Apply(htmlText);
                 plainText = templator.Apply(plainText);
 
@@ -678,7 +678,7 @@ namespace Quaestur
                         plainText = plainText + mailing.Footer.Value.PlainText.Value;
                     }
 
-                    var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
+                    var templator = new Templator(new PersonContentProvider(Database, Translator, CurrentSession.User));
                     htmlText = templator.Apply(htmlText);
                     plainText = templator.Apply(plainText);
 

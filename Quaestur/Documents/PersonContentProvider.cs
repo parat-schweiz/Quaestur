@@ -8,11 +8,13 @@ namespace Quaestur
 {
     public class PersonContentProvider : IContentProvider
     {
+        private readonly IDatabase _database;
         private readonly Translator _translator;
         private readonly Person _person;
 
-        public PersonContentProvider(Translator translator, Person person)
+        public PersonContentProvider(IDatabase database, Translator translator, Person person)
         {
+            _database = database;
             _translator = translator;
             _person = person;
         }
@@ -77,6 +79,10 @@ namespace Quaestur
                     return CreatePostalAddressFiveLines();
                 case "Person.Parameter.Income.Url":
                     return string.Format("{0}/income", Global.Config.WebSiteAddress);
+                case "Person.Subscription.Unsubscribe.Url":
+                    return SubscriptionModule.CreateUnsubscribeLink(_database, _person);
+                case "Person.Subscription.Join.Url":
+                    return SubscriptionModule.CreateJoinLink(_database, _person);
                 default:
                     throw new InvalidOperationException(
                         "Variable " + variable + " not known in provider " + Prefix);

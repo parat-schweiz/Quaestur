@@ -220,37 +220,37 @@ namespace Quaestur
             PointsTallyMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.PointsTallyMails(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PointsTallyMails.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             SettlementMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.SettlementMails(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.SettlementMails.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             BillDocuments = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.BillDocuments(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.BillDocuments.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             SettlementDocuments = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.SettlementDocuments(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.SettlementDocuments.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             PointsTallyDocuments = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.PointsTallyDocuments(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PointsTallyDocuments.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             PaymentParameterUpdateRequiredMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateRequiredMails(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateRequiredMails.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             PaymentParameterUpdateInvitationMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == membershipType.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.MembershipType)
-                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateInvitationMails(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, membershipType.PaymentParameterUpdateInvitationMails.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
         }
     }
@@ -556,13 +556,13 @@ namespace Quaestur
 
         private void UpdateTemplatesAndParameters(MembershipTypeEditViewModel model, MembershipType membershipType, PostStatus status)
         {
-            status.UpdateMailTemplates(Database, membershipType.PointsTallyMail, model.PointsTallyMailTemplates);
-            status.UpdateMailTemplates(Database, membershipType.SettlementMail, model.SettlementMailTemplates);
-            status.UpdateLatexTemplates(Database, membershipType.BillDocument, model.BillDocumentTemplates);
-            status.UpdateLatexTemplates(Database, membershipType.SettlementDocument, model.SettlementDocumentTemplates);
-            status.UpdateLatexTemplates(Database, membershipType.PointsTallyDocument, model.PointsTallyDocumentTemplates);
-            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateRequiredMail, model.PaymentParameterUpdateRequiredMailTemplates);
-            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateInvitationMail, model.PaymentParameterUpdateInvitationMailTemplates);
+            status.UpdateMailTemplates(Database, membershipType.PointsTallyMails, model.PointsTallyMailTemplates);
+            status.UpdateMailTemplates(Database, membershipType.SettlementMails, model.SettlementMailTemplates);
+            status.UpdateLatexTemplates(Database, membershipType.BillDocuments, model.BillDocumentTemplates);
+            status.UpdateLatexTemplates(Database, membershipType.SettlementDocuments, model.SettlementDocumentTemplates);
+            status.UpdateLatexTemplates(Database, membershipType.PointsTallyDocuments, model.PointsTallyDocumentTemplates);
+            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateRequiredMails, model.PaymentParameterUpdateRequiredMailTemplates);
+            status.UpdateMailTemplates(Database, membershipType.PaymentParameterUpdateInvitationMails, model.PaymentParameterUpdateInvitationMailTemplates);
             AddPaymentModelParameters(membershipType);
         }
 

@@ -142,109 +142,39 @@ namespace Quaestur
         public const string PaymentParameterUpdateRequiredMailFieldName = "PaymentParameterUpdateRequiredMails";
         public const string PaymentParameterUpdateInvitationMailFieldName = "PaymentParameterUpdateInvitationMails";
 
-        public TemplateField PointsTallyMail
+        public MailTemplateAssignmentField PointsTallyMails
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyMailFieldName); }
+            get { return new MailTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyMailFieldName); }
         }
 
-        public TemplateField SettlementMail
+        public MailTemplateAssignmentField SettlementMails
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, SettlementMailFieldName); }
+            get { return new MailTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, SettlementMailFieldName); }
         }
 
-        public TemplateField BillDocument
+        public LatexTemplateAssignmentField BillDocuments
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, BillDocumentFieldName); }
+            get { return new LatexTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, BillDocumentFieldName); }
         }
 
-        public TemplateField SettlementDocument
+        public LatexTemplateAssignmentField SettlementDocuments
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, SettlementDocumentFieldName); }
+            get { return new LatexTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, SettlementDocumentFieldName); }
         }
 
-        public TemplateField PointsTallyDocument
+        public LatexTemplateAssignmentField PointsTallyDocuments
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyDocumentFieldName); }
+            get { return new LatexTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, PointsTallyDocumentFieldName); }
         }
 
-        public TemplateField PaymentParameterUpdateRequiredMail
+        public MailTemplateAssignmentField PaymentParameterUpdateRequiredMails
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateRequiredMailFieldName); }
+            get { return new MailTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateRequiredMailFieldName); }
         }
 
-        public TemplateField PaymentParameterUpdateInvitationMail
+        public MailTemplateAssignmentField PaymentParameterUpdateInvitationMails
         {
-            get { return new TemplateField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateInvitationMailFieldName); }
-        }
-
-        public IEnumerable<MailTemplateAssignment> PointsTallyMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PointsTallyMailFieldName)));
-        }
-
-        public IEnumerable<MailTemplateAssignment> SettlementMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", SettlementMailFieldName)));
-        }
-
-        public IEnumerable<LatexTemplateAssignment> BillDocuments(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillDocumentFieldName)));
-        }
-
-        public IEnumerable<LatexTemplateAssignment> SettlementDocuments(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", SettlementDocumentFieldName)));
-        }
-
-        public IEnumerable<LatexTemplateAssignment> PointsTallyDocuments(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PointsTallyDocumentFieldName)));
-        }
-
-        public IEnumerable<MailTemplateAssignment> PaymentParameterUpdateRequiredMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PaymentParameterUpdateRequiredMailFieldName)));
-        }
-
-        public IEnumerable<MailTemplateAssignment> PaymentParameterUpdateInvitationMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", PaymentParameterUpdateInvitationMailFieldName)));
-        }
-
-        public MailTemplate GetPointsTallyMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, PointsTallyMails);
-        }
-
-        public MailTemplate GetSettlementMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, SettlementMails);
-        }
-
-        public LatexTemplate GetBillDocument(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, BillDocuments);
-        }
-
-        public LatexTemplate GetSettlementDocument(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, SettlementDocuments);
-        }
-
-        public LatexTemplate GetPointsTallyDocument(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, PointsTallyDocuments);
-        }
-
-        public MailTemplate GetPaymentParameterUpdateRequiredMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, PaymentParameterUpdateRequiredMails);
-        }
-
-        public MailTemplate GetPaymentParameterUpdateInvitationMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, PaymentParameterUpdateInvitationMails);
+            get { return new MailTemplateAssignmentField(TemplateAssignmentType.MembershipType, Id.Value, PaymentParameterUpdateInvitationMailFieldName); }
         }
 
         public static string GetFieldNameTranslation(Translator translator, string fieldName)
@@ -298,6 +228,13 @@ namespace Quaestur
                 .ToList())
             {
                 membership.Delete(database);
+            }
+
+            foreach (var subscription in database
+                .Query<Subscription>(DC.Equal("membershiptypeid", Id.Value))
+                .ToList())
+            {
+                subscription.Delete(database);
             }
 
             foreach (var parameter in PaymentParameters)

@@ -616,7 +616,7 @@ namespace Quaestur
             }
         }
 
-        public void UpdateLatexTemplates(IDatabase database, TemplateField field, string[] stringValues)
+        public void UpdateLatexTemplates(IDatabase database, LatexTemplateAssignmentField field, string[] stringValues)
         {
             if (stringValues == null ||
                 !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
@@ -687,7 +687,7 @@ namespace Quaestur
             }
         }
 
-        public void UpdateMailTemplates(IDatabase database, TemplateField field, string[] stringValues)
+        public void UpdateMailTemplates(IDatabase database, MailTemplateAssignmentField field, string[] stringValues)
         {
             if (stringValues == null ||
                 !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))

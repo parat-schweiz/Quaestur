@@ -106,6 +106,7 @@ namespace Quaestur
         public string PhraseMenuIncome = string.Empty;
         public string PhraseMenuPoints = string.Empty;
         public string PhraseMenuPointsBudget = string.Empty;
+        public string PhraseMenuSubscriptions = string.Empty;
         public List<CustomMenu> CustomMenus;
 
         public MasterViewModel()
@@ -145,6 +146,7 @@ namespace Quaestur
             PhraseMenuTags = translator.Get("Master.Menu.Custom.Tags", "Item 'Tags' under 'Custom' in the main menu", "Tags").EscapeHtml();
             PhraseMenuMailTemplates = translator.Get("Master.Menu.Custom.MailTemplates", "Item 'Mail templates' under 'Custom' in the main menu", "Mail templates").EscapeHtml();
             PhraseMenuLatexTemplates = translator.Get("Master.Menu.Custom.LatexTemplates", "Item 'Latex templates' under 'Custom' in the main menu", "Latex templates").EscapeHtml();
+            PhraseMenuSubscriptions = translator.Get("Master.Menu.Custom.Subscriptions", "Item 'Subscriptions' under 'Custom' in the main menu", "Subscriptions").EscapeHtml();
             PhraseMenuPhrases = translator.Get("Master.Menu.Custom.Translations", "Item 'Translations' under 'Custom' in the main menu", "Translations").EscapeHtml();
             PhraseMenuMailings = translator.Get("Master.Menu.Mailings", "Item 'Mailings' in the main menu", "Mailings").EscapeHtml();
             PhraseMenuNewMailing = translator.Get("Master.Menu.Mailings.New", "Item 'New mailing' under 'Mailings' in the main menu", "New mailing").EscapeHtml();

@@ -190,9 +190,11 @@ namespace Quaestur
                 {
                     using (var transaction = Database.BeginTransaction())
                     {
-                        var highNumber = Database.Query<Person>().MaxOrDefault(p => p.Number.Value, 1);
                         var person = membership.Person.Value;
-                        person.Number.Value = highNumber + 1;
+                        var sequence = Database.Query<Sequence>().Single();
+                        person.Number.Value = sequence.NextPersonNumber.Value;
+                        sequence.NextPersonNumber.Value++;
+                        Database.Save(sequence);
                         Database.Save(person);
                         Journal(
                             person,
