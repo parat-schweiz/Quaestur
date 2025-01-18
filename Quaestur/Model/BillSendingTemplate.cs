@@ -61,34 +61,14 @@ namespace Quaestur
             SendingMode = new EnumField<SendingMode>(this, "sendingmode", Quaestur.SendingMode.MailOnly, SendingModeExtensions.Translate);
         }
 
-        public TemplateField BillSendingLetter
+        public LatexTemplateAssignmentField BillSendingLetters
         {
-            get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingLetterFieldName); }
+            get { return new LatexTemplateAssignmentField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingLetterFieldName); }
         }
 
-        public TemplateField BillSendingMail
+        public MailTemplateAssignmentField BillSendingMails
         {
-            get { return new TemplateField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingMailFieldName); }
-        }
-
-        public IEnumerable<LatexTemplateAssignment> BillSendingLetters(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingLetterFieldName)));
-        }
-
-        public IEnumerable<MailTemplateAssignment> BillSendingMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BillSendingMailFieldName)));
-        }
-
-        public LatexTemplate GetBillSendingLetter(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, BillSendingLetters);
-        }
-
-        public MailTemplate GetBillSendingMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, BillSendingMails);
+            get { return new MailTemplateAssignmentField(TemplateAssignmentType.BillSendingTemplate, Id.Value, BillSendingMailFieldName); }
         }
 
         public override void Delete(IDatabase database)

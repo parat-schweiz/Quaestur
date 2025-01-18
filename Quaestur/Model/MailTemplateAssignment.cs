@@ -40,6 +40,10 @@ namespace Quaestur
             {
                 return ((BillSendingTemplate)o).MembershipType.Value.Organization.Value;
             }
+            else if (o is Subscription)
+            {
+                return ((Subscription)o).Membership.Value.Organization.Value;
+            }
             else
             {
                 throw new NotSupportedException();
@@ -84,6 +88,8 @@ namespace Quaestur
                     return database.Query<MembershipType>(AssignedId.Value);
                 case TemplateAssignmentType.BillSendingTemplate:
                     return database.Query<BillSendingTemplate>(AssignedId.Value);
+                case TemplateAssignmentType.Subscription:
+                    return database.Query<Subscription>(AssignedId.Value);
                 default:
                     throw new NotSupportedException();
             }
@@ -118,13 +124,29 @@ namespace Quaestur
             }
         }
 
-        MailTemplate ITemplateAssignment<MailTemplate>.Template => Template.Value;
+        MailTemplate ITemplateAssignment<MailTemplate>.Template
+        {
+            get { return Template.Value; }
+            set { Template.Value = value; }
+        }
 
-        TemplateAssignmentType ITemplateAssignment<MailTemplate>.AssignedType => AssignedType.Value;
+        TemplateAssignmentType ITemplateAssignment<MailTemplate>.AssignedType
+        {
+            get { return AssignedType.Value; }
+            set { AssignedType.Value = value; }
+        }
 
-        Guid ITemplateAssignment<MailTemplate>.AssignedId => AssignedId.Value;
+        Guid ITemplateAssignment<MailTemplate>.AssignedId
+        {
+            get { return AssignedId.Value; }
+            set { AssignedId.Value = value; }
+        }
 
-        string ITemplateAssignment<MailTemplate>.FieldName => FieldName.Value;
+        string ITemplateAssignment<MailTemplate>.FieldName
+        {
+            get { return FieldName.Value; }
+            set { FieldName.Value = value; }
+        }
 
         public bool HasAccess(IDatabase database, Session session, AccessRight right)
         {

@@ -23,6 +23,7 @@ namespace Quaestur
         public string SuccessText { get; private set; }
         public string Data { get; private set; }
         public string FileName { get; private set; }
+        public string Redirect { get; set; }
 
         public bool ObjectNotNull(DatabaseObject obj)
         {
@@ -99,6 +100,11 @@ namespace Quaestur
             SetError("Error.Access.Denied", "Error message when access denied", "You do not have permission for this action.");
         }
 
+        public void SetErrorInvalidData()
+        {
+            SetError("Error.Invalid.Data", "Error message when access denied", "The submitted data is not valid.");
+        }
+
         public bool HasAnyOrganizationAccess(PartAccess partAccess, AccessRight right)
         {
             return VerifyAccess(s => s.HasAnyOrganizationAccess(partAccess, right));
@@ -146,6 +152,11 @@ namespace Quaestur
                 statusObject.Add(new JProperty("MessageText", SuccessText.EscapeHtml()));
             }
 
+            if (!string.IsNullOrEmpty(Redirect))
+            {
+                statusObject.Add(new JProperty("Redirect", Redirect));
+            }
+
             if (!string.IsNullOrEmpty(Data))
             {
                 statusObject.Add(new JProperty("Data", Data));
@@ -174,6 +185,11 @@ namespace Quaestur
         {
             var message = _translator.Get(key, hint, text);
             _messages.Add(new JProperty(fieldName + "Validation", message));
+        }
+
+        public void Add(string fieldName, string translatedMessage)
+        {
+            _messages.Add(new JProperty(fieldName + "Validation", translatedMessage));
         }
 
         public void AssingDataUrlString(string fieldName, ByteArrayField dataField, StringField contentTypeField, string stringValue, bool required)
@@ -352,7 +368,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTime field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -394,7 +410,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTimeNull field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeNullField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -436,7 +452,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string fieldName, FieldDateTime field, string stringValue)
+        public void AssignDateTimeString(string fieldName, DateTimeField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -464,7 +480,7 @@ namespace Quaestur
         }
 
 
-        public void AssignDateString(string fieldName, FieldDate field, string stringValue)
+        public void AssignDateString(string fieldName, DateField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -491,7 +507,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateString(string fieldName, FieldDateNull field, string stringValue, bool notNull = false)
+        public void AssignDateString(string fieldName, DateNullField field, string stringValue, bool notNull = false)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -530,7 +546,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignStringFree(string fieldName, StringField field, string stringValue)
+        public bool AssignStringFree(string fieldName, StringField field, string stringValue)
         {
             if (stringValue == null)
             {
@@ -540,6 +556,7 @@ namespace Quaestur
             {
                 field.Value = stringValue;
             }
+            return true;
         }
 
         public const string UnchangedGpgPassphraseValue = "_______________________________";
@@ -557,11 +574,12 @@ namespace Quaestur
             }
         }
 
-        public void AssignStringRequired(string fieldName, StringField field, string stringValue)
+        public bool AssignStringRequired(string fieldName, StringField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
                 field.Value = stringValue;
+                return true;
             }
             else
             {
@@ -570,6 +588,7 @@ namespace Quaestur
                     "Validation message on string required",
                     "Value required");
                 IsSuccess = false;
+                return false;
             }
         }
 
@@ -616,14 +635,16 @@ namespace Quaestur
             }
         }
 
-        public void UpdateLatexTemplates(IDatabase database, TemplateField field, string[] stringValues)
+        public void UpdateTemplates<TTemplate, TTemplateAssignment>(IDatabase database, TemplateField<TTemplate, TTemplateAssignment> field, string[] stringValues)
+            where TTemplate : DatabaseObject, ITemplate, new()
+            where TTemplateAssignment : DatabaseObject, ITemplateAssignment<TTemplate>, new()
         {
             if (stringValues == null ||
                 !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
             {
                 Add(field.FieldName,
-                    "Validation.LatexTemplates.Invalid",
-                    "Validation message on invalid latex templates ids",
+                    "Validation.Templates.Invalid",
+                    "Validation message on invalid templates ids",
                     "Invalid selection");
                 IsSuccess = false;
                 return;
@@ -631,11 +652,11 @@ namespace Quaestur
 
             var idValues = stringValues.Select(Guid.Parse).ToList();
             var assignments = database
-                .Query<LatexTemplateAssignment>(DC.Equal("assignedid", field.AssignedId).And(DC.Equal("fieldname", field.FieldName)))
+                .Query<TTemplateAssignment>(DC.Equal("assignedid", field.AssignedId).And(DC.Equal("fieldname", field.FieldName)))
                 .ToList();
 
             foreach (var removeAssignment in assignments
-                .Where(a => !idValues.Contains(a.Template.Value.Id.Value))
+                .Where(a => !idValues.Contains(a.Template.Id.Value))
                 .ToList())
             {
                 removeAssignment.Delete(database);
@@ -643,116 +664,45 @@ namespace Quaestur
             }
 
             foreach (var newId in idValues
-                .Where(i => !assignments.Any(a => a.Template.Value.Id.Value.Equals(i))))
+                .Where(i => !assignments.Any(a => a.Template.Id.Value.Equals(i))))
             {
-                var template = database.Query<LatexTemplate>(newId);
+                var template = database.Query<TTemplate>(newId);
 
                 if (template == null)
                 {
                     Add(field.FieldName,
-                        "Validation.LatexTemplates.NoFound",
-                        "Validation message on latex template not found",
+                        "Validation.Templates.NoFound",
+                        "Validation message on template not found",
                         "Invalid selection");
                     IsSuccess = false;
                     return;
                 }
 
-                var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
-                newAssignment.Template.Value = template;
-                newAssignment.AssignedType.Value = field.AssignedType;
-                newAssignment.AssignedId.Value = field.AssignedId;
-                newAssignment.FieldName.Value = field.FieldName;
+                var newAssignment = field.CreateNew();
+                newAssignment.Template = template;
+                newAssignment.AssignedType = field.AssignedType;
+                newAssignment.AssignedId = field.AssignedId;
+                newAssignment.FieldName = field.FieldName;
                 database.Save(newAssignment);
                 assignments.Add(newAssignment);
 
-                if (template.Organization.Value != newAssignment.GetOrganization(database))
+                if (template.Organization != newAssignment.GetOrganization(database))
                 {
                     Add(field.FieldName,
-                        "Validation.LatexTemplates.WrongOrganization",
-                        "Validation message on latex template wrong organization",
+                        "Validation.Templates.WrongOrganization",
+                        "Validation message on template wrong organization",
                         "Wrong organization");
                     IsSuccess = false;
                 }
             }
 
             if (assignments
-                .GroupBy(a => a.Template.Value.Language.Value)
+                .GroupBy(a => a.Template.Language)
                 .Any(g => g.Count() > 1))
             {
                 Add(field.FieldName,
-                    "Validation.LatexTemplates.LanguageTwice",
-                    "Validation message on two latex templates with the same language",
-                    "Max one template per language");
-                IsSuccess = false;
-            }
-        }
-
-        public void UpdateMailTemplates(IDatabase database, TemplateField field, string[] stringValues)
-        {
-            if (stringValues == null ||
-                !stringValues.All(v => Guid.TryParse(v, out Guid dummy)))
-            {
-                Add(field.FieldName,
-                    "Validation.MailTemplates.Invalid",
-                    "Validation message on invalid mail templates ids",
-                    "Invalid selection");
-                IsSuccess = false;
-                return;
-            }
-
-            var idValues = stringValues.Select(Guid.Parse).ToList();
-            var assignments = database
-                .Query<MailTemplateAssignment>(DC.Equal("assignedid", field.AssignedId).And(DC.Equal("fieldname", field.FieldName)))
-                .ToList();
-
-            foreach (var removeAssignment in assignments
-                .Where(a => !idValues.Contains(a.Template.Value.Id.Value))
-                .ToList())
-            {
-                removeAssignment.Delete(database);
-                assignments.Remove(removeAssignment);
-            }
-
-            foreach (var newId in idValues
-                .Where(i => !assignments.Any(a => a.Template.Value.Id.Value.Equals(i))))
-            {
-                var template = database.Query<MailTemplate>(newId);
-
-                if (template == null)
-                {
-                    Add(field.FieldName,
-                        "Validation.MailTemplates.NoFound",
-                        "Validation message on mail template not found",
-                        "Invalid selection");
-                    IsSuccess = false;
-                    return;
-                }
-
-                var newAssignment = new MailTemplateAssignment(Guid.NewGuid());
-                newAssignment.Template.Value = template;
-                newAssignment.AssignedType.Value = field.AssignedType;
-                newAssignment.AssignedId.Value = field.AssignedId;
-                newAssignment.FieldName.Value = field.FieldName;
-                database.Save(newAssignment);
-                assignments.Add(newAssignment);
-
-                if (template.Organization.Value != newAssignment.GetOrganization(database))
-                {
-                    Add(field.FieldName,
-                        "Validation.MailTemplates.WrongOrganization",
-                        "Validation message on mail template wrong organization",
-                        "Wrong organization");
-                    IsSuccess = false;
-                }
-            }
-
-            if (assignments
-                .GroupBy(a => a.Template.Value.Language.Value)
-                .Any(g => g.Count() > 1))
-            {
-                Add(field.FieldName,
-                    "Validation.MailTemplates.LanguageTwice",
-                    "Validation message on two mail templates with the same language",
+                    "Validation.Templates.LanguageTwice",
+                    "Validation message on two templates with the same language",
                     "Max one template per language");
                 IsSuccess = false;
             }

@@ -63,13 +63,13 @@ namespace Quaestur
 
         protected override string TexTemplate
         {
-            get { return _template.GetBallotPaper(_database, _translator.Language).Text.Value; }
+            get { return _template.BallotPapers.Value(_database, _translator.Language).Text.Value; }
         }
 
         protected override Templator GetTemplator()
         {
             return new Templator(
-                new PersonContentProvider(_translator, _person),
+                new PersonContentProvider(_database, _translator, _person),
                 new BallotPaperContentProvider(_translator, _ballotPaper),
                 this);
         }

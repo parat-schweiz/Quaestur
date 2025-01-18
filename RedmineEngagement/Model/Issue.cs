@@ -8,8 +8,8 @@ namespace RedmineEngagement
     public class Issue : DatabaseObject
     {
         public Field<int> IssueId { get; private set; }
-        public FieldDateTime CreatedOn { get; private set; }
-        public FieldDateTime UpdatedOn { get; private set; }
+        public DateTimeField CreatedOn { get; private set; }
+        public DateTimeField UpdatedOn { get; private set; }
         public List<Assignment> Assignments { get; private set; }
 
         public Issue() : this(Guid.Empty)
@@ -19,8 +19,8 @@ namespace RedmineEngagement
         public Issue(Guid id) : base(id)
         {
             IssueId = new Field<int>(this, "issueid", 0);
-            CreatedOn = new FieldDateTime(this, "created", new DateTime(1850, 1, 1));
-            UpdatedOn = new FieldDateTime(this, "updated", new DateTime(1850, 1, 1));
+            CreatedOn = new DateTimeField(this, "created", new DateTime(1850, 1, 1));
+            UpdatedOn = new DateTimeField(this, "updated", new DateTime(1850, 1, 1));
             Assignments = new List<Assignment>();
         }
 

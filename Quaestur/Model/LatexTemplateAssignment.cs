@@ -118,13 +118,29 @@ namespace Quaestur
             }
         }
 
-        LatexTemplate ITemplateAssignment<LatexTemplate>.Template => Template.Value;
+        LatexTemplate ITemplateAssignment<LatexTemplate>.Template
+        {
+            get { return Template.Value; }
+            set { Template.Value = value; }
+        }
 
-        TemplateAssignmentType ITemplateAssignment<LatexTemplate>.AssignedType => AssignedType.Value;
+        TemplateAssignmentType ITemplateAssignment<LatexTemplate>.AssignedType
+        {
+            get { return AssignedType.Value; }
+            set { AssignedType.Value = value; }
+        }
 
-        Guid ITemplateAssignment<LatexTemplate>.AssignedId => AssignedId.Value;
+        Guid ITemplateAssignment<LatexTemplate>.AssignedId
+        {
+            get { return AssignedId.Value; }
+            set { AssignedId.Value = value; }
+        }
 
-        string ITemplateAssignment<LatexTemplate>.FieldName => FieldName.Value;
+        string ITemplateAssignment<LatexTemplate>.FieldName
+        {
+            get { return FieldName.Value; }
+            set { FieldName.Value = value; }
+        }
 
         public bool HasAccess(IDatabase database, Session session, AccessRight right)
         {

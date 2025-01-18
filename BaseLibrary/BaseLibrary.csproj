@@ -98,6 +98,7 @@
     <Compile Include="Dates.cs" />
     <Compile Include="StringBuilderExtensions.cs" />
     <Compile Include="MultipartExtensions.cs" />
+    <Compile Include="Aes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

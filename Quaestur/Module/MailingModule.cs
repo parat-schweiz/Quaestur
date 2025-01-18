@@ -508,7 +508,7 @@ namespace Quaestur
                     status.AssignObjectIdString("Header", mailing.Header, model.Header);
                     status.AssignObjectIdString("Footer", mailing.Footer, model.Footer);
                     status.AssignStringRequired("Subject", mailing.Subject, model.Subject);
-                    var worker = new HtmlWorker(model.HtmlText);
+                    var worker = new HtmlText(model.HtmlText);
                     mailing.HtmlText.Value = worker.CleanHtml;
                     mailing.PlainText.Value = worker.PlainText;
                     mailing.Creator.Value = CurrentSession.User;
@@ -570,7 +570,7 @@ namespace Quaestur
                         status.AssignObjectIdString("Header", mailing.Header, model.Header);
                         status.AssignObjectIdString("Footer", mailing.Footer, model.Footer);
                         status.AssignStringRequired("Subject", mailing.Subject, model.Subject);
-                        var worker = new HtmlWorker(model.HtmlText);
+                        var worker = new HtmlText(model.HtmlText);
                         mailing.HtmlText.Value = worker.CleanHtml;
                         mailing.PlainText.Value = worker.PlainText;
                         mailing.Creator.Value = CurrentSession.User;
@@ -596,7 +596,7 @@ namespace Quaestur
             Post("/mailing/test", parameters =>
             {
                 var model = JsonConvert.DeserializeObject<MailingEditViewModel>(ReadBody());
-                var worker = new HtmlWorker(model.HtmlText);
+                var worker = new HtmlText(model.HtmlText);
                 var header = Database.Query<MailingElement>(model.Header);
                 var footer = Database.Query<MailingElement>(model.Footer);
                 var sender = Database.Query<Group>(model.SenderGroup);
@@ -606,17 +606,17 @@ namespace Quaestur
 
                 if (header != null)
                 {
-                    htmlText = HtmlWorker.ConcatHtml(header.HtmlText.Value, htmlText);
+                    htmlText = HtmlText.ConcatHtml(header.HtmlText.Value, htmlText);
                     plainText = header.PlainText.Value + plainText;
                 }
 
                 if (footer != null)
                 {
-                    htmlText = HtmlWorker.ConcatHtml(htmlText, footer.HtmlText.Value);
+                    htmlText = HtmlText.ConcatHtml(htmlText, footer.HtmlText.Value);
                     plainText = plainText + footer.PlainText.Value;
                 }
 
-                var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
+                var templator = new Templator(new PersonContentProvider(Database, Translator, CurrentSession.User));
                 htmlText = templator.Apply(htmlText);
                 plainText = templator.Apply(plainText);
 
@@ -661,24 +661,24 @@ namespace Quaestur
                 if (status.ObjectNotNull(mailing))
                 {
                     var sendToAddress = ReadBody();
-                    var worker = new HtmlWorker(mailing.HtmlText.Value);
+                    var worker = new HtmlText(mailing.HtmlText.Value);
 
                     var htmlText = worker.CleanHtml;
                     var plainText = worker.PlainText;
 
                     if (mailing.Header.Value != null)
                     {
-                        htmlText = HtmlWorker.ConcatHtml(mailing.Header.Value.HtmlText.Value, htmlText);
+                        htmlText = HtmlText.ConcatHtml(mailing.Header.Value.HtmlText.Value, htmlText);
                         plainText = mailing.Header.Value.PlainText.Value + plainText;
                     }
 
                     if (mailing.Footer.Value != null)
                     {
-                        htmlText = HtmlWorker.ConcatHtml(htmlText, mailing.Footer.Value.HtmlText.Value);
+                        htmlText = HtmlText.ConcatHtml(htmlText, mailing.Footer.Value.HtmlText.Value);
                         plainText = plainText + mailing.Footer.Value.PlainText.Value;
                     }
 
-                    var templator = new Templator(new PersonContentProvider(Translator, CurrentSession.User));
+                    var templator = new Templator(new PersonContentProvider(Database, Translator, CurrentSession.User));
                     htmlText = templator.Apply(htmlText);
                     plainText = templator.Apply(plainText);
 

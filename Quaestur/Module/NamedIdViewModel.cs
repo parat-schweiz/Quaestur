@@ -79,17 +79,10 @@ namespace Quaestur
             Selected = selected;
         }
 
-        public NamedIdViewModel(Translator translator, MailTemplate template, bool selected)
+        public NamedIdViewModel(Translator translator, ITemplate template, bool selected)
         {
             Id = template.Id.ToString();
-            Name = template.Label.Value.EscapeHtml();
-            Selected = selected;
-        }
-
-        public NamedIdViewModel(Translator translator, LatexTemplate template, bool selected)
-        {
-            Id = template.Id.ToString();
-            Name = template.Label.Value.EscapeHtml();
+            Name = template.Label.EscapeHtml();
             Selected = selected;
         }
 

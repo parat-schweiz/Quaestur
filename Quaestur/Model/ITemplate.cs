@@ -8,6 +8,7 @@ namespace Quaestur
         Organization Organization { get; }
         TemplateAssignmentType AssignmentType { get; }
         Language Language { get; }
+        Guid Id { get; }
         string Label { get; }
     }
 }

@@ -1,0 +1,111 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(fieldName, key, result){
+  let field = $('#@Model.Id' + fieldName);
+  let feedback = $('#Feedback@Model.Id' + fieldName);
+  let validation = result[fieldName + 'Validation'];
+  if (validation){
+    field.addClass('is-invalid');
+    feedback.addClass('invalid-feedback');
+    feedback.removeClass('valid-feedback');
+    feedback.html(validation);
+  }else{
+    field.addClass('is-invalid');
+    feedback.removeClass('invalid-feedback');
+    feedback.addClass('valid-feedback');
+    feedback.html('');
+  }
+}
+function assignFieldValidation(fieldName, result){
+  let field = $('#@Model.Id' + fieldName);
+  let feedback = $('#Feedback@Model.Id' + fieldName);
+  let validation = result[fieldName + 'Validation'];
+  if (validation){
+    if (field[0].tagName == 'SELECT'){
+      field.parent().addClass('is-invalid');
+    }else{
+      field.addClass('is-invalid');
+    }
+    feedback.addClass('invalid-feedback');
+    feedback.removeClass('valid-feedback');
+    feedback.html(validation);
+  }else{
+    if (field[0].tagName == 'SELECT'){
+      field.parent().removeClass('is-invalid');
+    }else{
+      field.removeClass('is-invalid');
+    }
+    feedback.removeClass('invalid-feedback');
+    feedback.addClass('valid-feedback');
+    feedback.html('');
+  }
+}
+function assignValidation(result){
+  @Each.Widgets
+  @Current.SetValidation
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+$(document).ready(function() {
+  @Each.Widgets
+  @Current.Js
+  @EndEach
+  $("#@Model.ButtonOkId").click(function(event) {
+    var formData = new Object();
+    @Each.Widgets
+    @Current.GetValue
+    @EndEach
+    $.post("@Model.SaveUrl", JSON.stringify(formData), function(resultData, status){
+      let result = JSON.parse(resultData);
+      if (assignValidation(result)) {
+        window.location.href = result.Redirect;
+      }
+    });
+    event.preventDefault();
+  });
+});
+</script>
+@EndSection
+
+@Section['header']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Header
+    </div>
+  </div>
+@EndSection
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Text
+    </div>
+  </div>
+  <div class="row input">
+    <div class="col-12">
+      <form>
+        <div class="form-row">
+          @Each.Widgets
+          @Current.Html
+          @EndEach
+        </div>
+        <div class="form-row">
+          <div class="col-12 mb-3">
+            <input type="submit" id="@Model.ButtonOkId" class="btn btn-primary" value="@Model.PhraseButtonOk"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+@EndSection
+
+@Section['footer']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Footer
+    </div>
+  </div>
+@EndSection

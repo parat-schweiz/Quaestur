@@ -206,7 +206,7 @@ namespace Publicus
                         status.AssignEnumIntString("AssignmentType", mailTemplate.AssignmentType, model.AssignmentType);
                         status.AssignObjectIdString("Feed", mailTemplate.Feed, model.Organization);
                         status.AssignStringRequired("Subject", mailTemplate.Subject, model.Subject);
-                        var worker = new HtmlWorker(model.HtmlText);
+                        var worker = new HtmlText(model.HtmlText);
                         mailTemplate.HtmlText.Value = worker.CleanHtml;
                         mailTemplate.PlainText.Value = worker.PlainText;
 
@@ -266,7 +266,7 @@ namespace Publicus
                 status.AssignEnumIntString("AssignmentType", mailTemplate.AssignmentType, model.AssignmentType);
                 status.AssignObjectIdString("Feed", mailTemplate.Feed, model.Organization);
                 status.AssignStringRequired("Subject", mailTemplate.Subject, model.Subject);
-                var worker = new HtmlWorker(model.HtmlText);
+                var worker = new HtmlText(model.HtmlText);
                 mailTemplate.HtmlText.Value = worker.CleanHtml;
                 mailTemplate.PlainText.Value = worker.PlainText;
 

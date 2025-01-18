@@ -110,19 +110,19 @@ namespace Quaestur
 
                         if (header != null)
                         {
-                            htmlText = HtmlWorker.ConcatHtml(header.HtmlText.Value, htmlText);
+                            htmlText = HtmlText.ConcatHtml(header.HtmlText.Value, htmlText);
                             plainText = header.PlainText.Value + plainText;
                         }
 
                         if (footer != null)
                         {
-                            htmlText = HtmlWorker.ConcatHtml(htmlText, footer.HtmlText.Value);
+                            htmlText = HtmlText.ConcatHtml(htmlText, footer.HtmlText.Value);
                             plainText = plainText + footer.PlainText.Value;
                         }
 
                         var translation = new Translation(database);
                         var translator = new Translator(translation, sending.Address.Value.Person.Value.Language.Value);
-                        var templator = new Templator(new PersonContentProvider(translator, sending.Address.Value.Person.Value));
+                        var templator = new Templator(new PersonContentProvider(database, translator, sending.Address.Value.Person.Value));
                         htmlText = templator.Apply(htmlText);
                         plainText = templator.Apply(plainText);
 

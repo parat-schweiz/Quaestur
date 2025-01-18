@@ -318,6 +318,24 @@
     <Compile Include="Infrastructure\BallotPruneTask.cs" />
     <Compile Include="Model\DeviceSession.cs" />
     <Compile Include="Module\LoginModule.cs" />
+    <Compile Include="Model\Subscription.cs" />
+    <Compile Include="Module\SubscriptionEditModule.cs" />
+    <Compile Include="Module\SubscriptionModule.cs" />
+    <Compile Include="Infrastructure\SubscribeThrottle.cs" />
+    <Compile Include="Util\Widget.cs" />
+    <Compile Include="Util\StringWidget.cs" />
+    <Compile Include="Util\DateWidget.cs" />
+    <Compile Include="Util\SelectIdWidget.cs" />
+    <Compile Include="Util\Form.cs" />
+    <Compile Include="Util\ReadOnlyWidget.cs" />
+    <Compile Include="Util\ClassWidget.cs" />
+    <Compile Include="Util\StructWidget.cs" />
+    <Compile Include="Util\IWidget.cs" />
+    <Compile Include="Util\SubWidget.cs" />
+    <Compile Include="Model\MailDomain.cs" />
+    <Compile Include="Model\PageTemplate.cs" />
+    <Compile Include="Model\PageTemplateAssignment.cs" />
+    <Compile Include="Module\PageTemplateModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1063,6 +1081,63 @@
     <None Include="View\page.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\subscription.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\subscriptionedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\subscriptionlist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\subscribe.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\unsubscribe.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\nobling_textonly.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\nobling.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\throttle-hash.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\throttle-control.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\throttle-main.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\string.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\date.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\date.js.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\selectid.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Form\nobling_form.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\readonly.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pagetemplate.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pagetemplateedit.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\pagetemplatelist.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -1075,6 +1150,8 @@
     <Folder Include="Documents\" />
     <Folder Include="Assets\filesaver\" />
     <Folder Include="Assets\images\" />
+    <Folder Include="View\Widget\" />
+    <Folder Include="View\Form\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

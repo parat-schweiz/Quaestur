@@ -39,9 +39,9 @@ namespace Quaestur
     {
         public ForeignKeyField<BallotTemplate, Ballot> Template { get; private set; }
         public EnumField<BallotStatus> Status { get; private set; }
-        public FieldDate AnnouncementDate { get; private set; }
-        public FieldDate StartDate { get; private set; }
-        public FieldDate EndDate { get; private set; }
+        public DateField AnnouncementDate { get; private set; }
+        public DateField StartDate { get; private set; }
+        public DateField EndDate { get; private set; }
         public MultiLanguageStringField AnnouncementText { get; private set; }
         public MultiLanguageStringField Questions { get; private set; }
         public ByteArrayField Secret { get; private set; }
@@ -90,9 +90,9 @@ namespace Quaestur
         {
             Template = new ForeignKeyField<BallotTemplate, Ballot>(this, "templateid", false, null);
             Status = new EnumField<BallotStatus>(this, "status", BallotStatus.New, BallotStatusExtensions.Translate);
-            AnnouncementDate = new FieldDate(this, "announcementdate", new DateTime(1850, 1, 3));
-            StartDate = new FieldDate(this, "startdate", new DateTime(1850, 1, 3));
-            EndDate = new FieldDate(this, "enddate", new DateTime(1850, 1, 3));
+            AnnouncementDate = new DateField(this, "announcementdate", new DateTime(1850, 1, 3));
+            StartDate = new DateField(this, "startdate", new DateTime(1850, 1, 3));
+            EndDate = new DateField(this, "enddate", new DateTime(1850, 1, 3));
             AnnouncementText = new MultiLanguageStringField(this, "announcementtext", AllowStringType.SafeHtml);
             Questions = new MultiLanguageStringField(this, "questions", AllowStringType.SafeLatex);
             Secret = new ByteArrayField(this, "secret", false);

@@ -25,7 +25,7 @@ namespace DiscourseEngagement
         public ForeignKeyField<Topic, Post> Topic { get; private set; }
         public ForeignKeyField<Person, Post> Person { get; private set; }
         public Field<int> PostId { get; private set; }
-        public FieldDateTime Created { get; private set; }
+        public DateTimeField Created { get; private set; }
         public Field<int> LikeCount { get; private set; }
         public EnumField<AwardDecision> AwardDecision { get; private set; }
         public StringField AwardedCalculation { get; private set; }
@@ -41,7 +41,7 @@ namespace DiscourseEngagement
             Person = new ForeignKeyField<Person, Post>(this, "personid", true, null);
             Topic = new ForeignKeyField<Topic, Post>(this, "topicid", false, null);
             PostId = new Field<int>(this, "postid", 0);
-            Created = new FieldDateTime(this, "created", new DateTime(1850, 1, 1));
+            Created = new DateTimeField(this, "created", new DateTime(1850, 1, 1));
             LikeCount = new Field<int>(this, "likecount", 0);
             AwardDecision = new EnumField<AwardDecision>(this, "awarddecision", DiscourseEngagement.AwardDecision.None, AwardDecisionExtensions.Translate);
             AwardedCalculation = new StringField(this, "awardedcalculation", 4096, AllowStringType.SimpleText);

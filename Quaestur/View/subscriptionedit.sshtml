@@ -1,0 +1,282 @@
+﻿@Master['View/dialog.sshtml']
+
+@Section['body']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#subscription' + field + key;
+  var feedbackId = '#subscription' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#subscription' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Name
+  assignFieldMultiValidation("Name", "@Current.Key", result);
+  @EndEach
+  assignFieldValidation("MembershipType", result);
+  assignFieldValidation("Tag", result);
+  assignFieldValidation("SenderGroup", result);
+  assignFieldValidation("SubscribePrePages", result);
+  assignFieldValidation("SubscribePostPages", result);
+  assignFieldValidation("SubscribeMails", result);
+  assignFieldValidation("UnsubscribePrePages", result);
+  assignFieldValidation("UnsubscribePostPages", result);
+  assignFieldValidation("JoinPrePages", result);
+  assignFieldValidation("JoinPages", result);
+  assignFieldValidation("JoinPostPages", result);
+  assignFieldValidation("JoinConfirmMails", result);
+  assignFieldValidation("ConfirmMailPages", result);
+  assignFieldValidation("PageHeaders", result);
+  assignFieldValidation("PageFooters", result);
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;
+}
+function getFormData(){
+  var formData = new Object();
+  formData.Name = new Array();
+  @Each.Name
+  var obj@Current.Key = new Object();
+  obj@Current.Key['Key'] = "@Current.Key";
+  obj@Current.Key['Value'] = $("#subscriptionName@Current.Key").val()
+  formData.Name.push(obj@Current.Key);
+  @EndEach
+  formData.MembershipType = $("#subscriptionMembershipType").val();
+  formData.Tag = $("#subscriptionTag").val();
+  formData.SenderGroup = $("#subscriptionSenderGroup").val();
+  formData.SubscribePrePageTemplates = $("#subscriptionSubscribePrePages").val();
+  formData.SubscribePostPageTemplates = $("#subscriptionSubscribePostPages").val();
+  formData.SubscribeMailTemplates = $("#subscriptionSubscribeMails").val();
+  formData.UnsubscribePrePageTemplates = $("#subscriptionUnsubscribePrePages").val();
+  formData.UnsubscribePostPageTemplates = $("#subscriptionUnsubscribePostPages").val();
+  formData.JoinPrePageTemplates = $("#subscriptionJoinPrePages").val();
+  formData.JoinPageTemplates = $("#subscriptionJoinPages").val();
+  formData.JoinPostPageTemplates = $("#subscriptionJoinPostPages").val();
+  formData.JoinConfirmMailTemplates = $("#subscriptionJoinConfirmMails").val();
+  formData.ConfirmMailPageTemplates = $("#subscriptionConfirmMailPages").val();
+  formData.PageHeaderTemplates = $("#subscriptionPageHeaders").val();
+  formData.PageFooterTemplates = $("#subscriptionPageFooters").val();
+  return formData;
+}
+$("#@Model.ButtonId").click(function() {
+  $.post("/subscription/@Model.Method/@Model.Id", JSON.stringify(getFormData()), function(resultData, status){
+    if (assignValidation(resultData)) {
+      $('#@Model.DialogId').modal('hide');
+      updateSubscriptionList();
+      $('.modal-backdrop').remove();
+    }
+  });
+});
+$('.selectpicker').selectpicker();
+</script>
+<div class="container">
+  <form>
+    <div class="form-row">
+      @Each.Name
+      <div class="col-12 mb-3">
+        <label for="subscriptionName@Current.Key">@Current.Phrase</label>
+        <input type="text" id="subscriptionName@Current.Key" class="form-control" value="@Current.Value"/>
+        <div id="subscriptionNameFeedback@Current.Key" class="valid-feedback"></div>
+      </div>
+      @EndEach
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="subscriptionMembershipType">@Model.PhraseFieldMembershipType</label>
+        <select id="subscriptionMembershipType" class="selectpicker form-control" data-live-search="true" @Model.MembershipTypeEditable >
+          @Each.MembershipTypes
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionMembershipTypeFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="subscriptionTag">@Model.PhraseFieldTag</label>
+        <select id="subscriptionTag" class="selectpicker form-control" data-live-search="true">
+          @Each.Tags
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionTagFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-12 mb-3">
+        <label for="subscriptionSenderGroup">@Model.PhraseFieldSenderGroup</label>
+        <select id="subscriptionSenderGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.SenderGroups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionSenderGroupFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionSubscribePrePages">@Model.PhraseFieldSubscribePrePageTemplates</label>
+        <select id="subscriptionSubscribePrePages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SubscribePrePages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionSubscribePrePagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionSubscribePostPages">@Model.PhraseFieldSubscribePostPageTemplates</label>
+        <select id="subscriptionSubscribePostPages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SubscribePostPages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionSubscribePostPagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionSubscribeMails">@Model.PhraseFieldSubscribeMailTemplates</label>
+        <select id="subscriptionSubscribeMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.SubscribeMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionSubscribeMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionUnsubscribePrePages">@Model.PhraseFieldUnsubscribePrePageTemplates</label>
+        <select id="subscriptionUnsubscribePrePages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.UnsubscribePrePages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionUnsubscribePrePagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionUnsubscribePostPages">@Model.PhraseFieldUnsubscribePostPageTemplates</label>
+        <select id="subscriptionUnsubscribePostPages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.UnsubscribePostPages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionUnsubscribePostPagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionJoinPrePages">@Model.PhraseFieldJoinPrePageTemplates</label>
+        <select id="subscriptionJoinPrePages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.JoinPrePages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionJoinPrePagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionJoinPages">@Model.PhraseFieldJoinPageTemplates</label>
+        <select id="subscriptionJoinPages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.JoinPages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionJoinPagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionJoinPostPages">@Model.PhraseFieldJoinPostPageTemplates</label>
+        <select id="subscriptionJoinPostPages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.JoinPostPages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionJoinPostPagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionJoinConfirmMails">@Model.PhraseFieldJoinConfirmMailTemplates</label>
+        <select id="subscriptionJoinConfirmMails" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.JoinConfirmMails
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionJoinConfirmMailsFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionConfirmMailPages">@Model.PhraseFieldConfirmMailPageTemplates</label>
+        <select id="subscriptionConfirmMailPages" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.ConfirmMailPages
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionConfirmMailPagesFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionPageHeaders">@Model.PhraseFieldPageHeaderTemplates</label>
+        <select id="subscriptionPageHeaders" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PageHeaders
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionPageHeadersFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="subscriptionPageFooters">@Model.PhraseFieldPageFooterTemplates</label>
+        <select id="subscriptionPageFooters" class="selectpicker form-control" data-live-search="true" multiple>
+          @Each.PageFooters
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="subscriptionPageFootersFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+  </form>
+</div>
+@EndSection

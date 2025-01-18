@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Quaestur - @Model.Title</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" sizes="any">
+    <link rel="stylesheet" href="/Assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/Assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-select/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-datepicker/css/bootstrap-datepicker.min.css">
+    <link rel="stylesheet" href="/Assets/bootstrap-editor/css/editor.css">
+    <link rel="stylesheet" href="/Assets/jquery-confirm/jquery-confirm.min.css">
+    <link rel="stylesheet" href="/Assets/custom.css">
+    <script src="/Assets/jquery-3.3.1.min.js"></script>
+    <script src="/Assets/popper.min.js"></script>
+    <script src="/Assets/bootstrap/js/bootstrap-notify.min.js"></script>
+    <script src="/Assets/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/Assets/bootstrap-select/js/bootstrap-select.min.js"></script>
+    <script src="/Assets/bootstrap-select/js/i18n/defaults-en_US.min.js"></script>
+    <script src="/Assets/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
+    <script src="/Assets/bootstrap-datepicker/locales/bootstrap-datepicker.de.min.js"></script>
+    <script src="/Assets/bootstrap-editor/js/editor.js"></script>
+    <script src="/Assets/tinymce/tinymce.min.js"></script>
+    <script src="/Assets/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="/Assets/filesaver/FileSaver.min.js"></script>
+    <script src="/Assets/waitdialog.js"></script>
+    <script>
+    $(document).on({
+        ajaxStart: function(){
+            $("body").addClass("loading"); 
+        },
+        ajaxStop: function(){ 
+            $("body").removeClass("loading"); 
+        }    
+    });
+    </script>
+    @Section['script'];
+  </head>
+  <body>
+    <div class="container">
+      @Section['header'];
+    </div>
+    <div class="container">
+      @Section['content'];
+    </div>
+    <div class="container">
+      @Section['footer'];
+    </div>
+    <div class="overlay"></div>
+  </body>
+</html>

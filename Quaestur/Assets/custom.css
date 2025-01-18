@@ -215,3 +215,8 @@ body.loading{
 body.loading .overlay{
     display: block;
 }
+
+.widget.required label:after {
+  content: " *";
+  color: red;
+}

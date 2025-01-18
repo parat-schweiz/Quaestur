@@ -113,13 +113,13 @@ namespace Publicus
 
                         if (header != null)
                         {
-                            htmlText = HtmlWorker.ConcatHtml(header.HtmlText.Value, htmlText);
+                            htmlText = HtmlText.ConcatHtml(header.HtmlText.Value, htmlText);
                             plainText = header.PlainText.Value + plainText;
                         }
 
                         if (footer != null)
                         {
-                            htmlText = HtmlWorker.ConcatHtml(htmlText, footer.HtmlText.Value);
+                            htmlText = HtmlText.ConcatHtml(htmlText, footer.HtmlText.Value);
                             plainText = plainText + footer.PlainText.Value;
                         }
 

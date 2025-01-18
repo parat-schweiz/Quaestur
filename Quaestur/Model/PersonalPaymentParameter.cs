@@ -9,7 +9,7 @@ namespace Quaestur
         public ForeignKeyField<Person, PersonalPaymentParameter> Person { get; private set; }
         public StringField Key { get; private set; }
         public DecimalField Value { get; private set; }
-        public FieldDateTime LastUpdate { get; private set; }
+        public DateTimeField LastUpdate { get; private set; }
 
         public PersonalPaymentParameter() : this(Guid.Empty)
         {
@@ -20,7 +20,7 @@ namespace Quaestur
             Person = new ForeignKeyField<Person, PersonalPaymentParameter>(this, "personid", false, m => m.PaymentParameters);
             Key = new StringField(this, "key", 256);
             Value = new DecimalField(this, "value", 16, 4);
-            LastUpdate = new FieldDateTime(this, "lastupdate", DateTime.UtcNow);
+            LastUpdate = new DateTimeField(this, "lastupdate", DateTime.UtcNow);
         }
 
         public override string ToString()

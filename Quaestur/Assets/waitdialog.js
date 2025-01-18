@@ -69,6 +69,12 @@ var waitingDialog = waitingDialog || (function ($) {
          */
         hide: function () {
             $dialog.modal('hide');
+        },
+        /**
+         * Set progress
+         */
+        progress: function(value) {
+            $dialog.find('.progress-bar').attr('style', 'width: ' + value + '%');
         }
     };
 

@@ -1,0 +1,9 @@
+﻿<div class="col-md-@Model.Width mb-3 widget @Model.Classes">
+  <label for="@Model.Form.Id@Model.Id">@Model.PhraseField</label>
+  <select id="@Model.Form.Id@Model.Id" class="selectpicker form-control" data-live-search="true">
+    @Each.Items
+    <option value="@Current.Id" @Current.Options>@Current.Name</option>
+    @EndEach
+  </select>
+  <div id="Feedback@Model.Form.Id@Model.Id" class="valid-feedback"></div>
+</div>

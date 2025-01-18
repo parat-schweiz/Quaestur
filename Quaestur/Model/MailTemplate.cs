@@ -23,6 +23,8 @@ namespace Quaestur
 
         string ITemplate.Label => Label.Value;
 
+        Guid ITemplate.Id => Id.Value;
+
         public MailTemplate() : this(Guid.Empty)
         {
         }

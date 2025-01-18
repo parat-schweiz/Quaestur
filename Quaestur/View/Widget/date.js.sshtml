@@ -1,0 +1,7 @@
+﻿$('#@Model.Form.Id@Model.Id').datepicker({
+  format: 'dd.mm.yyyy',
+  startDate: '@Model.StringStartDate',
+  endDate: '@Model.StringEndDate',
+  defaultDate: "@Model.StringValue",
+  language: '@Model.StringLanguage',
+});

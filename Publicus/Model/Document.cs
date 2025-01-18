@@ -30,7 +30,7 @@ namespace Publicus
     {
         public ForeignKeyField<Contact, Document> Contact { get; private set; }
         public ForeignKeyField<Contact, Document> Verifier { get; private set; }
-        public FieldDate CreatedDate { get; private set; }
+        public DateField CreatedDate { get; private set; }
         public StringField FileName { get; private set; }
         public StringField ContentType { get; private set; }
         public ByteArrayField Data { get; private set; }
@@ -44,7 +44,7 @@ namespace Publicus
         {
             Contact = new ForeignKeyField<Contact, Document>(this, "contactid", false, null);
             Verifier = new ForeignKeyField<Contact, Document>(this, "verifierid", true, null);
-            CreatedDate = new FieldDate(this, "createddate", DateTime.UtcNow);
+            CreatedDate = new DateField(this, "createddate", DateTime.UtcNow);
             FileName = new StringField(this, "filename", 512);
             ContentType = new StringField(this, "contenttype", 128);
             Data = new ByteArrayField(this, "data", false);

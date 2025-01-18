@@ -18,6 +18,20 @@ namespace Quaestur
         private static SecurityService _security;
         private static Gpg _gpg;
         private static MailCounter _mailCounter;
+        private static SubscribeThrottle _subscriptionThrottle;
+
+        public static SubscribeThrottle SubscribeThrottle
+        {
+            get
+            {
+                if (_subscriptionThrottle == null)
+                {
+                    _subscriptionThrottle = new SubscribeThrottle(CreateDatabase());
+                }
+
+                return _subscriptionThrottle;
+            }
+        }
 
         public static MailCounter MailCounter
         {

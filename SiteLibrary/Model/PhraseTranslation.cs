@@ -14,6 +14,21 @@ namespace SiteLibrary
 
     public static class LanguageExtensions
     {
+        public static string Locale(this Language language)
+        { 
+            switch (language)
+            {
+                case Language.German:
+                    return "de";
+                case Language.French:
+                    return "fr";
+                case Language.Italian:
+                    return "it";
+                default:
+                    return "en";
+            }
+        }
+
         public static string Translate(this Language language, Translator translator)
         {
             switch (language)

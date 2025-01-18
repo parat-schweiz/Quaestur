@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 39;
+        public static int CurrentVersion = 40;
 
         public static void Install(IDatabase database)
         {
@@ -74,6 +74,10 @@ namespace Quaestur
             database.CreateTable<CustomPage>();
             database.CreateTable<CustomMenuEntry>();
             database.CreateTable<DeviceSession>();
+            database.CreateTable<Subscription>();
+            database.CreateTable<MailDomain>();
+            database.CreateTable<PageTemplate>();
+            database.CreateTable<PageTemplateAssignment>();
 
             Global.Log.Info("Tables ok.");
         }
@@ -163,6 +167,9 @@ namespace Quaestur
                     database.AddColumn<Ballot>(o => o.RedmineStatus);
                     database.AddColumn<Ballot>(o => o.RedmineProject);
                     database.AddColumn<Ballot>(o => o.RedmineVersion);
+                    break;
+                case 40:
+                    database.AddColumn<Subscription>(o => o.SenderGroup);
                     break;
                 default:
                     throw new NotSupportedException();

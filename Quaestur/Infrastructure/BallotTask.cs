@@ -237,7 +237,9 @@ namespace Quaestur
             var ballot = ballotPaper.Ballot.Value;
             var template = ballot.Template.Value;
             var person = ballotPaper.Member.Value.Person.Value;
-            var mailTemplate = announcement ? template.GetAnnouncementMail(database, person.Language.Value) : template.GetInvitationMail(database, person.Language.Value);
+            var mailTemplate = announcement ? 
+                template.AnnouncementMails.Value(database, person.Language.Value) : 
+                template.InvitationMails.Value(database, person.Language.Value);
 
             if (mailTemplate != null)
             {
@@ -291,7 +293,7 @@ namespace Quaestur
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
             var templator = new Templator(
-                new PersonContentProvider(translator, person),
+                new PersonContentProvider(database, translator, person),
                 new BallotPaperContentProvider(translator, ballotPaper));
             var subject = templator.Apply(mailTemplate.Subject);
             var htmlText = templator.Apply(mailTemplate.HtmlText);

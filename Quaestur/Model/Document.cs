@@ -30,7 +30,7 @@ namespace Quaestur
     {
         public ForeignKeyField<Person, Document> Person { get; private set; }
         public ForeignKeyField<Person, Document> Verifier { get; private set; }
-        public FieldDate CreatedDate { get; private set; }
+        public DateField CreatedDate { get; private set; }
         public StringField FileName { get; private set; }
         public StringField ContentType { get; private set; }
         public ByteArrayField Data { get; private set; }
@@ -44,7 +44,7 @@ namespace Quaestur
         {
             Person = new ForeignKeyField<Person, Document>(this, "personid", false, null);
             Verifier = new ForeignKeyField<Person, Document>(this, "verifierid", true, null);
-            CreatedDate = new FieldDate(this, "createddate", DateTime.UtcNow);
+            CreatedDate = new DateField(this, "createddate", DateTime.UtcNow);
             FileName = new StringField(this, "filename", 512);
             ContentType = new StringField(this, "contenttype", 128);
             Data = new ByteArrayField(this, "data", false);

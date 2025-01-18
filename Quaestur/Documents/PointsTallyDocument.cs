@@ -156,7 +156,7 @@ namespace Quaestur
 
         protected override string TexTemplate
         {
-            get { return _membership.Type.Value.GetPointsTallyDocument(_database, _translator.Language).Text.Value; } 
+            get { return _membership.Type.Value.PointsTallyDocuments.Value(_database, _translator.Language).Text.Value; } 
         }
 
         private string CreateTableContent()
@@ -337,7 +337,7 @@ namespace Quaestur
 
         protected override Templator GetTemplator()
         {
-            return new Templator(new PersonContentProvider(_translator, _person), this);
+            return new Templator(new PersonContentProvider(_database, _translator, _person), this);
         }
     }
 }

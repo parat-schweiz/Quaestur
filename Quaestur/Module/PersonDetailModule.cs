@@ -140,12 +140,8 @@ namespace Quaestur
                     using (var transaction = Database.BeginTransaction())
                     {
                         var person = new Person(Guid.NewGuid());
-                        var sequence = Database.Query<Sequence>().Single();
-                        person.Number.Value = sequence.NextPersonNumber.Value;
-                        sequence.NextPersonNumber.Value++;
-                        Database.Save(sequence);
-                        person.UserName.Value = "user" + person.Number.Value.ToString();
-
+                        person.Number.Value = 0;
+                        person.UserName.Value = "user-" + person.Id.Value.ToString();
                         var membership = new Membership(Guid.NewGuid());
                         membership.Organization.Value = organization;
                         membership.Type.Value = organization.MembershipTypes

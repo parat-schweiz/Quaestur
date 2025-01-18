@@ -10,12 +10,14 @@ namespace Quaestur
 {
     public class UniversalDocument : TemplateDocument
     {
+        private readonly IDatabase _database;
         private readonly Translator _translator;
         private readonly Person _person;
         private readonly string _texTemplate;
 
-        public UniversalDocument(Translator translator, Person person, string texTemplate)
+        public UniversalDocument(IDatabase database, Translator translator, Person person, string texTemplate)
         {
+            _database = database;
             _translator = translator;
             _person = person;
             _texTemplate = texTemplate;
@@ -28,7 +30,7 @@ namespace Quaestur
 
         protected override Templator GetTemplator()
         {
-            return new Templator(new PersonContentProvider(_translator, _person));
+            return new Templator(new PersonContentProvider(_database, _translator, _person));
         }
     }
 }
