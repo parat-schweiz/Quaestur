@@ -107,12 +107,12 @@ namespace Quaestur
             BillSendingLetters = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
-                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingLetters(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingLetters.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
             BillSendingMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.Organization.Value == billSendingTemplate.MembershipType.Value.Organization.Value && t.AssignmentType.Value == TemplateAssignmentType.BillSendingTemplate)
-                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingMails(database).Any(x => x.Template.Value == t)))
+                .Select(t => new NamedIdViewModel(translator, t, billSendingTemplate.BillSendingMails.Values(database).Contains(t)))
                 .OrderBy(t => t.Name));
         }
     }
@@ -282,8 +282,8 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(billSendingTemplate);
-                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
-                                status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                status.UpdateTemplates(Database, billSendingTemplate.BillSendingLetters, model.BillSendingLetterTemplates);
+                                status.UpdateTemplates(Database, billSendingTemplate.BillSendingMails, model.BillSendingMailTemplates);
                                 transaction.Commit();
                                 Notice("{0} changed bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
                             }
@@ -334,8 +334,8 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(billSendingTemplate);
-                                status.UpdateLatexTemplates(Database, billSendingTemplate.BillSendingLetter, model.BillSendingLetterTemplates);
-                                status.UpdateMailTemplates(Database, billSendingTemplate.BillSendingMail, model.BillSendingMailTemplates);
+                                status.UpdateTemplates(Database, billSendingTemplate.BillSendingLetters, model.BillSendingLetterTemplates);
+                                status.UpdateTemplates(Database, billSendingTemplate.BillSendingMails, model.BillSendingMailTemplates);
                                 transaction.Commit();
                                 Notice("{0} added bill sending template {1}", CurrentSession.User.ShortHand, billSendingTemplate);
                             }

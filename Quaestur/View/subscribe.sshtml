@@ -1,0 +1,90 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['script']
+  <script src="/Assets/throttle-main.js"></script>
+  <script>
+  function setMessage(message) {
+    $("#emailField").addClass('is-invalid');
+    $("#emailFeedback").addClass('invalid-feedback');
+    $("#emailFeedback").html(message);
+  }
+  $(document).ready(function() {
+    $("#subscribeButton").click(function(event) {
+      let throttleRequest = {};
+      throttleRequest.mailAddress = $("#emailField").val();
+      $.post("/throttle",JSON.stringify(throttleRequest), function(throttleDataString, status) {
+        let throttleData = JSON.parse(throttleDataString);
+        let total = Math.pow(2, throttleData.bitlength) * throttleData.counter;
+        if ((throttleData.message != null) && (throttleData.message.length > 0)) {
+          setMessage(throttleData.message);
+        } else {
+          waitingDialog.progress(0);
+          waitingDialog.show("@Model.PhraseThrottleWait", undefined, function(){
+            throttle(throttleData,
+              (done) => {
+                let progress = Math.floor(100.0 / total * done);
+                waitingDialog.progress(progress);
+              },
+              (data) => {
+                //console.log("finished throttle");
+                waitingDialog.hide();
+                $.post("/@Model.Request/@Model.Language/@Model.Id", JSON.stringify(data), function(responseData, status) {
+                  let response = JSON.parse(responseData);
+                  if ((response.redirect != null) && (response.redirect.length > 0)) {
+                    window.location.href = response.redirect;
+                  } else {
+                    setMessage(response.message);
+                  }
+                });
+              }
+            );
+          });
+        }
+      });
+      event.preventDefault();
+    });
+  });
+  </script>
+@EndSection
+
+@Section['header']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Header
+    </div>
+  </div>
+@EndSection
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+      @Model.Text
+    </div>
+  </div>
+  <div class="row input">
+    <div class="col-12">
+      <form>
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <label for="emailField">@Model.PhraseFieldEmail</label>
+            <input type="text" class="form-control" id="emailField" name="emailField" autofocus/>
+            <div id="emailFeedback" class="invalid-feedback"></div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="col-6 mb-3">
+            <input type="submit" id="subscribeButton" class="btn btn-primary" value="@Model.PhraseButtonOk"/>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+@EndSection
+
+@Section['footer']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Footer
+    </div>
+  </div>
+@EndSection

@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RedmineEngagement", "Redmin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Census", "Census\Census.csproj", "{EE3636B8-B523-42A3-9842-C43B3D963A85}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libsodium-net", "libsodium-net\libsodium-net\libsodium-net.csproj", "{676CE0AC-5756-4714-9B95-AB5E37E82DFC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libsodium-net", "libsodium-net\libsodium-net\libsodium-net.csproj", "{8E6F5390-F39A-90BD-763E-7F08197788B3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,10 +87,10 @@ Global
 		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Debug|x86.Build.0 = Debug|x86
 		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.ActiveCfg = Release|x86
 		{EE3636B8-B523-42A3-9842-C43B3D963A85}.Release|x86.Build.0 = Release|x86
-		{676CE0AC-5756-4714-9B95-AB5E37E82DFC}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{676CE0AC-5756-4714-9B95-AB5E37E82DFC}.Debug|x86.Build.0 = Debug|Any CPU
-		{676CE0AC-5756-4714-9B95-AB5E37E82DFC}.Release|x86.ActiveCfg = Release|Any CPU
-		{676CE0AC-5756-4714-9B95-AB5E37E82DFC}.Release|x86.Build.0 = Release|Any CPU
+		{8E6F5390-F39A-90BD-763E-7F08197788B3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8E6F5390-F39A-90BD-763E-7F08197788B3}.Debug|x86.Build.0 = Debug|Any CPU
+		{8E6F5390-F39A-90BD-763E-7F08197788B3}.Release|x86.ActiveCfg = Release|Any CPU
+		{8E6F5390-F39A-90BD-763E-7F08197788B3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

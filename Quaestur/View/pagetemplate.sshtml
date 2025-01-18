@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updatePageTemplateList(){
+      $.get("/pagetemplate/list", function(data, status){
+          if (data){
+              $("#pageTemplateList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updatePageTemplateList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="pageTemplateList">
+</div>
+@EndSection

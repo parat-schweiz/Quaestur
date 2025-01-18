@@ -84,6 +84,7 @@ namespace Quaestur
         public string PhraseMenuStates = string.Empty;
         public string PhraseMenuTags = string.Empty;
         public string PhraseMenuMailTemplates = string.Empty;
+        public string PhraseMenuPageTemplates = string.Empty;
         public string PhraseMenuLatexTemplates = string.Empty;
         public string PhraseMenuPhrases = string.Empty;
         public string PhraseMenuMailings = string.Empty;
@@ -106,6 +107,7 @@ namespace Quaestur
         public string PhraseMenuIncome = string.Empty;
         public string PhraseMenuPoints = string.Empty;
         public string PhraseMenuPointsBudget = string.Empty;
+        public string PhraseMenuSubscriptions = string.Empty;
         public List<CustomMenu> CustomMenus;
 
         public MasterViewModel()
@@ -144,7 +146,9 @@ namespace Quaestur
             PhraseMenuStates = translator.Get("Master.Menu.Custom.States", "Item 'States' under 'Custom' in the main menu", "States").EscapeHtml();
             PhraseMenuTags = translator.Get("Master.Menu.Custom.Tags", "Item 'Tags' under 'Custom' in the main menu", "Tags").EscapeHtml();
             PhraseMenuMailTemplates = translator.Get("Master.Menu.Custom.MailTemplates", "Item 'Mail templates' under 'Custom' in the main menu", "Mail templates").EscapeHtml();
+            PhraseMenuPageTemplates = translator.Get("Master.Menu.Custom.PageTemplates", "Item 'Page templates' under 'Custom' in the main menu", "Page templates").EscapeHtml();
             PhraseMenuLatexTemplates = translator.Get("Master.Menu.Custom.LatexTemplates", "Item 'Latex templates' under 'Custom' in the main menu", "Latex templates").EscapeHtml();
+            PhraseMenuSubscriptions = translator.Get("Master.Menu.Custom.Subscriptions", "Item 'Subscriptions' under 'Custom' in the main menu", "Subscriptions").EscapeHtml();
             PhraseMenuPhrases = translator.Get("Master.Menu.Custom.Translations", "Item 'Translations' under 'Custom' in the main menu", "Translations").EscapeHtml();
             PhraseMenuMailings = translator.Get("Master.Menu.Mailings", "Item 'Mailings' in the main menu", "Mailings").EscapeHtml();
             PhraseMenuNewMailing = translator.Get("Master.Menu.Mailings.New", "Item 'New mailing' under 'Mailings' in the main menu", "New mailing").EscapeHtml();

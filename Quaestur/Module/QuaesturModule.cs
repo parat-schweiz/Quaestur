@@ -15,8 +15,10 @@ namespace Quaestur
 {
     public class QuaesturModule : NancyModule, IDisposable
     {
-        protected IDatabase Database { get; private set; }
-        protected Translation Translation { get; private set; }
+        private Language? _currentLanguage = null;
+
+        public IDatabase Database { get; private set; }
+        public Translation Translation { get; private set; }
 
         public QuaesturModule()
         { 
@@ -156,7 +158,6 @@ namespace Quaestur
 
             return false;
         }
-
 
         public bool HasAccess(Person subject, Group group, PartAccess part, AccessRight right)
         {
@@ -342,7 +343,7 @@ namespace Quaestur
             return View["View/info.sshtml", new AccessDeniedViewModel(Database, Translator)];
         }
 
-        private static Language? ConvertLocale(string locale)
+        public static Language? ConvertLocale(string locale)
         {
             if (locale.StartsWith("de", StringComparison.InvariantCulture))
             {
@@ -429,7 +430,11 @@ namespace Quaestur
         {
             get
             {
-                if (CurrentSession != null)
+                if (_currentLanguage.HasValue)
+                {
+                    return _currentLanguage.Value;
+                }
+                else if (CurrentSession != null)
                 {
                     return CurrentSession.User.Language.Value;
                 }
@@ -437,6 +442,10 @@ namespace Quaestur
                 {
                     return BrowserLanguage;
                 }
+            }
+            set
+            {
+                _currentLanguage = value;
             }
         }
 

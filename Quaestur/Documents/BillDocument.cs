@@ -174,7 +174,7 @@ namespace Quaestur
             _finalTableContent = CreateFinalTableContent();
 
             var latexTemplate =
-                _membership.Type.Value.GetBillDocument(_database, _translator.Language);
+                _membership.Type.Value.BillDocuments.Value(_database, _translator.Language);
 
             if (latexTemplate == null)
             {
@@ -428,7 +428,7 @@ namespace Quaestur
 
         protected override Templator GetTemplator()
         {
-            return new Templator(new PersonContentProvider(_translator, _person), this);
+            return new Templator(new PersonContentProvider(_database, _translator, _person), this);
         }
     }
 }

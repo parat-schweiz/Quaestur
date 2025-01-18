@@ -9,8 +9,8 @@ namespace Publicus
     {
         public ForeignKeyField<Contact, Subscription> Contact { get; set; }
         public ForeignKeyField<Feed, Subscription> Feed { get; set; }
-        public FieldDate StartDate { get; set; }
-        public FieldDateNull EndDate { get; set; }
+        public DateField StartDate { get; set; }
+        public DateNullField EndDate { get; set; }
 
         public Subscription() : this(Guid.Empty)
         {
@@ -20,8 +20,8 @@ namespace Publicus
         {
             Contact = new ForeignKeyField<Contact, Subscription>(this, "contactid", false, p => p.Subscriptions);
             Feed = new ForeignKeyField<Feed, Subscription>(this, "feedid", false, null);
-            StartDate = new FieldDate(this, "startdate", DateTime.UtcNow);
-            EndDate = new FieldDateNull(this, "enddate");
+            StartDate = new DateField(this, "startdate", DateTime.UtcNow);
+            EndDate = new DateNullField(this, "enddate");
         }
 
         public override string GetText(Translator translator)

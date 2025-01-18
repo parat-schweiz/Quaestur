@@ -110,17 +110,17 @@ namespace Quaestur
                 .Query<MailTemplate>()
                 .Where(t => t.AssignmentType.Value == TemplateAssignmentType.BallotTemplate)
                 .Where(t => session.HasAccess(t.Organization.Value, PartAccess.Ballot, AccessRight.Read))
-                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.AnnouncementMails(database).Any(x => x.Template.Value == t))));
+                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.AnnouncementMails.Values(database).Contains(t))));
             InvitationMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
                 .Where(t => t.AssignmentType.Value == TemplateAssignmentType.BallotTemplate)
                 .Where(t => session.HasAccess(t.Organization.Value, PartAccess.Ballot, AccessRight.Read))
-                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.InvitationMails(database).Any(x => x.Template.Value == t))));
+                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.InvitationMails.Values(database).Contains(t))));
             BallotPapers = new List<NamedIdViewModel>(database
                 .Query<LatexTemplate>()
                 .Where(t => t.AssignmentType.Value == TemplateAssignmentType.BallotTemplate)
                 .Where(t => session.HasAccess(t.Organization.Value, PartAccess.Ballot, AccessRight.Read))
-                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.BallotPapers(database).Any(x => x.Template.Value == t))));
+                .Select(t => new NamedIdViewModel(translator, t, ballotTemplate.BallotPapers.Values(database).Contains(t))));
             Organizers = new List<NamedIdViewModel>(database
                 .Query<Group>()
                 .Where(g => session.HasAccess(g.Organization.Value, PartAccess.Ballot, AccessRight.Write))
@@ -236,7 +236,7 @@ namespace Quaestur
 
                         using (var transaction = Database.BeginTransaction())
                         {
-                            foreach (var oldAssignment in ballotTemplate.AnnouncementMails(Database))
+                            foreach (var oldAssignment in ballotTemplate.AnnouncementMails.Assignments(Database))
                             {
                                 var newAssignment = new MailTemplateAssignment(Guid.NewGuid());
                                 newAssignment.Template.Value = oldAssignment.Template.Value;
@@ -246,7 +246,7 @@ namespace Quaestur
                                 Database.Save(newAssignment);
                             }
 
-                            foreach (var oldAssignment in ballotTemplate.InvitationMails(Database))
+                            foreach (var oldAssignment in ballotTemplate.InvitationMails.Assignments(Database))
                             {
                                 var newAssignment = new MailTemplateAssignment(Guid.NewGuid());
                                 newAssignment.Template.Value = oldAssignment.Template.Value;
@@ -256,7 +256,7 @@ namespace Quaestur
                                 Database.Save(newAssignment);
                             }
 
-                            foreach (var oldAssignment in ballotTemplate.BallotPapers(Database))
+                            foreach (var oldAssignment in ballotTemplate.BallotPapers.Assignments(Database))
                             {
                                 var newAssignment = new LatexTemplateAssignment(Guid.NewGuid());
                                 newAssignment.Template.Value = oldAssignment.Template.Value;
@@ -295,9 +295,9 @@ namespace Quaestur
                             using (var transaction = Database.BeginTransaction())
                             {
                                 Database.Save(ballotTemplate);
-                                status.UpdateMailTemplates(Database, ballotTemplate.AnnouncementMail, model.AnnouncementMailTemplates);
-                                status.UpdateMailTemplates(Database, ballotTemplate.InvitationMail, model.InvitationMailTemplates);
-                                status.UpdateLatexTemplates(Database, ballotTemplate.BallotPaper, model.BallotPaperTemplates);
+                                status.UpdateTemplates(Database, ballotTemplate.AnnouncementMails, model.AnnouncementMailTemplates);
+                                status.UpdateTemplates(Database, ballotTemplate.InvitationMails, model.InvitationMailTemplates);
+                                status.UpdateTemplates(Database, ballotTemplate.BallotPapers, model.BallotPaperTemplates);
 
                                 if (status.IsSuccess)
                                 {
@@ -338,9 +338,9 @@ namespace Quaestur
                     using (var transaction = Database.BeginTransaction())
                     {
                         Database.Save(ballotTemplate);
-                        status.UpdateMailTemplates(Database, ballotTemplate.AnnouncementMail, model.AnnouncementMailTemplates);
-                        status.UpdateMailTemplates(Database, ballotTemplate.InvitationMail, model.InvitationMailTemplates);
-                        status.UpdateLatexTemplates(Database, ballotTemplate.BallotPaper, model.BallotPaperTemplates);
+                        status.UpdateTemplates(Database, ballotTemplate.AnnouncementMails, model.AnnouncementMailTemplates);
+                        status.UpdateTemplates(Database, ballotTemplate.InvitationMails, model.InvitationMailTemplates);
+                        status.UpdateTemplates(Database, ballotTemplate.BallotPapers, model.BallotPaperTemplates);
 
                         if (status.IsSuccess)
                         {
@@ -411,7 +411,7 @@ namespace Quaestur
 
                     foreach (var language in new Language[] { Language.English, Language.French, Language.German, Language.Italian })
                     {
-                        var AnnouncementTemplate = ballotTemplate.GetAnnouncementMail(Database, language);
+                        var AnnouncementTemplate = ballotTemplate.AnnouncementMails.Value(Database, language);
 
                         if (AnnouncementTemplate != null)
                         {
@@ -420,7 +420,7 @@ namespace Quaestur
                             Global.Mail.Send(message);
                         }
 
-                        var invitationTemplate = ballotTemplate.GetInvitationMail(Database, language);
+                        var invitationTemplate = ballotTemplate.InvitationMails.Value(Database, language);
 
                         if (invitationTemplate != null)
                         {

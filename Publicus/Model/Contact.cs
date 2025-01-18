@@ -16,7 +16,7 @@ namespace Publicus
         public StringField MiddleNames { get; private set; }
         public StringField LastName { get; private set; }
         public StringField Position { get; private set; }
-        public FieldDate BirthDate { get; private set; }
+        public DateField BirthDate { get; private set; }
         public EnumField<Language> Language { get; private set; }
         public List<PostalAddress> PostalAddresses { get; private set; }
         public List<ServiceAddress> ServiceAddresses { get; private set; }
@@ -24,7 +24,7 @@ namespace Publicus
         public List<TagAssignment> TagAssignments { get; private set; }
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
-        public FieldDateTimeNull ExpiryDate { get; private set; }
+        public DateTimeNullField ExpiryDate { get; private set; }
 
         public Contact() : this(Guid.Empty)
         {
@@ -38,10 +38,10 @@ namespace Publicus
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
             Position = new StringField(this, "position", 256);
-            BirthDate = new FieldDate(this, "birthdate", new DateTime(1850, 1, 1));
+            BirthDate = new DateField(this, "birthdate", new DateTime(1850, 1, 1));
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
-            ExpiryDate = new FieldDateTimeNull(this, "expirydate");
+            ExpiryDate = new DateTimeNullField(this, "expirydate");
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();
             Subscriptions = new List<Subscription>();

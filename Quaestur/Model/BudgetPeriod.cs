@@ -9,8 +9,8 @@ namespace Quaestur
     public class BudgetPeriod : DatabaseObject
     {
         public ForeignKeyField<Organization, BudgetPeriod> Organization { get; private set; }
-        public FieldDate StartDate { get; private set; }
-        public FieldDate EndDate { get; private set; }
+        public DateField StartDate { get; private set; }
+        public DateField EndDate { get; private set; }
         public Field<long> TotalPoints { get; private set; }
 
         public BudgetPeriod() : this(Guid.Empty)
@@ -20,8 +20,8 @@ namespace Quaestur
         public BudgetPeriod(Guid id) : base(id)
         {
             Organization = new ForeignKeyField<Organization, BudgetPeriod>(this, "organizationid", false, null);
-            StartDate = new FieldDate(this, "startdate", DateTime.UtcNow.Date);
-            EndDate = new FieldDate(this, "enddate", DateTime.UtcNow.Date.AddDays(365));
+            StartDate = new DateField(this, "startdate", DateTime.UtcNow.Date);
+            EndDate = new DateField(this, "enddate", DateTime.UtcNow.Date.AddDays(365));
             TotalPoints = new Field<long>(this, "totalpoints", 0);
         }
 

@@ -76,6 +76,48 @@ namespace Newtonsoft.Json.Linq
             }
         }
 
+        public static bool TryValueByte(this JObject obj, string key, out byte value)
+        {
+            try
+            {
+                value = obj.ValueByte(key);
+                return true;
+            }
+            catch
+            {
+                value = 0;
+                return false;
+            }
+        }
+
+        public static bool TryValueDateTime64(this JObject obj, string key, out DateTime value)
+        {
+            if (TryValueInt64(obj, key, out long int64value))
+            {
+                value = new DateTime(int64value);
+                return true;
+            }
+            else
+            {
+                value = DateTime.MinValue;
+                return false;
+            }
+        }
+
+        public static bool TryValueInt64(this JObject obj, string key, out long value)
+        {
+            try
+            {
+                value = obj.ValueInt64(key);
+                return true;
+            }
+            catch
+            {
+                value = 0;
+                return false;
+            }
+        }
+
         public static bool TryValueDecimal(this JObject obj, string key, out decimal value)
         {
             if (obj.TryValueString(key, out string valueString))
@@ -85,6 +127,20 @@ namespace Newtonsoft.Json.Linq
             else
             {
                 value = 0M;
+                return false;
+            }
+        }
+
+        public static bool TryValueHexBytes(this JObject obj, string key, out byte[] value)
+        {
+            if (TryValueString(obj, key, out string stringValue))
+            {
+                value = stringValue.TryParseHexBytes();
+                return value != null;
+            }
+            else
+            {
+                value = null;
                 return false;
             }
         }
@@ -178,6 +234,30 @@ namespace Newtonsoft.Json.Linq
             if (obj.TryGetValue(key, out JToken value))
             {
                 return value.ToObject<int>();
+            }
+            else
+            {
+                throw new ArgumentNullException("Property " + key + " not present");
+            }
+        }
+
+        public static byte ValueByte(this JObject obj, string key)
+        {
+            if (obj.TryGetValue(key, out JToken value))
+            {
+                return value.ToObject<byte>();
+            }
+            else
+            {
+                throw new ArgumentNullException("Property " + key + " not present");
+            }
+        }
+
+        public static long ValueInt64(this JObject obj, string key)
+        {
+            if (obj.TryGetValue(key, out JToken value))
+            {
+                return value.ToObject<long>();
             }
             else
             {

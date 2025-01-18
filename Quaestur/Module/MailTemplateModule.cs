@@ -64,6 +64,7 @@ namespace Quaestur
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, false));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, false));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, false));
+            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.Subscription, false));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, false))
@@ -88,6 +89,7 @@ namespace Quaestur
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BallotTemplate, TemplateAssignmentType.BallotTemplate == mailTemplate.AssignmentType.Value));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.MembershipType, TemplateAssignmentType.MembershipType == mailTemplate.AssignmentType.Value));
             AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.BillSendingTemplate, TemplateAssignmentType.BillSendingTemplate == mailTemplate.AssignmentType.Value));
+            AssignmentTypes.Add(new NamedIntViewModel(translator, TemplateAssignmentType.Subscription, TemplateAssignmentType.Subscription == mailTemplate.AssignmentType.Value));
             Organizations = new List<NamedIdViewModel>(database
                 .Query<Organization>()
                 .Select(o => new NamedIdViewModel(translator, o, mailTemplate.Organization.Value == o))
@@ -206,7 +208,7 @@ namespace Quaestur
                         status.AssignEnumIntString("AssignmentType", mailTemplate.AssignmentType, model.AssignmentType);
                         status.AssignObjectIdString("Organization", mailTemplate.Organization, model.Organization);
                         status.AssignStringRequired("Subject", mailTemplate.Subject, model.Subject);
-                        var worker = new HtmlWorker(model.HtmlText);
+                        var worker = new HtmlText(model.HtmlText);
                         mailTemplate.HtmlText.Value = worker.CleanHtml;
                         mailTemplate.PlainText.Value = worker.PlainText;
 
@@ -266,7 +268,7 @@ namespace Quaestur
                 status.AssignEnumIntString("AssignmentType", mailTemplate.AssignmentType, model.AssignmentType);
                 status.AssignObjectIdString("Organization", mailTemplate.Organization, model.Organization);
                 status.AssignStringRequired("Subject", mailTemplate.Subject, model.Subject);
-                var worker = new HtmlWorker(model.HtmlText);
+                var worker = new HtmlText(model.HtmlText);
                 mailTemplate.HtmlText.Value = worker.CleanHtml;
                 mailTemplate.PlainText.Value = worker.PlainText;
 

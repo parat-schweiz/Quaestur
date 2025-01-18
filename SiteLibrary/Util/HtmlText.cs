@@ -6,53 +6,17 @@ using System.IO;
 using AngleSharp.Dom;
 using AngleSharp.Html.Parser;
 using AngleSharp.Html.Dom;
+using System.Drawing;
+using System.Drawing.Imaging;
 
 namespace SiteLibrary
 {
-    public class HtmlWorker
+    public class HtmlText
     {
         public string CleanHtml;
         public string PlainText;
 
-        private byte[] TryDownload(string source)
-        {
-            var client = new WebClient();
-            try
-            {
-                return client.DownloadData(source);
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        private string ImageType(string source)
-        {
-            if (source.EndsWith(".png", StringComparison.Ordinal))
-            {
-                return "image/png";
-            }
-            else if (source.EndsWith(".jpg", StringComparison.Ordinal) ||
-                     source.EndsWith(".jpeg", StringComparison.Ordinal))
-            {
-                return "image/jpeg";
-            }
-            else if (source.EndsWith(".gif", StringComparison.Ordinal))
-            {
-                return "image/gif";
-            }
-            else if (source.EndsWith(".svg", StringComparison.Ordinal))
-            {
-                return "image/svg";
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        public HtmlWorker(string dirtyHtml)
+        public HtmlText(string dirtyHtml)
         {
             MakeCleanHtml(dirtyHtml);
             MakePlainText(dirtyHtml);
@@ -67,38 +31,7 @@ namespace SiteLibrary
 
         private void MakeCleanHtml(string dirtyHtml)
         {
-            var parser = new HtmlParser();
-            var document = parser.ParseDocument(dirtyHtml);
-
-            foreach (IHtmlImageElement image in document.QuerySelectorAll("img"))
-            {
-                var source = image.Source;
-
-                if (!source.StartsWith("data:", StringComparison.Ordinal))
-                {
-                    var imageType = ImageType(source);
-
-                    if (imageType != null)
-                    {
-                        var data = TryDownload(source);
-
-                        if (data != null)
-                        {
-                            image.Source = string.Format("data:{0};base64,{1}", imageType, Convert.ToBase64String(data));
-                        }
-                        else
-                        {
-                            image.Remove();
-                        }
-                    }
-                    else
-                    {
-                        image.Remove();
-                    }
-                }
-            }
-
-            CleanHtml = document.DocumentElement.OuterHtml;
+            CleanHtml = HtmlImage.Inline(dirtyHtml);
         }
 
         public static string ConcatHtml(string a, string b)

@@ -8,7 +8,7 @@ namespace Quaestur
     public class Credits : DatabaseObject
     {
         public ForeignKeyField<Person, Credits> Owner { get; private set; }
-        public FieldDateTime Moment { get; private set; }
+        public DateTimeField Moment { get; private set; }
         public Field<int> Amount { get; private set; }
         public StringField Reason { get; private set; }
         public StringField Url { get; private set; }
@@ -22,7 +22,7 @@ namespace Quaestur
         public Credits(Guid id) : base(id)
         {
             Owner = new ForeignKeyField<Person, Credits>(this, "ownerid", false, null);
-            Moment = new FieldDateTime(this, "moment", DateTime.UtcNow);
+            Moment = new DateTimeField(this, "moment", DateTime.UtcNow);
             Amount = new Field<int>(this, "amount", 0);
             Reason = new StringField(this, "reason", 4096, AllowStringType.SimpleText);
             Url = new StringField(this, "url", 2048, AllowStringType.SimpleText);

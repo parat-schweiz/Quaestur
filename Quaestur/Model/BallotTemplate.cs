@@ -34,58 +34,28 @@ namespace Quaestur
         public const string InvitationMailFieldName = "InvitationMails";
         public const string BallotPaperFieldName = "BallotPapers";
 
-        public TemplateField AnnouncementMail
+        public MailTemplateAssignmentField AnnouncementMails
         {
             get
             {
-                return new TemplateField(TemplateAssignmentType.BallotTemplate, Id.Value, AnnouncementMailFieldName);
+                return new MailTemplateAssignmentField(TemplateAssignmentType.BallotTemplate, Id.Value, AnnouncementMailFieldName);
             } 
         }
 
-        public TemplateField InvitationMail
+        public MailTemplateAssignmentField InvitationMails
         {
             get
             {
-                return new TemplateField(TemplateAssignmentType.BallotTemplate, Id.Value, InvitationMailFieldName);
+                return new MailTemplateAssignmentField(TemplateAssignmentType.BallotTemplate, Id.Value, InvitationMailFieldName);
             }
         }
 
-        public TemplateField BallotPaper
+        public LatexTemplateAssignmentField BallotPapers
         {
             get
             {
-                return new TemplateField(TemplateAssignmentType.BallotTemplate, Id.Value, BallotPaperFieldName);
+                return new LatexTemplateAssignmentField(TemplateAssignmentType.BallotTemplate, Id.Value, BallotPaperFieldName);
             }
-        }
-
-        public IEnumerable<MailTemplateAssignment> AnnouncementMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", AnnouncementMailFieldName)));
-        }
-
-        public IEnumerable<MailTemplateAssignment> InvitationMails(IDatabase database)
-        {
-            return database.Query<MailTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", InvitationMailFieldName)));
-        }
-
-        public IEnumerable<LatexTemplateAssignment> BallotPapers(IDatabase database)
-        {
-            return database.Query<LatexTemplateAssignment>(DC.Equal("assignedid", Id.Value).And(DC.Equal("fieldname", BallotPaperFieldName)));
-        }
-
-        public MailTemplate GetAnnouncementMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, AnnouncementMails);
-        }
-
-        public MailTemplate GetInvitationMail(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, InvitationMails);
-        }
-
-        public LatexTemplate GetBallotPaper(IDatabase database, Language language)
-        {
-            return TemplateUtil.GetItem(database, language, BallotPapers);
         }
 
         public static string GetFieldNameTranslation(Translator translator, string fieldName)

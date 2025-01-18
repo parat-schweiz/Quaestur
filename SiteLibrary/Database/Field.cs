@@ -51,6 +51,8 @@ namespace SiteLibrary
         }
 
         public abstract string GetText(Translator translator);
+
+        public abstract void TransferValue(Field target);
     }
 
     public abstract class ValueField<T> : Field
@@ -139,6 +141,18 @@ namespace SiteLibrary
             else
             {
                 return Value.ToString();
+            }
+        }
+
+        public override void TransferValue(Field target)
+        {
+            if (target is ValueField<T> targetField)
+            {
+                targetField.Value = Value;
+            }
+            else
+            {
+                throw new ArgumentException("Argument value type must be identical", "target");
             }
         }
     }
@@ -257,9 +271,9 @@ namespace SiteLibrary
         }
     }
 
-    public class FieldDate : Field<DateTime>
+    public class DateField : Field<DateTime>
     {
-        public FieldDate(DatabaseObject obj, string columnName, DateTime defaultValue)
+        public DateField(DatabaseObject obj, string columnName, DateTime defaultValue)
          : base(obj, columnName, defaultValue)
         {
         }
@@ -277,9 +291,9 @@ namespace SiteLibrary
         }
     }
 
-    public class FieldDateNull : FieldNull<DateTime>
+    public class DateNullField : FieldNull<DateTime>
     {
-        public FieldDateNull(DatabaseObject obj, string columnName)
+        public DateNullField(DatabaseObject obj, string columnName)
          : base(obj, columnName)
         {
         }
@@ -312,9 +326,9 @@ namespace SiteLibrary
         }
     }
 
-    public class FieldDateTime : Field<DateTime>
+    public class DateTimeField : Field<DateTime>
     {
-        public FieldDateTime(DatabaseObject obj, string columnName, DateTime defaultValue)
+        public DateTimeField(DatabaseObject obj, string columnName, DateTime defaultValue)
          : base(obj, columnName, defaultValue)
         {
         }
@@ -347,9 +361,9 @@ namespace SiteLibrary
         }
     }
 
-    public class FieldDateTimeNull : FieldNull<DateTime>
+    public class DateTimeNullField : FieldNull<DateTime>
     {
-        public FieldDateTimeNull(DatabaseObject obj, string columnName) 
+        public DateTimeNullField(DatabaseObject obj, string columnName) 
          : base(obj, columnName)
         {
         }

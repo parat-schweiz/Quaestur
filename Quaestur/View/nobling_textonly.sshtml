@@ -1,0 +1,25 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['header']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Header
+    </div>
+  </div>
+@EndSection
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Text
+    </div>
+  </div>
+@EndSection
+
+@Section['footer']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Footer
+    </div>
+  </div>
+@EndSection

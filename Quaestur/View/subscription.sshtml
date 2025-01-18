@@ -1,0 +1,21 @@
+﻿@Master['View/master.sshtml']
+
+@Section['script']
+<script>
+  function updateSubscriptionList(){
+      $.get("/subscription/list", function(data, status){
+          if (data){
+              $("#subscriptionList").html(data);
+          }
+      });
+  }
+  $(document).ready(function(){
+      updateSubscriptionList();
+  });
+</script>
+@EndSection
+
+@Section['data']
+<div class="container" id="subscriptionList">
+</div>
+@EndSection

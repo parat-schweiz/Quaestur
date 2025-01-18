@@ -370,8 +370,8 @@ namespace Quaestur
 
         private static byte[] CreateLetter(IDatabase database, Translator translator, Person person, BillSendingTemplate template)
         {
-            var latexTemplate = template.GetBillSendingLetter(database, person.Language.Value);
-            var letter = new UniversalDocument(translator, person, latexTemplate.Text.Value);
+            var latexTemplate = template.BillSendingLetters.Value(database, person.Language.Value);
+            var letter = new UniversalDocument(database, translator, person, latexTemplate.Text.Value);
             var document = letter.Compile();
 
             if (document == null)
@@ -389,7 +389,7 @@ namespace Quaestur
         private static byte[] CreateSettlement(IDatabase database, Translator translator, Billing billing)
         {
             var membership = billing.Person.Memberships.First(m => m.Organization.Value == billing.Organization);
-            var latexTemplate = membership.Type.Value.GetSettlementDocument(database, translator.Language);
+            var latexTemplate = membership.Type.Value.SettlementDocuments.Value(database, translator.Language);
             var settlement = new SettlementDocument(database, translator, billing.Organization, billing.Person, billing.Bills, latexTemplate.Text.Value);
             var document = settlement.Compile();
 
@@ -435,8 +435,8 @@ namespace Quaestur
                 template.MailSender.Value.GpgKeyPassphrase.Value);
             var recipientKey = billing.Person.GetPublicKey();
             var content = new Multipart("mixed");
-            var templator = new Templator(new PersonContentProvider(translator, billing.Person));
-            var mailTemplate = template.GetBillSendingMail(database, billing.Person.Language.Value);
+            var templator = new Templator(new PersonContentProvider(database, translator, billing.Person));
+            var mailTemplate = template.BillSendingMails.Value(database, billing.Person.Language.Value);
             var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
             var plainText = templator.Apply(mailTemplate.PlainText.Value);
             var alternative = new Multipart("alternative");
@@ -561,8 +561,8 @@ namespace Quaestur
             var recipientKey = person.GetPublicKey();
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
-            var templator = new Templator(new PersonContentProvider(translator, person));
-            var mailTemplate = membership.Type.Value.GetSettlementMail(database, person.Language.Value);
+            var templator = new Templator(new PersonContentProvider(database, translator, person));
+            var mailTemplate = membership.Type.Value.SettlementMails.Value(database, person.Language.Value);
             var htmlText = templator.Apply(mailTemplate.HtmlText.Value);
             var plainText = templator.Apply(mailTemplate.PlainText.Value);
             var alternative = new Multipart("alternative");

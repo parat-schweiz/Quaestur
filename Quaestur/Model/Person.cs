@@ -65,7 +65,7 @@ namespace Quaestur
         public StringField FirstName { get; private set; }
         public StringField MiddleNames { get; private set; }
         public StringField LastName { get; private set; }
-        public FieldDate BirthDate { get; private set; }
+        public DateField BirthDate { get; private set; }
         public EnumField<UserStatus> UserStatus { get; private set; }
         public EnumField<Language> Language { get; private set; }
         public List<PostalAddress> PostalAddresses { get; private set; }
@@ -76,7 +76,7 @@ namespace Quaestur
         public List<PublicKey> PublicKeys { get; private set; }
         public Field<bool> Deleted { get; private set; }
         public ByteArrayField TwoFactorSecret { get; private set; }
-        public FieldDateTimeNull PaymentParameterUpdateReminderDate { get; private set; }
+        public DateTimeNullField PaymentParameterUpdateReminderDate { get; private set; }
         public FieldNull<int> PaymentParameterUpdateReminderLevel { get; private set; }
         public List<PersonalPaymentParameter> PaymentParameters { get; private set; }
 
@@ -94,12 +94,12 @@ namespace Quaestur
             FirstName = new StringField(this, "firstname", 256);
             MiddleNames = new StringField(this, "middlenames", 256);
             LastName = new StringField(this, "lastname", 256);
-            BirthDate = new FieldDate(this, "birthdate", new DateTime(1850, 1, 1));
+            BirthDate = new DateField(this, "birthdate", new DateTime(1850, 1, 1));
             UserStatus = new EnumField<UserStatus>(this, "userstatus", Quaestur.UserStatus.Locked, UserStatusExtensions.Translate);
             Language = new EnumField<Language>(this, "language", SiteLibrary.Language.English, LanguageExtensions.Translate);
             Deleted = new Field<bool>(this, "deleted", false);
             TwoFactorSecret = new ByteArrayField(this, "twofactorsecret", true);
-            PaymentParameterUpdateReminderDate = new FieldDateTimeNull(this, "paymentparameterupdatereminderdate");
+            PaymentParameterUpdateReminderDate = new DateTimeNullField(this, "paymentparameterupdatereminderdate");
             PaymentParameterUpdateReminderLevel = new FieldNull<int>(this, "paymentparameterupdatereminderlevel");
             PostalAddresses = new List<PostalAddress>();
             ServiceAddresses = new List<ServiceAddress>();

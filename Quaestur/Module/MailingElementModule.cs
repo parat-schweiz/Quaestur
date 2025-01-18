@@ -187,7 +187,7 @@ namespace Quaestur
                         status.AssignObjectIdString("Owner", mailingElement.Owner, model.Owner);
                         status.AssignStringRequired("Name", mailingElement.Name, model.Name);
                         status.AssignEnumIntString("Type", mailingElement.Type, model.Type);
-                        var worker = new HtmlWorker(model.HtmlText);
+                        var worker = new HtmlText(model.HtmlText);
                         mailingElement.HtmlText.Value = worker.CleanHtml;
                         mailingElement.PlainText.Value = worker.PlainText;
 
@@ -218,7 +218,7 @@ namespace Quaestur
                 status.AssignObjectIdString("Owner", mailingElement.Owner, model.Owner);
                 status.AssignStringRequired("Name", mailingElement.Name, model.Name);
                 status.AssignEnumIntString("Type", mailingElement.Type, model.Type);
-                var worker = new HtmlWorker(model.HtmlText);
+                var worker = new HtmlText(model.HtmlText);
                 mailingElement.HtmlText.Value = worker.CleanHtml;
                 mailingElement.PlainText.Value = worker.PlainText;
 
