@@ -35,7 +35,7 @@ namespace Quaestur
         protected override Templator GetTemplator()
         {
             return new Templator(
-                new PersonContentProvider(_translator, _person),
+                new PersonContentProvider(_database, _translator, _person),
                 new SettlementContentProvider(_database, _translator, _person, _bills));
         }
 

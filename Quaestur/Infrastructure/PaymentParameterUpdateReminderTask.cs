@@ -106,8 +106,8 @@ namespace Quaestur
             var person = membership.Person.Value;
             var senderGroup = membership.Type.Value.SenderGroup.Value;
             var template = requireUpdate ?
-                membership.Type.Value.GetPaymentParameterUpdateRequiredMail(database, person.Language.Value) :
-                membership.Type.Value.GetPaymentParameterUpdateInvitationMail(database, person.Language.Value);
+                membership.Type.Value.PaymentParameterUpdateRequiredMails.Value(database, person.Language.Value) :
+                membership.Type.Value.PaymentParameterUpdateInvitationMails.Value(database, person.Language.Value);
 
             if (senderGroup == null)
             {
@@ -143,7 +143,7 @@ namespace Quaestur
             var recipientKey = person.GetPublicKey();
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
-            var templator = new Templator(new PersonContentProvider(translator, person));
+            var templator = new Templator(new PersonContentProvider(database, translator, person));
             var htmlText = templator.Apply(template.HtmlText);
             var plainText = templator.Apply(template.PlainText);
             var alternative = new Multipart("alternative");

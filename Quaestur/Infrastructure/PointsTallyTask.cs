@@ -99,7 +99,7 @@ namespace Quaestur
 
         private static void SendTally(IDatabase database, Membership membership, PointsTally tally)
         {
-            var pointsTallyMailTemplate = membership.Type.Value.GetPointsTallyMail(database, membership.Person.Value.Language.Value);
+            var pointsTallyMailTemplate = membership.Type.Value.PointsTallyMails.Value(database, membership.Person.Value.Language.Value);
             var message = CreateMail(database, membership, pointsTallyMailTemplate, tally);
             Global.MailCounter.Used();
             Global.Mail.Send(message);
@@ -161,7 +161,7 @@ namespace Quaestur
             var translation = new Translation(database);
             var translator = new Translator(translation, person.Language.Value);
             var templator = new Templator(
-                new PersonContentProvider(translator, person));
+                new PersonContentProvider(database, translator, person));
             var subject = templator.Apply(mailTemplate.Subject);
             var htmlText = templator.Apply(mailTemplate.HtmlText);
             var plainText = templator.Apply(mailTemplate.PlainText);
