@@ -62,7 +62,7 @@ namespace Quaestur
                             .Where(c => c.Moment.Value < age)
                             .SumOrDefault(c => c.Amount.Value, 0);
                         var spentAfterAge = credits
-                            .Where(c => (c.Moment.Value >= age) && (c.Amount.Value < 0) && (c.ReferenceType.Value != InteractionReferenceType.Decay))
+                            .Where(c => (c.Moment.Value >= age) && (c.Amount.Value < 0))
                             .SumOrDefault(c => (-c.Amount.Value), 0);
 
                     if (spentAfterAge < balanceAtAge)
@@ -71,7 +71,7 @@ namespace Quaestur
                             .SumOrDefault(c => c.Amount.Value, 0);
                         var newDecay = new Credits(Guid.NewGuid());
                         newDecay.Owner.Value = person;
-                        newDecay.Amount.Value = balanceAtAge - spentAfterAge;
+                        newDecay.Amount.Value = -(balanceAtAge - spentAfterAge);
                         newDecay.Reason.Value = translator.Get(
                             "Credits.Decay.Reason", "Reason stated for credits decay.", "Decay");
                         newDecay.ReferenceType.Value = InteractionReferenceType.Decay;
