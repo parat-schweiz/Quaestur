@@ -169,6 +169,33 @@ namespace Quaestur
 
                 return string.Empty;
             });
+            Get("/person/detail/actions/assignmembernumber/{id}", parameters =>
+            {
+                string idString = parameters.id;
+                var membership = Database.Query<Membership>(idString);
+
+                if ((membership != null) &&
+                    HasAccess(membership.Person.Value, PartAccess.Demography, AccessRight.Write) &&
+                    (membership.Person.Value.Number.Value < 1))
+                {
+                    using (var transaction = Database.BeginTransaction())
+                    {
+                        var highNumber = Database.Query<Person>().MaxOrDefault(p => p.Number.Value, 1);
+                        var person = membership.Person.Value;
+                        person.Number.Value = highNumber + 1;
+                        Database.Save(person);
+                        Journal(
+                            person,
+                            "Person.Journal.MemberNumber.Assigned",
+                            "Journal entry when member number assigned",
+                            "Assigned member number {0}",
+                            t => person.Number.Value.ToString());
+                        transaction.Commit();
+                    }
+                }
+
+                return string.Empty;
+            });
             Get("/person/detail/actions/createballotpaper/{id}", parameters =>
             {
                 string idString = parameters.id;
@@ -196,7 +223,7 @@ namespace Quaestur
 
                             status.SetDataSuccess(Convert.ToBase64String(pdf), filename);
                             Journal(
-                                CurrentSession.User,
+                                membership.Person.Value,
                                 "BallotPaper.Journal.Download.Success",
                                 "Journal entry when downloaded ballot paper",
                                 "Downloaded ballot paper for {0}",
@@ -209,7 +236,7 @@ namespace Quaestur
                                 "Status message when downloading ballot paper fails due to document creation error",
                                 "Could not ballot paper fails due to document creation error");
                             Journal(
-                                CurrentSession.User,
+                                membership.Person.Value,
                                 "BallotPaper.Journal.Download.Error.Compile",
                                 "Journal entry when failed to download ballot paper due to document creation error",
                                 "Could not download ballot paper for {0} due to document creation error",
@@ -263,7 +290,7 @@ namespace Quaestur
                     var csvBytes = Encoding.UTF8.GetBytes(csv.ToString());
                     status.SetDataSuccess(Convert.ToBase64String(csvBytes), membership.Person.Value.Number.Value + ".csv");
                     Journal(
-                        CurrentSession.User,
+                        membership.Person.Value,
                         "BillData.Journal.Download.Success",
                         "Journal entry when downloaded bill data",
                         "Downloaded bill data");

@@ -71,6 +71,15 @@ $("#actionDownloadBillData").click(function(event) {
   downloadUrlWait("/person/detail/actions/downloadbilldata/" + membershipId, "text/csv");
   event.preventDefault();
 });
+$("#actionAssignMemberNumber").click(function(event) {
+  waitingDialog.show(undefined, undefined, function(){
+    var membershipId = $("#actionMembership").val();
+    $.get("/person/detail/actions/assignmembernumber/" + membershipId, function(statusData, status){
+      waitingDialog.hide();
+    });
+  });
+  event.preventDefault();
+});
 $('.selectpicker').selectpicker();
 </script>
 <div class="container">
@@ -94,6 +103,7 @@ $('.selectpicker').selectpicker();
         <button id ="actionButtonDownloadSettlement" type="button" class="btn btn-default">@Model.PhraseButtonDownloadSettlement</button>
         <button id ="actionSendSettlementOrReminder" type="button" class="btn btn-default">@Model.PhraseButtonSendSettlementOrReminder</button>
         <button id ="actionCreateBallotPaper" type="button" class="btn btn-default">@Model.PhraseButtonCreateBallotPaper</button>
+        <button id ="actionAssignMemberNumber" type="button" class="btn btn-default">@Model.PhraseButtonAssignMemberNumber</button>
       </div>
     </div>
   </form>
