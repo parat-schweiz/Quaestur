@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BaseLibrary;
 using Nancy;
 using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
@@ -315,18 +316,7 @@ namespace Publicus
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
             {
-                if (DateTime.TryParseExact(dateStringValue + " " + timeStringValue,
-                    new string[] {
-                        "yyyy-MM-dd HH:mm:ss",
-                        "yyyy-MM-dd HH:mm",
-                        "dd.MM.yyyy HH:mm:ss",
-                        "dd.MM.yyyy HH:mm",
-                        "MM/dd/yyyy HH:mm:ss",
-                        "MM/dd/yyyy HH:mm"
-                    },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out DateTime value))
+                if ((dateStringValue + " " + timeStringValue).TryParseDateTime(out DateTime value))
                 {
                     field.Value = value;
                 }
@@ -368,18 +358,7 @@ namespace Publicus
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
             {
-                if (DateTime.TryParseExact(dateStringValue + " " + timeStringValue,
-                    new string[] {
-                        "yyyy-MM-dd HH:mm:ss",
-                        "yyyy-MM-dd HH:mm",
-                        "dd.MM.yyyy HH:mm:ss",
-                        "dd.MM.yyyy HH:mm",
-                        "MM/dd/yyyy HH:mm:ss",
-                        "MM/dd/yyyy HH:mm"
-                    },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out DateTime value))
+                if ((dateStringValue + " " + timeStringValue).TryParseDateTime(out DateTime value))
                 {
                     field.Value = value;
                 }
@@ -420,18 +399,7 @@ namespace Publicus
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (DateTime.TryParseExact(stringValue,
-                    new string[] {
-                        "yyyy-MM-dd HH:mm:ss",
-                        "yyyy-MM-dd HH:mm",
-                        "dd.MM.yyyy HH:mm:ss",
-                        "dd.MM.yyyy HH:mm",
-                        "MM/dd/yyyy HH:mm:ss",
-                        "MM/dd/yyyy HH:mm"
-                    },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out DateTime value))
+                if (stringValue.TryParseDateTime(out DateTime value))
                 {
                     field.Value = value;
                 }
@@ -459,11 +427,7 @@ namespace Publicus
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (DateTime.TryParseExact(stringValue,
-                    new string[] { "yyyy-MM-dd", "dd.MM.yyyy", "MM/dd/yyyy" },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal,
-                    out DateTime value))
+                if (stringValue.TryParseDate(out DateTime value))
                 {
                     field.Value = value;
                 }
@@ -490,15 +454,7 @@ namespace Publicus
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (DateTime.TryParseExact(stringValue,
-                    new string[] {
-                    "yyyy-MM-dd",
-                    "dd.MM.yyyy",
-                    "MM/dd/yyyy",
-                    },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal,
-                    out DateTime value))
+                if (stringValue.TryParseDate(out DateTime value))
                 {
                     field.Value = value;
                 }

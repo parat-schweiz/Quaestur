@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using BaseLibrary;
 using Nancy;
 using Nancy.Responses.Negotiation;
 using Newtonsoft.Json;
@@ -309,11 +310,7 @@ namespace Census
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (DateTime.TryParseExact(stringValue,
-                    new string[] { "yyyy-MM-dd", "dd.MM.yyyy", "MM/dd/yyyy" },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal,
-                    out DateTime value))
+                if (stringValue.TryParseDate(out DateTime value))
                 {
                     field.Value = value;
                 }
@@ -374,15 +371,7 @@ namespace Census
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
-                if (DateTime.TryParseExact(stringValue,
-                    new string[] {
-                    "yyyy-MM-dd",
-                    "dd.MM.yyyy",
-                    "MM/dd/yyyy",
-                    },
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeLocal,
-                    out DateTime value))
+                if (stringValue.TryParseDate(out DateTime value))
                 {
                     field.Value = value;
                 }

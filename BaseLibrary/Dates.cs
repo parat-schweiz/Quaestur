@@ -5,6 +5,31 @@ namespace BaseLibrary
 {
     public static class Dates
     {
+        public static bool TryParseDateTime(this string stringValue, out DateTime value)
+        {
+            return DateTime.TryParseExact(stringValue,
+                new string[] {
+                    "yyyy-MM-dd HH:mm:ss",
+                    "yyyy-MM-dd HH:mm",
+                    "dd.MM.yyyy HH:mm:ss",
+                    "dd.MM.yyyy HH:mm",
+                    "MM/dd/yyyy HH:mm:ss",
+                    "MM/dd/yyyy HH:mm"
+                },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeLocal,
+                out value);
+        }
+
+        public static bool TryParseDate(this string stringValue, out DateTime value)
+        {
+            return DateTime.TryParseExact(stringValue,
+                new string[] { "yyyy-MM-dd", "dd.MM.yyyy", "MM/dd/yyyy" },
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.AssumeUniversal,
+                out value);
+        }
+
         public static string FormatSwissDateDay(this DateTime value)
         {
             return value.ToString("dd.MM.yyyy", CultureInfo.InvariantCulture);
