@@ -49,7 +49,6 @@ function process() {
     let start = new Uint8Array(t.start);
     let startString = toHexString(start);
     let targetString = toHexString(new Uint8Array(t.target));
-    console.log("prc " + self.response.name + " strt=" + startString + " tgt=" + targetString);
     crypto.subtle.digest("SHA-256", start).then((middle) => {
         crypto.subtle.digest("SHA-256", middle).then((ende) => {
             let endeString = toHexString(new Uint8Array(ende));
@@ -61,7 +60,6 @@ function process() {
             }
             self.response.done++;
             if (success || (!self.tasks.any())) {
-                console.log("rsp " + self.response.name + " ctr=" + self.response.counter + " dne=" + self.response.done + " suc=" + self.response.success);
                 postMessage(self.response);
                 self.tasks = null;
                 self.response = null;
@@ -74,7 +72,6 @@ function process() {
 
 onmessage = (e) => {
     if (e.data.type == "throttle_hash_request") {
-        console.log("req " + e.data.name + " ctr=" + e.data.counter + " tsk=" + e.data.tasks.length);
         self.response = {};
         self.response.type = "throttle_hash_result";
         self.response.name = e.data.name;

@@ -21,7 +21,6 @@ class Generator {
             while (hexValue.length < (this.bytelength * 2)) {
                 hexValue = "0" + hexValue;
             }
-            //console.log(this.current.toString(16) + "/" + this.max.toString(16) + " => " + hexValue);
             return hexToBytes(hexValue);
         }
 	}
@@ -59,10 +58,7 @@ async function sendTask(worker, name)
     }
     self.todoreq -= request.tasks.length;
     if (request.tasks.length > 0) {
-        console.log("snd " + request.name + " ctr=" + request.counter + " tsk=" + request.tasks.length);
         worker.postMessage(request);
-    } else {
-        console.log("nmt " + request.name + " treq=" + todoreq + " trsp=" + todorsp);
     }
 }
 
@@ -76,7 +72,6 @@ async function sendUpdate()
 
 async function handleMessage(e) {
     if (e.data.type == "throttle_hash_result") {
-        console.log("rcv " + e.data.name + " ctr=" + e.data.counter + " dne=" + e.data.done + " suc=" + e.data.success);
         if (e.data.counter = self.currentRound.counter) {
             self.done += e.data.done;
             self.todorsp -= e.data.done;
