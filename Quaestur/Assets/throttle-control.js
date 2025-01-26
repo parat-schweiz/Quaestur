@@ -57,11 +57,12 @@ async function sendTask(worker, name)
             break;
         }
     }
+    self.todoreq -= request.tasks.length;
     if (request.tasks.length > 0) {
         console.log("snd " + request.name + " ctr=" + request.counter + " tsk=" + request.tasks.length);
         worker.postMessage(request);
     } else {
-        console.log("nmt " + request.name)
+        console.log("nmt " + request.name + " treq=" + todoreq + " trsp=" + todorsp);
     }
 }
 
@@ -78,6 +79,7 @@ async function handleMessage(e) {
         console.log("rcv " + e.data.name + " ctr=" + e.data.counter + " dne=" + e.data.done + " suc=" + e.data.success);
         if (e.data.counter = self.currentRound.counter) {
             self.done += e.data.done;
+            self.todorsp -= e.data.done;
             if ((self.done % 256) == 0) {
                 sendUpdate();
             }
@@ -89,6 +91,8 @@ async function handleMessage(e) {
                 post("/throttle", JSON.stringify(self.currentRound), function(throttleDataString, status) {
                     self.currentRound = JSON.parse(throttleDataString);
                     if ('counter' in self.currentRound) {
+                        self.todoreq = 1 << self.currentRound.bitlength;
+                        self.todorsp = 1 << self.currentRound.bitlength;
                         self.gen = new Generator(self.currentRound.bitlength);
                         self.workers.forEach((w) => {
                             sendTask(w.worker, w.name);
@@ -113,6 +117,8 @@ async function start(firstRound) {
     self.workers = new Array();
 	self.done = 0;
     self.round = 0;
+    self.todoreq = 1 << self.currentRound.bitlength;
+    self.todorsp = 1 << self.currentRound.bitlength;
 	for (i = 0; i < 4; i++) {
 		let worker = {};
         worker.name = "w" + i.toString();

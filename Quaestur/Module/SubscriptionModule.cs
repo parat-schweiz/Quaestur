@@ -1095,6 +1095,7 @@ namespace Quaestur
             {
                 postfix[0] = (byte)(postfix[0] & ((1 << (bitlength % 8)) - 1));
             }
+            Console.WriteLine("postfix " + postfix.ToHexString());
             var start = prefix.Concat(postfix);
             var middle = start.HashSha256();
             var target = middle.HashSha256();
