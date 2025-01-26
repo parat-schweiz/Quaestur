@@ -44,8 +44,8 @@ class Queue {
     }
 }
 
-function process() {
-    let t = self.tasks.dequeue();
+function process(response, tasks) {
+    let t = tasks.dequeue();
     let start = new Uint8Array(t.start);
     let startString = toHexString(start);
     let targetString = toHexString(new Uint8Array(t.target));
@@ -54,17 +54,14 @@ function process() {
             let endeString = toHexString(new Uint8Array(ende));
             let success = (targetString == endeString);
             if (success) {
-                console.warn("SUCCESS!!!!!!");
-                self.response.success = true;
-                self.response.middle = toHexString(new Uint8Array(middle));
+                response.success = true;
+                response.middle = toHexString(new Uint8Array(middle));
             }
-            self.response.done++;
-            if (success || (!self.tasks.any())) {
-                postMessage(self.response);
-                self.tasks = null;
-                self.response = null;
+            response.done++;
+            if (success || (!tasks.any())) {
+                postMessage(response);
             } else {
-                process();
+                process(response, tasks);
             }
         });
     });
@@ -72,18 +69,18 @@ function process() {
 
 onmessage = (e) => {
     if (e.data.type == "throttle_hash_request") {
-        self.response = {};
-        self.response.type = "throttle_hash_result";
-        self.response.name = e.data.name;
-        self.response.counter = e.data.counter;
-        self.response.done = 0;
-        self.response.success = false;
-        self.tasks = new Queue();
+        let response = {};
+        response.type = "throttle_hash_result";
+        response.name = e.data.name;
+        response.counter = e.data.counter;
+        response.done = 0;
+        response.success = false;
+        let tasks = new Queue();
         e.data.tasks.forEach((t) => {
-            self.tasks.enqueue(t);
+            tasks.enqueue(t);
         });
-        if (self.tasks.any()) {
-            process();
+        if (tasks.any()) {
+            process(response, tasks);
         }
     }
 };

@@ -26,102 +26,112 @@ class Generator {
 	}
 }
 
-async function post(url, data, callback) {
+async function post(that, url, data, callback) {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", url, true);
     xhr.onreadystatechange = () => {
         if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-            callback(xhr.response, xhr.status);
+            callback(that, xhr.response, xhr.status);
         }
     };
     xhr.send(data);
 }
 
-async function sendTask(worker, name)
-{
-    let request = {};
-    request.type = "throttle_hash_request";
-    request.name = name;
-    request.counter = self.currentRound.counter;
-    request.tasks = new Array();
-    for (let i = 0; i < 16; i++)
-    {
-        let value = self.gen.next();
-        if (value != null) {
-            let task = {};
-            task.start = hexToBytes(self.currentRound.prefix).concat(value);
-            task.target = hexToBytes(self.currentRound.target);
-            request.tasks.push(task);
+class Control {
+    constructor(firstRound) {
+        this.currentRound = firstRound;
+    }
+    sendTask(worker, name) {
+        let request = {};
+        request.type = "throttle_hash_request";
+        request.name = name;
+        request.counter = this.currentRound.counter;
+        request.tasks = new Array();
+        for (let i = 0; i < 16; i++)
+        {
+            let value = this.gen.next();
+            if (value != null) {
+                let task = {};
+                task.start = hexToBytes(this.currentRound.prefix).concat(value);
+                task.target = hexToBytes(this.currentRound.target);
+                request.tasks.push(task);
+            } else {
+                break;
+            }
+        }
+        if (request.tasks.length > 0) {
+            worker.postMessage(request);
+        }
+    }
+    sendUpdate() {
+        let update = {};
+        update.type = "throttle_process_update";
+        update.done = this.done;
+        postMessage(update);
+    }
+    next(throttleDataString, status) {
+        this.currentRound = JSON.parse(throttleDataString);
+        if ('counter' in this.currentRound) {
+            this.gen = new Generator(this.currentRound.bitlength);
+            this.workers.forEach((w) => {
+                this.sendTask(w.worker, w.name);
+            });
         } else {
-            break;
+            this.workers.forEach((w) => { 
+                w.worker.terminate();
+                w.worker = null;
+            });
+            this.workers = null;
+            this.currentRound.type = "throttle_process_result";
+            postMessage(this.currentRound);
+            self.control = null;
         }
     }
-    self.todoreq -= request.tasks.length;
-    if (request.tasks.length > 0) {
-        worker.postMessage(request);
-    }
-}
-
-async function sendUpdate()
-{
-    let update = {};
-    update.type = "throttle_process_update";
-    update.done = self.done;
-    postMessage(update);
-}
-
-async function handleMessage(e) {
-    if (e.data.type == "throttle_hash_result") {
-        if (e.data.counter = self.currentRound.counter) {
-            self.done += e.data.done;
-            self.todorsp -= e.data.done;
-            if ((self.done % 256) == 0) {
-                sendUpdate();
+    handleMessage(e) {
+        if (e.data.type == "throttle_hash_result") {
+            if (e.data.counter = this.currentRound.counter) {
+                this.done += e.data.done;
+                if ((this.done % 256) == 0) {
+                    this.sendUpdate();
+                }
+                if (e.data.success) {
+                    this.round++;
+                    this.done = this.round * (1 << this.currentRound.bitlength);
+                    this.sendUpdate();
+                    this.currentRound.solvedMiddle = e.data.middle;
+                    post(this, "/throttle", JSON.stringify(this.currentRound), (that, throttleDataString, status) => {
+                        that.next(throttleDataString, status);
+                    });
+                }
             }
-            if (e.data.success) {
-                self.round++;
-                self.done = self.round * (1 << self.currentRound.bitlength);
-                sendUpdate();
-                self.currentRound.solvedMiddle = e.data.middle;
-                post("/throttle", JSON.stringify(self.currentRound), function(throttleDataString, status) {
-                    self.currentRound = JSON.parse(throttleDataString);
-                    if ('counter' in self.currentRound) {
-                        self.todoreq = 1 << self.currentRound.bitlength;
-                        self.todorsp = 1 << self.currentRound.bitlength;
-                        self.gen = new Generator(self.currentRound.bitlength);
-                        self.workers.forEach((w) => {
-                            sendTask(w.worker, w.name);
-                        });
-                    } else {
-                        self.workers.forEach((w) => w.worker.terminate());
-                        self.workers = null;
-                        self.currentRound.type = "throttle_process_result";
-                        postMessage(self.currentRound);
-                        return;
-                    }
-                });
-            }
+            this.sendTask(e.target, e.data.name);
         }
-        sendTask(e.target, e.data.name);
+    }
+    start() {
+        this.gen = new Generator(this.currentRound.bitlength);
+        this.workers = new Array();
+	    this.done = 0;
+        this.round = 0;
+	    for (let i = 0; i < 4; i++) {
+		    let worker = {};
+            worker.name = "w" + i.toString();
+            worker.worker = new Worker("/Assets/throttle-hash.js");
+            worker.worker.onmessage = (e) => {
+                this.handleMessage(e);
+            };
+            this.workers.push(worker);
+            this.sendTask(worker.worker, worker.name);
+	    }
     }
 }
 
-async function start(firstRound) {
-    self.currentRound = firstRound;
-    self.gen = new Generator(self.currentRound.bitlength);
-    self.workers = new Array();
-	self.done = 0;
-    self.round = 0;
-    self.todoreq = 1 << self.currentRound.bitlength;
-    self.todorsp = 1 << self.currentRound.bitlength;
-	for (i = 0; i < 4; i++) {
-		let worker = {};
-        worker.name = "w" + i.toString();
-        worker.worker = new Worker("/Assets/throttle-hash.js");
-        worker.worker.onmessage = handleMessage;
-        self.workers.push(worker);
-        sendTask(worker.worker, worker.name);
-	}
+function start(firstRound) {
+    if (self.control == null) {
+        self.control = new Control(firstRound);
+        self.control.start();
+    } else {
+        setTimeout(() => start(firstRound), 100);
+    }
 }
 
 onmessage = (e) => {
