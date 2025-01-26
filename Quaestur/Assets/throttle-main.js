@@ -15,7 +15,7 @@ function throttle(task, update, finished) {
                 break;
             case "throttle_process_result":
                 this.worker.terminate();
-                this.workers = null;
+                this.worker = null;
                 finished(e.data);
                 break;
         }
