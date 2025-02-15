@@ -17,8 +17,8 @@ namespace Quaestur
     {
         private Language? _currentLanguage = null;
 
-        protected IDatabase Database { get; private set; }
-        protected Translation Translation { get; private set; }
+        public IDatabase Database { get; private set; }
+        public Translation Translation { get; private set; }
 
         public QuaesturModule()
         { 

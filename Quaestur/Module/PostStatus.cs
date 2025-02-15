@@ -176,6 +176,11 @@ namespace Quaestur
             _messages.Add(new JProperty(fieldName + "Validation", message));
         }
 
+        public void Add(string fieldName, string translatedMessage)
+        {
+            _messages.Add(new JProperty(fieldName + "Validation", translatedMessage));
+        }
+
         public void AssingDataUrlString(string fieldName, ByteArrayField dataField, StringField contentTypeField, string stringValue, bool required)
         {
             if (!string.IsNullOrEmpty(stringValue))
@@ -352,7 +357,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTime field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -394,7 +399,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTimeNull field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeNullField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -436,7 +441,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateTimeString(string fieldName, FieldDateTime field, string stringValue)
+        public void AssignDateTimeString(string fieldName, DateTimeField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -464,7 +469,7 @@ namespace Quaestur
         }
 
 
-        public void AssignDateString(string fieldName, FieldDate field, string stringValue)
+        public void AssignDateString(string fieldName, DateField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -491,7 +496,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignDateString(string fieldName, FieldDateNull field, string stringValue, bool notNull = false)
+        public void AssignDateString(string fieldName, DateNullField field, string stringValue, bool notNull = false)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -530,7 +535,7 @@ namespace Quaestur
             }
         }
 
-        public void AssignStringFree(string fieldName, StringField field, string stringValue)
+        public bool AssignStringFree(string fieldName, StringField field, string stringValue)
         {
             if (stringValue == null)
             {
@@ -540,6 +545,7 @@ namespace Quaestur
             {
                 field.Value = stringValue;
             }
+            return true;
         }
 
         public const string UnchangedGpgPassphraseValue = "_______________________________";
@@ -557,11 +563,12 @@ namespace Quaestur
             }
         }
 
-        public void AssignStringRequired(string fieldName, StringField field, string stringValue)
+        public bool AssignStringRequired(string fieldName, StringField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
                 field.Value = stringValue;
+                return true;
             }
             else
             {
@@ -570,6 +577,7 @@ namespace Quaestur
                     "Validation message on string required",
                     "Value required");
                 IsSuccess = false;
+                return false;
             }
         }
 

@@ -311,7 +311,7 @@ namespace Publicus
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTime field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -353,7 +353,7 @@ namespace Publicus
             }
         }
 
-        public void AssignDateTimeString(string dateFieldName, string timeFieldName, FieldDateTimeNull field, string dateStringValue, string timeStringValue)
+        public void AssignDateTimeString(string dateFieldName, string timeFieldName, DateTimeNullField field, string dateStringValue, string timeStringValue)
         {
             if (!string.IsNullOrEmpty(dateStringValue) &&
                 !string.IsNullOrEmpty(timeStringValue))
@@ -395,7 +395,7 @@ namespace Publicus
             }
         }
 
-        public void AssignDateTimeString(string fieldName, FieldDateTime field, string stringValue)
+        public void AssignDateTimeString(string fieldName, DateTimeField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -423,7 +423,7 @@ namespace Publicus
         }
 
 
-        public void AssignDateString(string fieldName, FieldDate field, string stringValue)
+        public void AssignDateString(string fieldName, DateField field, string stringValue)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
@@ -450,7 +450,7 @@ namespace Publicus
             }
         }
 
-        public void AssignDateString(string fieldName, FieldDateNull field, string stringValue, bool notNull = false)
+        public void AssignDateString(string fieldName, DateNullField field, string stringValue, bool notNull = false)
         {
             if (!string.IsNullOrEmpty(stringValue))
             {
