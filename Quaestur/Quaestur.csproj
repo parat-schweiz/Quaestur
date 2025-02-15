@@ -322,6 +322,11 @@
     <Compile Include="Module\SubscriptionEditModule.cs" />
     <Compile Include="Module\SubscriptionModule.cs" />
     <Compile Include="Infrastructure\SubscribeThrottle.cs" />
+    <Compile Include="Util\Widget.cs" />
+    <Compile Include="Util\StringWidget.cs" />
+    <Compile Include="Util\DateWidget.cs" />
+    <Compile Include="Util\SelectIdWidget.cs" />
+    <Compile Include="Util\Form.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1109,6 +1114,18 @@
     <None Include="Assets\throttle-main.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\Widget\string.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\date.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\date.js.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Widget\selectid.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -1121,6 +1138,7 @@
     <Folder Include="Documents\" />
     <Folder Include="Assets\filesaver\" />
     <Folder Include="Assets\images\" />
+    <Folder Include="View\Widget\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

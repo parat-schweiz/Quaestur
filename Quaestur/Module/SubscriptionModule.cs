@@ -142,6 +142,49 @@ namespace Quaestur
         }
     }
 
+    public class JoinForm : Form<Person>
+    {
+        private JoinPostalAddressForm _postalAddress;
+
+        public JoinForm(QuaesturModule module, MailTemplate template)
+            : base(module, "JoinForm", template.Subject, template.HtmlText.GetText(module.Translator))
+        {
+            _postalAddress = new JoinPostalAddressForm(module);
+        }
+
+        protected override IEnumerable<SubFormHandler<Person>> CreateSubForms()
+        {
+            yield return new SubFormHandler<Person, PostalAddress>(
+                new JoinPostalAddressForm(Module),
+                p =>
+                {
+                    if (p.PrimaryPostalAddress == null)
+                    {
+                        var subObj = new PostalAddress(Guid.NewGuid());
+                        subObj.Person.Value = p;
+                        subObj.Precedence.Value = 1;
+                        return subObj;
+                    }
+                    else
+                    {
+                        return p.PrimaryPostalAddress;
+                    }
+                });
+        }
+
+        public override string Template => throw new NotImplementedException();
+    }
+
+    public class JoinPostalAddressForm : Form<PostalAddress>
+    {
+        public JoinPostalAddressForm(QuaesturModule module) 
+            : base(module, "JoinPostalAddress", null, null)
+        {
+        }
+
+        public override string Template => throw new NotImplementedException();
+    }
+
     public class JoinViewModel
     {
         public string PhraseFieldUserName;

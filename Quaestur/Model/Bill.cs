@@ -34,13 +34,13 @@ namespace Quaestur
         public ForeignKeyField<Membership, Bill> Membership { get; private set; }
         public StringField Number { get; private set; }
         public EnumField<BillStatus> Status { get; private set; }
-        public FieldDate FromDate { get; private set; }
-        public FieldDate UntilDate { get; private set; }
+        public DateField FromDate { get; private set; }
+        public DateField UntilDate { get; private set; }
         public DecimalField Amount { get; private set; }
-        public FieldDate CreatedDate { get; private set; }
-        public FieldDateNull PayedDate { get; private set; }
+        public DateField CreatedDate { get; private set; }
+        public DateNullField PayedDate { get; private set; }
         public ByteArrayField DocumentData { get; private set; }
-        public FieldDateNull ReminderDate { get; private set; }
+        public DateNullField ReminderDate { get; private set; }
         public Field<int> ReminderLevel { get; private set; }
 
         public Bill() : this(Guid.Empty)
@@ -52,13 +52,13 @@ namespace Quaestur
             Membership = new ForeignKeyField<Membership, Bill>(this, "membershipid", false, null);
             Number = new StringField(this, "number", 256);
             Status = new EnumField<BillStatus>(this, "status", BillStatus.New, BillStatusExtensions.Translate);
-            FromDate = new FieldDate(this, "fromdate", new DateTime(1850, 1, 1));
-            UntilDate = new FieldDate(this, "untildate", new DateTime(1850, 1, 1));
+            FromDate = new DateField(this, "fromdate", new DateTime(1850, 1, 1));
+            UntilDate = new DateField(this, "untildate", new DateTime(1850, 1, 1));
             Amount = new DecimalField(this, "amount", 16, 4);
-            CreatedDate = new FieldDate(this, "createddate", new DateTime(1850, 1, 1));
-            PayedDate = new FieldDateNull(this, "payeddate");
+            CreatedDate = new DateField(this, "createddate", new DateTime(1850, 1, 1));
+            PayedDate = new DateNullField(this, "payeddate");
             DocumentData = new ByteArrayField(this, "documentdata", false);
-            ReminderDate = new FieldDateNull(this, "reminderdate");
+            ReminderDate = new DateNullField(this, "reminderdate");
             ReminderLevel = new Field<int>(this, "reminderlevel", 0);
         }
 
