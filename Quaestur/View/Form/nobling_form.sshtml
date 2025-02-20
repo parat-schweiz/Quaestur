@@ -1,0 +1,91 @@
+﻿@Master['View/nobling.sshtml']
+
+@Section['script']
+<script>
+function assignFieldMultiValidation(field, key, result){
+  var fieldId = '#@Model.Id' + field + key;
+  var feedbackId = '#@Model.Id' + field + "Feedback" + key;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).addClass('invalid-feedback');
+    $(feedbackId).removeClass('valid-feedback');
+    $(feedbackId).html(validation);
+  }else{
+    $(fieldId).addClass('is-invalid');
+    $(feedbackId).removeClass('invalid-feedback');
+    $(feedbackId).addClass('valid-feedback');
+    $(feedbackId).html('');
+  }
+}
+function assignFieldValidation(field, result){
+  var fieldId = '#@Model.Id' + field;
+  var validation = result[field + 'Validation'];
+  if (validation){
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().addClass('is-invalid');
+    }else{
+      $(fieldId).addClass('is-invalid');
+    }
+    $(fieldId + "Feedback").addClass('invalid-feedback');
+    $(fieldId + "Feedback").removeClass('valid-feedback');
+    $(fieldId + "Feedback").html(validation);
+  }else{
+    if ($(fieldId)[0].tagName == 'SELECT'){
+      $(fieldId).parent().removeClass('is-invalid');
+    }else{
+      $(fieldId).removeClass('is-invalid');
+    }
+    $(fieldId + "Feedback").removeClass('invalid-feedback');
+    $(fieldId + "Feedback").addClass('valid-feedback');
+    $(fieldId + "Feedback").html('');
+  }
+}
+function assignValidation(resultData){
+  var result = JSON.parse(resultData);
+  @Each.Widgets
+  @Current.SetValidation
+  @EndEach
+  if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
+  return result.IsSuccess;s
+}
+$(document).ready(function() {
+  @Each.Widgets
+  @Current.Js
+  @EndEach
+  $("#@Model.ButtonOkId").click(function() {
+    var formData = new Object();
+    @Each.Widgets
+    @Current.GetValue
+    @EndEach
+    $.post("@Model.SaveUrl", JSON.stringify(formData), function(resultData, status){
+      if (assignValidation(resultData)) {
+        $('#@Model.DialogId').modal('hide');
+        updateApiPermissionList();
+        $('.modal-backdrop').remove();
+      }
+    });
+  });
+});
+</script>
+@EndSection
+
+@Section['content']
+  <div class="row header">
+    <div class="col-12">
+        @Model.Text
+    </div>
+  </div>
+  <div class="row input">
+    <form>
+      @Each.Widgets
+      @Current.Html
+      @EndEach
+      <div class="form-row">
+        <div class="col-12 mb-3">
+          <input type="submit" id="@Model.ButtonOkId" class="btn btn-primary" value="@Model.PhraseButtonOk"/>
+        </div>
+      </div>
+    </form>
+  </div>
+@EndSection

@@ -57,7 +57,7 @@ namespace Quaestur
 
         public override string GetValue
         {
-            get { return string.Format("$(\"#{0}{1}\").val();", Form.Id, Id); }
+            get { return string.Format("formData.{1} = $(\"#{0}{1}\").val();", Form.Id, Id); }
         }
 
         public override string SetValidation
@@ -65,9 +65,18 @@ namespace Quaestur
             get { return string.Format("assignFieldValidation(\"{0}\", result);", Id); }
         }
 
-        public override void AssignValue(PostStatus status, JObject data, TObject obj)
+        public override void SaveValue(PostStatus status, JObject data, TObject obj)
         {
+            var field = _field(obj);
             status.AssignObjectIdString(Id, _field(obj), data.ValueString(Id));
+            if (field.Dirty)
+            {
+                UpdatedObject = obj;
+            }
+        }
+
+        public override void LoadValue(TObject obj)
+        {
         }
     }
 }

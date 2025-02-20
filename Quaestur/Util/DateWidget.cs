@@ -26,9 +26,14 @@ namespace Quaestur
             get { return Render("View/Widget/date.js.sshtml"); }
         }
 
-        public override void AssignValue(PostStatus status, JObject data, TObject obj)
+        public override void SaveValue(PostStatus status, JObject data, TObject obj)
         {
-            status.AssignDateString(Id, _field(obj), data.ValueString(Id));
+            var field = _field(obj);
+            status.AssignDateString(Id, field, data.ValueString(Id));
+            if (field.Dirty)
+            {
+                UpdatedObject = obj;
+            }
         }
     }
 }

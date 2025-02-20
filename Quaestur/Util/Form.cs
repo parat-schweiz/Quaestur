@@ -13,12 +13,18 @@ namespace Quaestur
         public string Id { get; private set; }
         public string Title { get; private set; }
         public string Text { get; private set; }
+        public string ButtonOkId { get; private set; }
+        public string PhraseButtonOk { get; private set; }
+        public string SaveUrl { get; private set; }
 
-        public Form(QuaesturModule module, string id, string title, string text = null)
+        public Form(QuaesturModule module, string id, string title, string saveUrl, string phraseButtonOk, string text = null)
         {
             Id = id;
             Title = title;
             Text = text;
+            SaveUrl = saveUrl;
+            ButtonOkId = id + "Ok";
+            PhraseButtonOk = phraseButtonOk;
         }
 
         public abstract void ClearUpdated();
@@ -36,7 +42,9 @@ namespace Quaestur
     public abstract class SubFormHandler<TParent>
         where TParent : DatabaseObject, new()
     {
-        public abstract void AssingSubForms(PostStatus status, JObject data, TParent obj);
+        public abstract void SaveSubForm(PostStatus status, JObject data, TParent obj);
+
+        public abstract void LoadSubForm(TParent obj);
 
         public abstract void ClearUpdated();
 
@@ -48,22 +56,31 @@ namespace Quaestur
         where TSub : DatabaseObject, new()
     {
         private readonly Form<TSub> _form;
-        private readonly Func<TParent, TSub> _select;
+        private readonly Func<TParent, bool, TSub> _select;
 
-        public SubFormHandler(Form<TSub> form, Func<TParent, TSub> select)
+        public SubFormHandler(Form<TSub> form, Func<TParent, bool, TSub> select)
         {
             _form = form;
             _select = select;
         }
 
-        public override void AssingSubForms(PostStatus status, JObject data, TParent obj)
+        public override void SaveSubForm(PostStatus status, JObject data, TParent obj)
         {
-            _form.AssignValues(status, data, _select(obj));
+            _form.SaveValues(status, data, _select(obj, true));
         }
 
         public override void ClearUpdated()
         {
             _form.ClearUpdated();
+        }
+
+        public override void LoadSubForm(TParent obj)
+        {
+            var sub = _select(obj, false);
+            if (sub != null)
+            {
+                _form.LoadValues(sub);
+            }
         }
 
         public override void Save()
@@ -75,63 +92,35 @@ namespace Quaestur
     public abstract class Form<TObject> : Form
         where TObject : DatabaseObject, new()
     {
-        private readonly List<Widget<TObject>> _widgets;
-        private readonly List<DatabaseObject> _updatedObjects;
-        private readonly List<SubFormHandler<TObject>> _subForms;
+        private readonly List<IWidget<TObject>> _widgets;
 
-        public IEnumerable<Widget<TObject>> Widgets { get { return _widgets; } }
+        public IEnumerable<IWidget<TObject>> Widgets { get { return _widgets; } }
         public TObject Prototype { get; private set; }
 
-        public Form(QuaesturModule module, string id, string title, string text = null)
-            : base(module, id, title, text)
+        public Form(QuaesturModule module, string id, string title, string saveUrl, string text = null)
+            : base(module, id, title, saveUrl, text)
         {
             Prototype = new TObject();
-            _widgets = new List<Widget<TObject>>();
-            _updatedObjects = new List<DatabaseObject>();
-            _subForms = CreateSubForms().ToList();
+            _widgets = new List<IWidget<TObject>>();
         }
 
-        protected void Add(Widget<TObject> widget)
+        protected void Add(IWidget<TObject> widget)
         {
             _widgets.Add(widget);
         }
-
-        public override void ClearUpdated()
-        {
-            _updatedObjects.Clear();
-            foreach (var sub in _subForms)
-            {
-                sub.ClearUpdated();
-            }
-        }
-
-        public override void Save()
-        {
-            foreach (var obj in _updatedObjects)
-            {
-                Module.Database.Save(obj);
-            }
-            foreach (var sub in _subForms)
-            {
-                sub.Save();
-            }
-        }
-
-        protected virtual IEnumerable<SubFormHandler<TObject>> CreateSubForms()
-        {
-            return new SubFormHandler<TObject>[0];
-        }
-
-        public void AssignValues(PostStatus status, JObject data, TObject obj)
+        public void SaveValues(PostStatus status, JObject data, TObject obj)
         {
             foreach (var widget in _widgets)
             {
-                widget.AssignValue(status, data, obj);
+                widget.SaveValue(status, data, obj);
             }
-            _updatedObjects.Add(obj);
-            foreach (var sub in _subForms)
+        }
+
+        public void LoadValues(TObject obj)
+        {
+            foreach (var widget in _widgets)
             {
-                sub.AssingSubForms(status, data, obj);
+                widget.LoadValue(obj);
             }
         }
     }

@@ -144,45 +144,55 @@ namespace Quaestur
 
     public class JoinForm : Form<Person>
     {
-        private JoinPostalAddressForm _postalAddress;
-
-        public JoinForm(QuaesturModule module, MailTemplate template)
-            : base(module, "JoinForm", template.Subject, template.HtmlText.GetText(module.Translator))
+        private ServiceAddress GetMailAddress(Person person, bool create)
         {
-            _postalAddress = new JoinPostalAddressForm(module);
+            var address = person.PrimaryAddress(ServiceType.EMail);
+            if ((address == null) && create)
+            {
+                address = new ServiceAddress(Guid.NewGuid());
+                address.Person.Value = person;
+                address.Precedence.Value = 0;
+                address.Service.Value = ServiceType.EMail;
+                address.Category.Value = AddressCategory.Home;
+            }
+            return address;
         }
 
-        protected override IEnumerable<SubFormHandler<Person>> CreateSubForms()
+        private PostalAddress GetPostalAddress(Person person, bool create)
         {
-            yield return new SubFormHandler<Person, PostalAddress>(
-                new JoinPostalAddressForm(Module),
-                p =>
-                {
-                    if (p.PrimaryPostalAddress == null)
-                    {
-                        var subObj = new PostalAddress(Guid.NewGuid());
-                        subObj.Person.Value = p;
-                        subObj.Precedence.Value = 1;
-                        return subObj;
-                    }
-                    else
-                    {
-                        return p.PrimaryPostalAddress;
-                    }
-                });
+            var address = person.PrimaryPostalAddress;
+            if ((address == null) && create)
+            {
+                address = new PostalAddress(Guid.NewGuid());
+                address.Person.Value = person;
+                address.Precedence.Value = 0;
+            }
+            return address;
         }
 
-        public override string Template => throw new NotImplementedException();
-    }
-
-    public class JoinPostalAddressForm : Form<PostalAddress>
-    {
-        public JoinPostalAddressForm(QuaesturModule module) 
-            : base(module, "JoinPostalAddress", null, null)
+        public override void ClearUpdated()
         {
+            throw new NotImplementedException();
         }
 
-        public override string Template => throw new NotImplementedException();
+        public override void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public JoinForm(QuaesturModule module, MailTemplate template, string saveUrl, Person person, string mailAddress)
+            : base(module, "JoinForm", template.Subject, saveUrl, template.HtmlText.GetText(module.Translator))
+        {
+            if (person != null)
+            {
+                LoadValues(person);
+            }
+            else if (!string.IsNullOrEmpty(mailAddress))
+            {
+            }
+        }
+
+        public override string Template => "View/Form/nobling_form.sshtml";
     }
 
     public class JoinViewModel
@@ -779,8 +789,15 @@ namespace Quaestur
 
                 if (subscription != null)
                 {
-                    return View["View/subscribe.sshtml",
-                        new SubscribeViewModel(Translator, Database, subscription, "join")];
+                    var saveUrl = string.Format("/join/{0}/{1}",
+                                                CurrentLanguage.Locale(),
+                                                subscription.Id.Value);
+                    var page = subscription.SubscribePrePages.Value(Database, CurrentLanguage);
+                    var joinForm = new JoinForm(this, page, saveUrl, null, null);
+                    return joinForm.Render();
+
+                    //return View["View/subscribe.sshtml",
+                    //    new SubscribeViewModel(Translator, Database, subscription, "join")];
                 }
 
                 return AccessDenied();
@@ -814,23 +831,29 @@ namespace Quaestur
                     {
                         if (person != null)
                         {
-                            var linkUrl = CreateLink("join",
+                            var saveUrl = CreateLink("join",
                                                      languageString,
                                                      subscriptionIdString,
                                                      personIdString,
                                                      DateTime.UtcNow.AddDays(10).Ticks.ToString());
-                            return View["View/join.sshtml",
-                                new JoinViewModel(Translator, Database, subscription, linkUrl, person)];
+                            var page = subscription.SubscribePrePages.Value(Database, CurrentLanguage);
+                            var joinForm = new JoinForm(this, page, saveUrl, person, null);
+                            return joinForm.Render();
+                            //return View["View/join.sshtml",
+                            //    new JoinViewModel(Translator, Database, subscription, linkUrl, person)];
                         }
                         else if (TryParseAddress(personIdString, out string mailAddress))
                         {
-                            var linkUrl = CreateLink("join",
+                            var saveUrl = CreateLink("join",
                                                      languageString,
                                                      subscriptionIdString,
                                                      personIdString,
                                                      DateTime.UtcNow.AddDays(10).Ticks.ToString());
-                            return View["View/join.sshtml",
-                                new JoinViewModel(Translator, Database, subscription, linkUrl, mailAddress)];
+                            var page = subscription.SubscribePrePages.Value(Database, CurrentLanguage);
+                            var joinForm = new JoinForm(this, page, saveUrl, null, mailAddress);
+                            return joinForm.Render();
+                            //return View["View/join.sshtml",
+                            //    new JoinViewModel(Translator, Database, subscription, linkUrl, mailAddress)];
                         }
                     }
                 }

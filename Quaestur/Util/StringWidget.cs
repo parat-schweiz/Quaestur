@@ -33,21 +33,31 @@ namespace Quaestur
             get { return Render("View/Widget/string.sshtml"); }
         }
 
-        public override void AssignValue(PostStatus status, JObject data, TObject obj)
+        public override void SaveValue(PostStatus status, JObject data, TObject obj)
         {
+            var field = _field(obj);
             var valid =
                 Required ?
-                status.AssignStringRequired(Id, _field(obj), data.ValueString(Id)) :
-                status.AssignStringFree(Id, _field(obj), data.ValueString(Id));
+                status.AssignStringRequired(Id, field, data.ValueString(Id)) :
+                status.AssignStringFree(Id, field, data.ValueString(Id));
 
             if (valid && (_validation != null))
             {
-                var validationMessage = _validation(_field(obj).Value);
+                var validationMessage = _validation(field.Value);
                 if (!string.IsNullOrEmpty(validationMessage))
                 {
                     status.Add(Id, validationMessage);
                 }
             }
+            if (field.Dirty)
+            {
+                UpdatedObject = obj;
+            }
+        }
+
+        public override void LoadValue(TObject obj)
+        {
+            Value = _field(obj).Value;
         }
     }
 }
