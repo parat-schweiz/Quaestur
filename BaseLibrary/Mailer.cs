@@ -134,7 +134,14 @@ namespace BaseLibrary
                 content.AddDocument(attachement); 
             }
 
-            Send(SystemMailAddress, AdminMailAddress, null, AdminKeyInfo, subject, content);
+            try
+            {
+                Send(SystemMailAddress, AdminMailAddress, null, AdminKeyInfo, subject, content);
+            }
+            catch (GpgException)
+            {
+                // the admin is informed before we get here.
+            }
         }
 
         private Multipart Encrypt(Multipart input, GpgPublicKeyInfo recipientKey)
@@ -153,7 +160,8 @@ namespace BaseLibrary
             multipartStream.Position = 0;
             var plainText = Encoding.UTF8.GetString(multipartStream.ToArray()).Replace("\n", "\r\n");
 
-            _gpg.Encrypt(plainText, out string cipherText, recipientKey.Id, true);
+            var result = _gpg.Encrypt(plainText, out string cipherText, recipientKey.Id, true);
+            result.ThrowOnError();
             var encryptedPart = new TextPart("octet-stream");
             encryptedPart.ContentType.MediaType = "application";
             encryptedPart.ContentType.Name = "encrypted.asc";
@@ -163,7 +171,6 @@ namespace BaseLibrary
             encryptedPart.ContentTransferEncoding = ContentEncoding.SevenBit;
             encryptedPart.Headers.Remove(HeaderId.ContentTransferEncoding);
             gpgMultipart.Add(encryptedPart);
-
             return gpgMultipart;
         }
 
@@ -183,7 +190,9 @@ namespace BaseLibrary
             multipartStream.Position = 0;
             var plainText = Encoding.UTF8.GetString(multipartStream.ToArray()).Replace("\n", "\r\n");
 
-            _gpg.EncryptAndSign(plainText, out string cipherText, recipientKey.Id, senderKey.Id, true, senderKey.Passphrase);
+            var result = _gpg.EncryptAndSign(plainText, out string cipherText, recipientKey.Id, senderKey.Id, true, senderKey.Passphrase);
+            result.ThrowOnError();
+
             var encryptedPart = new TextPart("octet-stream");
             encryptedPart.ContentType.MediaType = "application";
             encryptedPart.ContentType.Name = "encrypted.asc";
@@ -193,7 +202,6 @@ namespace BaseLibrary
             encryptedPart.ContentTransferEncoding = ContentEncoding.SevenBit;
             encryptedPart.Headers.Remove(HeaderId.ContentTransferEncoding);
             gpgMultipart.Add(encryptedPart);
-
             return gpgMultipart;
         }
 
@@ -208,7 +216,9 @@ namespace BaseLibrary
             input.WriteTo(multipartStream);
             var signedText = Encoding.UTF8.GetString(multipartStream.ToArray()).Replace("\n", "\r\n");
 
-            _gpg.Sign(signedText, out string signatureText, senderKey.Id, SignatureType.DetachSign, true, senderKey.Passphrase);
+            var result = _gpg.Sign(signedText, out string signatureText, senderKey.Id, SignatureType.DetachSign, true, senderKey.Passphrase);
+            result.ThrowOnError();
+
             var signaturePart = new TextPart("pgp-signature");
             signaturePart.ContentType.MediaType = "application";
             signaturePart.ContentType.Name = "signature.asc";
@@ -263,17 +273,34 @@ namespace BaseLibrary
 
         public MimeMessage Create(InternetAddress from, InternetAddress to, GpgPrivateKeyInfo senderKey, GpgPublicKeyInfo recipientKey, string subject, Multipart content)
         {
-            if (senderKey != null && recipientKey != null)
+            try
             {
-                content = EncryptAndSign(content, senderKey, recipientKey);
+                if (senderKey != null && recipientKey != null)
+                {
+                    content = EncryptAndSign(content, senderKey, recipientKey);
+                }
+                else if (recipientKey != null)
+                {
+                    content = Encrypt(content, recipientKey);
+                }
+                else if (senderKey != null)
+                {
+                    content = Sign(content, senderKey);
+                }
             }
-            else if (recipientKey != null)
+            catch (GpgException gpgException)
             {
-                content = Encrypt(content, recipientKey);
-            }
-            else if (senderKey != null)
-            {
-                content = Sign(content, senderKey);
+                _log.Error("Gpg operation failed for mail from {0} to {1} sender key {2} recipient key {3} status {4}",
+                           from, to, senderKey?.Id ?? "none", recipientKey?.Id ?? "none", gpgException.Message);
+                var body = new StringBuilder();
+                body.AppendLine("Subject:        " + subject);
+                body.AppendLine("From:           " + from);
+                body.AppendLine("To:             " + to);
+                body.AppendLine("Sender Key:     " + senderKey?.Id ?? "none");
+                body.AppendLine("Recipeient Key: " + recipientKey?.Id ?? "none");
+                body.AppendLine("Status:         " + gpgException.Message);
+                SendAdmin("gpg operation failed", body.ToString());
+                throw;
             }
 
             var message = new MimeMessage();
