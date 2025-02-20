@@ -200,13 +200,27 @@ namespace SecurityService
             reply.AddProperty(SecurityServiceProtocol.ErrorDataProperty, Encoding.UTF8.GetBytes(result.Item2));
             reply.AddProperty(SecurityServiceProtocol.ResultProperty, SecurityServiceProtocol.ResultSuccess);
 
-            if (passphraseResult?.Item1 != null)
+            if (result.Item1 == 0)
             {
-                _logger.Info("Executed GPG {0} width passphrase {1}", arguments, passphraseResult.Item2);
+                if (passphraseResult?.Item1 != null)
+                {
+                    _logger.Info("Executed GPG {0} width passphrase {1}", arguments, passphraseResult.Item2);
+                }
+                else
+                {
+                    _logger.Info("Executed GPG {0}", arguments);
+                }
             }
             else
             {
-                _logger.Info("Executed GPG {0}", arguments);
+                if (passphraseResult?.Item1 != null)
+                {
+                    _logger.Warning("Execution of GPG {0} width passphrase {1} failed: {2}", arguments, passphraseResult.Item2, result.Item2);
+                }
+                else
+                {
+                    _logger.Warning("Execution of GPG {0} failed: {1}", arguments, result.Item2);
+                }
             }
         }
 

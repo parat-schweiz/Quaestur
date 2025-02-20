@@ -39,18 +39,20 @@ namespace BaseLibrary
     {
         public GpgStatus Status { get; private set; }
         public string Signer { get; private set; }
+        public string Message { get; private set; }
 
-        public GpgResult(GpgStatus status, string signer)
+        public GpgResult(GpgStatus status, string signer, string message)
         {
             Status = status;
             Signer = signer;
+            Message = message;
         }
 
         public void ThrowOnError()
         {
             if (Status != GpgStatus.Success)
             {
-                throw new GpgException(Status.ToString());
+                throw new GpgException(Message);
             }
         }
     }
@@ -575,16 +577,16 @@ namespace BaseLibrary
                 if (matches.Count == 1)
                 {
                     var signer = matches[0].Groups[1].Value;
-                    return new GpgResult(GpgStatus.Success, signer);
+                    return new GpgResult(GpgStatus.Success, signer, null);
                 }
                 else
                 {
-                    return new GpgResult(GpgStatus.Success, null);
+                    return new GpgResult(GpgStatus.Success, null, null);
                 }
             }
             else
             {
-                return new GpgResult(GpgStatus.Success, null);
+                return new GpgResult(GpgStatus.Success, null, null);
             }
         }
 
@@ -592,23 +594,23 @@ namespace BaseLibrary
         {
             if (text.Contains("gpg: cancelled by user"))
             {
-                return new GpgResult(GpgStatus.Canceled, null);
+                return new GpgResult(GpgStatus.Canceled, null, text);
             }
             else if (text.Contains("gpg: decryption failed: No secret key"))
             {
-                return new GpgResult(GpgStatus.NoSecretKey, null);
+                return new GpgResult(GpgStatus.NoSecretKey, null, text);
             }
             else if (text.Contains("gpg: [stdin]: encryption failed: No public key"))
             {
-                return new GpgResult(GpgStatus.NoPublicKey, null);
+                return new GpgResult(GpgStatus.NoPublicKey, null, text);
             }
             else if (text.Contains("gpg: [stdin]: encryption failed: Unusable public key"))
             {
-                return new GpgResult(GpgStatus.NoPublicKey, null);
+                return new GpgResult(GpgStatus.NoPublicKey, null, text);
             }
             else
             {
-                return new GpgResult(GpgStatus.Error, null);
+                return new GpgResult(GpgStatus.Error, null, text);
             }
         }
 
