@@ -327,6 +327,7 @@
     <Compile Include="Util\DateWidget.cs" />
     <Compile Include="Util\SelectIdWidget.cs" />
     <Compile Include="Util\Form.cs" />
+    <Compile Include="Util\ReadOnlyWidget.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1126,6 +1127,9 @@
     <None Include="View\Widget\selectid.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\Form\nobling_form.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -1139,6 +1143,7 @@
     <Folder Include="Assets\filesaver\" />
     <Folder Include="Assets\images\" />
     <Folder Include="View\Widget\" />
+    <Folder Include="View\Form\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">
