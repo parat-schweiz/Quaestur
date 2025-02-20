@@ -144,13 +144,23 @@ namespace Quaestur
                     HasAccessBilling(membership))
                 {
                     var pdf = BillingReminderTask.CreateSettlementDocument(Database, Translation, membership);
-                    status.SetDataSuccess(Convert.ToBase64String(pdf.Item1), pdf.Item2);
+                    if (pdf.Item1 != null)
+                    {
+                        status.SetDataSuccess(Convert.ToBase64String(pdf.Item1), pdf.Item2);
+                    }
+                    else
+                    {
+                        status.SetError(
+                            "Settlement.Download.Status.Error.Failed",
+                            "Status message when downloading settlement fails because of a latex error.",
+                            "Could not create settlement because of a latex error.");
+                    }
                 }
                 else
                 {
                     status.SetError(
                         "Settlement.Download.Status.Error.NotFound",
-                        "Status message when downloading settlement fails because not current ballot paper was found.",
+                        "Status message when downloading settlement fails because the membership was not found.",
                         "Could not create settlement because no valid membership was found.");
                 }
 
