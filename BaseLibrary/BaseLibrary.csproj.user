@@ -34,5 +34,9 @@
     <MonoArchitecture>Default</MonoArchitecture>
     <Architecture></Architecture>
     <TargetRuntimeId></TargetRuntimeId>
+    <MonoXDebug>false</MonoXDebug>
+    <MonoGcType>Default</MonoGcType>
+    <MonoLlvm>false</MonoLlvm>
+    <MonoNoLlvm>false</MonoNoLlvm>
   </PropertyGroup>
 </Project>
