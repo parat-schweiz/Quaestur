@@ -23,6 +23,7 @@ namespace Quaestur
         public string SuccessText { get; private set; }
         public string Data { get; private set; }
         public string FileName { get; private set; }
+        public string Redirect { get; set; }
 
         public bool ObjectNotNull(DatabaseObject obj)
         {
@@ -97,6 +98,11 @@ namespace Quaestur
         public void SetErrorAccessDenied()
         {
             SetError("Error.Access.Denied", "Error message when access denied", "You do not have permission for this action.");
+        }
+
+        public void SetErrorInvalidData()
+        {
+            SetError("Error.Invalid.Data", "Error message when access denied", "The submitted data is not valid.");
         }
 
         public bool HasAnyOrganizationAccess(PartAccess partAccess, AccessRight right)

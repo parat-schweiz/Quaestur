@@ -170,25 +170,84 @@ namespace Quaestur
             return address;
         }
 
-        public override void ClearUpdated()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Save()
-        {
-            throw new NotImplementedException();
-        }
-
         public JoinForm(QuaesturModule module, MailTemplate template, string saveUrl, Person person, string mailAddress)
-            : base(module, "JoinForm", template.Subject, saveUrl, template.HtmlText.GetText(module.Translator))
+            : base(module, "JoinForm", template.Subject, saveUrl,
+                   module.Translator.Get("Subscription.Join.Button.Join", "Join button on the join page", "Join").EscapeHtml(),
+                   template.HtmlText.GetText(module.Translator))
         {
             if (person != null)
             {
-                LoadValues(person);
+                Add(new ReadOnlyWidget<Person, string>(
+                    this, "MailAddress", 6,
+                    module.Translator.Get("Subscription.Join.Field.MailAddress", "Mail address field on the join page", "E-Mail").EscapeHtml(),
+                    p => p.PrimaryMailAddress));
             }
             else if (!string.IsNullOrEmpty(mailAddress))
             {
+                Add(new ReadOnlyWidget<Person, string>(
+                    this, "MailAddress", 6,
+                    module.Translator.Get("Subscription.Join.Field.MailAddress", "Mail address field on the join page", "E-Mail").EscapeHtml(),
+                    p => mailAddress));
+            }
+
+            Add(new StringWidget<Person>(
+                    this, "FirstName", 6,
+                    module.Translator.Get("Subscription.Join.Field.FirstName", "First name field on the join page", "First name").EscapeHtml(),
+                    p => p.FirstName, true));
+            Add(new StringWidget<Person>(
+                    this, "MiddleNames", 6,
+                    module.Translator.Get("Subscription.Join.Field.dMiddleNames", "Middle names field on the join page", "Middle names").EscapeHtml(),
+                    p => p.MiddleNames, false));
+            Add(new StringWidget<Person>(
+                    this, "LastName", 6,
+                    module.Translator.Get("Subscription.Join.Field.LastName", "Last name field on the join page", "Last name").EscapeHtml(),
+                    p => p.LastName, true));
+            Add(new DateWidget<Person>(
+                    this, "BirthDate", 6,
+                    module.Translator.Get("Subscription.Join.Field.BirthDate", "Birth date field on the join page", "Birth date").EscapeHtml(),
+                    p => p.BirthDate));
+            Add(new SubWidget<Person, PostalAddress>(
+                    new StringWidget<PostalAddress>(
+                    this, "Street", 6,
+                    module.Translator.Get("Subscription.Join.Field.Street", "Street field on the join page", "Street").EscapeHtml(),
+                    s => s.Street, true),
+                    GetPostalAddress));
+            Add(new SubWidget<Person, PostalAddress>(
+                    new StringWidget<PostalAddress>(
+                    this, "Place", 6,
+                    module.Translator.Get("Subscription.Join.Field.Place", "Place field on the join page", "Place").EscapeHtml(),
+                    s => s.Place, true),
+                    GetPostalAddress));
+            Add(new SubWidget<Person, PostalAddress>(
+                    new StringWidget<PostalAddress>(
+                    this, "PostalCode", 6,
+                    module.Translator.Get("Subscription.Join.Field.PostalCode", "Postal code field on the join page", "Postal code").EscapeHtml(),
+                    s => s.PostalCode, true),
+                    GetPostalAddress));
+            Add(new SubWidget<Person, PostalAddress>(
+                    new SelectIdWidget<PostalAddress, Country>(
+                    this, "Country", 6,
+                    module.Translator.Get("Subscription.Join.Field.Country", "Country field on the join page", "Country").EscapeHtml(),
+                    s => s.Country,
+                    c => new NamedIdViewModel(module.Translator, c, false),
+                    null,
+                    null,
+                    i => i.Name),
+                    GetPostalAddress));
+            Add(new SubWidget<Person, PostalAddress>(
+                    new SelectIdWidget<PostalAddress, State>(
+                    this, "State", 6,
+                    module.Translator.Get("Subscription.Join.Field.State", "State field on the join page", "State").EscapeHtml(),
+                    s => s.State,
+                    s => new NamedIdViewModel(module.Translator, s, false),
+                    null,
+                    () => new NamedIdViewModel(module.Translator.Get("Subscription.Join.Field.State.None", "No selection in the select state field of the join page", "None"), false, true),
+                    i => i.Name),
+                    GetPostalAddress));
+
+            if (person != null)
+            {
+                LoadValues(person);
             }
         }
 
@@ -659,13 +718,10 @@ namespace Quaestur
 
                 if (subscription != null)
                 {
-                    Console.WriteLine("  view");
                     return View["View/subscribe.sshtml",
                         new SubscribeViewModel(Translator, Database, subscription, "subscribe")];
                 }
 
-
-                Console.WriteLine("  denied");
                 return AccessDenied();
             });
             Post("/subscribe/{lang}/{sid}", parameters =>
@@ -867,168 +923,162 @@ namespace Quaestur
                 string personIdString = parameters.pid;
                 string expiryString = parameters.expiry;
                 string authValue = parameters.auth;
+                var status = CreateStatus();
 
                 if (VerifyAuth(authValue, "join", languageString, subscriptionIdString, personIdString, expiryString))
                 {
-                    if (!CheckExpiry(expiryString))
+                    if (CheckExpiry(expiryString))
                     {
-                        return Expired("/");
-                    }
+                        var bodyString = ReadBody();
 
-                    CurrentLanguage = ConvertLocale(parameters.lang);
-                    var subscription = Database.Query<Subscription>(subscriptionIdString);
-                    using (var transaction = Database.BeginTransaction())
-                    {
-                        var person = Database.Query<Person>(personIdString);
-
-                        if (subscription != null)
+                        if (TryParseJson(bodyString, out JObject request))
                         {
-                            var model = this.Bind<JoinViewModel>();
-                            var required = Translator.Get("Subscription.Join.Validation.Missing", "Missing value on the join page", "This field is required").EscapeHtml();
-                            var invalid = Translator.Get("Subscription.Join.Validation.Invalid", "Invalid value on the join page", "Value is not valid").EscapeHtml();
-                            var valid = true;
-                            DateTime birthDate = new DateTime(1850, 1, 1);
-
-                            valid &= ValidateNotEmpty(required, model.UserName, ref model.UserNameFeedback, ref model.UserNameValid);
-                            valid &= ValidateNotEmpty(required, model.FirstName, ref model.FirstNameFeedback, ref model.FirstNameValid);
-                            valid &= ValidateNotEmpty(required, model.LastName, ref model.LastNameFeedback, ref model.LastNameValid);
-                            valid &= ValidateNotEmpty(required, model.BirthDate, ref model.BirthDateFeedback, ref model.BirthDateValid);
-                            if (ValidateNotEmpty(required, model.BirthDate, ref model.BirthDateFeedback, ref model.BirthDateValid))
+                            CurrentLanguage = ConvertLocale(parameters.lang);
+                            using (var transaction = Database.BeginTransaction())
                             {
-                                if (model.BirthDate.TryParseDate(out DateTime value))
+                                var subscription = Database.Query<Subscription>(subscriptionIdString);
+                                if (subscription != null)
                                 {
-                                    if ((value >= DateTime.UtcNow.Date.AddYears(-115) &&
-                                        (value <= DateTime.UtcNow.Date.AddYears(-5))))
+                                    var page = subscription.SubscribePrePages.Value(Database, CurrentLanguage);
+                                    var person = Database.Query<Person>(personIdString);
+                                    if (person != null)
                                     {
-                                        birthDate = value;
+                                        if (!person.ActiveMemberships.Any(m => m.Type.Value != subscription.Membership.Value))
+                                        {
+                                            var joinForm = new JoinForm(this, page, null, person, null);
+                                            joinForm.SaveValues(status, request, person);
+                                            if (status.IsSuccess)
+                                            {
+                                                person.Language.Value = CurrentLanguage;
+                                                Database.Save(person);
+                                                Journal("Join Page", person, "Subscription.Join.Journal.Join", "Join journal event on the join page", "Requested to join");
+                                                transaction.Commit();
+                                                Global.Mail.Send(
+                                                    subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                Global.Mail.SendAdmin(
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                var expiry = DateTime.UtcNow.AddDays(10).Ticks.ToString();
+                                                status.Redirect = CreateLink(
+                                                    "joined",
+                                                    CurrentLanguage.Locale(),
+                                                    subscription.Id.Value.ToString(),
+                                                    person.Id.Value.ToString(),
+                                                    expiry);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            status.SetErrorAccessDenied();
+                                            Global.Mail.SendAdmin(
+                                                "Join error caused by memberships",
+                                                Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                        }
+                                    }
+                                    else if (TryParseAddress(personIdString, out string mailAddress))
+                                    {
+                                        var oldAddress = Database
+                                            .Query<ServiceAddress>(DC.Equal("service", (int)ServiceType.EMail)
+                                            .And(DC.Equal("address", mailAddress)))
+                                            .FirstOrDefault();
+
+                                        if (oldAddress == null)
+                                        {
+                                            person = new Person(Guid.NewGuid());
+                                            var joinForm = new JoinForm(this, page, null, person, null);
+                                            joinForm.SaveValues(status, request, person);
+                                            if (status.IsSuccess)
+                                            {
+                                                person.Language.Value = CurrentLanguage;
+                                                Database.Save(person);
+                                                Journal("Join Page", person, "Subscription.Join.Journal.Create", "Create journal event on the join page", "Was created by joining");
+                                                transaction.Commit();
+                                                Global.Mail.Send(
+                                                    subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                Global.Mail.SendAdmin(
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                var expiry = DateTime.UtcNow.AddDays(10).Ticks.ToString();
+                                                status.Redirect = CreateLink(
+                                                    "joined",
+                                                    CurrentLanguage.Locale(),
+                                                    subscription.Id.Value.ToString(),
+                                                    person.Id.Value.ToString(),
+                                                    expiry);
+                                            }
+                                        }
+                                        else if (!person.ActiveMemberships.Any(m => m.Type.Value != subscription.Membership.Value))
+                                        {
+                                            person = oldAddress.Person.Value;
+                                            var joinForm = new JoinForm(this, page, null, person, null);
+                                            joinForm.SaveValues(status, request, person);
+                                            if (status.IsSuccess)
+                                            {
+                                                person.Language.Value = CurrentLanguage;
+                                                Database.Save(person);
+                                                Journal("Join Page", person, "Subscription.Join.Journal.Join", "Join journal event on the join page", "Requested to join");
+                                                transaction.Commit();
+                                                Global.Mail.Send(
+                                                    subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                Global.Mail.SendAdmin(
+                                                    "New member joined",
+                                                    Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                                var expiry = DateTime.UtcNow.AddDays(10).Ticks.ToString();
+                                                status.Redirect = CreateLink(
+                                                    "joined",
+                                                    CurrentLanguage.Locale(),
+                                                    subscription.Id.Value.ToString(),
+                                                    person.Id.Value.ToString(),
+                                                    expiry);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            status.SetErrorAccessDenied();
+                                            person = oldAddress.Person.Value;
+                                            Global.Mail.SendAdmin(
+                                                "Join error caused by memberships",
+                                                Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
+                                        }
                                     }
                                     else
                                     {
-                                        model.BirthDateFeedback = required;
-                                        model.BirthDateValid = "is-invalid";
-                                        valid = false;
+                                        status.SetErrorInvalidData();
                                     }
                                 }
                                 else
                                 {
-                                    Console.WriteLine("BirthDate not valid");
-                                    model.BirthDateFeedback = required;
-                                    model.BirthDateValid = "is-invalid";
-                                    valid = false;
+                                    status.SetErrorNotFound();
                                 }
-                            }
-                            else
-                            {
-                                valid = false;
-                            }
-                            valid &= ValidateNotEmpty(required, model.Street, ref model.StreetFeedback, ref model.StreetValid);
-                            valid &= ValidateNotEmpty(required, model.Place, ref model.PlaceFeedback, ref model.PlaceValid);
-                            valid &= ValidateNotEmpty(required, model.PostalCode, ref model.PostalCodeFeedback, ref model.PostalCodeValid);
-                            valid &= ValidateNotEmpty(required, model.Country, ref model.CountryFeedback, ref model.CountryValid);
 
-                            if (valid)
-                            {
-                                if (person != null)
-                                {
-                                    if (!person.ActiveMemberships.Any(m => m.Type.Value != subscription.Membership.Value))
-                                    {
-                                        UpdatePersonNames(person, model, birthDate);
-                                        AddOrUpdatePostalAddress(person, model);
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Join", "Join journal event on the join page", "Requested to join");
-                                        transaction.Commit();
-                                        Global.Mail.Send(
-                                            subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        Global.Mail.SendAdmin(
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        return View["View/joined.sshtml",
-                                            new JoinedViewModel(Translator, Database, subscription, person)];
-                                    }
-                                    else
-                                    {
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Error", "Error journal event on the join page", "Tried to join despite other memberships");
-                                        transaction.Commit();
-                                        Global.Mail.SendAdmin(
-                                            "Join error caused by memberships",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        return JoinError(subscription);
-                                    }
-                                }
-                                else if (TryParseAddress(personIdString, out string mailAddress))
-                                {
-                                    var oldAddress = Database
-                                        .Query<ServiceAddress>(DC.Equal("service", (int)ServiceType.EMail)
-                                        .And(DC.Equal("address", mailAddress)))
-                                        .FirstOrDefault();
-
-                                    if (oldAddress == null)
-                                    {
-                                        person = new Person(Guid.NewGuid());
-                                        UpdatePersonNames(person, model, birthDate);
-                                        AddPostalAddress(person, model);
-                                        AddMailAddress(person, mailAddress);
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Create", "Create journal event on the join page", "Was created by joining");
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Join", "Join journal event on the join page", "Requested to join");
-                                        transaction.Commit();
-                                        Global.Mail.Send(
-                                            subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        Global.Mail.SendAdmin(
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        return View["View/joined.sshtml",
-                                            new JoinedViewModel(Translator, Database, subscription, person)];
-                                    }
-                                    else if (!person.ActiveMemberships.Any(m => m.Type.Value != subscription.Membership.Value))
-                                    {
-                                        person = oldAddress.Person.Value;
-                                        UpdatePersonNames(person, model, birthDate);
-                                        AddOrUpdatePostalAddress(person, model);
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Join", "Join journal event on the join page", "Requested to join");
-                                        transaction.Commit();
-                                        Global.Mail.Send(
-                                            subscription.SenderGroup.Value.MailAddress.Value.AnyValue,
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        Global.Mail.SendAdmin(
-                                            "New member joined",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        return View["View/joined.sshtml",
-                                            new JoinedViewModel(Translator, Database, subscription, person)];
-                                    }
-                                    else
-                                    {
-                                        person = oldAddress.Person.Value;
-                                        Journal("Join Page", person, "Subscription.Join.Journal.Error", "Error journal event on the join page", "Tried to join despite other memberships");
-                                        transaction.Commit();
-                                        Global.Mail.SendAdmin(
-                                            "Join error caused by memberships",
-                                            Global.Config.WebSiteAddress + "/person/detail/" + person.Id.Value.ToString());
-                                        return JoinError(subscription);
-                                    }
-                                }
-                                else
+                                if (!status.IsSuccess)
                                 {
                                     transaction.Rollback();
-                                    return JoinError(subscription);
                                 }
                             }
-                            else
-                            {
-                                transaction.Rollback();
-                                model.Reload(Translator, Database, subscription, person);
-                                return View["View/join.sshtml", model];
-                            }
                         }
-
-                        transaction.Rollback();
+                        else
+                        {
+                            status.SetErrorInvalidData();
+                        }
+                    }
+                    else
+                    {
+                        status.SetErrorAccessDenied();
                     }
                 }
+                else
+                {
+                    status.SetErrorAccessDenied();
+                }
 
-                return AccessDenied();
+                return status.CreateJsonData();
             });
             Get("/confirm/{lang}/{sid}", parameters =>
             {
@@ -1046,7 +1096,6 @@ namespace Quaestur
             });
             Post("/throttle", parameters =>
             {
-                Console.WriteLine("throttle");
                 var bodyString = ReadBody();
 
                 if (TryParseJson(bodyString, out JObject request))
@@ -1063,7 +1112,6 @@ namespace Quaestur
                         request.TryValueString("authValue", out string authValue) &&
                         request.TryValueHexBytes("solvedMiddle", out byte[] solvedMiddle))
                     {
-                        Console.WriteLine(" next fields ok");
                         if (VerifyAuth(authValue,
                                        "throttle",
                                        mailAddress,
@@ -1074,16 +1122,12 @@ namespace Quaestur
                                        encryptedMiddle.ToHexString(),
                                        number.ToString()))
                         {
-                            Console.WriteLine(" auth ok");
                             if (TryDecryptThrottle(encryptedMiddle, out byte[] decryptedMiddle))
                             {
-                                Console.WriteLine(" decrypt ok");
                                 if (decryptedMiddle.AreEqual(solvedMiddle))
                                 {
-                                    Console.WriteLine(" middle ok");
                                     if (counter > 1)
                                     {
-                                        Console.WriteLine(" next problem");
                                         var response = new JObject();
                                         AddProblem(mailAddress, bitLength, counter - 1, number, response);
                                         Console.WriteLine(response.ToString());
@@ -1091,7 +1135,6 @@ namespace Quaestur
                                     }
                                     else
                                     {
-                                        Console.WriteLine(" throttled ticket");
                                         var newAuthValue = CreateAuth("throttled",
                                                                       mailAddress,
                                                                       number.ToString());
@@ -1099,7 +1142,6 @@ namespace Quaestur
                                         response.Add(new JProperty("mailAddress", mailAddress));
                                         response.Add(new JProperty("number", number));
                                         response.Add(new JProperty("authValue", newAuthValue));
-                                        Console.WriteLine(response.ToString());
                                         return response.ToString();
                                     }
                                 }
@@ -1122,14 +1164,12 @@ namespace Quaestur
                             }
                             var response = new JObject();
                             AddProblem(newMailAddress, newBitLength, newCounter, newNumber, response);
-                            Console.WriteLine(response.ToString());
                             return response.ToString();
                         }
                         else
                         {
                             var response = new JObject();
                             AddMessage(response, EmailRequiredMessage());
-                            Console.WriteLine(response.ToString());
                             return response.ToString();
                         }
                     }
@@ -1138,13 +1178,38 @@ namespace Quaestur
                 {
                     var response = new JObject();
                     AddMessage(response, AnitSpamCheckFailedMessage());
-                    Console.WriteLine(response.ToString());
                     return response.ToString();
                 }
             });
             Get("/denied", parameters =>
             {
                 return View["View/info.sshtml", new AccessDeniedViewModel(Database, Translator)];
+            });
+            Get("/joined/{lang}/{sid}/{pid}/{expiry}/{auth}", parameters =>
+            {
+                string languageString = parameters.lang;
+                string subscriptionIdString = parameters.sid;
+                string personIdString = parameters.pid;
+                string expiryString = parameters.expiry;
+                string authValue = parameters.auth;
+                var status = CreateStatus();
+
+                if (VerifyAuth(authValue, "joined", languageString, subscriptionIdString, personIdString, expiryString))
+                {
+                    if (CheckExpiry(expiryString))
+                    {
+                        CurrentLanguage = ConvertLocale(languageString) ?? Language.German;
+                        var subscription = Database.Query<Subscription>(subscriptionIdString);
+                        var person = Database.Query<Person>(personIdString);
+
+                        if ((subscription != null) && (person != null))
+                        {
+                            return View["View/joined.sshtml", new JoinedViewModel(Translator, Database, subscription, person)];
+                        }
+                    }
+                }
+
+                return AccessDenied();
             });
         }
 
@@ -1161,7 +1226,6 @@ namespace Quaestur
             {
                 postfix[0] = (byte)(postfix[0] & ((1 << (bitlength % 8)) - 1));
             }
-            Console.WriteLine("postfix " + postfix.ToHexString());
             var start = prefix.Concat(postfix);
             var middle = start.HashSha256();
             var target = middle.HashSha256();
@@ -1191,12 +1255,10 @@ namespace Quaestur
 
         private object CheckSendSubscribeMail(string subscriptionIdString, bool preJoin)
         {
-            Console.WriteLine("CheckSendSubscribeMail " + (preJoin ? "prejoin" : "subscribe"));
             var subscription = Database.Query<Subscription>(subscriptionIdString);
 
             if (subscription != null)
             {
-                Console.WriteLine(" subscription ok");
                 var requestString = ReadBody();
 
                 if (TryParseJson(requestString, out JObject request))
@@ -1207,26 +1269,21 @@ namespace Quaestur
                         request.TryValueInt32("number", out int number) &&
                         request.TryValueString("authValue", out string authValue))
                     {
-                        Console.WriteLine(" fields ok");
                         if (VerifyAuth(authValue,
                                        "throttled",
                                        mailAddress,
                                        number.ToString()))
                         {
-                            Console.WriteLine(" auth ok");
                             if (Global.SubscribeThrottle.Check(mailAddress, number))
                             {
-                                Console.WriteLine(" check ok");
                                 var templateField = preJoin ? subscription.JoinPrePages : subscription.SubscribeMails;
                                 var template = templateField.Value(Database, Translator.Language);
                                 var linkAction = preJoin ? "join" : "subscribed";
                                 if (SendSubscribeMail(subscription, template, Translator, mailAddress, linkAction, number))
                                 {
-                                    Console.WriteLine(" send ok");
                                     var response = new JObject();
                                     var redirectUrl = string.Format("/confirm/{0}/{1}", CurrentLanguage.Locale(), subscription.Id.Value.ToString());
                                     response.Add(new JProperty("redirect", redirectUrl));
-                                    Console.WriteLine(response.ToString());
                                     return response.ToString();
                                 }
                             }
@@ -1238,7 +1295,6 @@ namespace Quaestur
             {
                 var response = new JObject();
                 response.Add(new JProperty("message", AnitSpamCheckFailedMessage()));
-                Console.WriteLine(response.ToString());
                 return response.ToString();
             }
         }
@@ -1281,16 +1337,6 @@ namespace Quaestur
                 valid = string.Empty;
                 return true;
             }
-        }
-
-        private Negotiator JoinError(Subscription subscription)
-        {
-            return View["View/info.sshtml",
-                new InfoViewModel(Database, Translator,
-                    Translator.Get("Subscription.Join.Error.Title", "Error title on the join page", "Error").EscapeHtml(),
-                    Translator.Get("Subscription.Join.Error.Text", "Error text on the join page", "Unfortunatly an error has occurred.").EscapeHtml(),
-                    Translator.Get("Subscription.Join.Error.Link", "Error back link on the join page", "Back").EscapeHtml(),
-                    string.Format("/join/{0}/{1}", Translator.Language.Locale(), subscription.Id))];
         }
 
         private void AddOrUpdatePostalAddress(Person person, JoinViewModel model)

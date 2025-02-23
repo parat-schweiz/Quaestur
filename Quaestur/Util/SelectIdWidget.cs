@@ -77,6 +77,12 @@ namespace Quaestur
 
         public override void LoadValue(TObject obj)
         {
+            var field = _field(obj);
+            var selectedItem = Items.FirstOrDefault(t => t.Id == (field.Value?.Id?.ToString() ?? string.Empty));
+            if (selectedItem != null)
+            {
+                selectedItem.Selected = true;
+            }
         }
     }
 }

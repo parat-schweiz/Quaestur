@@ -27,10 +27,6 @@ namespace Quaestur
             PhraseButtonOk = phraseButtonOk;
         }
 
-        public abstract void ClearUpdated();
-
-        public abstract void Save();
-
         public abstract string Template { get; }
 
         public Negotiator Render()
@@ -45,10 +41,6 @@ namespace Quaestur
         public abstract void SaveSubForm(PostStatus status, JObject data, TParent obj);
 
         public abstract void LoadSubForm(TParent obj);
-
-        public abstract void ClearUpdated();
-
-        public abstract void Save();
     }
 
     public class SubFormHandler<TParent, TSub> : SubFormHandler<TParent>
@@ -69,11 +61,6 @@ namespace Quaestur
             _form.SaveValues(status, data, _select(obj, true));
         }
 
-        public override void ClearUpdated()
-        {
-            _form.ClearUpdated();
-        }
-
         public override void LoadSubForm(TParent obj)
         {
             var sub = _select(obj, false);
@@ -81,11 +68,6 @@ namespace Quaestur
             {
                 _form.LoadValues(sub);
             }
-        }
-
-        public override void Save()
-        {
-            _form.Save();
         }
     }
 
@@ -97,8 +79,8 @@ namespace Quaestur
         public IEnumerable<IWidget<TObject>> Widgets { get { return _widgets; } }
         public TObject Prototype { get; private set; }
 
-        public Form(QuaesturModule module, string id, string title, string saveUrl, string text = null)
-            : base(module, id, title, saveUrl, text)
+        public Form(QuaesturModule module, string id, string title, string saveUrl, string phraseButtonOk, string text = null)
+            : base(module, id, title, saveUrl, phraseButtonOk, text)
         {
             Prototype = new TObject();
             _widgets = new List<IWidget<TObject>>();

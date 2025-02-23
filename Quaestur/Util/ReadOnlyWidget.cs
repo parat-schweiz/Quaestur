@@ -5,32 +5,42 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class ReadOnlyWidget<TObject> : IWidget<TObject>
+    public class ReadOnlyWidget<TObject, TValue> : Widget<TObject>
         where TObject : DatabaseObject, new()
     {
-        public Form Form { get; private set; }
-        public string Id { get; private set; }
-        public int Width { get; private set; }
-        public string PhraseField { get; private set; }
+        private readonly Func<TObject, TValue> _getValue;
 
-        public string Html => throw new NotImplementedException();
+        public TValue Value { get; set; }
 
-        public string Js => throw new NotImplementedException();
-
-        public string GetValue => throw new NotImplementedException();
-
-        public string SetValidation => throw new NotImplementedException();
-
-        public DatabaseObject UpdatedObject => throw new NotImplementedException();
-
-        public void LoadValue(TObject obj)
+        public ReadOnlyWidget(Form form, string id, int width, string phraseField, Func<TObject, TValue> getValue)
+            : base(form, id, width, phraseField)
         {
-            throw new NotImplementedException();
+            _getValue = getValue;
         }
 
-        public void SaveValue(PostStatus status, JObject data, TObject obj)
+        public override string Html
         {
-            throw new NotImplementedException();
+            get { return Render("View/Widget/readonly.sshtml"); }
+        }
+
+        public virtual string StringValue
+        {
+            get { return Value?.ToString() ?? string.Empty; }
+        }
+
+        public override string Js { get { return string.Empty; } }
+
+        public override string GetValue { get { return string.Empty; } }
+
+        public override string SetValidation { get { return string.Empty; } }
+
+        public override void LoadValue(TObject obj)
+        {
+            Value = _getValue(obj);
+        }
+
+        public override void SaveValue(PostStatus status, JObject data, TObject obj)
+        {
         }
     }
 }

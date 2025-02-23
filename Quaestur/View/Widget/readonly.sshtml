@@ -1,0 +1,4 @@
+﻿<div class="col-@Model.Width mb-3">
+  <label for="@Model.Form.Id@Model.Id">@Model.PhraseField</label>
+  <input type="input" class="form-control" id="@Model.Form.Id@Model.Id" value="@Model.StringValue" readonly/>
+</div>

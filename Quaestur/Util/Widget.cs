@@ -29,7 +29,7 @@ namespace Quaestur
         void LoadValue(TObject obj);
     }
 
-    public abstract class SubWidget<TObject, TSub> : IWidget<TObject>
+    public class SubWidget<TObject, TSub> : IWidget<TObject>
         where TObject : DatabaseObject, new()
         where TSub : DatabaseObject, new()
     {
@@ -124,7 +124,7 @@ namespace Quaestur
     {
         public TValue Value { get; set; }
 
-        public Widget(Form<TObject> form, string id, int width, string phraseField)
+        public Widget(Form form, string id, int width, string phraseField)
             : base(form, id, width, phraseField)
         {
         }

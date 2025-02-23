@@ -14,7 +14,7 @@ namespace Quaestur
         public bool Required { get; private set; }
 
         public StringWidget(
-            Form<TObject> form, 
+            Form form, 
             string id, 
             int width, 
             string phraseField, 
