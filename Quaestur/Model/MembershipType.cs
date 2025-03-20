@@ -112,6 +112,7 @@ namespace Quaestur
         public Field<long> TriplePoints { get; private set; }
         public Field<long> DoublePoints { get; private set; }
         public ForeignKeyField<Group, MembershipType> SenderGroup { get; private set; }
+        public ForeignKeyField<Group, MembershipType> NotificationGroup { get; private set; }
         public List<PaymentParameter> PaymentParameters { get; private set; }
 
         public MembershipType() : this(Guid.Empty)
@@ -132,6 +133,7 @@ namespace Quaestur
             TriplePoints = new Field<long>(this, "triplepoints", 0);
             DoublePoints = new Field<long>(this, "doublepoints", 0);
             SenderGroup = new ForeignKeyField<Group, MembershipType>(this, "sendergroup", true, null);
+            NotificationGroup = new ForeignKeyField<Group, MembershipType>(this, "notificationgroup", true, null);
         }
 
         public const string PointsTallyMailFieldName = "PointsTallyMails";

@@ -1,0 +1,1 @@
+﻿<th width="@Model.Width" colspan="@Model.ColumnSpan" class="@Model.Class">@Model.Content</th>

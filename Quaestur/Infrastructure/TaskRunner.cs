@@ -25,7 +25,7 @@ namespace Quaestur
             _task.Add(new VotingRightsUpdateTask());
             _task.Add(new BallotTask());
             _task.Add(new PointsTask());
-            _task.Add(new PaymentParameterUpdateReminderTask());
+            _task.Add(new PaymentParameterUpdateTask());
             _task.Add(new LogBufferTask());
             _task.Add(new CreditsDecayTask());
             _task.Add(new CreditsPruneTask());
@@ -33,6 +33,7 @@ namespace Quaestur
             _task.Add(new JournalPruneTask());
             _task.Add(new MailingPruneTask());
             _task.Add(new BallotPruneTask());
+            _task.Add(new MembershipTaskTask());
             _database = Global.CreateDatabase();
         }
 

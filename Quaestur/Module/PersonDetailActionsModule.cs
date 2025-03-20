@@ -103,7 +103,7 @@ namespace Quaestur
                 if (membership != null &&
                     HasAccessBilling(membership))
                 {
-                    PaymentParameterUpdateReminderTask.Send(Database, membership.Person.Value, true);
+                    PaymentParameterUpdateReminderTask.Send(Database, membership);
                 }
 
                 return string.Empty;
@@ -174,7 +174,7 @@ namespace Quaestur
                 if (membership != null &&
                     HasAccessBilling(membership))
                 {
-                    BillingReminderTask.RemindOrSettle(Database, Translation, membership, true);
+                    BillingReminderTask.RemindOrSettle(Database, membership);
                 }
 
                 return string.Empty;

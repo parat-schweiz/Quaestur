@@ -58,10 +58,12 @@ namespace Quaestur
         public string TriplePoints;
         public string DoublePoints;
         public string SenderGroup;
+        public string NotificationGroup;
         public List<NamedIntViewModel> Rights;
         public List<NamedIntViewModel> Payments;
         public List<NamedIntViewModel> Collections;
-        public List<NamedIdViewModel> Groups;
+        public List<NamedIdViewModel> SenderGroups;
+        public List<NamedIdViewModel> NotificationGroups;
         public List<NamedIdViewModel> PointsTallyMails;
         public string[] PointsTallyMailTemplates;
         public List<NamedIdViewModel> SettlementMails;
@@ -92,6 +94,7 @@ namespace Quaestur
         public string PhraseFieldPaymentParameterUpdateRequiredMailTemplates;
         public string PhraseFieldPaymentParameterUpdateInvitationMailTemplates;
         public string PhraseFieldSenderGroup;
+        public string PhraseFieldNotificationGroup;
 
         public MembershipTypeEditViewModel()
         { 
@@ -144,7 +147,12 @@ namespace Quaestur
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.Direct, false));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.ByParent, false));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.BySub, false));
-            Groups = new List<NamedIdViewModel>(database
+            SenderGroups = new List<NamedIdViewModel>(database
+                .Query<Group>()
+                .Where(g => session.HasAccess(g, PartAccess.Structure, AccessRight.Read))
+                .Select(g => new NamedIdViewModel(translator, g, false))
+                .OrderBy(g => g.Name));
+            NotificationGroups = new List<NamedIdViewModel>(database
                 .Query<Group>()
                 .Where(g => session.HasAccess(g, PartAccess.Structure, AccessRight.Read))
                 .Select(g => new NamedIdViewModel(translator, g, false))
@@ -212,10 +220,15 @@ namespace Quaestur
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.Direct, membershipType.Collection.Value == CollectionModel.Direct));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.ByParent, membershipType.Collection.Value == CollectionModel.ByParent));
             Collections.Add(new NamedIntViewModel(translator, CollectionModel.BySub, membershipType.Collection.Value == CollectionModel.BySub));
-            Groups = new List<NamedIdViewModel>(database
+            SenderGroups = new List<NamedIdViewModel>(database
                 .Query<Group>()
                 .Where(g => session.HasAccess(g, PartAccess.Structure, AccessRight.Read))
                 .Select(g => new NamedIdViewModel(translator, g, membershipType.SenderGroup.Value == g))
+                .OrderBy(g => g.Name));
+            NotificationGroups = new List<NamedIdViewModel>(database
+                .Query<Group>()
+                .Where(g => session.HasAccess(g, PartAccess.Structure, AccessRight.Read))
+                .Select(g => new NamedIdViewModel(translator, g, membershipType.NotificationGroup.Value == g))
                 .OrderBy(g => g.Name));
             PointsTallyMails = new List<NamedIdViewModel>(database
                 .Query<MailTemplate>()
@@ -578,6 +591,7 @@ namespace Quaestur
             status.AssignInt64String("MaximumBalanceForward", membershipType.MaximumBalanceForward, model.MaximumBalanceForward);
             status.AssignDecimalString("MaximumDiscount", membershipType.MaximumDiscount, model.MaximumDiscount);
             status.AssignObjectIdString("SenderGroup", membershipType.SenderGroup, model.SenderGroup);
+            status.AssignObjectIdString("NotificationGroup", membershipType.NotificationGroup, model.NotificationGroup);
         }
 
         private IEnumerable<Points> CreateTestPoints(Person person)

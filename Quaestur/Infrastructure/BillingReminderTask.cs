@@ -16,7 +16,7 @@ namespace Quaestur
             _lastSending = DateTime.MinValue;
         }
 
-        private static double DaysSinceLastReminder(Bill bill)
+        public static double DaysSinceLastReminder(Bill bill)
         {
             if (bill.ReminderDate.Value.HasValue)
             {
@@ -33,72 +33,168 @@ namespace Quaestur
             if (DateTime.UtcNow > _lastSending.AddMinutes(5))
             {
                 _lastSending = DateTime.UtcNow;
-                Global.Log.Info("Running mailing task");
+                Global.Log.Info("Running billing remeinder task");
                 var translation = new Translation(database);
-                var remindPersons = new Dictionary<string, Billing>();
+                var currentTasks = database
+                    .Query<MembershipTask>(DC.Equal("type", (int)MembershipTaskType.Billing))
+                    .ToList();
 
-                foreach (var bill in database
-                    .Query<Bill>()
-                    .Where(b => b.Status.Value == BillStatus.New && !b.Membership.Value.Person.Value.Deleted.Value)
-                    .OrderByDescending(DaysSinceLastReminder))
+                var memberships = database
+                    .Query<Bill>(DC.Equal("status", (int)BillStatus.New))
+                    .Select(b => b.Membership.Value)
+                    .Where(m => !m.Person.Value.Deleted.Value)
+                    .Distinct()
+                    .Where(m => !currentTasks.Any(t => t.Membership.Value == m))
+                    .ToList();
+
+                foreach (var membership in memberships)
                 {
-                    var currentPrepayment = bill.Membership.Value.Person.Value.CurrentPrepayment(database);
-
-                    var billing = new Billing(
-                        bill.Membership.Value.Organization.Value,
-                        bill.Membership.Value.Person.Value);
-
-                    if (!remindPersons.ContainsKey(billing.Id))
+                    var task = new BillingRemindOrSettleTask(database, membership);
+                    if (string.IsNullOrEmpty(task.Validate()))
                     {
-                        remindPersons.Add(billing.Id, billing);
+                        var membershipTask = new MembershipTask(Guid.NewGuid());
+                        membershipTask.Membership.Value = membership;
+                        membershipTask.Type.Value = MembershipTaskType.Billing;
+                        membershipTask.Status.Value = MembershipTaskStatus.New;
+                        membershipTask.Created.Value = DateTime.UtcNow;
+                        membershipTask.Modifed.Value = membershipTask.Created.Value;
+                        membershipTask.Message.Value = string.Empty;
+                        membershipTask.Error.Value = string.Empty;
+                        database.Save(membershipTask);
                     }
-
-                    remindPersons[billing.Id].Bills.Add(bill);
                 }
 
-                foreach (var billing in remindPersons.Values)
-                {
-                    RemindOrSettleInternal(database, translation, billing, false);
-                }
-
-                Global.Log.Info("Mailing task complete");
+                Global.Log.Info("Billing remeinder task complete");
             }
         }
 
-        public static void RemindOrSettle(IDatabase database, Translation translation, Membership membership, bool forceSend)
+        public static void RemindOrSettle(IDatabase database, Membership membership)
         {
-            var billing = new Billing(membership.Organization.Value, membership.Person.Value);
-            billing.Bills.AddRange(database
-                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
-                .Where(b => b.Status.Value == BillStatus.New)
-                .OrderByDescending(DaysSinceLastReminder));
-            RemindOrSettleInternal(database, translation, billing, forceSend);
+            var task = new BillingRemindOrSettleTask(database, membership);
+            task.Execute();
         }
 
         public static Tuple<byte[], string> CreateSettlementDocument(IDatabase database, Translation translation, Membership membership)
         {
-            var billing = new Billing(membership.Organization.Value, membership.Person.Value);
-            billing.Bills.AddRange(database
-                .Query<Bill>(DC.Equal("membershipid", membership.Id.Value))
-                .Where(b => b.Status.Value == BillStatus.New)
-                .OrderByDescending(DaysSinceLastReminder));
+            var task = new BillingRemindOrSettleTask(database, membership);
+            return task.CreateSettlementDocument(translation);
+        }
+    }
+
+    public class BillingRemindOrSettleTask : IMembershipTask
+    {
+        private readonly IDatabase _database;
+        private readonly Membership _membership;
+
+        public BillingRemindOrSettleTask(IDatabase database, Membership membership)
+        {
+            _database = database;
+            _membership = membership;
+        }
+
+        public void Execute()
+        {
+            var translation = new Translation(_database);
+            RemindOrSettleInternal(_database, translation, Billing);
+        }
+
+        public string Title(Translator translator)
+        {
+            var billing = Billing;
+            var prepayment = billing.Person.CurrentPrepayment(_database);
+            var outstanding = billing.Bills.Sum(b => b.Amount) - prepayment;
+            var forceSend = billing.Bills.Any(b => BillingReminderTask.DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(_database));
+
+            if (outstanding <= 0m)
+            {
+                return translator.Get(
+                    "BillingReminderTask.Title.Settle",
+                    "Settlement information title in the billing remind or settle task",
+                    "Settlement information for {0} bills",
+                    billing.Bills.Count);
+            }
+            else if (forceSend)
+            {
+                var level = Level(billing);
+                return translator.Get(
+                    "BillingReminderTask.Title.Remind",
+                    "Bill reminder title in the billing remind or settle task",
+                    "Bill reminder for {0} bills at level {1}",
+                    billing.Bills.Count,
+                    level);
+            }
+            else
+            {
+                return string.Empty;
+            }
+        }
+
+        public string Validate()
+        {
+            var billing = Billing;
+            var prepayment = billing.Person.CurrentPrepayment(_database);
+            var outstanding = billing.Bills.Sum(b => b.Amount) - prepayment;
+            var forceSend = billing.Bills.Any(b => BillingReminderTask.DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(_database));
+
+            if (_membership.Person.Value.Deleted.Value)
+            {
+                var translator = new Translator(new Translation(_database), _membership.Person.Value.Language.Value);
+                return translator.Get(
+                    "BillingReminderTask.Invalid.Reason.Deleted",
+                    "Reason person deleted in the billing remind or settle task",
+                    "Person was marked deleted.");
+            }
+            else if (outstanding <= 0m)
+            {
+                return null;
+            }
+            else if (forceSend)
+            {
+                return null;
+            }
+            else
+            {
+                var translator = new Translator(new Translation(_database), _membership.Person.Value.Language.Value);
+                return translator.Get(
+                    "BillingReminderTask.Invalid.Reason.NotDue",
+                    "Reason reminder not due in the billing remind or settle task",
+                    "No settlement or reminder is due any more.");
+            }
+        }
+
+        public Tuple<byte[], string> CreateSettlementDocument(Translation translation)
+        {
+            var billing = Billing;
             var translator = new Translator(translation, billing.Person.Language.Value);
             string settlementDocumentName = GetSettlementDocumentName(translator);
-            byte[] document = CreateSettlement(database, translator, billing);
+            byte[] document = CreateSettlement(_database, translator, billing);
             return new Tuple<byte[], string>(document, settlementDocumentName);
         }
 
-        private static void RemindOrSettleInternal(IDatabase database, Translation translation, Billing billing, bool forceReminder)
+        private Billing Billing
+        {
+            get
+            {
+                var billing = new Billing(_membership);
+                billing.Bills.AddRange(_database
+                    .Query<Bill>(DC.Equal("membershipid", _membership.Id.Value))
+                    .Where(b => b.Status.Value == BillStatus.New)
+                    .OrderByDescending(BillingReminderTask.DaysSinceLastReminder));
+                return billing;
+            }
+        }
+
+        private static void RemindOrSettleInternal(IDatabase database, Translation translation, Billing billing)
         {
             var prepayment = billing.Person.CurrentPrepayment(database);
             var outstanding = billing.Bills.Sum(b => b.Amount) - prepayment;
-            var forceSend = billing.Bills.Any(b => DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database));
+            var forceSend = billing.Bills.Any(b => BillingReminderTask.DaysSinceLastReminder(b) > b.Membership.Value.Type.Value.GetReminderPeriod(database));
 
             if (outstanding <= 0m)
             {
                 SettleBills(database, translation, billing);
             }
-            else if ((forceReminder && Global.MailCounter.Available) || forceSend)
+            else if (forceSend)
             {
                 SendReminder(database, billing);
             }
@@ -165,24 +261,29 @@ namespace Quaestur
                 technicalTranslator.Get(key, hint, technical, parameters.Select(p => p(technicalTranslator))));
         }
 
-        private static BillSendingTemplate SelectTemplate(IDatabase database, Person person, IEnumerable<Bill> bills, int level)
+        private static BillSendingTemplate SelectTemplate(IDatabase database, Membership membership, IEnumerable<Bill> bills, int level)
         {
             var allTemplates = database.Query<BillSendingTemplate>();
             return allTemplates
-                .Where(t => person.ActiveMemberships.Any(m => m.Type.Value == t.MembershipType.Value) &&
+                .Where(t => membership.Type.Value == t.MembershipType.Value &&
                             level >= t.MinReminderLevel.Value && level <= t.MaxReminderLevel.Value)
                 .OrderByDescending(t => t.MembershipType.Value.Organization.Value.Subordinates.Count())
                 .FirstOrDefault();
+        }
+
+        private static int Level(Billing billing)
+        {
+            return
+                billing.HasLevelZero ? 1 :
+                billing.Bills.Max(b => b.ReminderLevel.Value + 1);
         }
 
         private static void SendReminder(IDatabase database, Billing billing)
         {
             var translation = new Translation(database);
             var translator = new Translator(translation, billing.Person.Language.Value);
-            var level = 
-                billing.HasLevelZero ? 1 :
-                billing.Bills.Max(b => b.ReminderLevel.Value + 1);
-            var template = SelectTemplate(database, billing.Person, billing.Bills, level);
+            var level = Level(billing);
+            var template = SelectTemplate(database, billing.Membership, billing.Bills, level);
             var sendBilling = billing.HasLevelZero ? billing.SelectLevelZero() : billing;
 
             using (ITransaction transaction = database.BeginTransaction())
@@ -275,7 +376,7 @@ namespace Quaestur
         }
 
         private static string ComputeBillText(Translator translator, IEnumerable<Bill> bills)
-        { 
+        {
             return string.Join(", ", bills
                 .Select(b => translator.Get(
                     "Document.BillingReminder.BillText",
@@ -584,7 +685,7 @@ namespace Quaestur
             }
             else
             {
-                return null; 
+                return null;
             }
 
             foreach (var bill in billing.Bills)
@@ -598,15 +699,15 @@ namespace Quaestur
 
     public class Billing
     {
-        public Organization Organization { get; private set; }
-        public Person Person { get; private set; }
+        public Membership Membership { get; private set; }
+        public Organization Organization { get { return Membership.Organization.Value; } }
+        public Person Person { get { return Membership.Person.Value; } }
         public List<Bill> Bills { get; private set; }
-        public string Id { get { return Organization.Id.Value.ToString() + "-" + Person.Id.Value.ToString(); } }
+        public string Id { get { return Membership.Id.Value.ToString(); } }
 
-        public Billing(Organization organization, Person person)
+        public Billing(Membership membership)
         {
-            Organization = organization;
-            Person = person;
+            Membership = membership;
             Bills = new List<Bill>();
         }
 
@@ -620,7 +721,7 @@ namespace Quaestur
 
         public Billing SelectLevelZero()
         {
-            var newBilling = new Billing(Organization, Person);
+            var newBilling = new Billing(Membership);
             newBilling.Bills.AddRange(Bills.Where(b => b.ReminderLevel.Value < 1));
             return newBilling;
         }

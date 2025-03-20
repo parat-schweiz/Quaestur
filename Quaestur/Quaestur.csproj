@@ -276,7 +276,7 @@
     <Compile Include="Model\PaymentModelFederalTax.cs" />
     <Compile Include="Model\PaymentModelFlat.cs" />
     <Compile Include="Model\PointTransfer.cs" />
-    <Compile Include="Infrastructure\PaymentParameterUpdateReminderTask.cs" />
+    <Compile Include="Infrastructure\PaymentParameterUpdateTask.cs" />
     <Compile Include="Module\ApiModule.cs" />
     <Compile Include="Model\ApiClient.cs" />
     <Compile Include="Model\ApiPermission.cs" />
@@ -333,6 +333,9 @@
     <Compile Include="Model\PageTemplate.cs" />
     <Compile Include="Model\PageTemplateAssignment.cs" />
     <Compile Include="Module\PageTemplateModule.cs" />
+    <Compile Include="Model\MembershipTask.cs" />
+    <Compile Include="Infrastructure\MembershipTaskTask.cs" />
+    <Compile Include="Util\Table.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1135,6 +1138,15 @@
     <None Include="View\pagetemplatelist.sshtml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Include="View\Table\cell.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Table\head.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="View\Table\table.sshtml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\fontawesome\" />
@@ -1149,6 +1161,7 @@
     <Folder Include="Assets\images\" />
     <Folder Include="View\Widget\" />
     <Folder Include="View\Form\" />
+    <Folder Include="View\Table\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BaseLibrary\BaseLibrary.csproj">

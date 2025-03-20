@@ -1,0 +1,5 @@
+﻿<div class="col-@Model.Width mb-3 widget @Model.Classes">
+  <label for="@Model.Form.Id@Model.Id">@Model.PhraseField</label>
+  <input type="text" id="@Model.Form.Id@Model.Id" class="form-control datepicker" value="@Model.StringValue"/>
+  <div id="Feedback@Model.Form.Id@Model.Id" class="valid-feedback"></div>
+</div>

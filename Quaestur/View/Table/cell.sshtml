@@ -1,0 +1,1 @@
+﻿<td width="@Model.Width" colspan="@Model.ColumnSpan" id="@Model.Id" class="@Model.Class">@Model.Content</td>

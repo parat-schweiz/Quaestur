@@ -7,17 +7,13 @@ using SiteLibrary;
 
 namespace Quaestur
 {
-    public class PaymentParameterUpdateReminderTask : ITask
+    public class PaymentParameterUpdateTask : ITask
     {
         private DateTime _lastSending;
 
-        public PaymentParameterUpdateReminderTask()
+        public PaymentParameterUpdateTask()
         {
             _lastSending = DateTime.MinValue;
-        }
-
-        public void UpdateRequired()
-        { 
         }
 
         public void Run(IDatabase database)
@@ -26,21 +22,96 @@ namespace Quaestur
             {
                 _lastSending = DateTime.UtcNow;
                 Global.Log.Info("Running parameter update reminder task");
+                var currentTasks = database
+                    .Query<MembershipTask>(DC.Equal("type", (int)MembershipTaskType.PaymentParameterUpdate))
+                    .ToList();
 
-                foreach (var person in database.Query<Person>())
+                foreach (var membership in database.Query<Membership>())
                 {
-                    if (Global.MailCounter.Available &&
-                        !person.Deleted.Value &&
-                        person.Memberships.Any(m => m.Type.Value.Payment.Value != PaymentModel.None && m.Type.Value.CreatePaymentModel(database).InviteForParameterUpdate(m)) &&
-                        (!person.PaymentParameterUpdateReminderDate.Value.HasValue ||
-                        DateTime.Now.Subtract(person.PaymentParameterUpdateReminderDate.Value.Value).TotalDays >= 7d))
+                    if ((!currentTasks.Any(t => t.Membership.Value == membership)))
                     {
-                        Send(database, person, false);
+                        var task = new PaymentParameterUpdateReminderTask(database, membership);
+                        if (string.IsNullOrEmpty(task.Validate()))
+                        {
+                            var membershipTask = new MembershipTask(Guid.NewGuid());
+                            membershipTask.Membership.Value = membership;
+                            membershipTask.Type.Value = MembershipTaskType.PaymentParameterUpdate;
+                            membershipTask.Status.Value = MembershipTaskStatus.New;
+                            membershipTask.Created.Value = DateTime.UtcNow;
+                            membershipTask.Modifed.Value = membershipTask.Created.Value;
+                            membershipTask.Message.Value = string.Empty;
+                            membershipTask.Error.Value = string.Empty;
+                            database.Save(membershipTask);
+                        }
                     }
                 }
 
                 Global.Log.Info("Parameter update reminder task complete");
             }
+        }
+    }
+
+    public class PaymentParameterUpdateReminderTask : IMembershipTask
+    {
+        private readonly IDatabase _database;
+        private readonly Membership _membership;
+
+        public PaymentParameterUpdateReminderTask(IDatabase database, Membership membership)
+        {
+            _database = database;
+            _membership = membership;
+        }
+
+        public string Validate()
+        {
+            var translator = new Translator(new Translation(_database), _membership.Person.Value.Language.Value);
+
+            if (_membership.Person.Value.Deleted.Value)
+            {
+                return translator.Get(
+                    "PaymentParameterUpdateReminderTask.Invalid.Reason.Deleted",
+                    "Reason person deleted in the payment parameter update reminder task",
+                    "Person was marked deleted.");
+            }
+            else if (_membership.Type.Value.Payment.Value != PaymentModel.None)
+            {
+                return translator.Get(
+                    "PaymentParameterUpdateReminderTask.Invalid.Reason.NoPaymentModel",
+                    "Reason no payment model deleted in the payment parameter update reminder task",
+                    "No payment model selected for membership.");
+            }
+            else if (!_membership.Type.Value.CreatePaymentModel(_database).InviteForParameterUpdate(_membership))
+            {
+                return translator.Get(
+                    "PaymentParameterUpdateReminderTask.Invalid.Reason.NoUpdateRequired",
+                    "Reason no update required in the payment parameter update reminder task",
+                    "Current payment model does not require a parameter update.");
+            }
+            else if (_membership.Person.Value.PaymentParameterUpdateReminderDate.Value.HasValue &&
+                     DateTime.Now.Subtract(_membership.Person.Value.PaymentParameterUpdateReminderDate.Value.Value).TotalDays < 7d)
+            {
+                return translator.Get(
+                    "PaymentParameterUpdateReminderTask.Invalid.Reason.RecentlyUpdated",
+                    "Reason recently update in the payment parameter update reminder task",
+                    "Payment parameters were recently updated.");
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void Execute()
+        {
+            Send(_database, _membership);
+        }
+
+        public string Title(Translator translator)
+        {
+            return translator.Get(
+                "PaymentParameterUpdateReminderTask.Title",
+                "Title in the payment parameter update reminder task",
+                "Reminder for parameter update");
         }
 
         private static void Journal(IDatabase db, Person person, string key, string hint, string technical, params Func<Translator, string>[] parameters)
@@ -61,43 +132,30 @@ namespace Quaestur
                 technicalTranslator.Get(key, hint, technical, parameters.Select(p => p(technicalTranslator))));
         }
 
-        public static void Send(IDatabase database, Person person, bool forceSend)
+        public static void Send(IDatabase database, Membership membership)
         {
-            var parametersRequested = new List<string>();
+            var model = membership.Type.Value.CreatePaymentModel(database);
+            var requestParamemterUpdate = model.InviteForParameterUpdate(membership);
 
-            foreach (var membership in person.Memberships
-                .Where(m => m.Type.Value.Payment.Value != PaymentModel.None)
-                .OrderByDescending(m => m.Organization.Value.Subordinates.Count()))
+            if (SendMail(database, membership, membership.Type.Value.CreatePaymentModel(database).RequireParameterUpdate(membership)))
             {
-                var model = membership.Type.Value.CreatePaymentModel(database);
-                var requestParamemterUpdate = model.InviteForParameterUpdate(membership);
+                membership.Person.Value.PaymentParameterUpdateReminderDate.Value = DateTime.UtcNow;
 
-                if ((requestParamemterUpdate || forceSend) &&
-                    model.PersonalParameterTypes.Any(p => !parametersRequested.Contains(p.Key)))
+                if (membership.Person.Value.PaymentParameterUpdateReminderLevel.Value.HasValue)
                 {
-                    parametersRequested.AddRange(model.PersonalParameterTypes.Select(p => p.Key));
-
-                    if (SendMail(database, membership, membership.Type.Value.CreatePaymentModel(database).RequireParameterUpdate(membership)))
-                    {
-                        person.PaymentParameterUpdateReminderDate.Value = DateTime.UtcNow;
-
-                        if (person.PaymentParameterUpdateReminderLevel.Value.HasValue)
-                        {
-                            person.PaymentParameterUpdateReminderLevel.Value = person.PaymentParameterUpdateReminderLevel.Value.Value + 1;
-                        }
-                        else
-                        {
-                            person.PaymentParameterUpdateReminderLevel.Value = 1;
-                        }
-
-                        database.Save(person);
-                    }
-                    else
-                    {
-                        person.PaymentParameterUpdateReminderDate.Value = DateTime.UtcNow.AddDays(-6);
-                        database.Save(person);
-                    }
+                    membership.Person.Value.PaymentParameterUpdateReminderLevel.Value = membership.Person.Value.PaymentParameterUpdateReminderLevel.Value.Value + 1;
                 }
+                else
+                {
+                    membership.Person.Value.PaymentParameterUpdateReminderLevel.Value = 1;
+                }
+
+                database.Save(membership.Person.Value);
+            }
+            else
+            {
+                membership.Person.Value.PaymentParameterUpdateReminderDate.Value = DateTime.UtcNow.AddDays(-6);
+                database.Save(membership.Person.Value);
             }
         }
 

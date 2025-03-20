@@ -62,6 +62,7 @@ function assignValidation(resultData){
   assignFieldValidation("PaymentParameterUpdateRequiredMails", result);
   assignFieldValidation("PaymentParameterUpdateInvitationMails", result);
   assignFieldValidation("SenderGroup", result);
+  assignFieldValidation("NotificationGroup", result);
   if (result.MessageType) $.notify({ message: result.MessageText },{ type: result.MessageType, element: "form" });
   return result.IsSuccess;
 }
@@ -90,6 +91,7 @@ function getFormData(){
   formData.PaymentParameterUpdateInvitationMailTemplates = $("#membershipTypePaymentParameterUpdateInvitationMails").val();
   formData.BillDocumentTemplates = $("#membershipTypeBillDocuments").val();
   formData.SenderGroup = $("#membershipTypeSenderGroup").val();
+  formData.NotificationGroup = $("#membershipTypeNotificationGroup").val();
   return formData;
 }
 $("#@Model.ButtonId").click(function() {
@@ -219,11 +221,22 @@ $('.selectpicker').selectpicker();
       <div class="col-md-12 mb-3">
         <label for="membershipTypeSenderGroup">@Model.PhraseFieldSenderGroup</label>
         <select id="membershipTypeSenderGroup" class="selectpicker form-control" data-live-search="true">
-          @Each.Groups
+          @Each.SenderGroups
           <option value="@Current.Id" @Current.Options>@Current.Name</option>
           @EndEach
         </select>
         <div id="membershipTypeSenderGroupFeedback" class="valid-feedback"></div>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="col-md-12 mb-3">
+        <label for="membershipTypeNotificationGroup">@Model.PhraseFieldNotificationGroup</label>
+        <select id="membershipTypeNotificationGroup" class="selectpicker form-control" data-live-search="true">
+          @Each.NotificationGroups
+          <option value="@Current.Id" @Current.Options>@Current.Name</option>
+          @EndEach
+        </select>
+        <div id="membershipTypeNotificationGroupFeedback" class="valid-feedback"></div>
       </div>
     </div>
     <div class="form-row">

@@ -1,0 +1,16 @@
+﻿<table class="table table-hover table-fixed">
+  <thead>
+  @Each.Headers
+    <tr class='centering clickable-row'>
+    @Current.Render
+    </tr>
+    @EndEach
+  </thead>
+  <tbody>
+  @Each.Rows
+    <tr class='centering clickable-row'>
+    @Current.Render
+    </tr>
+  @EndEach
+  </tbody>
+</table>

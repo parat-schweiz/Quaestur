@@ -6,7 +6,7 @@ namespace Quaestur
 {
     public static class Model
     {
-        public static int CurrentVersion = 40;
+        public static int CurrentVersion = 41;
 
         public static void Install(IDatabase database)
         {
@@ -170,6 +170,9 @@ namespace Quaestur
                     break;
                 case 40:
                     database.AddColumn<Subscription>(o => o.SenderGroup);
+                    break;
+                case 41:
+                    database.AddColumn<MembershipType>(o => o.NotificationGroup);
                     break;
                 default:
                     throw new NotSupportedException();
