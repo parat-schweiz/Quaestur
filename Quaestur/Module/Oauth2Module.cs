@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using BaseLibrary;
+using JWT;
 using JWT.Algorithms;
 using JWT.Builder;
 using Nancy;
@@ -434,6 +435,7 @@ namespace Quaestur
             });
             Get("/oauth2/jwk.json", parameters =>
             {
+                var encoder = new JwtBase64UrlEncoder();
                 var rsa = Oauth2SigningKey.Instance.Rsa.ExportParameters(false);
                 var response = new JObject(
                     new JProperty("keys", new JArray(
@@ -442,8 +444,8 @@ namespace Quaestur
                             new JProperty("kty", "RSA"),
                             new JProperty("alg", "RS256"),
                             new JProperty("use", "sig"),
-                            new JProperty("n", rsa.Modulus),
-                            new JProperty("e", rsa.Exponent)))));
+                            new JProperty("n", encoder.Encode(rsa.Modulus)),
+                            new JProperty("e", encoder.Encode(rsa.Exponent))))));
                 return Response.AsText(response.ToString(), "application/json");
             });
             Post("/oauth2/token", parameters =>
