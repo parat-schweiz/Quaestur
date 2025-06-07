@@ -36,12 +36,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-    </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.0\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -62,44 +59,44 @@
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Threading.Tasks.Extensions">
-      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.0\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462\System.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="QRCoder">
       <HintPath>..\packages\QRCoder.1.6.0\lib\net40\QRCoder.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing.Common">
-      <HintPath>..\packages\System.Drawing.Common.9.0.3\lib\net462\System.Drawing.Common.dll</HintPath>
+      <HintPath>..\packages\System.Drawing.Common.9.0.5\lib\net462\System.Drawing.Common.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp">
       <HintPath>..\packages\AngleSharp.0.17.1\lib\net472\AngleSharp.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics" />
     <Reference Include="System.Memory">
-      <HintPath>..\packages\System.Memory.4.6.0\lib\net462\System.Memory.dll</HintPath>
+      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
     </Reference>
     <Reference Include="System.Buffers">
-      <HintPath>..\packages\System.Buffers.4.6.0\lib\net462\System.Buffers.dll</HintPath>
+      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
     </Reference>
     <Reference Include="System.Numerics.Vectors">
-      <HintPath>..\packages\System.Numerics.Vectors.4.6.0\lib\net462\System.Numerics.Vectors.dll</HintPath>
+      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Crypto">
       <HintPath>..\packages\Portable.BouncyCastle.1.9.0\lib\net40\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="HtmlSanitizer">
-      <HintPath>..\packages\HtmlSanitizer.9.0.876\lib\net461\HtmlSanitizer.dll</HintPath>
+      <HintPath>..\packages\HtmlSanitizer.9.0.884\lib\net462\HtmlSanitizer.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Encoding.CodePages">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.3\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
+      <HintPath>..\packages\System.Text.Encoding.CodePages.9.0.5\lib\net462\System.Text.Encoding.CodePages.dll</HintPath>
     </Reference>
     <Reference Include="AngleSharp.Css">
       <HintPath>..\packages\AngleSharp.Css.0.17.0\lib\net472\AngleSharp.Css.dll</HintPath>
     </Reference>
     <Reference Include="MailKit">
-      <HintPath>..\packages\MailKit.4.11.0\lib\net48\MailKit.dll</HintPath>
+      <HintPath>..\packages\MailKit.4.12.1\lib\net48\MailKit.dll</HintPath>
     </Reference>
     <Reference Include="MimeKit">
-      <HintPath>..\packages\MimeKit.4.11.0\lib\net48\MimeKit.dll</HintPath>
+      <HintPath>..\packages\MimeKit.4.12.0\lib\net48\MimeKit.dll</HintPath>
     </Reference>
     <Reference Include="JWT">
       <HintPath>..\packages\JWT.11.0.0\lib\net462\JWT.dll</HintPath>
@@ -108,22 +105,22 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="netstandard" />
     <Reference Include="System.Collections.Immutable">
-      <HintPath>..\packages\System.Collections.Immutable.9.0.3\lib\net462\System.Collections.Immutable.dll</HintPath>
+      <HintPath>..\packages\System.Collections.Immutable.9.0.5\lib\net462\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Encodings.Web">
-      <HintPath>..\packages\System.Text.Encodings.Web.9.0.3\lib\net462\System.Text.Encodings.Web.dll</HintPath>
+      <HintPath>..\packages\System.Text.Encodings.Web.9.0.5\lib\net462\System.Text.Encodings.Web.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces">
-      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.3\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.9.0.5\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
     <Reference Include="System.Text.Json">
-      <HintPath>..\packages\System.Text.Json.9.0.3\lib\net462\System.Text.Json.dll</HintPath>
+      <HintPath>..\packages\System.Text.Json.9.0.5\lib\net462\System.Text.Json.dll</HintPath>
     </Reference>
     <Reference Include="BouncyCastle.Cryptography">
-      <HintPath>..\packages\BouncyCastle.Cryptography.2.5.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+      <HintPath>..\packages\BouncyCastle.Cryptography.2.6.1\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
     </Reference>
     <Reference Include="System.Formats.Asn1">
-      <HintPath>..\packages\System.Formats.Asn1.9.0.3\lib\net462\System.Formats.Asn1.dll</HintPath>
+      <HintPath>..\packages\System.Formats.Asn1.9.0.5\lib\net462\System.Formats.Asn1.dll</HintPath>
     </Reference>
     <Reference Include="NancyEx">
       <HintPath>..\packages\ThrowException.Nancy.2.0.2\lib\net452\NancyEx.dll</HintPath>
@@ -135,7 +132,7 @@
       <HintPath>..\packages\ThrowException.Nancy.Authentication.Forms.2.0.1\lib\net452\NancyEx.Authentication.Forms.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Pipelines">
-      <HintPath>..\packages\System.IO.Pipelines.9.0.3\lib\net462\System.IO.Pipelines.dll</HintPath>
+      <HintPath>..\packages\System.IO.Pipelines.9.0.5\lib\net462\System.IO.Pipelines.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -1181,4 +1178,5 @@
       </Properties>
     </MonoDevelop>
   </ProjectExtensions>
+  <Import Project="..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.1\build\net471\System.ValueTuple.targets')" />
 </Project>
