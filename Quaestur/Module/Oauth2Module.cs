@@ -474,6 +474,7 @@ namespace Quaestur
                             .AddClaim("sub", session.User.Value.Id.Value.ToString())
                             .AddClaim("aud", session.Client.Value.Id.Value.ToString())
                             .AddClaim("name", session.User.Value.UserName.Value)
+                            .AddClaim("preferred_username", session.User.Value.UserName.Value)
                             .AddClaim("exp", expiry)
                             .AddClaim("iat", issueTime)
                             .AddClaim("auth_time", authTime);
