@@ -98,12 +98,10 @@ namespace Quaestur
         }
     }
 
-    public class CustomPageEdit : QuaesturModule
+    public class CustomPageView : QuaesturModule
     {
-        public CustomPageEdit()
+        public CustomPageView()
         {
-            RequireCompleteLogin();
-
             Get("/page/{id}", parameters =>
             {
                 string idString = parameters.id;
@@ -117,6 +115,15 @@ namespace Quaestur
 
                 return string.Empty;
             });
+        }
+    }
+
+    public class CustomPageEdit : QuaesturModule
+    {
+        public CustomPageEdit()
+        {
+            RequireCompleteLogin();
+
             Get("/custompage", parameters =>
             {
                 if (HasSystemWideAccess(PartAccess.CustomDefinitions, AccessRight.Write))
