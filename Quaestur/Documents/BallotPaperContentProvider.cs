@@ -69,30 +69,9 @@ namespace Quaestur
                 var text = new StringBuilder();
                 text.AppendLine("<ul>");
 
-                foreach (var issue in issues)
+                foreach (var issue in issues.Where(i => !i.ParentId.HasValue))
                 {
-                    var discussionUrl = issue.CustomFields.FirstOrDefault(f => f.Name == "Diskussion")?.Values?.FirstOrDefault();
-                    var issueUrl = string.Format(
-                        "{0}/issues/{1}",
-                        Global.Config.RedmineApiConfig.ApiUrl,
-                        issue.Id);
-                    if (!string.IsNullOrEmpty(discussionUrl))
-                    {
-                        text.AppendLine(string.Format(
-                            "<li>Antrag {0}: <a href=\"{1}\">{2}</a> - <a href=\"{3}\">Diskussion zum Antrag</a></li>",
-                            issue.Id,
-                            issueUrl,
-                            issue.Subject,
-                            discussionUrl));
-                    }
-                    else
-                    {
-                        text.AppendLine(string.Format(
-                            "<li>Antrag {0}: <a href=\"{1}\">{2}</a></li>",
-                            issue.Id,
-                            issue.Subject,
-                            issueUrl));
-                    }
+                    AddIssue(text, issue, issues);
                 }
 
                 text.AppendLine("</ul>");
@@ -101,6 +80,78 @@ namespace Quaestur
             catch (Exception exception)
             {
                 return exception.Message;
+            }
+        }
+
+        private static bool IsElection(Issue issue)
+        {
+            var category = issue.Category.Name.ToLowerInvariant();
+            return category.Contains("wahl") ||
+                   category.Contains("election") ||
+                   category.Contains("éléction");
+        }
+
+        private static void AddIssue(StringBuilder text, Issue issue, IEnumerable<Issue> allIssues)
+        {
+            if (IsElection(issue))
+            {
+                AddElection(text, issue, allIssues);
+            }
+            else
+            {
+                AddVoting(text, issue, allIssues);
+            }
+        }
+
+        private static void AddElection(StringBuilder text, Issue issue, IEnumerable<Issue> allIssues)
+        {
+            var discussionUrl = issue.CustomFields.FirstOrDefault(f => f.Name == "Diskussion")?.Values?.FirstOrDefault();
+            var issueUrl = string.Format(
+                "{0}/issues/{1}",
+                Global.Config.RedmineApiConfig.ApiUrl,
+                issue.Id);
+            if (!string.IsNullOrEmpty(discussionUrl))
+            {
+                text.AppendLine(string.Format(
+                    "<li>Geschäft {0}: <a href=\"{1}\">{2}</a> - <a href=\"{3}\">Diskussion zum Antrag</a></li>",
+                    issue.Id,
+                    issueUrl,
+                    issue.Subject,
+                    discussionUrl));
+            }
+            else
+            {
+                text.AppendLine(string.Format(
+                    "<li>Geschäft {0}: <a href=\"{1}\">{2}</a></li>",
+                    issue.Id,
+                    issue.Subject,
+                    issueUrl));
+            }
+        }
+
+        private static void AddVoting(StringBuilder text, Issue issue, IEnumerable<Issue> allIssues)
+        {
+            var discussionUrl = issue.CustomFields.FirstOrDefault(f => f.Name == "Diskussion")?.Values?.FirstOrDefault();
+            var issueUrl = string.Format(
+                "{0}/issues/{1}",
+                Global.Config.RedmineApiConfig.ApiUrl,
+                issue.Id);
+            if (!string.IsNullOrEmpty(discussionUrl))
+            {
+                text.AppendLine(string.Format(
+                    "<li>Antrag {0}: <a href=\"{1}\">{2}</a> - <a href=\"{3}\">Diskussion zum Antrag</a></li>",
+                    issue.Id,
+                    issueUrl,
+                    issue.Subject,
+                    discussionUrl));
+            }
+            else
+            {
+                text.AppendLine(string.Format(
+                    "<li>Antrag {0}: <a href=\"{1}\">{2}</a></li>",
+                    issue.Id,
+                    issue.Subject,
+                    issueUrl));
             }
         }
     }

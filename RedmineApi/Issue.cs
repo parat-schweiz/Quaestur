@@ -20,6 +20,7 @@ namespace RedmineApi
         public NamedId Author { get; private set; }
         public NamedId AssignedTo { get; private set; }
         public NamedId Version { get; private set; }
+        public int? ParentId { get; private set; }
         public List<CustomField> CustomFields { get; private set; }
 
         private NamedId GetNamedId(JObject obj, string key)
@@ -33,6 +34,20 @@ namespace RedmineApi
             else
             {
                 return new NamedId(subObj); 
+            }
+        }
+
+        private int? GetId(JObject obj, string key)
+        {
+            var subObj = obj.Value<JObject>(key);
+
+            if (subObj == null)
+            {
+                return null;
+            }
+            else
+            {
+                return subObj.Value<int>("id");
             }
         }
 
@@ -50,6 +65,7 @@ namespace RedmineApi
             Author = GetNamedId(obj, "author");
             AssignedTo = GetNamedId(obj, "assigned_to");
             Version = GetNamedId(obj, "fixed_version");
+            ParentId = GetId(obj, "parent");
             CustomFields = new List<CustomField>();
             var customFields = obj.Value<JArray>("custom_fields");
 

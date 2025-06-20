@@ -159,54 +159,128 @@ namespace Quaestur
             var text = new StringBuilder();
             var issueCounter = 1;
 
-            foreach (var issue in _issues)
+            foreach (var issue in _issues.Where(i => !i.ParentId.HasValue))
             {
-                var questions = issue.CustomFields
-                    .Where(f => f.Name.StartsWith("Abstimmungstitel", StringComparison.Ordinal))
-                    .Where(f => f.Values.Any())
-                    .Select(f => f.Values.FirstOrDefault())
-                    .Where(f => !string.IsNullOrEmpty(f))
-                    .ToList();
-                var shortUrl = string.Format(
-                    "https://a.parat.swiss/{0}",
-                    issue.Id);
-                var qrFilename = string.Format(
-                    "qr{0}.png",
-                    issue.Id);
-
-                if (questions.Any())
-                {
-                    text.AppendLine(@"\begin{samepage}");
-                    text.AppendLine(@"\section*{Abstimmungsvorlage §§§}"
-                                    .Replace("§§§", issueCounter.ToString()));
-                    text.AppendLine(@"\questionurl{§§§}{£££}"
-                                    .Replace("§§§", shortUrl)
-                                    .Replace("£££", qrFilename));
-
-                    var questionCounter = 1;
-
-                    foreach (var question in questions)
-                    {
-                        text.AppendLine(@"\subsection*{Frage £££}"
-                                        .Replace("§§§", issueCounter.ToString())
-                                        .Replace("£££", questionCounter.ToString()));
-                        text.AppendLine(@"\question{Stimmst du dem Antrag von £££ auf §§§ zu?}"
-                                        .Replace("§§§", question)
-                                        .Replace("£££", GetIssuePoster(users, issue)));
-
-                        questionCounter++;
-                    }
-                    text.AppendLine(@"\end{samepage}");
-                }
-
-                text.AppendLine();
-                text.AppendLine(@"\vspace{0.5cm}");
-                text.AppendLine();
-
+                AddIssue(users, _issues, text, issueCounter, issue);
                 issueCounter++;
             }
 
             return text.ToString();
+        }
+
+        private void AddIssue(IEnumerable<User> users, IEnumerable<Issue> allIssues, StringBuilder text, int issueCounter, Issue issue)
+        { 
+            if (IsElection(issue))
+            {
+                AddElection(users, allIssues, text, issueCounter, issue);
+            }
+            else
+            {
+                AddVoting(users, allIssues, text, issueCounter, issue);
+            }
+        }
+
+        private void AddElection(IEnumerable<User> users, IEnumerable<Issue> allIssues, StringBuilder text, int issueCounter, Issue issue)
+        {
+            var candidates = allIssues
+                .Where(i => i.ParentId.HasValue && (i.ParentId.Value == issue.Id))
+                .Where(i => i.Status.Id == issue.Status.Id)
+                .OrderBy(i => i.Id)
+                .ToList();
+            var shortUrl = string.Format(
+                "https://a.parat.swiss/{0}",
+                issue.Id);
+            var qrFilename = string.Format(
+                "qr{0}.png",
+                issue.Id);
+
+            if (candidates.Any())
+            {
+                text.AppendLine(@"\begin{samepage}");
+                text.AppendLine(@"\section*{Wahl §§§: $$$}"
+                                .Replace("§§§", issueCounter.ToString())
+                                .Replace("$$$", issue.Subject));
+                text.AppendLine(@"\questionurl{§§§}{£££}"
+                                .Replace("§§§", shortUrl)
+                                .Replace("£££", qrFilename));
+
+                var candidateCounter = 1;
+
+                foreach (var candidate in candidates)
+                {
+                    var name = candidate.CustomFields
+                        .Where(f => f.Name.StartsWith("Abstimmungstitel", StringComparison.Ordinal))
+                        .Where(f => f.Values.Any())
+                        .Select(f => f.Values.FirstOrDefault())
+                        .FirstOrDefault(f => !string.IsNullOrEmpty(f))
+                        ?? candidate.Subject;
+                    text.AppendLine(@"\subsection*{Kandidat*in £££}"
+                                    .Replace("§§§", issueCounter.ToString())
+                                    .Replace("£££", candidateCounter.ToString()));
+                    text.AppendLine(@"\question{Gibts du §§§ deine Stimme?}"
+                                    .Replace("§§§", name));
+
+                    candidateCounter++;
+                }
+                text.AppendLine(@"\end{samepage}");
+            }
+
+            text.AppendLine();
+            text.AppendLine(@"\vspace{0.5cm}");
+            text.AppendLine();
+        }
+
+        private void AddVoting(IEnumerable<User> users, IEnumerable<Issue> allIssues, StringBuilder text, int issueCounter, Issue issue)
+        {
+            var questions = issue.CustomFields
+                .Where(f => f.Name.StartsWith("Abstimmungstitel", StringComparison.Ordinal))
+                .Where(f => f.Values.Any())
+                .Select(f => f.Values.FirstOrDefault())
+                .Where(f => !string.IsNullOrEmpty(f))
+                .ToList();
+            var shortUrl = string.Format(
+                "https://a.parat.swiss/{0}",
+                issue.Id);
+            var qrFilename = string.Format(
+                "qr{0}.png",
+                issue.Id);
+
+            if (questions.Any())
+            {
+                text.AppendLine(@"\begin{samepage}");
+                text.AppendLine(@"\section*{Abstimmungsvorlage §§§}"
+                                .Replace("§§§", issueCounter.ToString()));
+                text.AppendLine(@"\questionurl{§§§}{£££}"
+                                .Replace("§§§", shortUrl)
+                                .Replace("£££", qrFilename));
+
+                var questionCounter = 1;
+
+                foreach (var question in questions)
+                {
+                    text.AppendLine(@"\subsection*{Frage £££}"
+                                    .Replace("§§§", issueCounter.ToString())
+                                    .Replace("£££", questionCounter.ToString()));
+                    text.AppendLine(@"\question{Stimmst du dem Antrag von £££ auf §§§ zu?}"
+                                    .Replace("§§§", question)
+                                    .Replace("£££", GetIssuePoster(users, issue)));
+
+                    questionCounter++;
+                }
+                text.AppendLine(@"\end{samepage}");
+            }
+
+            text.AppendLine();
+            text.AppendLine(@"\vspace{0.5cm}");
+            text.AppendLine();
+        }
+
+        private static bool IsElection(Issue issue)
+        {
+            var category = issue.Category.Name.ToLowerInvariant();
+            return category.Contains("wahl") ||
+                   category.Contains("election") ||
+                   category.Contains("éléction");
         }
 
         private string CreateVerificationLink()
