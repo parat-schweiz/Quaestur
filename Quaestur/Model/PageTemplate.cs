@@ -45,7 +45,7 @@ namespace Quaestur
 
         public override void Delete(IDatabase database)
         {
-            foreach (var assignment in database.Query<MailTemplateAssignment>(DC.Equal("templateid", Id.Value)))
+            foreach (var assignment in database.Query<PageTemplateAssignment>(DC.Equal("templateid", Id.Value)))
             {
                 assignment.Delete(database);
             }

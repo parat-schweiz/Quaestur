@@ -109,6 +109,11 @@ namespace Quaestur
                 template.Delete(database);
             }
 
+            foreach (var template in database.Query<PageTemplateAssignment>(DC.Equal("assignedid", Id.Value)))
+            {
+                template.Delete(database);
+            }
+
             database.Delete(this);
         }
 
