@@ -53,9 +53,9 @@ namespace Quaestur
             database.Delete(this);
         }
 
-        public IEnumerable<MailTemplateAssignment> Assignments(IDatabase database)
+        public IEnumerable<PageTemplateAssignment> Assignments(IDatabase database)
         {
-            return database.Query<MailTemplateAssignment>(DC.Equal("templateid", Id.Value));
+            return database.Query<PageTemplateAssignment>(DC.Equal("templateid", Id.Value));
         }
 
         public override string GetText(Translator translator)

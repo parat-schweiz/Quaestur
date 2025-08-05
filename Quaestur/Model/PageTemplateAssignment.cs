@@ -56,8 +56,8 @@ namespace Quaestur
         public string FieldNameTranslation(Translator translator)
         {
             return translator.Get(
-                "MailTemplateAssignment.FieldName." + FieldName.Value,
-                FieldName.Value + " field in the mail template assignment",
+                "PageTemplateAssignment.FieldName." + FieldName.Value,
+                FieldName.Value + " field in the page template assignment",
                 FieldName.Value);
         }
 
