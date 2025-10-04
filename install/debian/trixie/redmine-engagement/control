@@ -1,0 +1,6 @@
+Package: redmine-engagement
+Version: {{VERSION}}
+Architecture: amd64
+Maintainer: Stefan Thoeni <stefan.thoeni@parat.swiss>
+Description: A program granting engagement points/credits from redmine activity
+Depends: mono-devel

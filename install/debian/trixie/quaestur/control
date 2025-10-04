@@ -1,0 +1,6 @@
+Package: quaestur
+Version: {{VERSION}}
+Architecture: amd64
+Maintainer: Stefan Thoeni <stefan.thoeni@parat.swiss>
+Description: A web application for membership management
+Depends: mono-devel

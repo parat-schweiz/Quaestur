@@ -1,0 +1,6 @@
+Package: publicus
+Version: {{VERSION}}
+Architecture: amd64
+Maintainer: Stefan Thoeni <stefan.thoeni@parat.swiss>
+Description: A web application for media and supporter management
+Depends: mono-devel
