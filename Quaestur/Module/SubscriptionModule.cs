@@ -399,7 +399,7 @@ namespace Quaestur
         public static string CreateJoinLink(IDatabase database, Person person)
         {
             var subscription = database.Query<Subscription>()
-                .SingleOrDefault(s => person.ActiveMemberships.Any(m => m.Type.Value == s.Membership.Value));
+                .FirstOrDefault(s => person.ActiveMemberships.Any(m => m.Type.Value == s.Membership.Value));
             if (subscription != null)
             {
                 return CreateLink("join",
