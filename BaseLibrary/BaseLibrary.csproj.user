@@ -2,6 +2,9 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <StartAction>Project</StartAction>
+    <StartArguments></StartArguments>
+    <StartWorkingDirectory></StartWorkingDirectory>
+    <ExternalConsole>false</ExternalConsole>
     <ConsolePause>true</ConsolePause>
     <MonoDebugMode>false</MonoDebugMode>
     <MonoDebugCasts>false</MonoDebugCasts>
@@ -38,5 +41,9 @@
     <MonoGcType>Default</MonoGcType>
     <MonoLlvm>false</MonoLlvm>
     <MonoNoLlvm>false</MonoNoLlvm>
+    <MonoThreadsPerCpu></MonoThreadsPerCpu>
+    <MonoAspNetNoDelete>false</MonoAspNetNoDelete>
+    <MonoTraceListener></MonoTraceListener>
+    <MonoXExceptions>false</MonoXExceptions>
   </PropertyGroup>
 </Project>
