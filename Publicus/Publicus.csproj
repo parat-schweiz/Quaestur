@@ -231,7 +231,9 @@
     <Compile Include="Module\LatexTemplateModule.cs" />
     <Compile Include="Module\MailTemplateModule.cs" />
     <Compile Include="Module\PetitionModule.cs" />
-    <Compile Include="Module\SignPetitionModule.cs" />
+    <Compile Include="Module\SignPetitionModule.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
     <Compile Include="Module\UnsubcribeModule.cs" />
     <Compile Include="Infrastructure\ExpiryTask.cs" />
     <Compile Include="Module\RobotsTxtModule.cs" />
@@ -817,16 +819,13 @@
     <None Include="Assets\images\reddit.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\images\facebook.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Include="Assets\images\email.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\images\pinterest.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Assets\images\twitter.png">
+    <None Include="Assets\images\mastodon.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

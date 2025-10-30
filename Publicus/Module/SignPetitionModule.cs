@@ -318,8 +318,7 @@ namespace Publicus
         public string PhraseShareText;
         public string PhraseShareTitle;
         public string PhraseShareLink;
-        public string PhraseShareFacebook;
-        public string PhraseShareTwitter;
+        public string PhraseShareMastodon;
         public string PhraseSharePinterest;
         public string PhraseShareReddit;
         public string PhraseShareEmail;
@@ -340,14 +339,10 @@ namespace Publicus
                 .UrlEncode(petition.Label.Value[translator.Language]);
             PhraseShareLink = Nancy.Helpers.HttpUtility
                 .UrlEncode(petition.WebAddress.Value[translator.Language]);
-            PhraseShareFacebook = translator.Get(
-                "Petition.Action.Info.Share.Facebook",
-                "Share on facebook on the petition action page",
-                "Share on facebook").EscapeHtml();
-            PhraseShareTwitter = translator.Get(
-                "Petition.Action.Info.Share.Twitter",
-                "Share on twitter on the petition action page",
-                "Tweet").EscapeHtml();
+            PhraseShareMastodon = translator.Get(
+                "Petition.Action.Info.Share.Mastodon",
+                "Share on Mastodon on the petition action page",
+                "Share on Mastodon").EscapeHtml();
             PhraseSharePinterest = translator.Get(
                 "Petition.Action.Info.Share.Pinterest",
                 "Share on Pinterest on the petition action page",

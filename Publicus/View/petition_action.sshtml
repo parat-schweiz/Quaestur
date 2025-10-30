@@ -79,7 +79,7 @@
             </div>
             <div class="row">
               <div class="col-md-3 mb-3" style="text-align: center;">
-                <a href="@Model.WebAddress">@Model.PhrasePagePetition</a>
+                <a href="@Model.WebAddress/">@Model.PhrasePagePetition</a>
               </div>
               <div class="col-md-3 mb-3" style="text-align: center;">
                 <a href="@Model.WebAddress/privacy">@Model.PhrasePagePrivacy</a>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="-9 0 274 274"
+   version="1.1"
+   preserveAspectRatio="xMidYMid"
+   id="svg2"
+   sodipodi:docname="mastodon.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:export-filename="mastodon.png"
+   inkscape:export-xdpi="3.8399999"
+   inkscape:export-ydpi="3.8399999"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="1.0261887"
+     inkscape:cx="393.68977"
+     inkscape:cy="478.95674"
+     inkscape:window-width="2680"
+     inkscape:window-height="1443"
+     inkscape:window-x="4"
+     inkscape:window-y="65"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <circle
+     style="fill:#ffffff;stroke-width:0.408729"
+     id="path3"
+     cx="128"
+     cy="137"
+     r="137" />
+  <g
+     id="g2"
+     transform="matrix(0.8049065,0,0,0.8049065,24.996983,30.688372)">
+    <path
+       d="m 249.8741,164.08479 c -3.75299,19.30765 -33.61327,40.43797 -67.90783,44.53309 -17.88314,2.13382 -35.49051,4.09511 -54.26581,3.23392 -30.705251,-1.40682 -54.933823,-7.32904 -54.933823,-7.32904 0,2.98913 0.184332,5.83521 0.552996,8.49696 3.991889,30.30268 30.047557,32.11798 54.728847,32.96443 24.91134,0.85235 47.09309,-6.14194 47.09309,-6.14194 l 1.02341,22.52092 c 0,0 -17.42452,9.35669 -48.46452,11.07761 -17.11631,0.94083 -38.36903,-0.4306 -63.122578,-6.98249 C 10.891614,252.24848 1.6588033,195.02157 0.2460844,136.95558 -0.18451468,119.71539 0.08092311,103.4588 0.08092311,89.862488 0.08092311,30.487005 38.98378,13.083134 38.98378,13.083134 58.599633,4.0744701 92.258619,0.28608295 127.25069,0 h 0.85973 c 34.99207,0.28608295 68.67318,4.0744701 88.28755,13.083134 0,0 38.90139,17.403871 38.90139,76.779354 0,0 0.48811,43.807562 -5.42526,74.222302"
+       fill="#3088d4"
+       id="path1" />
+    <path
+       d="M 209.41254,94.468719 V 166.36254 H 180.92959 V 96.581899 c 0,-14.709678 -6.18913,-22.175853 -18.56885,-22.175853 -13.68774,0 -20.54784,8.856774 -20.54784,26.369774 v 38.19502 h -28.31483 v -38.19502 c 0,-17.513 -6.86157,-26.369774 -20.549313,-26.369774 -12.379723,0 -18.568848,7.466175 -18.568848,22.175853 V 166.36254 H 45.89696 V 94.468719 c 0,-14.693456 3.741198,-26.36977 11.256037,-35.008295 7.749309,-8.638525 17.89788,-13.066912 30.495852,-13.066912 14.575481,0 25.613271,5.602211 32.911341,16.80811 l 7.09456,11.893088 7.09603,-11.893088 c 7.29659,-11.205899 18.33438,-16.80811 32.91134,-16.80811 12.5965,0 22.74507,4.428387 30.49585,13.066912 7.51337,8.638525 11.25457,20.314839 11.25457,35.008295"
+       fill="#ffffff"
+       id="path2" />
+  </g>
+</svg>
