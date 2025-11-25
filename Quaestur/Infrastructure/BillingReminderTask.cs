@@ -58,7 +58,17 @@ namespace Quaestur
 
                 foreach (var billing in remindPersons.Values)
                 {
-                    RemindOrSettleInternal(database, translation, billing, false);
+                    try
+                    {
+                        RemindOrSettleInternal(database, translation, billing, false);
+                    }
+                    catch (Exception exception)
+                    {
+                        Global.Log.Error("Billing reminder for {0} failed to process: {1}", billing.Person.ShortHand, exception.ToString());
+                        Global.Mail.SendAdmin(
+                            "Billing reminder process failed",
+                            string.Format("Billing reminder failed to process: {0}", exception.ToString()));
+                    }
                 }
 
                 Global.Log.Info("Mailing task complete");

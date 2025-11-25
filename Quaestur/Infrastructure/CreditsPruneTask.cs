@@ -38,7 +38,17 @@ namespace Quaestur
                 .Query<Person>()
                 .ToList())
             {
-                RunPerson(database, settings, person);
+                try
+                {
+                    RunPerson(database, settings, person);
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Error("Credits prune for {0} failed to process: {1}", person.ShortHand, exception.ToString());
+                    Global.Mail.SendAdmin(
+                        "Credits prune process failed", 
+                        string.Format("Credits prune failed to process: {0}", exception.ToString()));
+                }
             }
         }
 

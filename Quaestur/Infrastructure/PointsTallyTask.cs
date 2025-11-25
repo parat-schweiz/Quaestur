@@ -54,34 +54,49 @@ namespace Quaestur
             foreach (var person in persons
                 .Where(p => !p.Deleted.Value))
             {
-                if (Global.MailCounter.Available)
+                try
                 {
-                    var membership = person.Memberships
-                        .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
-                                    m.Type.Value.Payment.Value != PaymentModel.None &&
-                                    m.Type.Value.MaximumPoints.Value > 0)
-                        .OrderByDescending(m => m.Organization.Value.Subordinates.Count())
+                    ProcessPerson(database, translation, person);
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Error("Point tally for {0} failed to process: {1}", person.ShortHand, exception.ToString());
+                    Global.Mail.SendAdmin(
+                        "Point tally process failed",
+                        string.Format("Point tally failed to process: {0}", exception.ToString()));
+                }
+            }
+        }
+
+        private static void ProcessPerson(IDatabase database, Translation translation, Person person)
+        {
+            if (Global.MailCounter.Available)
+            {
+                var membership = person.Memberships
+                    .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
+                                m.Type.Value.Payment.Value != PaymentModel.None &&
+                                m.Type.Value.MaximumPoints.Value > 0)
+                    .OrderByDescending(m => m.Organization.Value.Subordinates.Count())
+                    .FirstOrDefault();
+
+                if (membership != null)
+                {
+                    var lastTally = database
+                        .Query<PointsTally>(DC.Equal("personid", person.Id.Value))
+                        .OrderByDescending(t => t.UntilDate.Value)
                         .FirstOrDefault();
+                    var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
+                    var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
+                    Global.Log.Info(
+                        "Checking tally for {0} (last tally {1}, until date {2})",
+                        person.ShortHand,
+                        lastTallyUntilDate,
+                        untilDate);
 
-                    if (membership != null)
+                    if (DateTime.UtcNow.Date > untilDate.Date &&
+                        untilDate.Date > lastTallyUntilDate.Date)
                     {
-                        var lastTally = database
-                            .Query<PointsTally>(DC.Equal("personid", person.Id.Value))
-                            .OrderByDescending(t => t.UntilDate.Value)
-                            .FirstOrDefault();
-                        var lastTallyUntilDate = lastTally == null ? new DateTime(1850, 1, 1) : lastTally.UntilDate.Value;
-                        var untilDate = PointsTallyDocument.ComputeUntilDate(database, membership, lastTally);
-                        Global.Log.Info(
-                            "Checking tally for {0} (last tally {1}, until date {2})",
-                            person.ShortHand,
-                            lastTallyUntilDate,
-                            untilDate);
-
-                        if (DateTime.UtcNow.Date > untilDate.Date &&
-                            untilDate.Date > lastTallyUntilDate.Date)
-                        {
-                            CreatePointsTallyAndSend(database, translation, membership);
-                        }
+                        CreatePointsTallyAndSend(database, translation, membership);
                     }
                 }
             }

@@ -45,7 +45,17 @@ namespace Quaestur
 
             foreach (var task in _task)
             {
-                task.Run(_database);
+                try
+                {
+                    task.Run(_database);
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Error("Task failed to run: {0}", exception.ToString());
+                    Global.Mail.SendAdmin(
+                        "Task failed to run",
+                        string.Format("Task failed to run: {0}", exception.ToString()));
+                }
             }
         }
     }

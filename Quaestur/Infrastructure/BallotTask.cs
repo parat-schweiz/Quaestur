@@ -51,7 +51,15 @@ namespace Quaestur
         {
             foreach (var ballot in database.Query<Ballot>())
             {
-                RunBallot(database, ballot);
+                try
+                {
+                    RunBallot(database, ballot);
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Error("{0} failed to process: {1}", ballot, exception.ToString());
+                    Global.Mail.SendAdmin("Ballot process failed", string.Format("{0} failed to process: {1}", ballot, exception.ToString()));
+                }
             }
         }
 

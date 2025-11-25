@@ -25,18 +25,31 @@ namespace Quaestur
 
                 foreach (var mailing in database.Query<Mailing>())
                 {
-                    if (mailing.Status.Value == MailingStatus.Scheduled &&
-                        DateTime.UtcNow >= mailing.SendingDate.Value)
+                    try
                     {
-                        RunSend(database, mailing);
+                        RunMailing(database, mailing);
                     }
-                    else if (mailing.Status.Value == MailingStatus.Sending)
+                    catch (Exception exception)
                     {
-                        RunSending(database, mailing);
+                        Global.Log.Error("Mailing {0} failed to process: {1}", mailing.Title.Value, exception.ToString());
+                        Global.Mail.SendAdmin("Mailing process failed", string.Format("Mailing {0} failed to process: {1}", mailing.Title.Value, exception.ToString()));
                     }
                 }
 
                 Global.Log.Info("Mailing task complete");
+            }
+        }
+
+        private void RunMailing(IDatabase database, Mailing mailing)
+        {
+            if (mailing.Status.Value == MailingStatus.Scheduled &&
+                DateTime.UtcNow >= mailing.SendingDate.Value)
+            {
+                RunSend(database, mailing);
+            }
+            else if (mailing.Status.Value == MailingStatus.Sending)
+            {
+                RunSending(database, mailing);
             }
         }
 
@@ -99,83 +112,16 @@ namespace Quaestur
 
             foreach (var sending in database.Query<Sending>(DC.Equal("mailingid", mailing.Id.Value)))
             {
-                if (sending.Status.Value == SendingStatus.Created)
+                try
                 {
-                    if (Global.MailCounter.Available)
-                    {
-                        var header = mailing.Header.Value;
-                        var footer = mailing.Footer.Value;
-                        var htmlText = mailing.HtmlText.Value;
-                        var plainText = mailing.PlainText.Value;
-
-                        if (header != null)
-                        {
-                            htmlText = HtmlText.ConcatHtml(header.HtmlText.Value, htmlText);
-                            plainText = header.PlainText.Value + plainText;
-                        }
-
-                        if (footer != null)
-                        {
-                            htmlText = HtmlText.ConcatHtml(htmlText, footer.HtmlText.Value);
-                            plainText = plainText + footer.PlainText.Value;
-                        }
-
-                        var translation = new Translation(database);
-                        var translator = new Translator(translation, sending.Address.Value.Person.Value.Language.Value);
-                        var templator = new Templator(new PersonContentProvider(database, translator, sending.Address.Value.Person.Value));
-                        htmlText = templator.Apply(htmlText);
-                        plainText = templator.Apply(plainText);
-
-                        try
-                        {
-                            var language = sending.Address.Value.Person.Value.Language.Value;
-                            var from = new MailboxAddress(
-                                mailing.Sender.Value.MailName.Value[language],
-                                mailing.Sender.Value.MailAddress.Value[language]);
-                            var to = new MailboxAddress(
-                                sending.Address.Value.Person.Value.ShortHand, 
-                                sending.Address.Value.Address.Value);
-                            var senderKey = string.IsNullOrEmpty(mailing.Sender.Value.GpgKeyId.Value) ? null :
-                                new GpgPrivateKeyInfo(
-                                mailing.Sender.Value.GpgKeyId.Value,
-                                mailing.Sender.Value.GpgKeyPassphrase.Value);
-                            var content = new Multipart("alternative");
-                            var textPart = new TextPart("plain") { Text = plainText };
-                            textPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
-                            content.Add(textPart);
-                            var htmlPart = new TextPart("html") { Text = htmlText };
-                            htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
-                            content.Add(htmlPart);
-
-                            Global.MailCounter.Used();
-                            Global.Mail.Send(from, to, senderKey, null, mailing.Subject.Value, content);
-                            sending.Status.Value = SendingStatus.Sent;
-                            sending.SentDate.Value = DateTime.UtcNow;
-                            database.Save(sending);
-                            Journal(database, mailing, sending.Address.Value.Person.Value,
-                                "MailTask.Journal.Sent",
-                                "Journal entry sent mail",
-                                "Task sent mail {0}",
-                                t => mailing.Title.Value);
-                        }
-                        catch (Exception exception)
-                        {
-                            sending.Status.Value = SendingStatus.Failed;
-                            sending.FailureMessage.Value = exception.Message;
-                            sending.SentDate.Value = DateTime.UtcNow;
-                            database.Save(sending);
-                            Journal(database, mailing, sending.Address.Value.Person.Value,
-                                "MailTask.Journal.Failed",
-                                "Journal entry sending mail failed",
-                                "Task failed sending mail {0}",
-                                t => mailing.Title.Value);
-                        }
-                    }
-                    else
-                    {
-                        remainingCount++;
-                    }
-                } 
+                    remainingCount += RunSendMail(database, mailing, sending);
+                }
+                catch (Exception exception)
+                {
+                    remainingCount++;
+                    Global.Log.Error("Mailing {0} for {1} failed to process: {2}", mailing.Title.Value, sending.Address.Value.Person.Value.ShortHand, exception.ToString());
+                    Global.Mail.SendAdmin("Mailing process failed", string.Format("Mailing {0} for someone failed to process: {1}", mailing.Title.Value, exception.ToString()));
+                }
             }
 
             if (remainingCount < 1)
@@ -189,6 +135,89 @@ namespace Quaestur
             {
                 Global.Log.Info("Mailing {0} needs to send {1} more mails", mailing.Title, remainingCount);
             }
+        }
+
+        private int RunSendMail(IDatabase database, Mailing mailing, Sending sending)
+        {
+            if (sending.Status.Value == SendingStatus.Created)
+            {
+                if (Global.MailCounter.Available)
+                {
+                    var header = mailing.Header.Value;
+                    var footer = mailing.Footer.Value;
+                    var htmlText = mailing.HtmlText.Value;
+                    var plainText = mailing.PlainText.Value;
+
+                    if (header != null)
+                    {
+                        htmlText = HtmlText.ConcatHtml(header.HtmlText.Value, htmlText);
+                        plainText = header.PlainText.Value + plainText;
+                    }
+
+                    if (footer != null)
+                    {
+                        htmlText = HtmlText.ConcatHtml(htmlText, footer.HtmlText.Value);
+                        plainText = plainText + footer.PlainText.Value;
+                    }
+
+                    var translation = new Translation(database);
+                    var translator = new Translator(translation, sending.Address.Value.Person.Value.Language.Value);
+                    var templator = new Templator(new PersonContentProvider(database, translator, sending.Address.Value.Person.Value));
+                    htmlText = templator.Apply(htmlText);
+                    plainText = templator.Apply(plainText);
+
+                    try
+                    {
+                        var language = sending.Address.Value.Person.Value.Language.Value;
+                        var from = new MailboxAddress(
+                            mailing.Sender.Value.MailName.Value[language],
+                            mailing.Sender.Value.MailAddress.Value[language]);
+                        var to = new MailboxAddress(
+                            sending.Address.Value.Person.Value.ShortHand,
+                            sending.Address.Value.Address.Value);
+                        var senderKey = string.IsNullOrEmpty(mailing.Sender.Value.GpgKeyId.Value) ? null :
+                            new GpgPrivateKeyInfo(
+                            mailing.Sender.Value.GpgKeyId.Value,
+                            mailing.Sender.Value.GpgKeyPassphrase.Value);
+                        var content = new Multipart("alternative");
+                        var textPart = new TextPart("plain") { Text = plainText };
+                        textPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                        content.Add(textPart);
+                        var htmlPart = new TextPart("html") { Text = htmlText };
+                        htmlPart.ContentTransferEncoding = ContentEncoding.QuotedPrintable;
+                        content.Add(htmlPart);
+
+                        Global.MailCounter.Used();
+                        Global.Mail.Send(from, to, senderKey, null, mailing.Subject.Value, content);
+                        sending.Status.Value = SendingStatus.Sent;
+                        sending.SentDate.Value = DateTime.UtcNow;
+                        database.Save(sending);
+                        Journal(database, mailing, sending.Address.Value.Person.Value,
+                            "MailTask.Journal.Sent",
+                            "Journal entry sent mail",
+                            "Task sent mail {0}",
+                            t => mailing.Title.Value);
+                    }
+                    catch (Exception exception)
+                    {
+                        sending.Status.Value = SendingStatus.Failed;
+                        sending.FailureMessage.Value = exception.Message;
+                        sending.SentDate.Value = DateTime.UtcNow;
+                        database.Save(sending);
+                        Journal(database, mailing, sending.Address.Value.Person.Value,
+                            "MailTask.Journal.Failed",
+                            "Journal entry sending mail failed",
+                            "Task failed sending mail {0}",
+                            t => mailing.Title.Value);
+                    }
+                }
+                else
+                {
+                    return 1;
+                }
+            }
+
+            return 0;
         }
     }
 }

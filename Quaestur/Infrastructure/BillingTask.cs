@@ -56,23 +56,38 @@ namespace Quaestur
                 .Where(m => m.Type.Value.Collection.Value == CollectionModel.Direct &&
                             !m.Person.Value.Deleted.Value))
             {
-                var translator = new Translator(translation, membership.Person.Value.Language.Value);
-                var model = membership.Type.Value.CreatePaymentModel(database);
-                var advancePeriod = model != null ? model.GetBillAdvancePeriod() : 30;
-
-                var bills = database.Query<Bill>(DC.Equal("membershipid", membership.Id.Value)).ToList();
-
-                if (bills.Count > 0)
+                try
                 {
-                    if (DateTime.Now.Date >= bills.Max(b => b.UntilDate.Value).AddDays(-advancePeriod).Date)
-                    {
-                        CreateBill(database, translation, membership);
-                    }
+                    RunMembership(database, translation, membership);
                 }
-                else
+                catch (Exception exception)
+                {
+                    Global.Log.Error("Billing for {0}, {1} failed to process: {2}", membership.Person.Value.ShortHand, membership.Organization.Value.Name.Value, exception.ToString());
+                    Global.Mail.SendAdmin(
+                        "Billing process failed", 
+                        string.Format("Billing failed to process: {0}", exception.ToString()));
+                }
+            }
+        }
+
+        private static void RunMembership(IDatabase database, Translation translation, Membership membership)
+        {
+            var translator = new Translator(translation, membership.Person.Value.Language.Value);
+            var model = membership.Type.Value.CreatePaymentModel(database);
+            var advancePeriod = model != null ? model.GetBillAdvancePeriod() : 30;
+
+            var bills = database.Query<Bill>(DC.Equal("membershipid", membership.Id.Value)).ToList();
+
+            if (bills.Count > 0)
+            {
+                if (DateTime.Now.Date >= bills.Max(b => b.UntilDate.Value).AddDays(-advancePeriod).Date)
                 {
                     CreateBill(database, translation, membership);
                 }
+            }
+            else
+            {
+                CreateBill(database, translation, membership);
             }
         }
 

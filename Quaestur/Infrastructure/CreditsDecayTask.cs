@@ -39,7 +39,17 @@ namespace Quaestur
                 .Where(p => !p.Deleted.Value)
                 .ToList())
             {
-                RunPerson(person, database, settings);
+                try
+                {
+                    RunPerson(person, database, settings);
+                }
+                catch (Exception exception)
+                {
+                    Global.Log.Error("Credits decay for {0} failed to process: {1}", person.ShortHand, exception.ToString());
+                    Global.Mail.SendAdmin(
+                        "Credits decay process failed", 
+                        string.Format("Credits decay failed to process: {0}", exception.ToString()));
+                }
             }
         }
 
