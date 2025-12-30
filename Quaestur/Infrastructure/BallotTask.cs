@@ -446,15 +446,18 @@ namespace Quaestur
         { 
             foreach (var membership in memberships.Values)
             {
-                if (!ballotPapers.ContainsKey(membership.Id))
+                if (membership.Type.Value.Rights.Value.HasFlag(MembershipRight.Voting))
                 {
-                    var newBallotPaper = new BallotPaper(Guid.NewGuid());
-                    newBallotPaper.Ballot.Value = ballot;
-                    newBallotPaper.Member.Value = membership;
-                    newBallotPaper.Status.Value = BallotPaperStatus.New;
-                    newBallotPaper.LastTry.Value = DateTime.UtcNow.AddDays(-10);
-                    database.Save(newBallotPaper);
-                    ballotPapers.Add(newBallotPaper.Id.Value, newBallotPaper);
+                    if (!ballotPapers.ContainsKey(membership.Id))
+                    {
+                        var newBallotPaper = new BallotPaper(Guid.NewGuid());
+                        newBallotPaper.Ballot.Value = ballot;
+                        newBallotPaper.Member.Value = membership;
+                        newBallotPaper.Status.Value = BallotPaperStatus.New;
+                        newBallotPaper.LastTry.Value = DateTime.UtcNow.AddDays(-10);
+                        database.Save(newBallotPaper);
+                        ballotPapers.Add(newBallotPaper.Id.Value, newBallotPaper);
+                    }
                 }
             }
         }
