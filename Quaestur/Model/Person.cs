@@ -471,6 +471,11 @@ namespace Quaestur
                 points.Delete(database);
             }
 
+            foreach (var credits in database.Query<Credits>(DC.Equal("ownerid", Id.Value)))
+            {
+                credits.Delete(database);
+            }
+
             foreach (var authorization in database.Query<Oauth2Authorization>(DC.Equal("userid", Id.Value)))
             {
                 authorization.Delete(database);
