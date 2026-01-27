@@ -103,7 +103,9 @@ $('.selectpicker').selectpicker();
         <button id ="actionButtonDownloadSettlement" type="button" class="btn btn-default">@Model.PhraseButtonDownloadSettlement</button>
         <button id ="actionSendSettlementOrReminder" type="button" class="btn btn-default">@Model.PhraseButtonSendSettlementOrReminder</button>
         <button id ="actionCreateBallotPaper" type="button" class="btn btn-default">@Model.PhraseButtonCreateBallotPaper</button>
+        @If.ShowButtonAssignMemberNumber
         <button id ="actionAssignMemberNumber" type="button" class="btn btn-default">@Model.PhraseButtonAssignMemberNumber</button>
+        @EndIf
       </div>
     </div>
   </form>

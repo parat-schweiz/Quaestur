@@ -23,6 +23,8 @@ namespace Quaestur
         public string PhraseButtonCreateBallotPaper;
         public string PhraseButtonDownloadBillData;
         public string PhraseDownloadWait;
+        public string PhraseButtonAssignMemberNumber;
+        public bool ShowButtonAssignMemberNumber;
 
         public PersonDetailActionsView(Translator translator, Person person)
         {
@@ -35,6 +37,8 @@ namespace Quaestur
             PhraseButtonCreateBallotPaper = translator.Get("Person.Detail.Master.Actions.Button.CreateBallotPaper", "Button to create ballot paper on actions tab in person detail page", "Create Ballot Paper");
             PhraseButtonDownloadBillData = translator.Get("Person.Detail.Master.Actions.Button.DownloadBillData", "Button to download bill data on actions tab in person detail page", "Download Bill Data");
             PhraseDownloadWait = translator.Get("Person.Detail.Master.Actions.Wait.Download", "Wait for download message on actions tab in person detail page", "Downloading...");
+            PhraseButtonAssignMemberNumber = translator.Get("Person.Detail.Master.Actions.Button.AssignMemberNumber", "Button to assign a member number on actions tab in person detail page", "Assign Member Number");
+            ShowButtonAssignMemberNumber = person.Number.Value < 1;
             Memberships = new List<NamedIdViewModel>(
                 person.Memberships.Select(m => new NamedIdViewModel(translator, m, false)));
         }
@@ -298,14 +302,25 @@ namespace Quaestur
                         fields.Add(bill.PayedDate.Value?.ToString() ?? string.Empty);
                         csv.AppendLine(string.Join(";", fields.Select(y => "\"" + y + "\"")));
                     }
-                    var b = new Bill();
                     var csvBytes = Encoding.UTF8.GetBytes(csv.ToString());
-                    status.SetDataSuccess(Convert.ToBase64String(csvBytes), membership.Person.Value.Number.Value + ".csv");
-                    Journal(
-                        membership.Person.Value,
-                        "BillData.Journal.Download.Success",
-                        "Journal entry when downloaded bill data",
-                        "Downloaded bill data");
+                    if (csvBytes.Any())
+                    {
+                        status.SetDataSuccess(Convert.ToBase64String(csvBytes), membership.Person.Value.Number.Value + ".csv");
+                        Journal(
+                            membership.Person.Value,
+                            "BillData.Journal.Download.Success",
+                            "Journal entry when downloaded bill data",
+                            "Downloaded bill data");
+                    }
+                    else
+                    {
+                        status.SetErrorNotFound();
+                        Journal(
+                            membership.Person.Value,
+                            "BillData.Journal.Download.NotFound",
+                            "Journal entry when no bill data to download",
+                            "No bill data to download");
+                    }
                 }
 
                 return status.CreateJsonData();
