@@ -773,6 +773,9 @@ namespace Publicus
                                 {
                                     postalAddress = new PostalAddress(Guid.NewGuid());
                                     postalAddress.Contact.Value = contact;
+                                    postalAddress.Country.Value = Database
+                                        .Query<Country>()
+                                        .FirstOrDefault(c => c.Name.Value[Language.German] == "Schweiz");
                                     status.AssignStringRequired("Place", postalAddress.Place, model.Place);
                                     status.AssignStringRequired("PostalCode", postalAddress.PostalCode, model.PostalCode);
                                     Database.Save(postalAddress);
