@@ -38,12 +38,14 @@ namespace DiscourseEngagement
         {
             foreach (var like in database.Query<Like>(DC.Equal("personid", Id.Value)))
             {
-                database.Delete(like);
+                like.Person.Value = null;
+                database.Save(like);
             }
 
             foreach (var post in database.Query<Post>(DC.Equal("personid", Id.Value)))
             {
-                database.Delete(post);
+                post.Person.Value = null;
+                database.Save(post);
             }
 
             database.Delete(this);
