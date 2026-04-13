@@ -24,7 +24,8 @@ namespace Publicus
             }
 
             var uri = "http://localhost:8889";
-            Global.Log.Info("Starting Publicus on " + uri);
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            Global.Log.Info("Starting Publicus version {0} on {1}", version, uri);
 
             // initialize an instance of NancyHost
             var host = new NancyHost(new Uri(uri));

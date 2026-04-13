@@ -27,7 +27,8 @@ namespace Quaestur
             }
 
             var uri = "http://localhost:8888";
-            Global.Log.Info("Starting Quaestur on " + uri);
+            var version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            Global.Log.Info("Starting Quaestur version {0} on {1}", version, uri);
 
             // initialize an instance of NancyHost
             var host = new NancyHost(new Uri(uri));
