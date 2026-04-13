@@ -646,8 +646,9 @@ namespace Quaestur
                     return PostResult.Success(
                         Translate("Mailing.Edit.Test.Success", "Success message on sending test mail in mailing edit page", "Test E-Mail sent."));
                 }
-                catch
+                catch (Exception exception)
                 {
+                    Warning("Test E-Mail could not be sent: {0}", exception.ToString());
                     return PostResult.Failed(
                         Translate("Mailing.Edit.Test.Failed", "Failed message on sending test mail in mailing edit page", "E-Mail could not be sent."));
                 }
