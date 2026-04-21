@@ -614,6 +614,7 @@ namespace Publicus
 
                 if (contact == null)
                 {
+                    Warning("Test E-Mail could not be sent: Test contact not found.");
                     return PostResult.Failed(
                         Translate("Mailing.Edit.Test.Failed", "Failed message on sending test mail in mailing edit page", "E-Mail could not be sent."));
                 }
